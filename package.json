@@ -1,0 +1,55 @@
+{
+  "name": "spellcast-ext-3dgws",
+  "version": "0.50.0",
+  "description": "3D Ground With Sprites - A Spellcast's Client Extension.",
+  "main": "lib/extension.js",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "dom-kit": "^0.3.14",
+    "exm": "github:cronvel/exm",
+    "seventh": "^0.7.35"
+  },
+  "devDependencies": {
+    "browserify": "^16.5.1",
+    "uglify-es": "^3.3.9"
+  },
+  "scripts": {
+    "test": "tea-time -R dot -O"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cronvel/spellcast-ext-3dgws.git"
+  },
+  "keywords": [
+    "spellcast",
+    "web",
+    "client",
+    "3d",
+    "ground",
+    "sprite"
+  ],
+  "author": "Cédric Ronvel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cronvel/spellcast-ext-3dgws/issues"
+  },
+  "config": {
+    "tea-time": {
+      "coverDir": [
+        "lib"
+      ]
+    }
+  },
+  "copyright": {
+    "title": "3D Ground With Sprites",
+    "years": [
+      2020
+    ],
+    "owner": "Cédric Ronvel"
+  }
+}

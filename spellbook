@@ -1,0 +1,25 @@
+
+[[doctype spellcast/spellbook]]
+
+[formula]
+	browserify: ./node_modules/.bin/browserify
+	uglify: ./node_modules/.bin/uglifyjs
+
+# Browser client
+
+[spell browser]
+	[summon]
+		- browser/ext.min.js
+
+[summoning browser/ext.js]
+	[summon]
+		- lib/ext.js
+	[scroll]
+		- $> ${browserify} lib/ext.js -s Tdgws -i fs -i buffer -o browser/ext.js
+
+[summoning browser/ext.min.js]
+	[summon]
+		- browser/ext.js
+	[scroll]
+		- $> ${uglify} browser/ext.js -o browser/ext.min.js -m
+
