@@ -38,6 +38,8 @@ function Tdgws( options ) {
 
 module.exports = Tdgws ;
 
+console.warn( "Client extension 3DGWS loaded!" ) ;
+
 
 },{}]},{},[1])(1)
 });
