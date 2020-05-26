@@ -10,8 +10,8 @@
     "test": "test"
   },
   "dependencies": {
-    "3d-kit": "^0.1.0",
-    "dom-kit": "^0.3.14",
+    "3d-kit": "^0.1.2",
+    "dom-kit": "^0.4.0",
     "exm": "github:cronvel/exm",
     "seventh": "^0.7.35"
   },
