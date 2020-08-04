@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "3d-kit": "^0.1.2",
-    "dom-kit": "^0.4.0",
-    "exm": "github:cronvel/exm",
+    "dom-kit": "^0.4.1",
+    "exm": "^0.3.0",
     "seventh": "^0.7.35"
   },
   "devDependencies": {
-    "browserify": "^16.5.1",
+    "browserify": "^16.5.2",
     "uglify-es": "^3.3.9"
   },
   "scripts": {
