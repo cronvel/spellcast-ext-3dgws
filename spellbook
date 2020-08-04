@@ -9,17 +9,17 @@
 
 [spell browser]
 	[summon]
-		- browser/ext.min.js
+		- browser/extension.min.js
 
-[summoning browser/ext.js]
+[summoning browser/extension.js]
 	[summon]
-		- lib/ext.js
+		- lib/browser-extension.js
 	[scroll]
-		- $> ${browserify} lib/ext.js -s Tdgws -i fs -i buffer -o browser/ext.js
+		- $> ${browserify} lib/browser-extension.js -s Tdgws -i fs -i buffer -o browser/extension.js
 
-[summoning browser/ext.min.js]
+[summoning browser/extension.min.js]
 	[summon]
-		- browser/ext.js
+		- browser/extension.js
 	[scroll]
-		- $> ${uglify} browser/ext.js -o browser/ext.min.js -m
+		- $> ${uglify} browser/extension.js -o browser/extension.min.js -m
 

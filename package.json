@@ -12,7 +12,7 @@
   "dependencies": {
     "3d-kit": "^0.1.2",
     "dom-kit": "^0.4.1",
-    "exm": "^0.3.0",
+    "exm": "^0.3.3",
     "seventh": "^0.7.35"
   },
   "devDependencies": {
