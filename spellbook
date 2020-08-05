@@ -13,9 +13,9 @@
 
 [summoning browser/extension.js]
 	[summon]
-		- lib/browser-extension.js
+		- lib/*.js
 	[scroll]
-		- $> ${browserify} lib/browser-extension.js -s Tdgws -i fs -i buffer -o browser/extension.js
+		- $> ${browserify} lib/browser-extension.js -i fs -i buffer -o browser/extension.js
 
 [summoning browser/extension.min.js]
 	[summon]

@@ -10,9 +10,9 @@
     "test": "test"
   },
   "dependencies": {
-    "3d-kit": "^0.1.2",
+    "babylonjs": "^4.1.0",
     "dom-kit": "^0.4.1",
-    "exm": "^0.3.3",
+    "exm": "^0.3.4",
     "seventh": "^0.7.35"
   },
   "devDependencies": {
