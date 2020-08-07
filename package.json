@@ -10,6 +10,7 @@
     "test": "test"
   },
   "dependencies": {
+    "array-kit": "^0.2.4",
     "babylonjs": "^4.1.0",
     "dom-kit": "^0.4.1",
     "exm": "^0.3.4",
