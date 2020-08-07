@@ -294,26 +294,21 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 
 // Size, positioning and rotation
 GEntity.prototype.updateTransform = function( data ) {
-	var animationFps = 30 ;
-
 	if ( data.position ) {
 		if ( data.position.x !== undefined ) { this.position.x = data.position.x ; }
 		if ( data.position.y !== undefined ) { this.position.y = data.position.y ; }
 		if ( data.position.z !== undefined ) { this.position.z = data.position.z ; }
 
 		if ( data.transition ) {
+			console.warn( "this.babylon.entity:" , this.babylon.entity ) ;
 			// Animation using easing
-			Babylon.Animation.CreateAndStartAnimation(
-				'transition' ,	// name
-				this.babylon.entity ,	// thing to animate
-				'position' ,	// property to animate
-				animationFps ,
-				Math.round( data.transition.duration * animationFps ) ,	// number of frame of animation
-				this.babylon.entity.position ,		// starting value
-				new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ,	// ending value
-				Babylon.Animation.ANIMATIONLOOPMODE_CONSTANT	// loop mode, for cyclic use: Babylon.Animation.ANIMATIONLOOPMODE_CYCLE
-				// easingFunction: nothing for linear
-				// onAnimationEnd: callback
+			
+			data.transition.createAnimation(
+				this.gScene.babylon.scene ,
+				this.babylon.entity ,
+				'position' ,
+				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
 			) ;
 		}
 		else {
@@ -514,6 +509,10 @@ GScene.prototype.update = function( data ) {
 
 
 
+const Babylon = require( 'babylonjs' ) ;
+
+
+
 /*
 	duration: transition duration in s
 	easing: the easing function used
@@ -547,7 +546,53 @@ GTransition.prototype.toString = function( property ) {
 } ;
 
 
-},{}],5:[function(require,module,exports){
+
+// All of Babylon built-in easing functions
+const EASING_FUNCTION = {
+	circle: Babylon.CircleEase ,
+	back: Babylon.BackEase ,
+	bounce: Babylon.BounceEase ,
+	cubic: Babylon.CubicEase ,
+	elastic: Babylon.ElasticEase ,
+	exponential: Babylon.ExponentialEase ,
+	power: Babylon.PowerEase ,
+	quadratic: Babylon.QuadraticEase ,
+	quartic: Babylon.QuarticEase ,
+	quintic: Babylon.QuinticEase ,
+	sine: Babylon.SineEase ,
+	bezier: Babylon.BezierCurveEase
+} ;
+
+
+
+GTransition.prototype.createAnimation = function( scene , entity , property , animationType , newValue ) {
+	var animationFps = 30 ,
+		frameCount = Math.round( this.duration * animationFps ) ,
+		animation = new Babylon.Animation( 'transition' , property , animationFps , animationType , Babylon.Animation.ANIMATIONLOOPMODE_CONSTANT ) ,
+		animationKeys = [
+			{ frame: 0 , value: entity[ property ] } ,
+			{ frame: frameCount , value: newValue }
+		] ,
+		easingFunction 
+
+	animation.setKeys( animationKeys ) ;
+
+	if ( this.easing && EASING_FUNCTION[ this.easing ] ) {
+		// For each easing function, you can choose beetween EASEIN (default), EASEOUT, EASEINOUT
+		easingFunction = new EASING_FUNCTION[ this.easing ]() ;
+		easingFunction.setEasingMode( Babylon.EasingFunction.EASINGMODE_EASEINOUT ) ;
+		animation.setEasingFunction( easingFunction ) ;
+	}
+	
+	// Adding animation to my animations collection
+	entity.animations.push( animation ) ;
+
+	// Finally, launch animation, from key 0 to last-key, last argument is for activating loop (we don't want it)
+	scene.beginAnimation( entity , 0 , frameCount , false ) ;
+} ;
+
+
+},{"babylonjs":7}],5:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
