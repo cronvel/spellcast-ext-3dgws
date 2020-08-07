@@ -147,6 +147,7 @@ Camera.prototype.updateTransition = function( transitions ) {
 
 
 
+const Babylon = require( 'babylonjs' ) ;
 const GTransition = require( './GTransition.js' ) ;
 
 const Ngev = require( 'nextgen-events/lib/browser.js' ) ;
@@ -189,6 +190,9 @@ function GEntity( dom , gScene , data ) {
 
 
 	// Internal
+	this.babylon = {
+		entity: null
+	} ;
 
 	this.defineStates( 'loaded' , 'loading' ) ;
 }
@@ -222,7 +226,7 @@ GEntity.prototype.update = async function( data , initial = false ) {
 		|| data.size !== undefined || data.sizeMode !== undefined
 		|| data.rotation !== undefined || data.rotationMode !== undefined
 	) {
-		//this.updateTransform( data ) ;
+		this.updateTransform( data ) ;
 	}
 
 	//if ( data.meta ) { this.updateMeta( data.meta ) ; }
@@ -260,127 +264,56 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 	}
 
 	
-	
+	//*
 	var url = variant.frames[ 0 ].url ;
-	var spriteManager = new BABYLON.SpriteManager( 'spriteManager' , url , 10 , 400 , this.gScene.babylon.scene ) ;
-	var sprite = new BABYLON.Sprite( 'sprite' , spriteManager ) ;
-	sprite.position.x = 0 ;
-	sprite.position.y = 0 ;
-	sprite.position.z = 0 ;
-	sprite.cellIndex = 0 ;
-	sprite.size = 0.5 ;
-} ;
-
-
-
-// Load/replace the gEntity's image
-GEntity.prototype.updateImage = function( url ) {
-	if ( this.usage === 'card' ) {
-		this.$image.style.backgroundImage = 'url("' + this.dom.cleanUrl( url ) + '")' ;
-		return Promise.resolved ;
-	}
-
-	if ( url.endsWith( '.svg' ) ) { return this.updateVgImage( url ) ; }
+	this.babylon.spriteManager = new Babylon.SpriteManager( 'spriteManager' , this.dom.cleanUrl( url ) , 1 , 400 , this.gScene.babylon.scene ) ;
+	this.babylon.entity = new Babylon.Sprite( 'sprite' , this.babylon.spriteManager ) ;
+	this.babylon.entity.stopAnimation(); // Not animated
+	this.babylon.entity.cellIndex = 0 ;
+	this.babylon.entity.position.x = this.position.x ;
+	this.babylon.entity.position.y = this.position.y ;
+	this.babylon.entity.position.z = this.position.z ;
+	this.babylon.entity.width = this.size.x ;
+	this.babylon.entity.height = this.size.y ;
+	this.babylon.entity.angle = this.rotation.z ;
+	//*/
 	
-	var promise = new Promise() ,
-		shouldAppend = ! this.$image ;
 
-	if ( this.$image && this.$image.tagName.toLowerCase() !== 'img' ) {
-		this.$image.remove() ;
-		this.$image = null ;
-	}
+	// !!!Interesting properties!!!
 
-	if ( ! this.$image ) {
-		shouldAppend = true ;
-		this.$image = document.createElement( 'img' ) ;
-		this.$image.classList.add( this.usage ) ;
-	}
-
-	this.$image.setAttribute( 'src' , this.dom.cleanUrl( url ) ) ;
-	this.$image.onload = () => promise.resolve() ;
-
-	if ( shouldAppend && this.usage !== 'marker' ) {
-		this.$wrapper.append( this.$image ) ;
-	}
-
-	return promise ;
+	//this.babylon.entity.invertU = -1 ;	// Horizontal flip
+	//this.babylon.entity.invertV = -1 ;	// Vertical flip
+	//this.babylon.entity.isPickable = true ;	// Click detection
+	//this.babylon.entity.useAlphaForPicking = true ;	// Click detection works only on opaque area
 } ;
 
 
 
 // Size, positioning and rotation
 GEntity.prototype.updateTransform = function( data ) {
-	var areaWidth , areaHeight , imageWidth , imageHeight ;
+	var animation = new Babylon.Animation( 'transition' , 'position' , 30 , Babylon.Animation.ANIMATIONTYPE_VECTOR3 , Babylon.Animation.ANIMATIONLOOPMODE_CYCLE ) ;
 
 	if ( data.position ) {
-		if ( data.position.x !== undefined ) { this.position.x = data.position.x ; }
-		if ( data.position.y !== undefined ) { this.position.y = data.position.y ; }
-		if ( data.position.z !== undefined ) { this.position.z = data.position.z ; }
+		if ( data.position.x !== undefined ) { this.babylon.entity.position.x = this.position.x = data.position.x ; }
+		if ( data.position.y !== undefined ) { this.babylon.entity.position.y = this.position.y = data.position.y ; }
+		if ( data.position.z !== undefined ) { this.babylon.entity.position.z = this.position.z = data.position.z ; }
 	}
 
 	if ( data.size ) {
-		if ( data.size.x !== undefined ) { this.size.x = data.size.x ; }
-		if ( data.size.y !== undefined ) { this.size.y = data.size.y ; }
+		if ( data.size.x !== undefined ) { this.babylon.entity.width = this.size.x = data.size.x ; }
+		if ( data.size.y !== undefined ) { this.babylon.entity.height = this.size.y = data.size.y ; }
 		if ( data.size.z !== undefined ) { this.size.z = data.size.z ; }
 	}
 
 	if ( data.rotation ) {
 		if ( data.rotation.x !== undefined ) { this.rotation.x = data.rotation.x ; }
 		if ( data.rotation.y !== undefined ) { this.rotation.y = data.rotation.y ; }
-		if ( data.rotation.z !== undefined ) { this.rotation.z = data.rotation.z ; }
+		if ( data.rotation.z !== undefined ) { this.babylon.entity.angle = this.rotation.z = data.rotation.z ; }
 	}
-
-	if ( data.positionMode ) { this.positionMode = data.positionMode || 'default' ; }
-	if ( data.sizeMode ) { this.sizeMode = data.sizeMode || 'default' ; }
-	if ( data.rotationMode ) { this.rotationMode = data.rotationMode || 'default' ; }
-
-	// For instance, marker are excluded
-	if ( ! this.$wrapper || ! this.$image ) { return ; }
-
-
-	// Pre-compute few thing necessary for the following stuff
-
-	areaWidth = this.gScene.$gscene.offsetWidth ;
-	areaHeight = this.gScene.$gscene.offsetHeight ;
-	
-	if ( this.$image.tagName.toLowerCase() === 'svg' ) {
-		// The SVG element is not a DOM HTML element, it does not have offsetWidth/offsetHeight.
-		//imageNaturalWidth = this.$image.width.baseVal.value ;
-		//imageNaturalHeight = this.$image.height.baseVal.value ;
-		imageWidth = this.$wrapper.offsetWidth ;
-		imageHeight = this.$wrapper.offsetHeight ;
-	}
-	else {
-		//imageNaturalWidth = this.$image.naturalWidth ;
-		//imageNaturalHeight = this.$image.naturalHeight ;
-		imageWidth = this.$image.offsetWidth ;
-		imageHeight = this.$image.offsetHeight ;
-	}
-	console.log( "dbg img:" , { areaWidth , areaHeight , imageWidth , imageHeight } ) ;
-
-
-	// Compute scaling -- should comes first for this to work!
-	( sizeModes[ this.sizeMode ] || sizeModes.default )( this._transform , this.size , areaWidth , areaHeight , imageWidth , imageHeight ) ;
-	console.log( "._transform after size computing" , this._transform ) ;
-
-
-	// Compute position
-	( positionModes[ this.positionMode ] || positionModes.default )( this._transform , this.position , areaWidth , areaHeight , imageWidth , imageHeight ) ;
-	console.log( "._transform after position computing" , this._transform ) ;
-
-	// We use the math convention, x-right, y-up, z-to-cam, z-rotation is counter clockwise, and so on
-	this._transform.eulerOrder = this.rotationMode === 'default' ? null : this.rotationMode ;
-	this._transform.rotateX = -this.rotation.x ;
-	this._transform.rotateY = this.rotation.y ;
-	this._transform.rotateZ = -this.rotation.z ;
-	console.log( "._transform after rotation computing" , this._transform ) ;
-
-	// Finally, create the transformation CSS string
-	domKit.transform( this.$wrapper , this._transform ) ;
 } ;
 
 
-},{"./GTransition.js":4,"nextgen-events/lib/browser.js":11,"seventh":21}],3:[function(require,module,exports){
+},{"./GTransition.js":4,"babylonjs":7,"nextgen-events/lib/browser.js":11,"seventh":21}],3:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -443,6 +376,8 @@ function GScene( dom , data ) {
 	this.$gscene.style.visibility = 'hidden' ;
 	this.dom.$gfx.append( this.$gscene ) ;
 
+	this.resizeObserver = null ;	// used to detect when the canvas element is resized
+
 	// Babylon stuffs
 	this.babylon = {
 		engine: null ,
@@ -470,13 +405,15 @@ GScene.prototype.initScene = function() {
 	this.babylon.scene = new Babylon.Scene( this.babylon.engine ) ;
 
 	// Important, because by default the coordinate system is like DirectX (left-handed) not like math and OpenGL (right-handed)
-	this.babylon.scene.useRightHandedSystem = true ;
-	
+	// /!\ THERE ARE BUGS WITH SPRITES AND RIGHT-HANDED SYSTEM /!\
+	//this.babylon.scene.useRightHandedSystem = true ;
+
 
 	/* CAMERA */
 
 	// Add a camera to the scene and attach it to the canvas
-	this.babylon.camera = new Babylon.ArcRotateCamera( "Camera" , Math.PI / 2 , Math.PI / 2 , 2 , new Babylon.Vector3( 0 , 0 , 5 ) , this.babylon.scene ) ;
+	this.babylon.camera = new Babylon.ArcRotateCamera( "Camera" , Math.PI / 2 , Math.PI / 2 , 2 , new Babylon.Vector3( 0 , 0 , 15 ) , this.babylon.scene ) ;
+	//this.babylon.camera = new Babylon.ArcRotateCamera( "Camera" , 1 , 0.8 , 8 , new Babylon.Vector3( 0 , 0 , 0 ) , this.babylon.scene ) ;
 
 	// Make the canvas events control the camera
 	this.babylon.camera.attachControl( this.$gscene , true ) ;
@@ -484,27 +421,14 @@ GScene.prototype.initScene = function() {
 	// Make the mouse wheel move less
 	this.babylon.camera.wheelPrecision = 20 ;
 
-	// Add the physical sphere for the point light
-	var miniSphere = Babylon.MeshBuilder.CreateSphere( "miniSphere" , { diameter: 0.5 } , this.babylon.scene ) ;
-	miniSphere.position = miniSpherePosition ;
-	miniSphere.material = new Babylon.StandardMaterial( 'miniSphereMaterial' , this.babylon.scene ) ;
-	miniSphere.material.diffuseColor = new Babylon.Color3( 0 , 0 , 0 ) ;
-	miniSphere.material.specularColor = new Babylon.Color3( 0 , 0 , 0 ) ;
-	miniSphere.material.emissiveColor = new Babylon.Color3( 0.5 , 0.4 , 0 ) ;
-
-	var t = 0 , radius = 2 ;
-
-	console.log( "initScene" ) ;
 	// Register a render loop to repeatedly render the scene
 	this.babylon.engine.runRenderLoop( () => {
-		console.log( "renderLoop" ) ;
-		miniSpherePosition.x = radius * Math.cos( 0.7 * t ) ;
-		miniSpherePosition.y = radius * Math.sin( 0.7 * t ) ;
-		miniSpherePosition.z = radius * ( 0.6 + 0.4 * Math.sin( 1.17 * t ) ) ;
-
 		this.babylon.scene.render() ;
-		t += 0.01 ;
 	} ) ;
+	
+	// ResizeObserver is used to detect when the canvas element is resized, to avoid image streching
+	this.resizeObserver = new ResizeObserver( () => this.babylon.engine.resize() ) ;
+	this.resizeObserver.observe( this.$gscene ) ;
 } ;
 
 
