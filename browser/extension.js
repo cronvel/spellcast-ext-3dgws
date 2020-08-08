@@ -49,6 +49,11 @@ function Camera( gScene , data ) {
 	this.transitions = {
 		transform: null   // transition on position, target, perspective and parallax changes
 	} ;
+
+	// Babylon stuffs
+	this.babylon = {
+		camera: null
+	} ;
 }
 
 module.exports = Camera ;
@@ -398,8 +403,7 @@ function GScene( dom , data ) {
 	// Babylon stuffs
 	this.babylon = {
 		engine: null ,
-		scene: null ,
-		camera: null
+		scene: null
 	} ;
 
 	this.initScene() ;
@@ -429,14 +433,14 @@ GScene.prototype.initScene = function() {
 	/* CAMERA */
 
 	// Add a camera to the scene and attach it to the canvas
-	this.babylon.camera = new Babylon.ArcRotateCamera( "Camera" , Math.PI / 2 , Math.PI / 2 , 2 , new Babylon.Vector3( 0 , 0 , 15 ) , this.babylon.scene ) ;
-	//this.babylon.camera = new Babylon.ArcRotateCamera( "Camera" , 1 , 0.8 , 8 , new Babylon.Vector3( 0 , 0 , 0 ) , this.babylon.scene ) ;
+	this.globalCamera.babylon.camera = new Babylon.ArcRotateCamera( "Camera" , 0 , 0 , 0 , new Babylon.Vector3( 0 , 0 , 0 ) , this.babylon.scene ) ;
+	this.globalCamera.babylon.camera.setPosition( new Babylon.Vector3( 0 , 0 , 20 ) ) ;
 
 	// Make the canvas events control the camera
-	this.babylon.camera.attachControl( this.$gscene , true ) ;
+	//this.globalCamera.babylon.camera.attachControl( this.$gscene , true ) ;
 
 	// Make the mouse wheel move less
-	this.babylon.camera.wheelPrecision = 20 ;
+	//this.globalCamera.babylon.camera.wheelPrecision = 20 ;
 
 	// Register a render loop to repeatedly render the scene
 	this.babylon.engine.runRenderLoop( () => {
