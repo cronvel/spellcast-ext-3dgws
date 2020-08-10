@@ -29,6 +29,7 @@
 
 
 
+const Babylon = require( 'babylonjs' ) ;
 const GTransition = require( './GTransition.js' ) ;
 
 //const domKit = require( 'dom-kit' ) ;
@@ -45,15 +46,26 @@ function Camera( gScene , data ) {
 	this.free = false ;
 	this.trackingMode = null ;
 	this.perspective = 1 ;
-
-	this.transitions = {
-		transform: null   // transition on position, target, perspective and parallax changes
-	} ;
+	this.fov = 90 ;
 
 	// Babylon stuffs
 	this.babylon = {
 		camera: null
 	} ;
+	
+	this.babylon.camera = new Babylon.ArcRotateCamera(
+		'Camera' , 0 , 0 , 0 ,
+		new Babylon.Vector3( this.targetPosition.x , this.targetPosition.y , this.targetPosition.z ) ,
+		this.gScene.babylon.scene
+	) ;
+	
+	this.babylon.camera.setPosition( new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ) ;
+
+	// Make the canvas events control the camera
+	//this.babylon.camera.attachControl( this.gScene.$gscene , true ) ;
+
+	// Make the mouse wheel move less
+	//this.babylon.camera.wheelPrecision = 20 ;
 }
 
 module.exports = Camera ;
@@ -61,67 +73,45 @@ module.exports = Camera ;
 
 
 // !THIS SHOULD TRACK SERVER-SIDE Camera! spellcast/lib/gfx/Camera.js
-Camera.prototype.update = function( data , eventData ) {
-	if ( data.transitions !== undefined ) { this.updateTransition( data.transitions ) ; }
+Camera.prototype.update = function( data ) {
+    console.warn( "3D Camera.update()" , data ) ;
+	if ( data.transition ) { data.transition = new GTransition( data.transition ) ; }
 
 	if ( data.position ) {
-		if ( data.position.x !== undefined ) { this.position.x = data.position.x ; }
-		if ( data.position.y !== undefined ) { this.position.y = data.position.y ; }
-		if ( data.position.z !== undefined ) { this.position.z = data.position.z ; }
-
-		// perspective-origin changes have nasty bug and no transition (at least in FF 08/2020)
-		//this.gScene.$gscene.style.perspectiveOrigin = ( ( 1 + this.position.x ) * 50 ) + '%' + ( ( 1 + this.position.y ) * 50 ) + '%' ;
+		this.position = data.position ;
+		
+		console.warn( "this.babylon.camera:" , this.babylon.camera ) ;
+		if ( data.transition ) {
+			// Animation using easing
+			data.transition.createAnimation(
+				this.gScene.babylon.scene ,
+				this.babylon.camera ,
+				'position' ,
+				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
+			) ;
+		}
+		else {
+			this.babylon.camera.setPosition( new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ) ;
+		}
 	}
 
-	if ( data.targetPosition ) {
-		if ( data.targetPosition.x !== undefined ) { this.targetPosition.x = data.targetPosition.x ; }
-		if ( data.targetPosition.y !== undefined ) { this.targetPosition.y = data.targetPosition.y ; }
-		if ( data.targetPosition.z !== undefined ) { this.targetPosition.z = data.targetPosition.z ; }
-	}
+	//if ( data.targetPosition ) { this.targetPosition = data.targetPosition ; }
 
 	if ( data.free !== undefined ) { this.free = !! data.free ; }
 	if ( data.trackingMode !== undefined ) { this.trackingMode = data.trackingMode || null ; }
-
-	if ( data.perspective !== undefined ) {
-		this.perspective = data.perspective || null ;
-		// The perspective is relative to the viewport size
-		let max = Math.max( this.gScene.$gscene.offsetWidth , this.gScene.$gscene.offsetHeight ) ;
-		this.gScene.$gscene.style.perspective = this.perspective ? Math.round( max * this.perspective ) + 'px' : null ;
-	}
 	
+	if ( data.fov !== undefined ) {
+		this.fov = data.fov || 90 ;
+		this.babylon.camera.fov = this.fov * Math.PI / 360 ;	// looks like fov is divided by 2 in Babylon, hence 360 instead of 180
+	}
+
 	// It may be async later, waiting for transitions to finish the camera move?
 	return Promise.resolved ;
 } ;
 
 
-
-Camera.prototype.updateTransition = function( transitions ) {
-	console.warn( "Camera.updateTransition()" , transitions ) ;
-	var parts = [] ;
-
-	if ( transitions.transform !== undefined ) { this.transitions.transform = transitions.transform ? new GTransition( transitions.transform ) : transitions.transform ; }
-
-	if ( this.transitions.transform !== null ) {
-		if ( ! transitions.transform ) {
-			parts.push( 'perspective 0s' ) ;
-			//parts.push( 'perspective-origin 0s' ) ;
-		}
-		else {
-			parts.push( this.transitions.transform.toString( 'perspective' ) ) ;
-			//parts.push( this.transitions.transform.toString( 'perspective-origin' ) ) ;
-		}
-	}
-
-	if ( ! parts.length ) {
-		this.gScene.$gscene.style.transition = '' ;	// reset it to default stylesheet value
-	}
-	else {
-		this.gScene.$gscene.style.transition = parts.join( ', ' ) ;
-	}
-} ;
-
-
-},{"./GTransition.js":4,"seventh":27}],2:[function(require,module,exports){
+},{"./GTransition.js":4,"babylonjs":13,"seventh":27}],2:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -300,9 +290,7 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 // Size, positioning and rotation
 GEntity.prototype.updateTransform = function( data ) {
 	if ( data.position ) {
-		if ( data.position.x !== undefined ) { this.position.x = data.position.x ; }
-		if ( data.position.y !== undefined ) { this.position.y = data.position.y ; }
-		if ( data.position.z !== undefined ) { this.position.z = data.position.z ; }
+		this.position = data.position ;
 
 		if ( data.transition ) {
 			console.warn( "this.babylon.entity:" , this.babylon.entity ) ;
@@ -322,15 +310,14 @@ GEntity.prototype.updateTransform = function( data ) {
 	}
 
 	if ( data.size ) {
-		if ( data.size.x !== undefined ) { this.babylon.entity.width = this.size.x = data.size.x ; }
-		if ( data.size.y !== undefined ) { this.babylon.entity.height = this.size.y = data.size.y ; }
-		if ( data.size.z !== undefined ) { this.size.z = data.size.z ; }
+		this.size = data.size ;
+		this.babylon.entity.width = this.size.x ;
+		this.babylon.entity.height = this.size.y ;
 	}
 
 	if ( data.rotation ) {
-		if ( data.rotation.x !== undefined ) { this.rotation.x = data.rotation.x ; }
-		if ( data.rotation.y !== undefined ) { this.rotation.y = data.rotation.y ; }
-		if ( data.rotation.z !== undefined ) { this.babylon.entity.angle = this.rotation.z = data.rotation.z ; }
+		this.rotation = data.rotation ;
+		this.babylon.entity.angle = this.rotation.z ;
 	}
 } ;
 
@@ -389,7 +376,7 @@ function GScene( dom , data ) {
 	this.gEntities = {} ;
 	this.gEntityLocations = {} ;
 
-	this.globalCamera = new Camera( this ) ;
+	this.globalCamera = null ;
 	this.roleCamera = null ;	// For multiplayer, not implemented yet
 
 	this.$gscene = document.createElement( 'canvas' ) ;
@@ -433,14 +420,7 @@ GScene.prototype.initScene = function() {
 	/* CAMERA */
 
 	// Add a camera to the scene and attach it to the canvas
-	this.globalCamera.babylon.camera = new Babylon.ArcRotateCamera( "Camera" , 0 , 0 , 0 , new Babylon.Vector3( 0 , 0 , 0 ) , this.babylon.scene ) ;
-	this.globalCamera.babylon.camera.setPosition( new Babylon.Vector3( 0 , 0 , 20 ) ) ;
-
-	// Make the canvas events control the camera
-	//this.globalCamera.babylon.camera.attachControl( this.$gscene , true ) ;
-
-	// Make the mouse wheel move less
-	//this.globalCamera.babylon.camera.wheelPrecision = 20 ;
+	this.globalCamera = new Camera( this ) ;
 
 	// Register a render loop to repeatedly render the scene
 	this.babylon.engine.runRenderLoop( () => {
@@ -470,12 +450,7 @@ GScene.prototype.update = function( data ) {
 		Object.assign( this.engine , data.engine ) ;
 	}
 
-	if ( data.globalCamera !== undefined ) {
-		this.globalCamera =
-			data.globalCamera instanceof Camera ? data.globalCamera :
-			data.globalCamera ? new Camera( data.globalCamera ) :
-			null ;
-	}
+	if ( data.globalCamera !== undefined ) { this.globalCamera.update( data.globalCamera ) ; }
 
 	// For instance, there is no async code in GScene, but the API have to allow it
 	return Promise.resolved ;
