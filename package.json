@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "array-kit": "^0.2.4",
-    "babylonjs": "^4.1.0",
+    "babylonjs": "^4.2.0-alpha.31",
     "dom-kit": "^0.4.1",
     "exm": "^0.3.4",
     "seventh": "^0.7.35"
