@@ -82,25 +82,6 @@ Camera.prototype.update = function( data ) {
 
 	if ( data.transition ) { data.transition = new GTransition( data.transition ) ; }
 
-	if ( data.up ) {
-		this.up = data.up ;
-		
-		console.warn( "camera:" , camera ) ;
-		if ( data.transition ) {
-			// Animation using easing
-			data.transition.createAnimation(
-				scene ,
-				camera ,
-				'upVector' ,
-				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-				new Babylon.Vector3( this.up.x , this.up.y , this.up.z )
-			) ;
-		}
-		else {
-			camera.upVector = new Babylon.Vector3( this.up.x , this.up.y , this.up.z ) ;
-		}
-	}
-
 	if ( data.position ) {
 		this.position = data.position ;
 		
@@ -114,6 +95,15 @@ Camera.prototype.update = function( data ) {
 				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
 				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
 			) ;
+			// We need to animate targetPosition too, because camara.position translate camera.target
+			data.transition.createAnimation(
+				scene ,
+				camera ,
+				'target' ,
+				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+				new Babylon.Vector3( this.targetPosition.x , this.targetPosition.y , this.targetPosition.z ) ,
+				new Babylon.Vector3( this.targetPosition.x , this.targetPosition.y , this.targetPosition.z )
+			) ;
 		}
 		else {
 			camera.position = new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ;
@@ -121,8 +111,7 @@ Camera.prototype.update = function( data ) {
 	}
 
 	if ( data.targetPosition ) {
-		// Here we need to use the original target position, because when camera.position is changed,
-		// camera.target is translated
+		// Here we need to use the original target position, because camera.position can translate camera.target
 		oldValue = this.targetPosition ;
 		this.targetPosition = data.targetPosition ;
 		
@@ -143,9 +132,25 @@ Camera.prototype.update = function( data ) {
 		}
 	}
 
-	if ( data.free !== undefined ) { this.free = !! data.free ; }
-	if ( data.trackingMode !== undefined ) { this.trackingMode = data.trackingMode || null ; }
-	
+	if ( data.up ) {
+		this.up = data.up ;
+		
+		console.warn( "camera:" , camera ) ;
+		if ( data.transition ) {
+			// Animation using easing
+			data.transition.createAnimation(
+				scene ,
+				camera ,
+				'upVector' ,
+				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+				new Babylon.Vector3( this.up.x , this.up.y , this.up.z )
+			) ;
+		}
+		else {
+			camera.upVector = new Babylon.Vector3( this.up.x , this.up.y , this.up.z ) ;
+		}
+	}
+
 	if ( data.fov !== undefined ) {
 		this.fov = data.fov || 90 ;
 		// It looks like fov is divided by 2 in Babylon, hence the 360 instead of 180
@@ -164,6 +169,9 @@ Camera.prototype.update = function( data ) {
 		}
 	}
 
+	if ( data.free !== undefined ) { this.free = !! data.free ; }
+	if ( data.trackingMode !== undefined ) { this.trackingMode = data.trackingMode || null ; }
+	
 	// It may be async later, waiting for transitions to finish the camera move?
 	return Promise.resolved ;
 } ;
@@ -243,6 +251,7 @@ function GEntity( dom , gScene , data ) {
 
 
 	// Internal
+	this.updateMeshNeeded = true ;
 	this.babylon = {
 		entity: null
 	} ;
@@ -265,6 +274,11 @@ GEntity.prototype.update = async function( data , initial = false ) {
 
 	if ( data.texturePack !== undefined || data.variant !== undefined || data.theme !== undefined ) {
 		await this.updateTexture( data.texturePack , data.variant , data.theme ) ;
+	}
+	
+	if ( this.updateMeshNeeded ) {
+		await this.updateMesh() ;
+		this.updateMeshNeeded = false ;
 	}
 
 	//if ( data.button !== undefined ) { this.updateButton( data.button ) ; }
@@ -308,7 +322,7 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 
 		if ( ! texturePack ) {
 			console.warn( "3D Texture pack fallback" , this.texturePack + '/default' , "not found" ) ;
-			return Promise.resolved ;
+			return ;
 		}
 	}
 
@@ -316,31 +330,10 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 
 	if ( ! variant ) {
 		console.warn( "3D Texture pack variant" , this.variant , "not found, and default variant missing too" ) ;
-		return Promise.resolved ;
+		return ;
 	}
-
 	
-	//*
-	var url = variant.frames[ 0 ].url ;
-	this.babylon.spriteManager = new Babylon.SpriteManager( 'spriteManager' , this.dom.cleanUrl( url ) , 1 , 400 , this.gScene.babylon.scene ) ;
-	this.babylon.entity = new Babylon.Sprite( 'sprite' , this.babylon.spriteManager ) ;
-	this.babylon.entity.stopAnimation() ; // Not animated
-	this.babylon.entity.cellIndex = 0 ;
-	this.babylon.entity.position.x = this.position.x ;
-	this.babylon.entity.position.y = this.position.y ;
-	this.babylon.entity.position.z = this.position.z ;
-	this.babylon.entity.width = this.size.x ;
-	this.babylon.entity.height = this.size.y ;
-	this.babylon.entity.angle = this.rotation.z ;
-	//*/
-	
-
-	// !!!Interesting properties!!!
-
-	//this.babylon.entity.invertU = -1 ;	// Horizontal flip
-	//this.babylon.entity.invertV = -1 ;	// Vertical flip
-	//this.babylon.entity.isPickable = true ;	// Click detection
-	//this.babylon.entity.useAlphaForPicking = true ;	// Click detection works only on opaque area
+	return this.updateTexture_( texturePack , variant ) ;
 } ;
 
 
@@ -435,56 +428,21 @@ module.exports = GEntityGround ;
 
 
 // Update the gEntity's texture
-GEntityGround.prototype.updateTexture = function( texturePackId , variantId , themeId ) {
-	var texturePack , variant ;
+GEntityGround.prototype.updateTexture_ = function( texturePack , variant ) {
+	console.warn( "3D GEntityGround.updateTexture_()" , texturePack , variant ) ;
 
-	if ( texturePackId !== undefined ) { this.texturePack = texturePackId || null ; }
-	if ( variantId !== undefined ) { this.variant = variantId || null ; }
-	if ( themeId !== undefined ) { this.theme = themeId || null ; }
-
-	console.warn( "3D GEntityGround.updateTexture()" , texturePackId , variantId , themeId ) ;
-
-	texturePack = this.gScene.texturePacks[ this.texturePack + '/' + ( this.theme || this.gScene.theme ) ] ;
-
-	if ( ! texturePack ) {
-		console.warn( "3D Texture pack" , this.texturePack + '/' + ( this.theme || this.gScene.theme ) , "not found" ) ;
-		texturePack = this.gScene.texturePacks[ this.texturePack + '/default' ] ;
-
-		if ( ! texturePack ) {
-			console.warn( "3D Texture pack fallback" , this.texturePack + '/default' , "not found" ) ;
-			return Promise.resolved ;
-		}
-	}
-
-	variant = texturePack.variants[ this.variant ] || texturePack.variants.default ;
-
-	if ( ! variant ) {
-		console.warn( "3D Texture pack variant" , this.variant , "not found, and default variant missing too" ) ;
-		return Promise.resolved ;
-	}
-
-	
-	//*
 	var url = variant.frames[ 0 ].url ;
-	this.babylon.spriteManager = new Babylon.SpriteManager( 'spriteManager' , this.dom.cleanUrl( url ) , 1 , 400 , this.gScene.babylon.scene ) ;
-	this.babylon.entity = new Babylon.Sprite( 'sprite' , this.babylon.spriteManager ) ;
-	this.babylon.entity.stopAnimation() ; // Not animated
-	this.babylon.entity.cellIndex = 0 ;
-	this.babylon.entity.position.x = this.position.x ;
-	this.babylon.entity.position.y = this.position.y ;
-	this.babylon.entity.position.z = this.position.z ;
-	this.babylon.entity.width = this.size.x ;
-	this.babylon.entity.height = this.size.y ;
-	this.babylon.entity.angle = this.rotation.z ;
-	//*/
+	this.updateMeshNeeded = true ;
+} ;
+
+
 	
+GEntityGround.prototype.updateMesh = function() {
+	var plane = Babylon.Mesh.CreatePlane( 'ground' , 20 , scene ) ;
 
-	// !!!Interesting properties!!!
+	plane.rotate( new Babylon.Vector3( 1 , 1 , 0.5 ) , Math.PI / 3 , Babylon.Space.Local ) ;
 
-	//this.babylon.entity.invertU = -1 ;	// Horizontal flip
-	//this.babylon.entity.invertV = -1 ;	// Vertical flip
-	//this.babylon.entity.isPickable = true ;	// Click detection
-	//this.babylon.entity.useAlphaForPicking = true ;	// Click detection works only on opaque area
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 1.5, width: 2.5, subdivisions: 4}, scene);
 } ;
 
 
@@ -579,56 +537,38 @@ module.exports = GEntitySprite ;
 
 
 // Update the gEntity's texture
-GEntitySprite.prototype.updateTexture = function( texturePackId , variantId , themeId ) {
-	var texturePack , variant ;
+GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
+	console.warn( "3D GEntitySprite.updateTexture_()" , texturePack , variant ) ;
 
-	if ( texturePackId !== undefined ) { this.texturePack = texturePackId || null ; }
-	if ( variantId !== undefined ) { this.variant = variantId || null ; }
-	if ( themeId !== undefined ) { this.theme = themeId || null ; }
-
-	console.warn( "3D GEntitySprite.updateTexture()" , texturePackId , variantId , themeId ) ;
-
-	texturePack = this.gScene.texturePacks[ this.texturePack + '/' + ( this.theme || this.gScene.theme ) ] ;
-
-	if ( ! texturePack ) {
-		console.warn( "3D Texture pack" , this.texturePack + '/' + ( this.theme || this.gScene.theme ) , "not found" ) ;
-		texturePack = this.gScene.texturePacks[ this.texturePack + '/default' ] ;
-
-		if ( ! texturePack ) {
-			console.warn( "3D Texture pack fallback" , this.texturePack + '/default' , "not found" ) ;
-			return Promise.resolved ;
-		}
-	}
-
-	variant = texturePack.variants[ this.variant ] || texturePack.variants.default ;
-
-	if ( ! variant ) {
-		console.warn( "3D Texture pack variant" , this.variant , "not found, and default variant missing too" ) ;
-		return Promise.resolved ;
-	}
-
-	
-	//*
 	var url = variant.frames[ 0 ].url ;
-	this.babylon.spriteManager = new Babylon.SpriteManager( 'spriteManager' , this.dom.cleanUrl( url ) , 1 , 400 , this.gScene.babylon.scene ) ;
-	this.babylon.entity = new Babylon.Sprite( 'sprite' , this.babylon.spriteManager ) ;
-	this.babylon.entity.stopAnimation() ; // Not animated
-	this.babylon.entity.cellIndex = 0 ;
-	this.babylon.entity.position.x = this.position.x ;
-	this.babylon.entity.position.y = this.position.y ;
-	this.babylon.entity.position.z = this.position.z ;
-	this.babylon.entity.width = this.size.x ;
-	this.babylon.entity.height = this.size.y ;
-	this.babylon.entity.angle = this.rotation.z ;
-	//*/
-	
+	this.babylon.spriteManager = new Babylon.SpriteManager( 'spriteManager' , this.dom.cleanUrl( url ) , 1 , 400 , scene ) ;
+	this.updateMeshNeeded = true ;
+} ;
+
+
+
+// Size, positioning and rotation
+GEntitySprite.prototype.updateMesh = function() {
+	var entity ;
+
+	if ( this.babylon.entity ) { this.babylon.entity.dispose() ; }
+
+	this.babylon.entity = entity = new Babylon.Sprite( 'sprite' , this.babylon.spriteManager ) ;
+	entity.stopAnimation() ; // Not animated
+	entity.cellIndex = 0 ;
+	entity.position.x = this.position.x ;
+	entity.position.y = this.position.y ;
+	entity.position.z = this.position.z ;
+	entity.width = this.size.x ;
+	entity.height = this.size.y ;
+	entity.angle = this.rotation.z ;
 
 	// !!!Interesting properties!!!
 
-	//this.babylon.entity.invertU = -1 ;	// Horizontal flip
-	//this.babylon.entity.invertV = -1 ;	// Vertical flip
-	//this.babylon.entity.isPickable = true ;	// Click detection
-	//this.babylon.entity.useAlphaForPicking = true ;	// Click detection works only on opaque area
+	//entity.invertU = -1 ;	// Horizontal flip
+	//entity.invertV = -1 ;	// Vertical flip
+	//entity.isPickable = true ;	// Click detection
+	//entity.useAlphaForPicking = true ;	// Click detection works only on opaque area
 } ;
 
 
@@ -895,7 +835,14 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 	var easingFunction , animation , animationKeys , animationFps = 30 ,
 		frameCount = Math.round( this.duration * animationFps ) ;
 
-	animation = new Babylon.Animation( 'transition' , property , animationFps , animationType , Babylon.Animation.ANIMATIONLOOPMODE_CONSTANT ) ;
+	animation = new Babylon.Animation(
+		'transition' ,
+		property ,
+		animationFps ,
+		animationType ,
+		Babylon.Animation.ANIMATIONLOOPMODE_CONSTANT ,	// loop mode
+		true	// enable blending?
+	) ;
 
 	if ( oldValue === null ) {
 		oldValue = entity[ property ] ;
