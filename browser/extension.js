@@ -63,7 +63,7 @@ function Camera( gScene , data ) {
 	this.babylon.camera.setTarget( new Babylon.Vector3( this.targetPosition.x , this.targetPosition.y , this.targetPosition.z ) ) ;
 
 	// Make the canvas events control the camera
-	//this.babylon.camera.attachControl( this.gScene.$gscene , true ) ;
+	this.babylon.camera.attachControl( this.gScene.$gscene , true ) ;
 
 	// Make the mouse wheel move less
 	//this.babylon.camera.wheelPrecision = 20 ;
@@ -253,7 +253,8 @@ function GEntity( dom , gScene , data ) {
 	// Internal
 	this.updateMeshNeeded = true ;
 	this.babylon = {
-		entity: null
+		material: null ,
+		mesh: null
 	} ;
 
 	this.defineStates( 'loaded' , 'loading' ) ;
@@ -275,11 +276,8 @@ GEntity.prototype.update = async function( data , initial = false ) {
 	if ( data.texturePack !== undefined || data.variant !== undefined || data.theme !== undefined ) {
 		await this.updateTexture( data.texturePack , data.variant , data.theme ) ;
 	}
-	
-	if ( this.updateMeshNeeded ) {
-		await this.updateMesh() ;
-		this.updateMeshNeeded = false ;
-	}
+
+	if ( this.updateMeshNeeded ) { await this.updateMesh() ; }
 
 	//if ( data.button !== undefined ) { this.updateButton( data.button ) ; }
 
@@ -332,7 +330,7 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		console.warn( "3D Texture pack variant" , this.variant , "not found, and default variant missing too" ) ;
 		return ;
 	}
-	
+
 	return this.updateTexture_( texturePack , variant ) ;
 } ;
 
@@ -341,38 +339,38 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 // Size, positioning and rotation
 GEntity.prototype.updateTransform = function( data ) {
 	console.warn( "3D GEntity.updateTransform()" , data ) ;
-	var entity = this.babylon.entity ,
+	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( data.position ) {
 		this.position = data.position ;
 
 		if ( data.transition ) {
-			console.warn( "entity:" , entity ) ;
+			console.warn( "mesh:" , mesh ) ;
 			// Animation using easing
-			
+
 			data.transition.createAnimation(
 				scene ,
-				entity ,
+				mesh ,
 				'position' ,
 				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
 				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
 			) ;
 		}
 		else {
-			entity.position.set( this.position.x , this.position.y , this.position.z ) ;
+			mesh.position.set( this.position.x , this.position.y , this.position.z ) ;
 		}
 	}
 
 	if ( data.size ) {
 		this.size = data.size ;
-		entity.width = this.size.x ;
-		entity.height = this.size.y ;
+		mesh.width = this.size.x ;
+		mesh.height = this.size.y ;
 	}
 
 	if ( data.rotation ) {
 		this.rotation = data.rotation ;
-		entity.angle = this.rotation.z ;
+		mesh.angle = this.rotation.z ;
 	}
 } ;
 
@@ -429,20 +427,56 @@ module.exports = GEntityGround ;
 
 // Update the gEntity's texture
 GEntityGround.prototype.updateTexture_ = function( texturePack , variant ) {
+	var material ,
+		oldMaterial = this.babylon.material ,
+		scene = this.gScene.babylon.scene ,
+		mesh = this.babylon.mesh ;
+
 	console.warn( "3D GEntityGround.updateTexture_()" , texturePack , variant ) ;
 
 	var url = variant.frames[ 0 ].url ;
-	this.updateMeshNeeded = true ;
+	this.babylon.material = material = new Babylon.StandardMaterial( 'simpleMaterial' , scene ) ;
+	material.diffuseTexture = new Babylon.Texture( this.dom.cleanUrl( url ) , scene ) ;
+	material.diffuseTexture.uScale = 5 ;
+	material.diffuseTexture.vScale = 5 ;
+	material.backFaceCulling = true ;
+	
+	// TEMP!
+	material.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
+	material.backFaceCulling = false ;
+
+	if ( ! mesh ) { mesh = this.updateMesh() ; }
+
+	mesh.material = material ;
+
+	if ( oldMaterial ) {
+		oldMaterial.dispose(
+			false ,	// forceDisposeEffect
+			false , // forceDisposeTextures, keep texture, texture should be managed by gScene
+			true	// notBoundToMesh
+		) ;
+	}
 } ;
 
 
-	
+
 GEntityGround.prototype.updateMesh = function() {
-	var plane = Babylon.Mesh.CreatePlane( 'ground' , 20 , scene ) ;
+	var mesh ,
+		scene = this.gScene.babylon.scene ;
 
-	plane.rotate( new Babylon.Vector3( 1 , 1 , 0.5 ) , Math.PI / 3 , Babylon.Space.Local ) ;
+	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
 
-    var ground = BABYLON.MeshBuilder.CreateGround("ground", {height: 1.5, width: 2.5, subdivisions: 4}, scene);
+	this.babylon.mesh = mesh = Babylon.MeshBuilder.CreateGround(
+		'ground' ,
+		{ height: 1000 , width: 1000 , subdivisions: 4 } ,
+		scene
+	) ;
+
+	// TEMP!
+	mesh.position = new Babylon.Vector3( 0 , -8 , 0 ) ;
+
+	this.updateMeshNeeded = false ;
+	return mesh ;
 } ;
 
 
@@ -450,38 +484,39 @@ GEntityGround.prototype.updateMesh = function() {
 // Size, positioning and rotation
 GEntityGround.prototype.updateTransform = function( data ) {
 	console.warn( "3D GEntityGround.updateTransform()" , data ) ;
-	var entity = this.babylon.entity ,
+	return ;
+	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( data.position ) {
 		this.position = data.position ;
 
 		if ( data.transition ) {
-			console.warn( "entity:" , entity ) ;
+			console.warn( "mesh:" , mesh ) ;
 			// Animation using easing
-			
+
 			data.transition.createAnimation(
 				scene ,
-				entity ,
+				mesh ,
 				'position' ,
 				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
 				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
 			) ;
 		}
 		else {
-			entity.position.set( this.position.x , this.position.y , this.position.z ) ;
+			mesh.position.set( this.position.x , this.position.y , this.position.z ) ;
 		}
 	}
 
 	if ( data.size ) {
 		this.size = data.size ;
-		entity.width = this.size.x ;
-		entity.height = this.size.y ;
+		mesh.width = this.size.x ;
+		mesh.height = this.size.y ;
 	}
 
 	if ( data.rotation ) {
 		this.rotation = data.rotation ;
-		entity.angle = this.rotation.z ;
+		mesh.angle = this.rotation.z ;
 	}
 } ;
 
@@ -538,6 +573,7 @@ module.exports = GEntitySprite ;
 
 // Update the gEntity's texture
 GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
+	var scene = this.gScene.babylon.scene ;
 	console.warn( "3D GEntitySprite.updateTexture_()" , texturePack , variant ) ;
 
 	var url = variant.frames[ 0 ].url ;
@@ -549,26 +585,29 @@ GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
 
 // Size, positioning and rotation
 GEntitySprite.prototype.updateMesh = function() {
-	var entity ;
+	var mesh ;
 
-	if ( this.babylon.entity ) { this.babylon.entity.dispose() ; }
+	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
 
-	this.babylon.entity = entity = new Babylon.Sprite( 'sprite' , this.babylon.spriteManager ) ;
-	entity.stopAnimation() ; // Not animated
-	entity.cellIndex = 0 ;
-	entity.position.x = this.position.x ;
-	entity.position.y = this.position.y ;
-	entity.position.z = this.position.z ;
-	entity.width = this.size.x ;
-	entity.height = this.size.y ;
-	entity.angle = this.rotation.z ;
+	this.babylon.mesh = mesh = new Babylon.Sprite( 'sprite' , this.babylon.spriteManager ) ;
+	mesh.stopAnimation() ; // Not animated
+	mesh.cellIndex = 0 ;
+	mesh.position.x = this.position.x ;
+	mesh.position.y = this.position.y ;
+	mesh.position.z = this.position.z ;
+	mesh.width = this.size.x ;
+	mesh.height = this.size.y ;
+	mesh.angle = this.rotation.z ;
 
 	// !!!Interesting properties!!!
 
-	//entity.invertU = -1 ;	// Horizontal flip
-	//entity.invertV = -1 ;	// Vertical flip
-	//entity.isPickable = true ;	// Click detection
-	//entity.useAlphaForPicking = true ;	// Click detection works only on opaque area
+	//mesh.invertU = -1 ;	// Horizontal flip
+	//mesh.invertV = -1 ;	// Vertical flip
+	//mesh.isPickable = true ;	// Click detection
+	//mesh.useAlphaForPicking = true ;	// Click detection works only on opaque area
+
+	this.updateMeshNeeded = false ;
+	return mesh ;
 } ;
 
 
@@ -576,38 +615,38 @@ GEntitySprite.prototype.updateMesh = function() {
 // Size, positioning and rotation
 GEntitySprite.prototype.updateTransform = function( data ) {
 	console.warn( "3D GEntitySprite.updateTransform()" , data ) ;
-	var entity = this.babylon.entity ,
+	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( data.position ) {
 		this.position = data.position ;
 
 		if ( data.transition ) {
-			console.warn( "entity:" , entity ) ;
+			console.warn( "mesh:" , mesh ) ;
 			// Animation using easing
-			
+
 			data.transition.createAnimation(
 				scene ,
-				entity ,
+				mesh ,
 				'position' ,
 				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
 				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
 			) ;
 		}
 		else {
-			entity.position.set( this.position.x , this.position.y , this.position.z ) ;
+			mesh.position.set( this.position.x , this.position.y , this.position.z ) ;
 		}
 	}
 
 	if ( data.size ) {
 		this.size = data.size ;
-		entity.width = this.size.x ;
-		entity.height = this.size.y ;
+		mesh.width = this.size.x ;
+		mesh.height = this.size.y ;
 	}
 
 	if ( data.rotation ) {
 		this.rotation = data.rotation ;
-		entity.angle = this.rotation.z ;
+		mesh.angle = this.rotation.z ;
 	}
 } ;
 
@@ -696,25 +735,28 @@ module.exports = GScene ;
 
 GScene.prototype.initScene = function() {
 	// Instanciate Babylon engine
-	this.babylon.engine = new Babylon.Engine( this.$gscene , true ) ;
+	var engine = this.babylon.engine = new Babylon.Engine( this.$gscene , true ) ;
 
 	// Create the scene space
-	this.babylon.scene = new Babylon.Scene( this.babylon.engine ) ;
+	var scene = this.babylon.scene = new Babylon.Scene( engine ) ;
 
 	// Important, because by default the coordinate system is like DirectX (left-handed) not like math and OpenGL (right-handed)
 	// /!\ THERE ARE BUGS WITH SPRITES AND RIGHT-HANDED SYSTEM /!\
-	//this.babylon.scene.useRightHandedSystem = true ;
+	//scene.useRightHandedSystem = true ;
+	
+	// TEMP!
+	scene.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
 
 	// Add a camera to the scene and attach it to the canvas
 	this.globalCamera = new Camera( this ) ;
 
 	// Register a render loop to repeatedly render the scene
-	this.babylon.engine.runRenderLoop( () => {
-		this.babylon.scene.render() ;
+	engine.runRenderLoop( () => {
+		scene.render() ;
 	} ) ;
 	
 	// ResizeObserver is used to detect when the canvas element is resized, to avoid image streching
-	this.resizeObserver = new ResizeObserver( () => this.babylon.engine.resize() ) ;
+	this.resizeObserver = new ResizeObserver( () => engine.resize() ) ;
 	this.resizeObserver.observe( this.$gscene ) ;
 } ;
 
