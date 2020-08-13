@@ -259,6 +259,10 @@ module.exports = GEntity ;
 
 
 
+GEntity.prototype.bboxSize = 1 ;
+
+
+
 // !THIS SHOULD TRACK SERVER-SIDE GEntity! spellcast/lib/gfx/GEntity.js
 GEntity.prototype.update = async function( data , initial = false ) {
 	console.warn( "3D GEntity.update()" , data ) ;
@@ -280,6 +284,8 @@ GEntity.prototype.update = async function( data , initial = false ) {
 		if ( initial ) { delete data.transition ; }
 		else { data.transition = new GTransition( data.transition ) ; }
 	}
+
+	if ( data.origin !== undefined ) { this.updateOrigin( data.origin ) ; }
 
 	if (
 		data.position !== undefined || data.positionMode !== undefined
@@ -369,12 +375,14 @@ GEntity.prototype.updateTransform = function( data ) {
 
 
 GEntity.prototype.updateOrigin = function( newOrigin ) {
-	var mesh = this.babylon.mesh ;
+	var mesh = this.babylon.mesh ,
+		rate = this.bboxSize / 2 ;
 
+	// For each axis, 0 is middle of BBox, -1 is lower bound, +1 is upper bound
 	mesh.bakeTransformIntoVertices( Babylon.Matrix.Translation(
-		this.origin.x - newOrigin.x ,
-		this.origin.y - newOrigin.y ,
-		this.origin.z - newOrigin.z
+		( this.origin.x - newOrigin.x ) * rate ,
+		( this.origin.y - newOrigin.y ) * rate ,
+		( this.origin.z - newOrigin.z ) * rate
 	) ) ;
 
 	this.origin = newOrigin ;
@@ -435,6 +443,10 @@ module.exports = GEntityBackground ;
 
 
 
+GEntityBackground.prototype.bboxSize = 1000 ;
+
+
+
 // Update the gEntity's texture
 GEntityBackground.prototype.updateTexture_ = function( texturePack , variant ) {
 	var material ,
@@ -477,8 +489,8 @@ GEntityBackground.prototype.updateMesh = function() {
 	this.babylon.mesh = mesh = Babylon.MeshBuilder.CreateCylinder(
 		'background' ,
 		{
-			height: 1000 ,
-			diameter: 1000 ,
+			height: this.bboxSize ,
+			diameter: this.bboxSize ,
 			tessellation: 24 ,
 			cap: Babylon.Mesh.NO_CAP ,
 			sideOrientation: Babylon.Mesh.BACKSIDE
@@ -733,7 +745,7 @@ const Promise = require( 'seventh' ) ;
 function GEntitySprite( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
 
-	this.babylon.billboardOrigin = new Babylon.Vector3( 0 , 0 , 0 ) ;
+	//this.babylon.billboardOrigin = new Babylon.Vector3( 0 , 0 , 0 ) ;
 }
 
 GEntitySprite.prototype = Object.create( GEntity.prototype ) ;
@@ -794,11 +806,12 @@ GEntitySprite.prototype.updateMesh = function() {
 	mesh.scaling.x = this.size.x ;
 	mesh.scaling.y = this.size.y ;
 
-	this.babylon.billboardOrigin.y = -0.5 ;
-
 	// Billboard mode is not sensible to pivot (as of v4.2.0-alpha31), this is a workaround for that, see:
 	// https://forum.babylonjs.com/t/sprite-planting-i-e-sprite-origin-at-the-bottom/13337/8
+	// Alternative is to mesh.bakeTransformIntoVertices(), done by this.updateOrigin()
 	// Otherwise if/when 'usePivotForBillboardMode' option is accepted, use simply mesh.setPivot*()
+	/*
+	//this.babylon.billboardOrigin.y = -0.5 ;
 	mesh.onAfterWorldMatrixUpdateObservable.add( () => {
 		var pivot = this.babylon.billboardOrigin ,
 			matrix = Babylon.TmpVectors.Matrix[ 0 ] ,
@@ -811,6 +824,7 @@ GEntitySprite.prototype.updateMesh = function() {
 		matrix.setRowFromFloats( 3 , -pivot.x , -pivot.y , -pivot.z , 1 ) ;
 		matrix.multiplyToRef( worldMatrix , worldMatrix ) ;
 	} ) ;
+	*/
 
 	console.warn( 'Mesh:' , mesh ) ;
 
