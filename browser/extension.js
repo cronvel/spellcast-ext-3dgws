@@ -259,7 +259,7 @@ module.exports = GEntity ;
 
 
 
-GEntity.prototype.bboxSize = 1 ;
+GEntity.prototype.localBBoxSize = 1 ;
 
 
 
@@ -334,6 +334,22 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 
 
 
+GEntity.prototype.updateOrigin = function( newOrigin ) {
+	var mesh = this.babylon.mesh ,
+		rate = this.localBBoxSize / 2 ;
+
+	// For each axis, 0 is middle of BBox, -1 is lower bound, +1 is upper bound
+	mesh.bakeTransformIntoVertices( Babylon.Matrix.Translation(
+		( this.origin.x - newOrigin.x ) * rate ,
+		( this.origin.y - newOrigin.y ) * rate ,
+		( this.origin.z - newOrigin.z ) * rate
+	) ) ;
+
+	this.origin = newOrigin ;
+} ;
+
+
+
 // Size, positioning and rotation
 GEntity.prototype.updateTransform = function( data ) {
 	console.warn( "3D GEntity.updateTransform()" , data ) ;
@@ -370,22 +386,6 @@ GEntity.prototype.updateTransform = function( data ) {
 		this.rotation = data.rotation ;
 		mesh.angle = this.rotation.z ;
 	}
-} ;
-
-
-
-GEntity.prototype.updateOrigin = function( newOrigin ) {
-	var mesh = this.babylon.mesh ,
-		rate = this.bboxSize / 2 ;
-
-	// For each axis, 0 is middle of BBox, -1 is lower bound, +1 is upper bound
-	mesh.bakeTransformIntoVertices( Babylon.Matrix.Translation(
-		( this.origin.x - newOrigin.x ) * rate ,
-		( this.origin.y - newOrigin.y ) * rate ,
-		( this.origin.z - newOrigin.z ) * rate
-	) ) ;
-
-	this.origin = newOrigin ;
 } ;
 
 
@@ -443,7 +443,7 @@ module.exports = GEntityBackground ;
 
 
 
-GEntityBackground.prototype.bboxSize = 1000 ;
+GEntityBackground.prototype.localBBoxSize = 1000 ;
 
 
 
@@ -489,8 +489,8 @@ GEntityBackground.prototype.updateMesh = function() {
 	this.babylon.mesh = mesh = Babylon.MeshBuilder.CreateCylinder(
 		'background' ,
 		{
-			height: this.bboxSize ,
-			diameter: this.bboxSize ,
+			height: this.localBBoxSize ,
+			diameter: this.localBBoxSize ,
 			tessellation: 24 ,
 			cap: Babylon.Mesh.NO_CAP ,
 			sideOrientation: Babylon.Mesh.BACKSIDE
