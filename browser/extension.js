@@ -41,13 +41,13 @@ const Promise = require( 'seventh' ) ;
 function Camera( gScene , data ) {
 	this.gScene = gScene ;    // immutable
 
-	this.up = { x: 0 , y: 1 , z: 0 } ;
 	this.position = { x: 0 , y: 0 , z: 10 } ;
-	this.targetPosition = { x: 0 , y: 0 , z: 0 } ;
+	this.target = { x: 0 , y: 0 , z: 0 } ;
+	this.roll = 0 ;
+	this.fov = 90 ;
+	this.perspective = 1 ;
 	this.free = false ;
 	this.trackingMode = null ;
-	this.perspective = 1 ;
-	this.fov = 90 ;
 
 	// Babylon stuffs
 	this.babylon = {
@@ -60,7 +60,7 @@ function Camera( gScene , data ) {
 		this.gScene.babylon.scene
 	) ;
 	
-	this.babylon.camera.setTarget( new Babylon.Vector3( this.targetPosition.x , this.targetPosition.y , this.targetPosition.z ) ) ;
+	this.babylon.camera.setTarget( new Babylon.Vector3( this.target.x , this.target.y , this.target.z ) ) ;
 
 	// Make the canvas events control the camera
 	this.babylon.camera.attachControl( this.gScene.$gscene , true ) ;
@@ -81,13 +81,16 @@ Camera.prototype.update = function( data ) {
 
 	if ( data.transition ) { data.transition = new GTransition( data.transition ) ; }
 
-	if ( data.position || data.target ) {
+	if ( data.position || data.target || data.roll !== undefined ) {
 		let oldPosition = this.position ;
 
 		if ( data.position ) { this.position = data.position ; }
-		if ( data.targetPosition ) { this.targetPosition = data.targetPosition ; }
+		if ( data.target ) { this.target = data.target ; }
+		if ( data.roll !== undefined ) { this.roll = data.roll ; }
 		
-		let newRotation = vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.targetPosition ) ;
+		// I found out that rotation can't be animated properly without quaternion,
+		// so even if the new value is computed in Euler YXZ, it is translated into quaternion for the animation.
+		let newRotation = vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll * vectorUtils.DEG_TO_RAD ) ;
 		let newRotationQuaternion = Babylon.Quaternion.FromEulerVector( newRotation ) ;
 
 		if ( data.transition ) {
@@ -127,25 +130,6 @@ Camera.prototype.update = function( data ) {
 		}
 	}
 	
-	if ( data.up ) {
-		this.up = data.up ;
-		
-		console.warn( "camera:" , camera ) ;
-		if ( data.transition ) {
-			// Animation using easing
-			data.transition.createAnimation(
-				scene ,
-				camera ,
-				'upVector' ,
-				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-				new Babylon.Vector3( this.up.x , this.up.y , this.up.z )
-			) ;
-		}
-		else {
-			camera.upVector = new Babylon.Vector3( this.up.x , this.up.y , this.up.z ) ;
-		}
-	}
-
 	if ( data.fov !== undefined ) {
 		this.fov = data.fov || 90 ;
 		// It looks like fov is divided by 2 in Babylon, hence the 360 instead of 180
@@ -1293,6 +1277,10 @@ exports.cameraRotationFromOriginAndTarget = ( origin , target , rz = 0 ) => {
 
 
 // Extracted from the math-kit module:
+
+exports.RAD_TO_DEG = 180 / Math.PI ;
+exports.DEG_TO_RAD = Math.PI / 180 ;
+exports.PI_2 = Math.PI / 2 ;
 
 // Fixed (absolute) epsilon (not relative to the exposant, because it's faster to compute)
 // EPSILON and INVERSE_EPSILON are private
