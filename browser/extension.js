@@ -74,12 +74,14 @@ module.exports = Camera ;
 
 
 // !THIS SHOULD TRACK SERVER-SIDE Camera! spellcast/lib/gfx/Camera.js
-Camera.prototype.update = function( data ) {
+Camera.prototype.update = function( data , awaiting = false ) {
     console.warn( "3D Camera.update()" , data ) ;
 	var camera = this.babylon.camera ,
 		scene = this.gScene.babylon.scene ;
 
-	if ( data.transition ) { data.transition = new GTransition( data.transition ) ; }
+	if ( data.transition ) {
+		data.transition = new GTransition( data.transition ) ;
+	}
 
 	if ( data.position || data.target || data.roll !== undefined ) {
 		let oldPosition = this.position ;
@@ -151,8 +153,7 @@ Camera.prototype.update = function( data ) {
 	if ( data.free !== undefined ) { this.free = !! data.free ; }
 	if ( data.trackingMode !== undefined ) { this.trackingMode = data.trackingMode || null ; }
 	
-	// It may be async later, waiting for transitions to finish the camera move?
-	return Promise.resolved ;
+	return ( awaiting && data.transition && data.transition.promise ) || Promise.resolved ;
 } ;
 
 
@@ -1017,6 +1018,7 @@ GScene.prototype.update = function( data ) {
 
 
 
+const Promise = require( 'seventh' ) ;
 const Babylon = require( 'babylonjs' ) ;
 const arrayKit = require( 'array-kit' ) ;
 
@@ -1030,6 +1032,8 @@ const arrayKit = require( 'array-kit' ) ;
 function GTransition( data ) {
 	this.duration = 0.2 ;
 	this.easing = 'linear' ;
+	this.running = 0 ;
+	this.promise = null ;
 
 	if ( data ) { this.update( data ) ; }
 }
@@ -1113,7 +1117,14 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 	// Adding animation to the animations collection
 	entity.animations.push( animation ) ;
 
+	if ( ! this.promise ) {
+		this.promise = new Promise() ;
+		// Prevent from bug or side-effect where the animation event would be lost? (e.g. animation aborted?)
+		this.promise.resolveTimeout( 1000 * this.duration + 20 ) ;
+	}
+
 	// Finally, launch animation, from key 0 to last-key, last argument is for activating loop (we don't want it)
+	this.running ++ ;
 	scene.beginAnimation(
 		entity ,
 		0 ,	// starting frame
@@ -1122,8 +1133,10 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 		1 ,	// speed ratio
 		() => {
 			// onAnimationEnd callback
+			this.running -- ;
 			scene.removeAnimation( animation ) ;
 			arrayKit.deleteValue( entity.animations , animation ) ;
+			if ( this.running <= 0 ) { this.promise.resolve() ; }
 		} ,
 		undefined ,
 		false	// stop current running animations?
@@ -1131,7 +1144,7 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 } ;
 
 
-},{"array-kit":11,"babylonjs":17}],8:[function(require,module,exports){
+},{"array-kit":11,"babylonjs":17,"seventh":31}],8:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
