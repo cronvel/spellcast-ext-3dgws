@@ -87,7 +87,17 @@ Camera.prototype.update = function( data , awaiting = false ) {
 	switch ( this.mode ) {
 		case 'positions' :
 			if ( data.position || data.target || data.roll !== undefined ) {
-				this.updatePositions( data ) ;
+				this.updateFirstPerson( data , false , true ) ;
+			}
+			break ;
+		case 'firstPerson' :
+			if ( data.position || data.yaw !== undefined || data.pitch !== undefined || data.roll !== undefined ) {
+				this.updateFirstPerson( data ) ;
+			}
+			break ;
+		case 'firstPersonQuaternion' :
+			if ( data.position || data.rotation ) {
+				this.updateFirstPerson( data , true ) ;
 			}
 			break ;
 		case 'orbital' :
@@ -167,9 +177,9 @@ Camera.prototype.setMode = function( mode ) {
 			}
 			else {
 				this.babylon.camera.rotationQuaternion = Babylon.Quaternion.FromEulerAngles(
-					this.pitch ,
-					this.yaw ,
-					this.roll
+					this.pitch * vectorUtils.DEG_TO_RAD ,
+					this.yaw * vectorUtils.DEG_TO_RAD ,
+					this.roll * vectorUtils.DEG_TO_RAD
 				) ;
 			}
 
@@ -220,24 +230,47 @@ Camera.prototype.setMode = function( mode ) {
 
 
 
-Camera.prototype.updatePositions = function( data ) {
-	var camera = this.babylon.camera ,
+Camera.prototype.updateFirstPerson = function( data , quaternionMode , positionsMode ) {
+	var oldRotationQuaternion , newRotationQuaternion ,
+		camera = this.babylon.camera ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( data.position ) { this.position = data.position ; }
 	if ( data.target ) { this.target = data.target ; }
+	if ( data.rotation ) { this.rotation = data.rotation ; }
+	if ( data.yaw !== undefined ) { this.yaw = data.yaw ; }
+	if ( data.pitch !== undefined ) { this.pitch = data.pitch ; }
 	if ( data.roll !== undefined ) { this.roll = data.roll ; }
 
-	// I found out that rotation can't be animated properly without quaternion,
-	// so even if the new value is computed in Euler YXZ, it is translated into quaternion for the animation.
-	var newRotation = vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll * vectorUtils.DEG_TO_RAD ) ;
-	var newRotationQuaternion = Babylon.Quaternion.FromEulerVector( newRotation ) ;
+	// Rotation can't be animated properly without quaternion, so we use it everywhere
+	
+	if ( positionsMode ) {
+		// In this mode, any changes will always change the rotation
+		newRotationQuaternion = Babylon.Quaternion.FromEulerVector(
+			vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll * vectorUtils.DEG_TO_RAD )
+		) ;
+	}
+	else if ( quaternionMode ) {
+		if ( data.rotation ) {
+			newRotationQuaternion = new Babylon.Quaternion( this.rotation.x , this.rotation.y , this.rotation.z , this.rotation.w ) ;
+		}
+	}
+	else {
+		if ( data.yaw !== undefined || data.pitch !== undefined || data.roll !== undefined ) {
+			newRotationQuaternion = Babylon.Quaternion.FromEulerAngles(
+				this.pitch * vectorUtils.DEG_TO_RAD ,
+				this.yaw * vectorUtils.DEG_TO_RAD ,
+				this.roll * vectorUtils.DEG_TO_RAD
+			) ;
+		}
+	}
 
 	if ( data.transition ) {
-		let oldRotation = camera.rotationQuaternion ? camera.rotationQuaternion.toEulerAngles() : camera.rotation.clone() ,
-			oldRotationQuaternion = Babylon.Quaternion.FromEulerVector( oldRotation ) ;
-
-		console.warn( "[!] camera transition:" , camera , oldRotation , newRotation , oldRotationQuaternion ) ;
+		oldRotationQuaternion =
+			camera.rotationQuaternion ? camera.rotationQuaternion :
+			Babylon.Quaternion.FromEulerVector( camera.rotation ) ;
+		
+		console.warn( "[!] camera transition:" , camera , oldRotationQuaternion , newRotationQuaternion ) ;
 
 		if ( data.position ) {
 			data.transition.createAnimation(
@@ -249,24 +282,24 @@ Camera.prototype.updatePositions = function( data ) {
 			) ;
 		}
 
-		// rotation is *ALWAYS* changed
-
-		data.transition.createAnimation(
-			scene ,
-			camera ,
-			'rotationQuaternion' ,
-			Babylon.Animation.ANIMATIONTYPE_QUATERNION ,
-			newRotationQuaternion ,
-			oldRotationQuaternion
-		) ;
+		if ( newRotationQuaternion ) {
+			data.transition.createAnimation(
+				scene ,
+				camera ,
+				'rotationQuaternion' ,
+				Babylon.Animation.ANIMATIONTYPE_QUATERNION ,
+				newRotationQuaternion ,
+				oldRotationQuaternion
+			) ;
+		}
 	}
 	else {
-		console.warn( "[!] camera direct:" , camera , newRotation ) ;
+		console.warn( "[!] camera direct:" , camera , newRotationQuaternion ) ;
 		if ( data.position ) {
 			camera.position = new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ;
 		}
 
-		camera.rotationQuaternion = newRotationQuaternion ;
+		if ( newRotationQuaternion ) { camera.rotationQuaternion = newRotationQuaternion ; }
 	}
 } ;
 
@@ -1482,8 +1515,8 @@ utils.cameraRotationFromOriginAndTarget = ( origin , target , rz = 0 ) => {
 
 
 // Orbital camera alpha and beta angles
-utils.toCameraAlpha = yaw => - utils.PI_2 + yaw * utils.DEG_TO_RAD ;
-utils.toCameraBeta = pitch => utils.PI_2 + pitch * utils.DEG_TO_RAD ;
+utils.toCameraAlpha = yaw => - utils.PI_2 - yaw * utils.DEG_TO_RAD ;
+utils.toCameraBeta = pitch => utils.PI_2 - pitch * utils.DEG_TO_RAD ;
 
 
 
