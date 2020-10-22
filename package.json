@@ -14,7 +14,7 @@
     "babylonjs": "^4.2.0-beta.16",
     "dom-kit": "^0.4.1",
     "exm": "^0.3.4",
-    "seventh": "^0.7.35"
+    "seventh": "^0.7.36"
   },
   "devDependencies": {
     "browserify": "^16.5.2",

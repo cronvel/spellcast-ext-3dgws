@@ -391,6 +391,11 @@ Camera.prototype.updateOrbital = function( data ) {
 				this.distance
 			) ;
 		}
+		
+		if ( this.gScene.listenerCount( 'cameraMove' ) ) {
+// -------------------------------------------------------------- HERE ------------------------------------------
+			// Emit a cameraMove event every frame???
+		}
 	}
 	else {
 		console.warn( "[!] camera direct:" , camera ) ;
@@ -461,7 +466,7 @@ function GEntity( dom , gScene , data ) {
 	this.sizeMode = 'default' ;
 	this.rotation = { x: 0 , y: 0 , z: 0 } ;
 	this.rotationMode = 'default' ;
-	//this.rotation = TO BE DEFINED....
+	this.rotation = { x: 0 , y: 0 , z: 1 } ;
 
 	this.data = {} ;
 	this.meta = {} ;
@@ -512,6 +517,8 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 	if ( data.origin !== undefined ) { this.updateOrigin( data.origin ) ; }
 
+	if ( data.direction !== undefined ) { this.direction = data.direction ; }
+
 	if (
 		data.position !== undefined || data.positionMode !== undefined
 		|| data.size !== undefined || data.sizeMode !== undefined
@@ -523,6 +530,13 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 	//if ( data.meta ) { this.updateMeta( data.meta ) ; }
 
 	return ( awaiting && data.transition && data.transition.promise ) || Promise.resolved ;
+} ;
+
+
+
+// By default, changing the facing direction does nothing
+GEntity.prototype.updateDirection = function( direction ) {
+	this.direction = direction ;
 } ;
 
 
@@ -982,6 +996,17 @@ module.exports = GEntitySprite ;
 
 
 
+GEntitySprite.prototype.updateDirection = function( direction ) {
+	this.direction = direction ;
+
+// ------------------------------------------------ HERE -------------------------------------------
+	if ( this.engine.spriteAutoFacing ) {
+		//this.gScene
+	}
+} ;
+
+
+
 // Update the gEntity's texture
 GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
 	var material , texture ,
@@ -1171,7 +1196,7 @@ function GScene( dom , data ) {
 		engine: null ,
 		scene: null
 	} ;
-
+	
 	this.initScene() ;
 }
 
@@ -1275,7 +1300,7 @@ const arrayKit = require( 'array-kit' ) ;
 	duration: transition duration in s
 	easing: the easing function used
 */
-// !THIS SHOULD TRACK SERVER-SIDE GEntity! spellcast/lib/gfx/GTransition.js
+// !THIS SHOULD TRACK SERVER-SIDE GTransition! spellcast/lib/gfx/GTransition.js
 function GTransition( data ) {
 	this.duration = 0.2 ;
 	this.easing = 'linear' ;
@@ -1289,7 +1314,6 @@ module.exports = GTransition ;
 
 
 
-// !THIS SHOULD TRACK SERVER-SIDE GEntity! spellcast/lib/gfx/GTransition.js
 GTransition.prototype.update = function( data ) {
 	if ( ! data || typeof data !== 'object' ) { return ; }
 
@@ -1325,8 +1349,9 @@ const EASING_FUNCTION = {
 
 
 
-GTransition.prototype.createAnimation = function( scene , entity , property , animationType , newValue , oldValue = null ) {
-	var easingFunction , animation , animationKeys , animationFps = 30 ,
+GTransition.prototype.createAnimation = function( scene , entity , property , animationType , newValue , oldValue = null , everyFrameFn = null ) {
+	var easingFunction , animation , animationKeys ,
+		animationFps = 30 ,
 		frameCount = Math.round( this.duration * animationFps ) ;
 
 	animation = new Babylon.Animation(
@@ -1367,10 +1392,29 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 	if ( ! this.promise ) {
 		this.promise = new Promise() ;
 		// Prevent from bug or side-effect where the animation event would be lost? (e.g. animation aborted?)
+		// The promise is resolved in the "onAnimationEnd" callback, this one is a fallback.
 		this.promise.resolveTimeout( 1000 * this.duration + 20 ) ;
 	}
+	
+// ---------------------------------- HERE ---------------------------------------------------------------
+// Useful???
+	if ( everyFrameFn ) {
+		let frameTimer = null ;
+		let counter = 0 ;
 
-	// Finally, launch animation, from key 0 to last-key, last argument is for activating loop (we don't want it)
+		let wrapperFn = function() {
+			counter ++ ;
+
+			// Only call it every 2 frames
+			if ( counter % 2 ) { everyFrameFn() ; }
+
+			if ( ! this.promise.isSettled() ) { frameTimer = window.requestAnimationFrame( wrapperFn ) ; }
+		}
+		
+		frameTimer = window.requestAnimationFrame() ;
+	}
+
+	// Finally, launch animation, from key 0 to last-key
 	this.running ++ ;
 	scene.beginAnimation(
 		entity ,
@@ -5932,6 +5976,10 @@ Promise.prototype._unhandledRejection = function() {
 	}
 	//*/
 } ;
+
+
+
+Promise.prototype.isSettled = function() { return this._then.settled ; } ;
 
 
 
