@@ -499,6 +499,8 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 	// Structural/discrete part
 
+	if ( data.engine !== undefined ) { await this.updateEngine( data.engine ) ; }
+
 	if ( data.texturePack !== undefined || data.variant !== undefined || data.theme !== undefined ) {
 		await this.updateTexture( data.texturePack , data.variant , data.theme ) ;
 	}
@@ -530,6 +532,11 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 	//if ( data.meta ) { this.updateMeta( data.meta ) ; }
 
 	return ( awaiting && data.transition && data.transition.promise ) || Promise.resolved ;
+} ;
+
+
+
+GEntity.prototype.updateEngine = function( engineData ) {
 } ;
 
 
@@ -986,6 +993,8 @@ const Promise = require( 'seventh' ) ;
 function GEntitySprite( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
 
+	this.autoFacing = this.autoFacing.bind( this ) ;
+
 	//this.babylon.billboardOrigin = new Babylon.Vector3( 0 , 0 , 0 ) ;
 }
 
@@ -993,6 +1002,35 @@ GEntitySprite.prototype = Object.create( GEntity.prototype ) ;
 GEntitySprite.prototype.constructor = GEntitySprite ;
 
 module.exports = GEntitySprite ;
+
+
+
+GEntitySprite.prototype.updateEngine = function( engineData ) {
+	if ( engineData.spriteAutoFacing !== undefined && ! this.engine.spriteAutoFacing !== ! engineData.spriteAutoFacing ) {
+		this.engine.spriteAutoFacing = !! engineData.spriteAutoFacing ;
+
+		if ( this.engine.spriteAutoFacing ) {
+			this.gScene.on( 'cameraMove' , this.autoFacing ) ;
+		}
+		else {
+			this.gScene.off( 'cameraMove' , this.autoFacing ) ;
+		}
+	}
+} ;
+
+
+
+GEntitySprite.prototype.autoFacing = function() {
+	var cpos = this.gScene.globalCamera.babylon.camera.position ,
+		epos = this.position ,
+		dir = this.direction ;
+
+// ------------------------------------------------ HERE -------------------------------------------
+	var dotProduct =
+		( epos.x - cpos.x ) * dir.x
+		+ ( epos.y - cpos.y ) * dir.y
+		+ ( epos.z - cpos.z ) * dir.z ;
+} ;
 
 
 
