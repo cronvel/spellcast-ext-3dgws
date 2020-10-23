@@ -458,6 +458,7 @@ function GEntity( dom , gScene , data ) {
 	this.theme = null ;
 	this.texturePack = null ;
 	this.variant = 'default' ;
+	this.clientVariant = null ;	// A variant affix that is automatically computed, not from server
 	this.location = null ;
 	this.origin = { x: 0 , y: 0 , z: 0 } ;
 	this.position = { x: 0 , y: 0 , z: 0 } ;
@@ -466,7 +467,7 @@ function GEntity( dom , gScene , data ) {
 	this.sizeMode = 'default' ;
 	this.rotation = { x: 0 , y: 0 , z: 0 } ;
 	this.rotationMode = 'default' ;
-	this.rotation = { x: 0 , y: 0 , z: 1 } ;
+	this.direction = { x: 0 , y: 0 , z: 1 } ;
 
 	this.data = {} ;
 	this.meta = {} ;
@@ -570,7 +571,12 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		}
 	}
 
-	variant = texturePack.variants[ this.variant ] || texturePack.variants.default ;
+	variant = 
+		( this.clientVariant && texturePack.variants[ this.variant + '@' + this.clientVariant ] )
+		|| texturePack.variants[ this.variant ]
+		|| texturePack.variants.default ;
+
+	//console.warn( "@@@@@@@@@@ variant" , this.clientVariant ? this.variant + '@' + this.clientVariant : this.variant ) ;
 
 	if ( ! variant ) {
 		console.warn( "3D Texture pack variant" , this.variant , "not found, and default variant missing too" ) ;
@@ -986,6 +992,8 @@ const Babylon = require( 'babylonjs' ) ;
 const GEntity = require( './GEntity.js' ) ;
 const GTransition = require( './GTransition.js' ) ;
 
+const vectorUtils = require( './vectorUtils.js' ) ;
+
 const Promise = require( 'seventh' ) ;
 
 
@@ -1006,11 +1014,21 @@ module.exports = GEntitySprite ;
 
 
 GEntitySprite.prototype.updateEngine = function( engineData ) {
-	if ( engineData.spriteAutoFacing !== undefined && ! this.engine.spriteAutoFacing !== ! engineData.spriteAutoFacing ) {
-		this.engine.spriteAutoFacing = !! engineData.spriteAutoFacing ;
+	if (
+		engineData.spriteAutoFacing !== undefined
+		&& ( engineData.spriteAutoFacing === false || vectorUtils.degToSector[ engineData.spriteAutoFacing ] )
+		&& engineData.spriteAutoFacing !== this.engine.spriteAutoFacing
+	) {
+		this.engine.spriteAutoFacing = engineData.spriteAutoFacing ;
 
+		//console.warn( "@@@@@@@@@@ engineData.spriteAutoFacing" , this.engine.spriteAutoFacing ) ;
 		if ( this.engine.spriteAutoFacing ) {
 			this.gScene.on( 'cameraMove' , this.autoFacing ) ;
+			
+//-------------------------------------------------------------------- HERE -----------------------------------------
+			//+++ TEMP
+			setInterval( this.autoFacing , 50 ) ;
+			//--- TEMP
 		}
 		else {
 			this.gScene.off( 'cameraMove' , this.autoFacing ) ;
@@ -1020,27 +1038,9 @@ GEntitySprite.prototype.updateEngine = function( engineData ) {
 
 
 
-GEntitySprite.prototype.autoFacing = function() {
-	var cpos = this.gScene.globalCamera.babylon.camera.position ,
-		epos = this.position ,
-		dir = this.direction ;
-
-// ------------------------------------------------ HERE -------------------------------------------
-	var dotProduct =
-		( epos.x - cpos.x ) * dir.x
-		+ ( epos.y - cpos.y ) * dir.y
-		+ ( epos.z - cpos.z ) * dir.z ;
-} ;
-
-
-
 GEntitySprite.prototype.updateDirection = function( direction ) {
 	this.direction = direction ;
-
-// ------------------------------------------------ HERE -------------------------------------------
-	if ( this.engine.spriteAutoFacing ) {
-		//this.gScene
-	}
+	if ( this.engine.spriteAutoFacing ) { this.autoFacing() ; }
 } ;
 
 
@@ -1163,7 +1163,26 @@ GEntitySprite.prototype.updateTransform = function( data ) {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":7,"babylonjs":17,"seventh":31}],6:[function(require,module,exports){
+
+GEntitySprite.prototype.autoFacing = function() {
+	//console.warn( "@@@@@@@@@@ autoFacing()" ) ;
+	var angle = vectorUtils.facingAngleDeg(
+		this.gScene.globalCamera.babylon.camera.position ,
+		this.babylon.mesh.position ,
+		this.direction
+	) ;
+	
+	var sector = vectorUtils.degToSector[ this.engine.spriteAutoFacing ]( angle ) ;
+
+	if ( this.clientVariant === sector ) { return ; }
+	console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector ) ;
+
+	this.clientVariant = sector ;
+	this.updateTexture() ;
+} ;
+
+
+},{"./GEntity.js":2,"./GTransition.js":7,"./vectorUtils.js":10,"babylonjs":17,"seventh":31}],6:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1604,6 +1623,38 @@ module.exports = utils ;
 
 
 
+// Angle between two vectors projected on the ground plane, return ]-180;+180]
+utils.flatVectorsAngleDeg = ( base , vector ) => utils.normalizeAngleDeg(
+	( Math.atan2( - vector.x , vector.z ) - Math.atan2( - base.x , base.z ) ) * utils.RAD_TO_DEG
+) ;
+
+
+
+// The facing angle of an object relative to the camera, return ]-180;+180]
+utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => utils.normalizeAngleDeg(
+	(
+		Math.atan2( - objectDirection.x , objectDirection.z )
+		- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.x )
+	) * utils.RAD_TO_DEG
+) ;
+
+
+
+utils.degToSector = {} ;
+utils.degToSector['ns'] = angle => angle <= 90 || angle >= 270 ? 'n' : 's' ;
+utils.degToSector['we'] = angle => angle <= 180 ? 'w' : 'e' ;
+
+const SECTOR_8 = [ 'n' , 'nw' , 'w' , 'sw' , 's' , 'se' , 'e' , 'ne' , 'n' ] ;
+utils.degToSector['8'] = angle => SECTOR_8[ Math.floor( ( angle + 22.5 ) / 45 ) ] ;
+
+const SECTOR_4 = [ 'n' , 'w' , 's' , 'e' , 'n' ] ;
+utils.degToSector['4'] = angle => SECTOR_4[ Math.floor( ( angle + 45 ) / 90 ) ] ;
+
+const SECTOR_4_DIAG = [ 'nw' , 'sw' , 'se' , 'ne' ] ;
+utils.degToSector['4diag'] = angle => SECTOR_4_DIAG[ Math.floor( angle / 90 ) ] ;
+
+
+
 utils.cameraRotationFromOriginAndTarget = ( origin , target , rz = 0 ) => {
 	var x = target.x - origin.x ,
 		y = target.y - origin.y ,
@@ -1632,6 +1683,13 @@ utils.toCameraBeta = pitch => utils.PI_2 - pitch * utils.DEG_TO_RAD ;
 utils.RAD_TO_DEG = 180 / Math.PI ;
 utils.DEG_TO_RAD = Math.PI / 180 ;
 utils.PI_2 = Math.PI / 2 ;
+
+
+
+// Return an angle between [0;360[
+utils.normalizeAngleDeg = a => a >= 0 ? a % 360 : 360 + a % 360 ;
+
+
 
 // Fixed (absolute) epsilon (not relative to the exposant, because it's faster to compute)
 // EPSILON and INVERSE_EPSILON are private
