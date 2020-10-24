@@ -151,8 +151,6 @@ Camera.prototype.setMode = function( mode ) {
 	if ( mode === this.mode ) { return ; }
 	this.mode = mode ;
 	
-	this.gScene.oneTimeChanges.cameraMove = true ;
-
 	switch ( this.mode ) {
 		case 'positions' :
 		case 'firstPerson' :
@@ -170,6 +168,10 @@ Camera.prototype.setMode = function( mode ) {
 					new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ,
 					this.gScene.babylon.scene
 				) ;
+				
+				this.babylon.camera.onViewMatrixChangedObservable.add( () => {
+					this.gScene.changes.camera = true ;
+				} ) ;
 			}
 			
 			if ( this.mode === 'positions' ) {
@@ -218,6 +220,10 @@ Camera.prototype.setMode = function( mode ) {
 					new Babylon.Vector3( this.target.x , this.target.y , this.target.z ) ,
 					this.gScene.babylon.scene
 				) ;
+
+				this.babylon.camera.onViewMatrixChangedObservable.add( () => {
+					this.gScene.changes.camera = true ;
+				} ) ;
 			}
 
 			break ;
@@ -252,6 +258,7 @@ Camera.prototype.updateFree = function( free ) {
 
 	//this.babylon.camera.attachControl( this.gScene.$gscene ) ;
 	this.babylon.camera.attachControl() ;
+
 	return false ;
 } ;
 
@@ -319,11 +326,6 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 				oldRotationQuaternion
 			) ;
 		}
-
-		if ( data.transition.promise ) {
-			this.gScene.continuousChanges.cameraMove ++ ;
-			data.transition.promise.then( () => this.gScene.continuousChanges.cameraMove -- ) ;
-		}
 	}
 	else {
 		console.warn( "[!] camera direct:" , camera , newRotationQuaternion ) ;
@@ -332,8 +334,6 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 		}
 
 		if ( newRotationQuaternion ) { camera.rotationQuaternion = newRotationQuaternion ; }
-
-		this.gScene.oneTimeChanges.cameraMove = true ;
 	}
 } ;
 
@@ -400,11 +400,6 @@ Camera.prototype.updateOrbital = function( data ) {
 				this.distance
 			) ;
 		}
-
-		if ( data.transition.promise ) {
-			this.gScene.continuousChanges.cameraMove ++ ;
-			data.transition.promise.then( () => this.gScene.continuousChanges.cameraMove -- ) ;
-		}
 	}
 	else {
 		console.warn( "[!] camera direct:" , camera ) ;
@@ -412,8 +407,6 @@ Camera.prototype.updateOrbital = function( data ) {
 		if ( data.yaw ) { camera.alpha = alpha ; }
 		if ( data.pitch ) { camera.beta = beta ; }
 		if ( data.distance ) { camera.radius = this.distance ; }
-
-		this.gScene.oneTimeChanges.cameraMove = true ;
 	}
 } ;
 
@@ -1175,12 +1168,12 @@ GEntitySprite.prototype.updateTransform = function( data ) {
 
 
 
-GEntitySprite.prototype.autoFacing = function( oneTimeChanges = null , continuousChanges = null ) {
-	//console.warn( "@@@@@@@@@@ autoFacing()" , oneTimeChanges , continuousChanges ) ;
-	if ( oneTimeChanges ) {
-		if ( ! oneTimeChanges.cameraMove && ! continuousChanges.cameraMove ) { return ; }
+GEntitySprite.prototype.autoFacing = function( changes = null ) {
+	//console.warn( "@@@@@@@@@@ autoFacing()" , changes ) ;
+	if ( changes ) {
+		if ( ! changes.camera ) { return ; }
 	}
-	console.warn( "@@@@@@@@@@ autoFacing() GO!" , oneTimeChanges.cameraMove , continuousChanges.cameraMove ) ;
+	console.warn( "@@@@@@@@@@ autoFacing() GO!" , changes && changes.camera ) ;
 
 	var angle = vectorUtils.facingAngleDeg(
 		this.gScene.globalCamera.babylon.camera.position ,
@@ -1190,8 +1183,9 @@ GEntitySprite.prototype.autoFacing = function( oneTimeChanges = null , continuou
 	
 	var sector = vectorUtils.degToSector[ this.engine.spriteAutoFacing ]( angle ) ;
 
+	console.warn( "@@@@@@@@@@ autoFacing() angle" , angle ) ;
 	if ( this.clientVariant === sector ) { return ; }
-	console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector , "(angle:" , angle , ")" ) ;
+	console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector ) ;
 
 	this.clientVariant = sector ;
 	this.updateTexture() ;
@@ -1265,13 +1259,11 @@ function GScene( dom , data ) {
 	this.resizeObserver = null ;	// used to detect when the canvas element is resized
 
 	// What have changed before the last rendered scene
-	this.oneTimeChanges = {
-		cameraMove: false
+	this.changes = {
+		camera: false
 	} ;
 
-	this.continuousChanges = {
-		cameraMove: 0
-	} ;
+	//this.continuousChanges = { camera: 0 } ;
 
 	// Babylon stuffs
 	this.babylon = {
@@ -1308,8 +1300,8 @@ GScene.prototype.initScene = function() {
 
 	// Register a render loop to repeatedly render the scene
 	engine.runRenderLoop( () => {
-		this.emitIfListener( 'render' , this.oneTimeChanges , this.continuousChanges ) ;
-		this.oneTimeChanges.cameraMove = false ;
+		this.emitIfListener( 'render' , this.changes ) ;
+		this.changes.camera = false ;
 
 		scene.render() ;
 	} ) ;
@@ -1647,6 +1639,17 @@ utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => 
 		- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.x )
 	) * utils.RAD_TO_DEG
 ) ;
+
+
+
+utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => {
+	var objectDirectionAngle = Math.atan2( - objectDirection.x , objectDirection.z ) * utils.RAD_TO_DEG ;
+	var objectToCameraAngle = Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.x ) * utils.RAD_TO_DEG ;
+	var angle = objectDirectionAngle - objectToCameraAngle ;
+	var normalizedAngle = utils.normalizeAngleDeg( angle ) ;
+	console.warn( "??????????????????" , objectDirectionAngle , objectToCameraAngle , angle , normalizedAngle ) ;
+	return normalizedAngle ;
+} ;
 
 
 
