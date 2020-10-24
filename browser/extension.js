@@ -1173,7 +1173,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 	if ( changes ) {
 		if ( ! changes.camera ) { return ; }
 	}
-	console.warn( "@@@@@@@@@@ autoFacing() GO!" , changes && changes.camera ) ;
+	//console.warn( "@@@@@@@@@@ autoFacing() GO!" , changes && changes.camera ) ;
 
 	var angle = vectorUtils.facingAngleDeg(
 		this.gScene.globalCamera.babylon.camera.position ,
@@ -1183,9 +1183,9 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 	
 	var sector = vectorUtils.degToSector[ this.engine.spriteAutoFacing ]( angle ) ;
 
-	console.warn( "@@@@@@@@@@ autoFacing() angle" , angle ) ;
+	//console.warn( "@@@@@@@@@@ autoFacing() angle" , angle ) ;
 	if ( this.clientVariant === sector ) { return ; }
-	console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector ) ;
+	//console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector ) ;
 
 	this.clientVariant = sector ;
 	this.updateTexture() ;
@@ -1636,20 +1636,9 @@ utils.flatVectorsAngleDeg = ( base , vector ) => utils.normalizeAngleDeg(
 utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => utils.normalizeAngleDeg(
 	(
 		Math.atan2( - objectDirection.x , objectDirection.z )
-		- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.x )
+		- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z )
 	) * utils.RAD_TO_DEG
 ) ;
-
-
-
-utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => {
-	var objectDirectionAngle = Math.atan2( - objectDirection.x , objectDirection.z ) * utils.RAD_TO_DEG ;
-	var objectToCameraAngle = Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.x ) * utils.RAD_TO_DEG ;
-	var angle = objectDirectionAngle - objectToCameraAngle ;
-	var normalizedAngle = utils.normalizeAngleDeg( angle ) ;
-	console.warn( "??????????????????" , objectDirectionAngle , objectToCameraAngle , angle , normalizedAngle ) ;
-	return normalizedAngle ;
-} ;
 
 
 
