@@ -150,6 +150,8 @@ Camera.prototype.setMode = function( mode ) {
 	console.warn( "##### Camera.setMode()" , mode , this.mode ) ;
 	if ( mode === this.mode ) { return ; }
 	this.mode = mode ;
+	
+	this.gScene.oneTimeChanges.cameraMove = true ;
 
 	switch ( this.mode ) {
 		case 'positions' :
@@ -317,6 +319,11 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 				oldRotationQuaternion
 			) ;
 		}
+
+		if ( data.transition.promise ) {
+			this.gScene.continuousChanges.cameraMove ++ ;
+			data.transition.promise.then( () => this.gScene.continuousChanges.cameraMove -- ) ;
+		}
 	}
 	else {
 		console.warn( "[!] camera direct:" , camera , newRotationQuaternion ) ;
@@ -325,6 +332,8 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 		}
 
 		if ( newRotationQuaternion ) { camera.rotationQuaternion = newRotationQuaternion ; }
+
+		this.gScene.oneTimeChanges.cameraMove = true ;
 	}
 } ;
 
@@ -391,10 +400,10 @@ Camera.prototype.updateOrbital = function( data ) {
 				this.distance
 			) ;
 		}
-		
-		if ( this.gScene.listenerCount( 'cameraMove' ) ) {
-// -------------------------------------------------------------- HERE ------------------------------------------
-			// Emit a cameraMove event every frame???
+
+		if ( data.transition.promise ) {
+			this.gScene.continuousChanges.cameraMove ++ ;
+			data.transition.promise.then( () => this.gScene.continuousChanges.cameraMove -- ) ;
 		}
 	}
 	else {
@@ -403,6 +412,8 @@ Camera.prototype.updateOrbital = function( data ) {
 		if ( data.yaw ) { camera.alpha = alpha ; }
 		if ( data.pitch ) { camera.beta = beta ; }
 		if ( data.distance ) { camera.radius = this.distance ; }
+
+		this.gScene.oneTimeChanges.cameraMove = true ;
 	}
 } ;
 
@@ -1023,15 +1034,15 @@ GEntitySprite.prototype.updateEngine = function( engineData ) {
 
 		//console.warn( "@@@@@@@@@@ engineData.spriteAutoFacing" , this.engine.spriteAutoFacing ) ;
 		if ( this.engine.spriteAutoFacing ) {
-			this.gScene.on( 'cameraMove' , this.autoFacing ) ;
+			this.gScene.on( 'render' , this.autoFacing ) ;
 			
 //-------------------------------------------------------------------- HERE -----------------------------------------
 			//+++ TEMP
-			setInterval( this.autoFacing , 50 ) ;
+			//setInterval( this.autoFacing , 50 ) ;
 			//--- TEMP
 		}
 		else {
-			this.gScene.off( 'cameraMove' , this.autoFacing ) ;
+			this.gScene.off( 'render' , this.autoFacing ) ;
 		}
 	}
 } ;
@@ -1164,8 +1175,13 @@ GEntitySprite.prototype.updateTransform = function( data ) {
 
 
 
-GEntitySprite.prototype.autoFacing = function() {
-	//console.warn( "@@@@@@@@@@ autoFacing()" ) ;
+GEntitySprite.prototype.autoFacing = function( oneTimeChanges = null , continuousChanges = null ) {
+	//console.warn( "@@@@@@@@@@ autoFacing()" , oneTimeChanges , continuousChanges ) ;
+	if ( oneTimeChanges ) {
+		if ( ! oneTimeChanges.cameraMove && ! continuousChanges.cameraMove ) { return ; }
+	}
+	console.warn( "@@@@@@@@@@ autoFacing() GO!" , oneTimeChanges.cameraMove , continuousChanges.cameraMove ) ;
+
 	var angle = vectorUtils.facingAngleDeg(
 		this.gScene.globalCamera.babylon.camera.position ,
 		this.babylon.mesh.position ,
@@ -1175,7 +1191,7 @@ GEntitySprite.prototype.autoFacing = function() {
 	var sector = vectorUtils.degToSector[ this.engine.spriteAutoFacing ]( angle ) ;
 
 	if ( this.clientVariant === sector ) { return ; }
-	console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector ) ;
+	console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector , "(angle:" , angle , ")" ) ;
 
 	this.clientVariant = sector ;
 	this.updateTexture() ;
@@ -1248,6 +1264,15 @@ function GScene( dom , data ) {
 
 	this.resizeObserver = null ;	// used to detect when the canvas element is resized
 
+	// What have changed before the last rendered scene
+	this.oneTimeChanges = {
+		cameraMove: false
+	} ;
+
+	this.continuousChanges = {
+		cameraMove: 0
+	} ;
+
 	// Babylon stuffs
 	this.babylon = {
 		engine: null ,
@@ -1283,6 +1308,9 @@ GScene.prototype.initScene = function() {
 
 	// Register a render loop to repeatedly render the scene
 	engine.runRenderLoop( () => {
+		this.emitIfListener( 'render' , this.oneTimeChanges , this.continuousChanges ) ;
+		this.oneTimeChanges.cameraMove = false ;
+
 		scene.render() ;
 	} ) ;
 	
@@ -1406,7 +1434,7 @@ const EASING_FUNCTION = {
 
 
 
-GTransition.prototype.createAnimation = function( scene , entity , property , animationType , newValue , oldValue = null , everyFrameFn = null ) {
+GTransition.prototype.createAnimation = function( scene , entity , property , animationType , newValue , oldValue = null ) {
 	var easingFunction , animation , animationKeys ,
 		animationFps = 30 ,
 		frameCount = Math.round( this.duration * animationFps ) ;
@@ -1453,24 +1481,6 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 		this.promise.resolveTimeout( 1000 * this.duration + 20 ) ;
 	}
 	
-// ---------------------------------- HERE ---------------------------------------------------------------
-// Useful???
-	if ( everyFrameFn ) {
-		let frameTimer = null ;
-		let counter = 0 ;
-
-		let wrapperFn = function() {
-			counter ++ ;
-
-			// Only call it every 2 frames
-			if ( counter % 2 ) { everyFrameFn() ; }
-
-			if ( ! this.promise.isSettled() ) { frameTimer = window.requestAnimationFrame( wrapperFn ) ; }
-		}
-		
-		frameTimer = window.requestAnimationFrame() ;
-	}
-
 	// Finally, launch animation, from key 0 to last-key
 	this.running ++ ;
 	scene.beginAnimation(
@@ -2741,6 +2751,18 @@ NextGenEvents.prototype.emit = function( ... args ) {
 
 
 
+// For performance, do not emit if there is no listener for that event,
+// do not even return an Event object, do not throw if the event name is error,
+// or whatever the .emit() process could do when there is no listener.
+NextGenEvents.prototype.emitIfListener = function( ... args ) {
+	var eventName = typeof args[ 0 ] === 'number' ? args[ 1 ] : args[ 0 ] ;
+	if ( ! this.__ngev || ! this.__ngev.listeners[ eventName ] || ! this.__ngev.listeners[ eventName ].length ) { return null ; }
+	var event = NextGenEvents.createEvent( this , ... args ) ;
+	return NextGenEvents.emitEvent( event ) ;
+} ;
+
+
+
 NextGenEvents.prototype.waitForEmit = function( ... args ) {
 	return new Promise( resolve => {
 		this.emit( ... args , ( interrupt ) => resolve( interrupt ) ) ;
@@ -3075,10 +3097,7 @@ NextGenEvents.listenerCount = function( emitter , eventName ) {
 
 NextGenEvents.prototype.listenerCount = function( eventName ) {
 	if ( ! eventName || typeof eventName !== 'string' ) { throw new TypeError( ".listenerCount(): argument #1 should be a non-empty string" ) ; }
-
-	if ( ! this.__ngev ) { NextGenEvents.init.call( this ) ; }
-	if ( ! this.__ngev.listeners[ eventName ] ) { this.__ngev.listeners[ eventName ] = [] ; }
-
+	if ( ! this.__ngev || ! this.__ngev.listeners[ eventName ] ) { return 0 ; }
 	return this.__ngev.listeners[ eventName ].length ;
 } ;
 
@@ -4229,29 +4248,31 @@ module.exports.isBrowser = true ;
 }).call(this,require('_process'))
 },{"./NextGenEvents.js":19,"_process":23}],22:[function(require,module,exports){
 module.exports={
-  "_from": "nextgen-events@^1.3.0",
-  "_id": "nextgen-events@1.3.0",
+  "_from": "nextgen-events",
+  "_id": "nextgen-events@1.3.3",
   "_inBundle": false,
-  "_integrity": "sha512-eBz5mrO4Hw2eenPVm0AVPHuAzg/RZetAWMI547RH8O9+a0UYhCysiZ3KoNWslnWNlHetb9kzowEshsKsmFo2YQ==",
+  "_integrity": "sha512-5h9U7had+Q+a95Rwgu4JL6otqXs3y4474g7ruQtd8TAsoG6ycvjccnuLxhXEv32/HOKTC09K+HkbFaITIexLkg==",
   "_location": "/nextgen-events",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "tag",
     "registry": true,
-    "raw": "nextgen-events@^1.3.0",
+    "raw": "nextgen-events",
     "name": "nextgen-events",
     "escapedName": "nextgen-events",
-    "rawSpec": "^1.3.0",
+    "rawSpec": "",
     "saveSpec": null,
-    "fetchSpec": "^1.3.0"
+    "fetchSpec": "latest"
   },
   "_requiredBy": [
+    "#USER",
+    "/",
     "/terminal-kit"
   ],
-  "_resolved": "https://registry.npmjs.org/nextgen-events/-/nextgen-events-1.3.0.tgz",
-  "_shasum": "a32665d1ab6f026448b19d75c4603ec20292fa22",
-  "_spec": "nextgen-events@^1.3.0",
-  "_where": "/home/cedric/inside/github/spellcast-ext-3dgws/node_modules/terminal-kit",
+  "_resolved": "https://registry.npmjs.org/nextgen-events/-/nextgen-events-1.3.3.tgz",
+  "_shasum": "3023cdf4299771918d6be1ad5f6049ca6b4d907d",
+  "_spec": "nextgen-events",
+  "_where": "/home/cedric/inside/github/spellcast-ext-3dgws",
   "author": {
     "name": "Cédric Ronvel"
   },
@@ -4311,7 +4332,7 @@ module.exports={
   "scripts": {
     "test": "tea-time -R dot"
   },
-  "version": "1.3.0"
+  "version": "1.3.3"
 }
 
 },{}],23:[function(require,module,exports){
