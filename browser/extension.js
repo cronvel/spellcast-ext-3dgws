@@ -470,7 +470,8 @@ function GEntity( dom , gScene , data ) {
 	this.sizeMode = 'default' ;
 	this.rotation = { x: 0 , y: 0 , z: 0 } ;
 	this.rotationMode = 'default' ;
-	this.direction = { x: 0 , y: 0 , z: 1 } ;
+	//this.direction = { x: 0 , y: 0 , z: 1 } ;
+	this.facing = 0 ;
 
 	this.data = {} ;
 	this.meta = {} ;
@@ -529,7 +530,8 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 	if ( data.origin !== undefined ) { this.updateOrigin( data.origin ) ; }
 
-	if ( data.direction !== undefined ) { this.direction = data.direction ; }
+	//if ( data.direction !== undefined ) { this.updateDirection( data.direction ) ; }
+	if ( data.facing !== undefined ) { this.updateFacing( data.facing ) ; }
 
 	if (
 		data.position !== undefined || data.positionMode !== undefined
@@ -552,9 +554,8 @@ GEntity.prototype.updateEngine = function( engineData ) {
 
 
 // By default, changing the facing direction does nothing
-GEntity.prototype.updateDirection = function( direction ) {
-	this.direction = direction ;
-} ;
+//GEntity.prototype.updateDirection = function( direction ) { this.direction = direction ; } ;
+GEntity.prototype.updateFacing = function( facing ) { this.facing = facing ; } ;
 
 
 
@@ -1057,8 +1058,14 @@ GEntitySprite.prototype.updateEngine = function( engineData ) {
 
 
 
+/*
 GEntitySprite.prototype.updateDirection = function( direction ) {
 	this.direction = direction ;
+	if ( this.engine.spriteAutoFacing ) { this.autoFacing() ; }
+} ;
+*/
+GEntitySprite.prototype.updateFacing = function( facing ) {
+	this.facing = facing ;
 	if ( this.engine.spriteAutoFacing ) { this.autoFacing() ; }
 } ;
 
@@ -1203,7 +1210,8 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 	var angle = vectorUtils.facingAngleDeg(
 		this.gScene.globalCamera.babylon.camera.position ,
 		this.babylon.mesh.position ,
-		this.direction
+		//this.direction
+		this.facing
 	) ;
 	
 	var sector = vectorUtils.degToSector[ this.engine.spriteAutoFacing ]( angle ) ;
@@ -1659,11 +1667,17 @@ utils.flatVectorsAngleDeg = ( base , vector ) => utils.normalizeAngleDeg(
 
 
 // The facing angle of an object relative to the camera, return ]-180;+180]
+/*
 utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => utils.normalizeAngleDeg(
 	(
 		Math.atan2( - objectDirection.x , objectDirection.z )
 		- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z )
 	) * utils.RAD_TO_DEG
+) ;
+*/
+utils.facingAngleDeg = ( cameraPosition , objectPosition , facing ) => utils.normalizeAngleDeg(
+	facing
+	- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z ) * utils.RAD_TO_DEG
 ) ;
 
 
