@@ -462,7 +462,6 @@ function GEntity( dom , gScene , data ) {
 	this.theme = null ;
 	this.texturePack = null ;
 	this.variant = 'default' ;
-	this.clientVariant = null ;	// A variant affix that is automatically computed, not from server
 	this.location = null ;
 	this.origin = { x: 0 , y: 0 , z: 0 } ;
 	this.position = { x: 0 , y: 0 , z: 0 } ;
@@ -476,6 +475,12 @@ function GEntity( dom , gScene , data ) {
 	this.data = {} ;
 	this.meta = {} ;
 	this.engine = {} ;
+
+	this.clientMods = {		// Things that are not server-side
+		variant: null ,		// A variant affix that is automatically computed
+		xFlipVariant: null ,	// A variant that can be used flipped
+		xFlip: false
+	} ;
 
 	// Internal
 	this.updateMeshNeeded = true ;
@@ -575,12 +580,27 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		}
 	}
 
-	variant = 
-		( this.clientVariant && texturePack.variants[ this.variant + '@' + this.clientVariant ] )
-		|| texturePack.variants[ this.variant ]
-		|| texturePack.variants.default ;
 
-	//console.warn( "@@@@@@@@@@ variant" , this.clientVariant ? this.variant + '@' + this.clientVariant : this.variant ) ;
+	this.clientMods.xFlip = false ;
+
+	if ( this.clientMods.variant ) {
+		variant = texturePack.variants[ this.variant + '@' + this.clientMods.variant ] ;
+		if ( ! variant ) {
+			variant = texturePack.variants[ this.variant + '@' + this.clientMods.xFlipVariant ] ;
+			
+			if ( variant ) {
+				this.clientMods.xFlip = true ;
+			}
+			else {
+				variant = texturePack.variants[ this.variant ] || texturePack.variants.default ;
+			}
+		}
+	}
+	else {
+		variant = texturePack.variants[ this.variant ] || texturePack.variants.default ;
+	}
+
+	//console.warn( "@@@@@@@@@@ variant" , this.clientMods.variant ? this.variant + '@' + this.clientMods.variant : this.variant ) ;
 
 	if ( ! variant ) {
 		console.warn( "3D Texture pack variant" , this.variant , "not found, and default variant missing too" ) ;
@@ -1028,11 +1048,6 @@ GEntitySprite.prototype.updateEngine = function( engineData ) {
 		//console.warn( "@@@@@@@@@@ engineData.spriteAutoFacing" , this.engine.spriteAutoFacing ) ;
 		if ( this.engine.spriteAutoFacing ) {
 			this.gScene.on( 'render' , this.autoFacing ) ;
-			
-//-------------------------------------------------------------------- HERE -----------------------------------------
-			//+++ TEMP
-			//setInterval( this.autoFacing , 50 ) ;
-			//--- TEMP
 		}
 		else {
 			this.gScene.off( 'render' , this.autoFacing ) ;
@@ -1067,7 +1082,7 @@ GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
 	texture.hasAlpha = true ;
 	texture.wrapU = texture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
 	
-	if ( variant.frames[ 0 ].xFlip ) {
+	if ( ! variant.frames[ 0 ].xFlip !== ! this.clientMods.xFlip ) {
 		texture.uScale = -1 ;
 		texture.uOffset = 1 ;
 	}
@@ -1194,10 +1209,11 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 	var sector = vectorUtils.degToSector[ this.engine.spriteAutoFacing ]( angle ) ;
 
 	//console.warn( "@@@@@@@@@@ autoFacing() angle" , angle ) ;
-	if ( this.clientVariant === sector ) { return ; }
+	if ( this.clientMods.variant === sector ) { return ; }
 	//console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector ) ;
 
-	this.clientVariant = sector ;
+	this.clientMods.variant = sector ;
+	this.clientMods.xFlipVariant = vectorUtils.xFlipSector[ sector ] ;
 	this.updateTexture() ;
 } ;
 
@@ -1663,7 +1679,9 @@ const SECTOR_4 = [ 'n' , 'w' , 's' , 'e' , 'n' ] ;
 utils.degToSector['4'] = angle => SECTOR_4[ Math.floor( ( angle + 45 ) / 90 ) ] ;
 
 const SECTOR_4_DIAG = [ 'nw' , 'sw' , 'se' , 'ne' ] ;
-utils.degToSector['4diag'] = angle => SECTOR_4_DIAG[ Math.floor( angle / 90 ) ] ;
+utils.degToSector['4-diag'] = angle => SECTOR_4_DIAG[ Math.floor( angle / 90 ) ] ;
+
+utils.xFlipSector = { n: 'n' , ne: 'nw' , e: 'w' , se: 'sw' , s: 's' , sw: 'se' , w: 'e' , nw: 'ne' } ;
 
 
 
