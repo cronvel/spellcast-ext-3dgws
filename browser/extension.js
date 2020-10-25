@@ -1066,6 +1066,16 @@ GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
 	material.diffuseTexture = texture = new Babylon.Texture( this.dom.cleanUrl( url ) , scene ) ;
 	texture.hasAlpha = true ;
 	texture.wrapU = texture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
+	
+	if ( variant.frames[ 0 ].xFlip ) {
+		texture.uScale = -1 ;
+		texture.uOffset = 1 ;
+	}
+
+	if ( variant.frames[ 0 ].yFlip ) {
+		texture.vScale = -1 ;
+		texture.vOffset = 1 ;
+	}
 
 	// /!\ TEMP! Easier to debug!
 	material.backFaceCulling = false ;
