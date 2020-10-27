@@ -1073,30 +1073,79 @@ GEntitySprite.prototype.updateFacing = function( facing ) {
 
 // Update the gEntity's texture
 GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
-	var material , texture ,
+	var material ,
 		oldMaterial = this.babylon.material ,
 		scene = this.gScene.babylon.scene ,
 		mesh = this.babylon.mesh ;
 
 	console.warn( "3D GEntitySprite.updateTexture_()" , texturePack , variant ) ;
 
-	var url = variant.frames[ 0 ].url ;
+	var frame = variant.frames[ 0 ] ;
 	this.babylon.material = material = new Babylon.StandardMaterial( 'spriteMaterial' , scene ) ;
 	material.backFaceCulling = true ;
 
 	material.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
-	material.diffuseTexture = texture = new Babylon.Texture( this.dom.cleanUrl( url ) , scene ) ;
-	texture.hasAlpha = true ;
-	texture.wrapU = texture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
+
+	// Diffuse/Albedo
+	var diffuseUrl = ( frame.maps && ( frame.maps.diffuse || frame.maps.albedo ) ) || frame.url
+	material.diffuseTexture = new Babylon.Texture( this.dom.cleanUrl( diffuseUrl ) , scene ) ;
+	material.diffuseTexture.hasAlpha = true ;
+	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
+
+	// Normal/Bump
+	var bumpUrl = frame.maps && ( frame.maps.normal || frame.maps.bump ) ;
+	if ( bumpUrl ) {
+		material.bumpTexture = new Babylon.Texture( this.dom.cleanUrl( bumpUrl ) , scene ) ;
+
+// ----------------------------------------------------- HERE ------------------------- DON'T WORK -----------------------------
+		material.bumpTexture.invertNormalMapY = true ;
+		material.bumpTexture.invertNormalMapX = true ;
+
+		material.bumpTexture.wrapU = material.bumpTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
+	}
 	
+	// Specular
+	var specularUrl = frame.maps && frame.maps.specular ;
+	if ( specularUrl ) {
+		material.specularTexture = new Babylon.Texture( this.dom.cleanUrl( specularUrl ) , scene ) ;
+		material.specularTexture.wrapU = material.specularTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
+	}
+	
+	/*
+		Also:
+			.ambientTexture is for ambient/occlusion
+			.emissiveTexture
+			.lightmapTexture
+			.reflectionTexture
+			.refractionTexture
+			
+	*/
+
+	// X-flip and Y-Flip
 	if ( ! variant.frames[ 0 ].xFlip !== ! this.clientMods.xFlip ) {
-		texture.uScale = -1 ;
-		texture.uOffset = 1 ;
+		material.diffuseTexture.uScale = -1 ;
+		material.diffuseTexture.uOffset = 1 ;
+		if ( material.bumpTexture ) {
+			material.bumpTexture.uScale = -1 ;
+			material.bumpTexture.uOffset = 1 ;
+		}
+		if ( material.specularTexture ) {
+			material.specularTexture.uScale = -1 ;
+			material.specularTexture.uOffset = 1 ;
+		}
 	}
 
 	if ( variant.frames[ 0 ].yFlip ) {
-		texture.vScale = -1 ;
-		texture.vOffset = 1 ;
+		material.diffuseTexture.vScale = -1 ;
+		material.diffuseTexture.vOffset = 1 ;
+		if ( material.bumpTexture ) {
+			material.bumpTexture.vScale = -1 ;
+			material.bumpTexture.vOffset = 1 ;
+		}
+		if ( material.specularTexture ) {
+			material.specularTexture.vScale = -1 ;
+			material.specularTexture.vOffset = 1 ;
+		}
 	}
 
 	// /!\ TEMP! Easier to debug!
@@ -1326,8 +1375,23 @@ GScene.prototype.initScene = function() {
 	// /!\ THERE ARE BUGS WITH SPRITES AND RIGHT-HANDED SYSTEM /!\
 	//scene.useRightHandedSystem = true ;
 	
-	// TEMP!
+	// TEMP! Lights!
 	scene.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
+
+	/* Add hemispheric light
+	var hemisphericLight = new Babylon.HemisphericLight( "hemisphericLight" , new Babylon.Vector3( 0 , 1 , 0 ) , scene ) ;
+	hemisphericLight.diffuse = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
+	hemisphericLight.specular = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
+	hemisphericLight.groundColor = new Babylon.Color3( 0.2 , 0.1 , 0 ) ;
+	//*/
+
+	//* Add a directional light
+	var directionalLight = new Babylon.DirectionalLight( "directionalLight" , new Babylon.Vector3( 0 , -1 , 0 ) , scene ) ;
+	directionalLight.diffuse = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
+	directionalLight.specular = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
+	//*/
+
+
 
 	// Add a camera to the scene and attach it to the canvas
 	this.globalCamera = new Camera( this ) ;
