@@ -739,6 +739,8 @@ GEntityBackground.prototype.updateTexture_ = function( texturePack , variant ) {
 	this.babylon.material = material = new Babylon.StandardMaterial( 'simpleMaterial' , scene ) ;
 	material.backFaceCulling = true ;
 	material.diffuseTexture = new Babylon.Texture( this.dom.cleanUrl( url ) , scene ) ;
+	//material.specularPower = 0 ;
+	material.specularColor = new Babylon.Color3( 0 , 0 , 0 ) ;
 	material.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
 	
 	// TEMP!
@@ -898,6 +900,8 @@ GEntityGround.prototype.updateTexture_ = function( texturePack , variant ) {
 	material.diffuseTexture = new Babylon.Texture( this.dom.cleanUrl( url ) , scene ) ;
 	material.diffuseTexture.uScale = 20 ;
 	material.diffuseTexture.vScale = 20 ;
+	//material.specularPower = 0 ;
+	material.specularColor = new Babylon.Color3( 0 , 0 , 0 ) ;
 	material.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
 	//*/
 	/*	For instance there is only ambient light, so no need to compute multiple pass
@@ -1096,12 +1100,11 @@ GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
 	var bumpUrl = frame.maps && ( frame.maps.normal || frame.maps.bump ) ;
 	if ( bumpUrl ) {
 		material.bumpTexture = new Babylon.Texture( this.dom.cleanUrl( bumpUrl ) , scene ) ;
-
-// ----------------------------------------------------- HERE ------------------------- DON'T WORK -----------------------------
-		material.bumpTexture.invertNormalMapY = true ;
-		material.bumpTexture.invertNormalMapX = true ;
-
 		material.bumpTexture.wrapU = material.bumpTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
+		
+		// BabylonJS use DirectX normalmap, but most software export OpenGL normalmap
+		material.invertNormalMapX = true ;
+		material.invertNormalMapY = true ;
 	}
 	
 	// Specular
@@ -1109,8 +1112,14 @@ GEntitySprite.prototype.updateTexture_ = function( texturePack , variant ) {
 	if ( specularUrl ) {
 		material.specularTexture = new Babylon.Texture( this.dom.cleanUrl( specularUrl ) , scene ) ;
 		material.specularTexture.wrapU = material.specularTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
+		//material.specularPower = 1 ;
+		material.useGlossinessFromSpecularMapAlpha = true ;
 	}
-	
+	else {
+		//material.specularPower = 0 ;	// This is the sharpness of the highlight
+		material.specularColor = new Babylon.Color3( 0 , 0 , 0 ) ;
+	}
+
 	/*
 		Also:
 			.ambientTexture is for ambient/occlusion
@@ -1374,21 +1383,29 @@ GScene.prototype.initScene = function() {
 	// Important, because by default the coordinate system is like DirectX (left-handed) not like math and OpenGL (right-handed)
 	// /!\ THERE ARE BUGS WITH SPRITES AND RIGHT-HANDED SYSTEM /!\
 	//scene.useRightHandedSystem = true ;
-	
-	// TEMP! Lights!
-	scene.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
 
-	/* Add hemispheric light
+	// Optimizations
+	scene.autoClear = false ;		// Don't clear the color buffer between frame (skybox expected!)
+	scene.autoClearDepthAndStencil = false ;	// Same with depth and stencil buffer
+
+	// TEMP! Lights!
+	//scene.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
+	//scene.ambientColor = new Babylon.Color3( 0.3 , 0.3 , 0.3 ) ;
+
+	//* Add hemispheric light
 	var hemisphericLight = new Babylon.HemisphericLight( "hemisphericLight" , new Babylon.Vector3( 0 , 1 , 0 ) , scene ) ;
-	hemisphericLight.diffuse = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
-	hemisphericLight.specular = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
-	hemisphericLight.groundColor = new Babylon.Color3( 0.2 , 0.1 , 0 ) ;
+	hemisphericLight.diffuse = new Babylon.Color3( 1 , 1 , 1 ) ;
+	//hemisphericLight.specular = new Babylon.Color3( 1 , 1 , 1 ) ;
+	hemisphericLight.specular = new Babylon.Color3( 0 , 0 , 0 ) ;
+	hemisphericLight.groundColor = new Babylon.Color3( 0.2 , 0 , 0 ) ;
+	hemisphericLight.intensity = 1.2 ;
 	//*/
 
 	//* Add a directional light
-	var directionalLight = new Babylon.DirectionalLight( "directionalLight" , new Babylon.Vector3( 0 , -1 , 0 ) , scene ) ;
-	directionalLight.diffuse = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
-	directionalLight.specular = new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ;
+	var directionalLight = new Babylon.DirectionalLight( "directionalLight" , new Babylon.Vector3( 1 , -1 , 1 ) , scene ) ;
+	directionalLight.diffuse = new Babylon.Color3( 1 , 1 , 1 ) ;
+	directionalLight.specular = new Babylon.Color3( 1 , 1 , 1 ) ;
+	directionalLight.intensity = 0.5 ;
 	//*/
 
 
