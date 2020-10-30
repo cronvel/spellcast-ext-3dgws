@@ -512,7 +512,7 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 	// Structural/discrete part
 
 	if ( data.engine !== undefined ) { await this.updateEngine( data.engine ) ; }
-	if ( data.data !== undefined ) { await this.updateSpecial( data ) ; }
+	if ( data.special !== undefined ) { await this.updateSpecial( data ) ; }
 
 	if ( data.texturePack !== undefined || data.variant !== undefined || data.theme !== undefined ) {
 		await this.updateTexture( data.texturePack , data.variant , data.theme ) ;
@@ -679,7 +679,7 @@ GEntity.prototype.updateTransform = function( data ) {
 
 
 // Light color/intensity/fallOff
-GEntityLight.prototype.updateLight = function( data ) {
+GEntity.prototype.updateLight = function( data ) {
 	console.warn( "3D GEntity.updateLight()" , data ) ;
 	var light = this.babylon.light ,
 		scene = this.gScene.babylon.scene ;
