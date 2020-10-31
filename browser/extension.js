@@ -511,6 +511,11 @@ GEntity.prototype.localBBoxSize = 1 ;
 GEntity.prototype.update = async function( data , awaiting = false , initial = false ) {
 	console.warn( "3D GEntity.update()" , data ) ;
 
+	if ( data.transition ) {
+		if ( initial ) { delete data.transition ; }
+		else { data.transition = new GTransition( data.transition ) ; }
+	}
+
 	// Structural/discrete part
 
 	if ( data.engine !== undefined ) { await this.updateEngine( data.engine ) ; }
@@ -533,11 +538,6 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 	// Continuous part
 
-	if ( data.transition ) {
-		if ( initial ) { delete data.transition ; }
-		else { data.transition = new GTransition( data.transition ) ; }
-	}
-
 	if ( data.origin !== undefined ) { this.updateOrigin( data.origin ) ; }
 
 	if ( data.direction !== undefined ) { this.updateDirection( data.direction ) ; }
@@ -549,6 +549,7 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 		|| data.rotation !== undefined || data.rotationMode !== undefined
 	) {
 		this.updateTransform( data ) ;
+		if ( this.lightEmitting ) { this.updateTransformLight( data ) ; }
 	}
 
 	//if ( data.meta ) { this.updateMeta( data.meta ) ; }
@@ -653,6 +654,8 @@ GEntity.prototype.updateTransform = function( data ) {
 	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
+	if ( ! mesh ) { return ; }
+
 	if ( data.position ) {
 		this.position = data.position ;
 
@@ -687,7 +690,37 @@ GEntity.prototype.updateTransform = function( data ) {
 
 
 
-// Light color/intensity/fallOff
+GEntity.prototype.updateTransformLight = function( data ) {
+	console.warn( "3D GEntity.updateTransformLight()" , data ) ;
+	var light = this.babylon.light ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( ! light ) { return ; }
+
+	if ( data.position ) {
+		this.position = data.position ;
+
+		if ( data.transition ) {
+			console.warn( "light:" , light ) ;
+			// Animation using easing
+
+			data.transition.createAnimation(
+				scene ,
+				light ,
+				'position' ,
+				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
+			) ;
+		}
+		else {
+			light.position.set( this.position.x , this.position.y , this.position.z ) ;
+		}
+	}
+} ;
+
+
+
+// Light color/intensity/...
 GEntity.prototype.updateLight = function( data ) {
 	console.warn( "3D GEntity.updateLight()" , data ) ;
 	if ( data.special.light === undefined ) { return ; }
@@ -842,9 +875,18 @@ module.exports = GEntityAmbientLight ;
 
 
 
-// Light color
+// Light color/intensity/...
 GEntityAmbientLight.prototype.updateLight = function( data ) {
 	console.warn( "3D GEntityAmbientLight.updateColor()" , data ) ;
+	if ( data.special.light === undefined ) { return ; }
+
+	// Create/remove light
+	if ( ! data.special.light !== ! this.lightEmitting ) {
+		this.lightEmitting = !! data.special.light ;
+		if ( ! this.lightEmitting ) { this.special.light = null ; return ; }
+		this.createLight() ;
+	}
+
 	if ( ! data.special.light || typeof data.special.light !== 'object' ) { return ; }
 
 	var scene = this.gScene.babylon.scene ;
@@ -865,6 +907,22 @@ GEntityAmbientLight.prototype.updateLight = function( data ) {
 			scene.ambientColor.set( this.special.light.diffuse.r , this.special.light.diffuse.g , this.special.light.diffuse.b ) ;
 		}
 	}
+} ;
+
+
+
+// For ambient light, there is nothing to create at all, since it's a scene property,
+// but we maintain a consistency with other lights, treating it a as GEntity too.
+GEntityAmbientLight.prototype.createLight = function( data ) {
+	var scene = this.gScene.babylon.scene ;
+
+	if ( ! this.special.light ) {
+		this.special.light = {
+			diffuse: new Babylon.Color3( 1 , 1 , 1 )
+		} ;
+	}
+
+	scene.ambientColor.set( this.special.light.diffuse.r , this.special.light.diffuse.g , this.special.light.diffuse.b ) ;
 } ;
 
 
@@ -1080,6 +1138,7 @@ module.exports = GEntityDirectionalLight ;
 
 
 
+// Light color/intensity/...
 GEntityDirectionalLight.prototype.updateLight = function( data ) {
 	console.warn( "3D GEntityDirectionalLight.updateLight()" , data ) ;
 	GEntity.prototype.updateLight.call( this , data ) ;
@@ -1348,6 +1407,7 @@ module.exports = GEntityHemisphericLight ;
 
 
 
+// Light color/intensity/...
 GEntityHemisphericLight.prototype.updateLight = function( data ) {
 	console.warn( "3D GEntityHemisphericLight.updateLight()" , data ) ;
 	GEntity.prototype.updateLight.call( this , data ) ;
@@ -1471,6 +1531,11 @@ GEntityPointLight.prototype.constructor = GEntityPointLight ;
 
 module.exports = GEntityPointLight ;
 
+/*
+	Base GEntity already contains all GEntityPointLight as default for light emissive entity,
+	so there is nothing to do here for instance.
+*/
+
 
 },{"./GEntity.js":2,"./GTransition.js":12,"./vectorUtils.js":15,"babylonjs":22,"seventh":36}],9:[function(require,module,exports){
 /*
@@ -1515,12 +1580,17 @@ const Promise = require( 'seventh' ) ;
 
 function GEntitySpotLight( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
+	console.error( "Not supported ATM!" ) ;
 }
 
 GEntitySpotLight.prototype = Object.create( GEntity.prototype ) ;
 GEntitySpotLight.prototype.constructor = GEntitySpotLight ;
 
 module.exports = GEntitySpotLight ;
+
+/*
+	TODO!
+*/
 
 
 },{"./GEntity.js":2,"./GTransition.js":12,"./vectorUtils.js":15,"babylonjs":22,"seventh":36}],10:[function(require,module,exports){
@@ -1947,7 +2017,7 @@ GScene.prototype.initScene = function() {
 	//*/
 	
 	var pointLightPosition = new Babylon.Vector3( 0 , 0 , 0 ) ;
-	//* Add the point light
+	/* Add the point light
 	var pointLight = new Babylon.PointLight( "pointLight" , pointLightPosition , scene ) ;
 	pointLight.diffuse = new Babylon.Color3( 1 , 1 , 1 ) ;
 	pointLight.specular = new Babylon.Color3( 1 , 1 , 1 ) ;
