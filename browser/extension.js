@@ -545,14 +545,13 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 	if ( data.direction !== undefined ) { this.updateDirection( data.direction ) ; }
 	if ( data.facing !== undefined ) { this.updateFacing( data.facing ) ; }
 
-	if (
-		data.position !== undefined || data.positionMode !== undefined
-		|| data.size !== undefined || data.sizeMode !== undefined
-		|| data.rotation !== undefined || data.rotationMode !== undefined
-	) {
-		this.updateTransform( data ) ;
-		if ( this.lightEmitting ) { this.updateTransformLight( data ) ; }
+	if ( data.position !== undefined || data.positionMode !== undefined ) {
+		this.updatePosition( data ) ;
+		if ( this.lightEmitting ) { this.updateLightPosition( data ) ; }
 	}
+
+	if ( data.rotation !== undefined || data.rotationMode !== undefined ) { this.updateRotation( data ) ; }
+	if ( data.size !== undefined || data.sizeMode !== undefined ) { this.updateSize( data ) ; }
 
 	//if ( data.meta ) { this.updateMeta( data.meta ) ; }
 
@@ -560,8 +559,6 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 		if ( ! data.parametric ) {
 			if ( this.parametric ) {
 				this.parametric = null ;
-				this.parametricCtx = null ;
-				this.parametricComputedData = null ;
 				this.gScene.parametricGEntities.delete( this ) ;
 			}
 		}
@@ -586,16 +583,15 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 
 GEntity.prototype.parametricUpdate = function( absoluteT ) {
-	var data = this.parametric.compute( absoluteT ) ;
+	var data = this.parametric.compute( absoluteT , this ) ;
 
-	if (
-		data.position !== undefined || data.positionMode !== undefined
-		|| data.size !== undefined || data.sizeMode !== undefined
-		|| data.rotation !== undefined || data.rotationMode !== undefined
-	) {
-		this.updateTransform( data ) ;
-		if ( this.lightEmitting ) { this.updateTransformLight( data ) ; }
+	if ( data.position !== undefined || data.positionMode !== undefined ) {
+		this.updatePosition( data , true ) ;
+		if ( this.lightEmitting ) { this.updateLightPosition( data , true ) ; }
 	}
+
+	if ( data.rotation !== undefined || data.rotationMode !== undefined ) { this.updateRotation( data , true ) ; }
+	if ( data.size !== undefined || data.sizeMode !== undefined ) { this.updateSize( data , true ) ; }
 } ;
 
 
@@ -689,80 +685,128 @@ GEntity.prototype.updateOrigin = function( newOrigin ) {
 
 
 
-// Size, positioning and rotation
-GEntity.prototype.updateTransform = function( data ) {
-	console.warn( "3D GEntity.updateTransform()" , data ) ;
+GEntity.prototype.updatePosition = function( data , volatile = false ) {
+	console.warn( "3D GEntity.updatePosition()" , data ) ;
 	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( ! mesh ) { return ; }
 
-	if ( data.position ) {
-		this.position = data.position ;
+	var x = data.position.x !== undefined ? data.position.x : this.position.x ,
+		y = data.position.y !== undefined ? data.position.y : this.position.y ,
+		z = data.position.z !== undefined ? data.position.z : this.position.z ;
 
-		if ( data.transition ) {
-			console.warn( "mesh:" , mesh ) ;
-			// Animation using easing
-
-			data.transition.createAnimation(
-				scene ,
-				mesh ,
-				'position' ,
-				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
-			) ;
-		}
-		else {
-			mesh.position.set( this.position.x , this.position.y , this.position.z ) ;
-		}
+	if ( ! volatile ) {
+		this.position.x = x ;
+		this.position.y = y ;
+		this.position.z = z ;
 	}
 
-	if ( data.size ) {
-		this.size = data.size ;
-		mesh.width = this.size.x ;
-		mesh.height = this.size.y ;
-	}
+	if ( data.transition ) {
+		console.warn( "mesh:" , mesh ) ;
+		// Animation using easing
 
-	if ( data.rotation ) {
-		this.rotation = data.rotation ;
-		mesh.angle = this.rotation.z ;
+		data.transition.createAnimation(
+			scene ,
+			mesh ,
+			'position' ,
+			Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+			new Babylon.Vector3( x , y , z )
+		) ;
+	}
+	else {
+		mesh.position.set( x , y , z ) ;
 	}
 } ;
 
 
 
-GEntity.prototype.updateTransformLight = function( data ) {
-	console.warn( "3D GEntity.updateTransformLight()" , data ) ;
+GEntity.prototype.updateRotation = function( data , volatile = false ) {
+	console.warn( "3D GEntity.updateRotation()" , data ) ;
+	var mesh = this.babylon.mesh ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( ! mesh ) { return ; }
+
+	var x = data.rotation.x !== undefined ? data.rotation.x : this.rotation.x ,
+		y = data.rotation.y !== undefined ? data.rotation.y : this.rotation.y ,
+		z = data.rotation.z !== undefined ? data.rotation.z : this.rotation.z ;
+
+	if ( ! volatile ) {
+		this.rotation.x = x ;
+		this.rotation.y = y ;
+		this.rotation.z = z ;
+	}
+
+	mesh.angle = z ;
+} ;
+
+
+
+GEntity.prototype.updateSize = function( data , volatile = false ) {
+	console.warn( "3D GEntity.updateSize()" , data ) ;
+	var mesh = this.babylon.mesh ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( ! mesh ) { return ; }
+
+	var x = data.size.x !== undefined ? data.size.x : this.size.x ,
+		y = data.size.y !== undefined ? data.size.y : this.size.y ,
+		z = data.size.z !== undefined ? data.size.z : this.size.z ;
+
+	if ( ! volatile ) {
+		this.size.x = x ;
+		this.size.y = y ;
+		this.size.z = z ;
+	}
+
+	//mesh.width = this.size.x ;
+	//mesh.height = this.size.y ;
+	mesh.scaling.x = x ;
+	mesh.scaling.y = y ;
+	mesh.scaling.z = z ;
+} ;
+
+
+
+GEntity.prototype.updateLightPosition = function( data , volatile = false ) {
+	console.warn( "3D GEntity.updateLightPosition()" , data ) ;
 	var light = this.babylon.light ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( ! light ) { return ; }
 
-	if ( data.position ) {
-		this.position = data.position ;
+	var x = data.position.x !== undefined ? data.position.x : this.position.x ,
+		y = data.position.y !== undefined ? data.position.y : this.position.y ,
+		z = data.position.z !== undefined ? data.position.z : this.position.z ;
 
-		if ( data.transition ) {
-			console.warn( "light:" , light ) ;
-			// Animation using easing
+	if ( ! volatile ) {
+		this.position.x = x ;
+		this.position.y = y ;
+		this.position.z = z ;
+	}
 
-			data.transition.createAnimation(
-				scene ,
-				light ,
-				'position' ,
-				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
-			) ;
-		}
-		else {
-			light.position.set( this.position.x , this.position.y , this.position.z ) ;
-		}
+	if ( data.transition ) {
+		console.warn( "light:" , light ) ;
+		// Animation using easing
+
+		data.transition.createAnimation(
+			scene ,
+			light ,
+			'position' ,
+			Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+			new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
+		) ;
+	}
+	else {
+		light.position.set( this.position.x , this.position.y , this.position.z ) ;
 	}
 } ;
 
 
 
 // Light color/intensity/...
-GEntity.prototype.updateLight = function( data ) {
+GEntity.prototype.updateLight = function( data , volatile = false ) {
 	console.warn( "3D GEntity.updateLight()" , data ) ;
 	if ( data.special.light === undefined ) { return ; }
 
@@ -1086,47 +1130,6 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-
-// Size, positioning and rotation
-GEntityBackground.prototype.updateTransform = function( data ) {
-	console.warn( "3D GEntityBackground.updateTransform()" , data ) ;
-	return ;
-	var mesh = this.babylon.mesh ,
-		scene = this.gScene.babylon.scene ;
-
-	if ( data.position ) {
-		this.position = data.position ;
-
-		if ( data.transition ) {
-			console.warn( "mesh:" , mesh ) ;
-			// Animation using easing
-
-			data.transition.createAnimation(
-				scene ,
-				mesh ,
-				'position' ,
-				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
-			) ;
-		}
-		else {
-			mesh.position.set( this.position.x , this.position.y , this.position.z ) ;
-		}
-	}
-
-	if ( data.size ) {
-		this.size = data.size ;
-		mesh.scaling.x = this.size.x ;
-		mesh.scaling.y = this.size.y ;
-		mesh.scaling.z = this.size.z ;
-	}
-
-	if ( data.rotation ) {
-		this.rotation = data.rotation ;
-	}
-} ;
-
-
 },{"./GEntity.js":2,"./GTransition.js":12,"babylonjs":23,"seventh":37}],5:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
@@ -1351,47 +1354,6 @@ GEntityGround.prototype.updateMesh = function() {
 
 	this.updateMeshNeeded = false ;
 	return mesh ;
-} ;
-
-
-
-// Size, positioning and rotation
-GEntityGround.prototype.updateTransform = function( data ) {
-	console.warn( "3D GEntityGround.updateTransform()" , data ) ;
-	return ;
-	var mesh = this.babylon.mesh ,
-		scene = this.gScene.babylon.scene ;
-
-	if ( data.position ) {
-		this.position = data.position ;
-
-		if ( data.transition ) {
-			console.warn( "mesh:" , mesh ) ;
-			// Animation using easing
-
-			data.transition.createAnimation(
-				scene ,
-				mesh ,
-				'position' ,
-				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
-			) ;
-		}
-		else {
-			mesh.position.set( this.position.x , this.position.y , this.position.z ) ;
-		}
-	}
-
-	if ( data.size ) {
-		this.size = data.size ;
-		mesh.width = this.size.x ;
-		mesh.height = this.size.y ;
-	}
-
-	if ( data.rotation ) {
-		this.rotation = data.rotation ;
-		mesh.angle = this.rotation.z ;
-	}
 } ;
 
 
@@ -1867,42 +1829,21 @@ GEntitySprite.prototype.updateMesh = function() {
 
 
 
-// Size, positioning and rotation
-GEntitySprite.prototype.updateTransform = function( data ) {
-	console.warn( "3D GEntitySprite.updateTransform()" , data ) ;
+GEntitySprite.prototype.updateRotation = function( data , volatile = false ) {
 	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
-	if ( data.position ) {
-		this.position = data.position ;
+	var x = data.rotation.x !== undefined ? data.rotation.x : this.rotation.x ,
+		y = data.rotation.y !== undefined ? data.rotation.y : this.rotation.y ,
+		z = data.rotation.z !== undefined ? data.rotation.z : this.rotation.z ;
 
-		if ( data.transition ) {
-			console.warn( "mesh:" , mesh ) ;
-			// Animation using easing
-
-			data.transition.createAnimation(
-				scene ,
-				mesh ,
-				'position' ,
-				Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-				new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
-			) ;
-		}
-		else {
-			mesh.position.set( this.position.x , this.position.y , this.position.z ) ;
-		}
+	if ( ! volatile ) {
+		this.rotation.x = x ;
+		this.rotation.y = y ;
+		this.rotation.z = z ;
 	}
 
-	if ( data.size ) {
-		this.size = data.size ;
-		mesh.scaling.x = this.size.x ;
-		mesh.scaling.y = this.size.y ;
-	}
-
-	if ( data.rotation ) {
-		this.rotation = data.rotation ;
-		mesh.rotation.z = this.rotation.z ;
-	}
+	mesh.rotation.z = z ;
 } ;
 
 
@@ -2060,12 +2001,10 @@ GScene.prototype.initScene = function() {
 
 	// TEMP!
 	var t = 0 , radius , baseRadius = 30 ;
-	var counter = 0 ;
 
 	// Register a render loop to repeatedly render the scene
 	engine.runRenderLoop( () => {
-		if ( this.parametricGEntities.size && counter < 5 ) {
-			//counter ++ ;
+		if ( this.parametricGEntities.size ) {
 			for ( let gEntity of this.parametricGEntities ) {
 				gEntity.parametricUpdate( Date.now() / 1000 ) ;
 			}
@@ -2333,7 +2272,7 @@ function Parametric( data ) {
 		t: 0 ,
 		tOffset: - Date.now() / 1000
 	} ;
-	this.computed = { var: {} , formula: {} } ;
+	this.computed = {} ;
 
 	this.update( data ) ;
 }
@@ -2381,35 +2320,37 @@ Parametric.prototype.recursiveUpdate = function( self , data ) {
 
 
 
-Parametric.prototype.compute = function( absoluteT ) {
+Parametric.prototype.compute = function( absoluteT , base ) {
 	this.ctx.t = absoluteT - this.ctx.tOffset ;
 
 	// /!\ RESET COMPUTED?
-	this.recursiveCompute( this.var , this.computed.var ) ;
-	this.recursiveCompute( this.formula , this.computed.formula ) ;
+	this.recursiveCompute( this.var , this.ctx ) ;
+	this.recursiveCompute( this.formula , this.computed , base ) ;
 	
-	return this.computed.formula ;
+	return this.computed ;
 } ;
 
 
 
-Parametric.prototype.recursiveCompute = function( self , computed ) {
-	var key , value ;
+Parametric.prototype.recursiveCompute = function( self , computed , base ) {
+	var key , value , baseValue ;
 
 	for ( key in self ) {
 		value = self[ key ] ;
+		baseValue = base && typeof base === 'object' ? base[ key ] : undefined ;
 
 		if ( typeof value === 'boolean' || typeof value === 'number' ) {
 			computed[ key ] = value ;
 		}
 		else if ( typeof value === 'function' ) {
+			this.ctx.base = baseValue ;
 			computed[ key ] = value( this.ctx ) ;
 		}
 		else if ( value && typeof value === 'object' ) {
 			computed[ key ] = {} ;	// Don't share with eventData
-			this.recursiveCompute( value , computed[ key ] ) ;
+			this.recursiveCompute( value , computed[ key ] , baseValue ) ;
 		}
-		
+
 		//console.warn( "!!!!!!!!!!!!!!!!! k/v/V" , key , value , computed[ key ] ) ;
 	}
 } ;
