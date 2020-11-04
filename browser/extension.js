@@ -594,7 +594,7 @@ GEntity.prototype.parametricUpdate = function( absoluteT ) {
 
 	if ( data.position !== undefined || data.positionMode !== undefined ) {
 		this.updatePosition( data , true ) ;
-		if ( this.lightEmitting ) { this.updateLightPosition( data , true ) ; }
+		if ( this.lightEmitting ) { this.updateLightPosition( data ) ; }
 	}
 
 	if ( data.rotation !== undefined || data.rotationMode !== undefined ) { this.updateRotation( data , true ) ; }
@@ -648,13 +648,17 @@ GEntity.prototype.updateMaterial = function() {
 	console.warn( "3D GEntity.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
 
 	this.babylon.material = material = new Babylon.StandardMaterial( 'basicMaterial' , scene ) ;
+
+	material.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
+	material.diffuseColor = new Babylon.Color3( 0 , 0 , 0 ) ;
+	material.specularColor = new Babylon.Color3( 0 , 0 , 0 ) ;
+	material.emissiveColor = new Babylon.Color3( 0 , 0 , 0 ) ;
+
 	material.backFaceCulling = true ;
 
 	if ( ! mesh ) { mesh = this.updateMesh() ; }
 	
-	if ( ! mesh ) {
-		console.warn( "@@@@@@@@@@@@@@@@@@!!!!!!!!!!! mesh undefined!" , Object.getPrototypeOf( this ).constructor.name ) ;
-	}
+	//if ( ! mesh ) { console.warn( "@@@@@@@@@@@@@@@@@@!!!!!!!!!!! mesh undefined!" , Object.getPrototypeOf( this ).constructor.name ) ; }
 
 	mesh.material = material ;
 
@@ -675,6 +679,7 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 	var r , g , b ,
 		material = this.babylon.material ;
 
+	console.warn( "@@@@@@@@@@@@@@@@@@ updateMaterialParams()" , params ) ;
 	if ( params.ambient && typeof params.ambient === 'object' ) {
 		if ( ! this.special.ambient ) { this.special.ambient = { r: 1 , g: 1 , b: 1 } ; }
 
@@ -724,6 +729,7 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 	}
 
 	if ( params.emissive && typeof params.emissive === 'object' ) {
+		console.warn( "@@@@@@@@@@@@@@@@@@ updateMaterialParams() emissive" , params.emissive ) ;
 		if ( ! this.special.emissive ) { this.special.emissive = { r: 0 , g: 0 , b: 0 } ; }
 
 		r = params.emissive.r !== undefined ? params.emissive.r : this.special.emissive.r ,
@@ -818,7 +824,7 @@ GEntity.prototype.updateOrigin = function( newOrigin ) {
 
 
 GEntity.prototype.updatePosition = function( data , volatile = false ) {
-	console.warn( "3D GEntity.updatePosition()" , data ) ;
+	//console.warn( "3D GEntity.updatePosition()" , data ) ;
 	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
@@ -835,7 +841,7 @@ GEntity.prototype.updatePosition = function( data , volatile = false ) {
 	}
 
 	if ( data.transition ) {
-		console.warn( "mesh:" , mesh ) ;
+		//console.warn( "mesh:" , mesh ) ;
 		// Animation using easing
 
 		data.transition.createAnimation(
@@ -901,8 +907,8 @@ GEntity.prototype.updateSize = function( data , volatile = false ) {
 
 
 
-GEntity.prototype.updateLightPosition = function( data , volatile = false ) {
-	console.warn( "3D GEntity.updateLightPosition()" , data ) ;
+GEntity.prototype.updateLightPosition = function( data ) {
+	//console.warn( "3D GEntity.updateLightPosition()" , data ) ;
 	var light = this.babylon.light ,
 		scene = this.gScene.babylon.scene ;
 
@@ -911,12 +917,6 @@ GEntity.prototype.updateLightPosition = function( data , volatile = false ) {
 	var x = data.position.x !== undefined ? data.position.x : this.position.x ,
 		y = data.position.y !== undefined ? data.position.y : this.position.y ,
 		z = data.position.z !== undefined ? data.position.z : this.position.z ;
-
-	if ( ! volatile ) {
-		this.position.x = x ;
-		this.position.y = y ;
-		this.position.z = z ;
-	}
 
 	if ( data.transition ) {
 		console.warn( "light:" , light ) ;
@@ -927,11 +927,11 @@ GEntity.prototype.updateLightPosition = function( data , volatile = false ) {
 			light ,
 			'position' ,
 			Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-			new Babylon.Vector3( this.position.x , this.position.y , this.position.z )
+			new Babylon.Vector3( x , y , z )
 		) ;
 	}
 	else {
-		light.position.set( this.position.x , this.position.y , this.position.z ) ;
+		light.position.set( x , y , z ) ;
 	}
 } ;
 
@@ -1083,6 +1083,7 @@ const Promise = require( 'seventh' ) ;
 
 function GEntityAmbientLight( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
+	this.updateMeshNeeded = this.updateMaterialNeeded = false ;
 }
 
 GEntityAmbientLight.prototype = Object.create( GEntity.prototype ) ;
@@ -1306,7 +1307,7 @@ const Promise = require( 'seventh' ) ;
 
 
 const SHAPE_CLASS = {
-	sphere: Babylon.Mesh.CreateSphere
+	sphere: 'CreateSphere'
 } ;
 
 
@@ -1347,12 +1348,12 @@ GEntityBasicShape.prototype.updateMesh = function() {
 	if ( ! this.shapeClass ) { return ; }
 	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
 
-	this.babylon.mesh = mesh = this.shapeClass( 'basic-shape' , this.shapeParams , scene ) ;	//, true ) ;
+	this.babylon.mesh = mesh = Babylon.MeshBuilder[ this.shapeClass ]( 'basic-shape' , this.shapeParams , scene ) ;
 
 	mesh.scaling.x = this.size.x ;
 	mesh.scaling.y = this.size.y ;
 	mesh.scaling.z = this.size.z ;
-
+	
 	console.warn( '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Mesh:' , mesh ) ;
 
 	this.updateMeshNeeded = false ;
@@ -1403,6 +1404,7 @@ const Promise = require( 'seventh' ) ;
 
 function GEntityDirectionalLight( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
+	this.updateMeshNeeded = this.updateMaterialNeeded = false ;
 }
 
 GEntityDirectionalLight.prototype = Object.create( GEntity.prototype ) ;
@@ -1632,6 +1634,7 @@ const Promise = require( 'seventh' ) ;
 
 function GEntityHemisphericLight( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
+	this.updateMeshNeeded = this.updateMaterialNeeded = false ;
 	this.createLightNeeded = true ;
 }
 
@@ -1759,6 +1762,7 @@ const Promise = require( 'seventh' ) ;
 
 function GEntityPointLight( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
+	this.updateMeshNeeded = this.updateMaterialNeeded = false ;
 }
 
 GEntityPointLight.prototype = Object.create( GEntity.prototype ) ;
@@ -1815,6 +1819,7 @@ const Promise = require( 'seventh' ) ;
 
 function GEntitySpotLight( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
+	this.updateMeshNeeded = this.updateMaterialNeeded = false ;
 	console.error( "Not supported ATM!" ) ;
 }
 
@@ -2211,30 +2216,8 @@ GScene.prototype.initScene = function() {
 	scene.autoClear = false ;		// Don't clear the color buffer between frame (skybox expected!)
 	scene.autoClearDepthAndStencil = false ;	// Same with depth and stencil buffer
 
-	// TEMP! Point Lights to test sprites!
-	var pointLightPosition = new Babylon.Vector3( 0 , 0 , 0 ) ;
-	//* Add the point light
-	var pointLight = new Babylon.PointLight( "pointLight" , pointLightPosition , scene ) ;
-	pointLight.diffuse = new Babylon.Color3( 1 , 1 , 1 ) ;
-	pointLight.specular = new Babylon.Color3( 1 , 1 , 1 ) ;
-	pointLight.intensity = 1 ;
-
-	// Add the physical sphere for the point light
-	var pointLightSphere = Babylon.MeshBuilder.CreateSphere( "pointLightSphere" , { diameter: 2 } , scene ) ;
-	pointLightSphere.position = pointLightPosition ;
-	pointLightSphere.material = new Babylon.StandardMaterial( 'pointLightMaterial' , scene ) ;
-	pointLightSphere.material.diffuseColor = new Babylon.Color3( 0 , 0 , 0 ) ;
-	pointLightSphere.material.specularColor = new Babylon.Color3( 0 , 0 , 0 ) ;
-	pointLightSphere.material.emissiveColor = new Babylon.Color3( 1 , 1 , 0 ) ;
-	//*/
-
-
-
 	// Add a camera to the scene and attach it to the canvas
 	this.globalCamera = new Camera( this ) ;
-
-	// TEMP!
-	var t = 0 , radius , baseRadius = 30 ;
 
 	// Register a render loop to repeatedly render the scene
 	engine.runRenderLoop( () => {
@@ -2247,14 +2230,6 @@ GScene.prototype.initScene = function() {
 		this.emitIfListener( 'render' , this.changes ) ;
 		this.changes.camera = false ;
 		
-		//+++ TEMP! Move the pointlight
-		radius = baseRadius * ( 1 + Math.cos( 0.51 * t ) ) ;
-		pointLightPosition.x = 15 + radius * Math.cos( 0.7 * t ) ;
-		pointLightPosition.z = 30 + radius * Math.sin( 0.7 * t ) ;
-		pointLightPosition.y = 20 + 18 * Math.sin( 1.17 * t ) ;
-		t += 0.01 ;
-		//--- TEMP
-
 		scene.render() ;
 	} ) ;
 	
