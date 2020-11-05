@@ -2466,10 +2466,8 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 
 
 
-//const kungFig = require( 'kung-fig' ) ;
-//const Expression = kungFig.Expression ;
-
-//const log = require( 'logfella' ).global.use( 'spellcast' ) ;
+const extension = require( './browser-extension.js' ) ;
+const operators = extension.host.exports.expressionOperators ;
 
 
 
@@ -2516,7 +2514,8 @@ Parametric.prototype.recursiveUpdate = function( self , data ) {
 			self[ key ] = value ;
 		}
 		else if ( typeof value === 'string' ) {
-			self[ key ] = new Function( 'ctx' , 'return ( ' + value + ' ) ;' ) ;
+			self[ key ] = new Function( 'op' , 'ctx' , 'return ( ' + value + ' ) ;' ) ;
+			//self[ key ] = new Function( 'ctx' , 'return ( ' + value + ' ) ;' ) ;
 		}
 		else if ( value && typeof value === 'object' ) {
 			self[ key ] = {} ;	// Don't share with eventData
@@ -2553,7 +2552,8 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 		}
 		else if ( typeof value === 'function' ) {
 			this.ctx.base = baseValue ;
-			computed[ key ] = value( this.ctx ) ;
+			computed[ key ] = value( operators , this.ctx ) ;
+			//computed[ key ] = value( this.ctx ) ;
 		}
 		else if ( value && typeof value === 'object' ) {
 			computed[ key ] = {} ;	// Don't share with eventData
@@ -2565,7 +2565,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 } ;
 
 
-},{}],15:[function(require,module,exports){
+},{"./browser-extension.js":15}],15:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3219,7 +3219,7 @@ function Exm( options = {} ) {
 
 	this.ns = options.ns ;
 	this.extensionPath = options.extensionPath || '/ext' ;
-	this.suffix = '/extension.js' ;
+	this.suffix = options.suffix || '/extension.js' ;
 
 	this.api = options.api || {} ;
 	this.exports = options.exports || {} ;
