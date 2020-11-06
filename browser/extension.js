@@ -572,14 +572,11 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 		else if ( typeof data.parametric === 'object' ) {
 			if ( ! this.parametric ) {
 				this.gScene.parametricGEntities.add( this ) ;
-				this.parametricCtx = {
-					t: 0 ,
-					tOffset: - Date.now() / 1000
-				} ;
-				this.parametricComputedData = {} ;
+				this.parametric = new Parametric( data.parametric ) ;
 			}
-			
-			this.parametric = new Parametric( data.parametric ) ;
+			else {
+				this.parametric.update( data.parametric ) ;
+			}
 		}
 		console.warn( "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 3D GEntity.update() parametric" , data ) ;
 	}
@@ -589,8 +586,18 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 
 
+// Not to be confused with .updateParametric() (which don't exist).
+// This does not update the parametric value (done by this.parametric.update()),
+// but instead update based on actual parametric formulas.
 GEntity.prototype.parametricUpdate = function( absoluteT ) {
 	var data = this.parametric.compute( absoluteT , this ) ;
+
+	if ( ! data ) {
+		// If data is null, then the animation have finished, we can remove it.
+		this.parametric = null ;
+		this.gScene.parametricGEntities.delete( this ) ;
+		return ;
+	}
 
 	if ( data.position !== undefined || data.positionMode !== undefined ) {
 		this.updatePosition( data , true ) ;
@@ -2483,6 +2490,7 @@ function Parametric( data ) {
 		tOffset: - Date.now() / 1000
 	} ;
 	this.computed = {} ;
+	this.stopAt = Infinity ;
 
 	this.update( data ) ;
 }
@@ -2491,38 +2499,70 @@ module.exports = Parametric ;
 
 
 
+function emptyObject( object ) {
+	var key ;
+	for ( key in object ) {
+		delete object[ key ] ;
+	}
+}
+
+
+
 // !CHANGE HERE MUST BE REFLECTED IN SERVER's Parametric! E.g.: spellcast-ext-web-client/lib/Parametric.js
 Parametric.prototype.update = function( data ) {
-	if ( data.reset ) { this.ctx.tOffset = - Date.now() / 1000 ; }
+	if ( data.reset ) {
+		emptyObject( this.var ) ;
+		emptyObject( this.formula ) ;
+		emptyObject( this.ctx ) ;
+		emptyObject( this.computed ) ;
+		this.ctx.t = 0 ;
+		this.ctx.tOffset = - Date.now() / 1000 ;
+	}
+	else if ( data.resetT ) {
+		this.ctx.tOffset = - Date.now() / 1000 ;
+		console.warn( "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNIGGA, please...." , this.ctx.tOffset ) ;
+	}
 
-	// /!\ RESET COMPUTED?
+	if ( typeof data.stopAt === 'number' ) {
+		this.stopAt = data.stopAt ;
+	}
+
 	if ( data.var ) {
 		this.recursiveUpdate( this.var , data.var ) ;
 	}
 
 	if ( data.formula ) {
-		this.recursiveUpdate( this.formula , data.formula ) ;
+		this.recursiveUpdate( this.formula , data.formula , this.computed ) ;
 	}
 } ;
 
 
 
-Parametric.prototype.recursiveUpdate = function( self , data ) {
+Parametric.prototype.recursiveUpdate = function( self , data , computed ) {
 	var key , value ;
 
 	for ( key in data ) {
 		value = data[ key ] ;
 
-		if ( typeof value === 'boolean' || typeof value === 'number' ) {
+		if ( typeof value === null ) {
+			// We destroy that parametric formula along with any computed value
+			delete self[ key ] ;
+			if ( computed && typeof computed[ key ] === 'object' ) { delete computed[ key ] ; }
+		}
+		else if ( typeof value === 'boolean' || typeof value === 'number' ) {
 			self[ key ] = value ;
 		}
 		else if ( typeof value === 'string' ) {
 			self[ key ] = new Function( 'op' , 'ctx' , 'return ( ' + value + ' ) ;' ) ;
 			//self[ key ] = new Function( 'ctx' , 'return ( ' + value + ' ) ;' ) ;
 		}
-		else if ( value && typeof value === 'object' ) {
+		else if ( typeof value === 'object' ) {
 			self[ key ] = {} ;	// Don't share with eventData
-			this.recursiveUpdate( self[ key ] , value ) ;
+			this.recursiveUpdate(
+				self[ key ] ,
+				value ,
+				computed && typeof computed[ key ] === 'object' ? computed[ key ] : null
+			) ;
 		}
 		
 		console.warn( "########## k/v/V" , key , value , self[ key ] ) ;
@@ -2532,7 +2572,8 @@ Parametric.prototype.recursiveUpdate = function( self , data ) {
 
 
 Parametric.prototype.compute = function( absoluteT , base ) {
-	this.ctx.t = absoluteT - this.ctx.tOffset ;
+	this.ctx.t = absoluteT + this.ctx.tOffset ;
+	if ( this.ctx.t > this.stopAt ) { return null ; }
 
 	// /!\ RESET COMPUTED?
 	this.recursiveCompute( this.var , this.ctx ) ;
