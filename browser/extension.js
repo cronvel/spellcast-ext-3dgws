@@ -2487,6 +2487,7 @@ function Parametric( data ) {
 	this.formula = {} ;
 	this.ctx = {
 		t: 0 ,
+		rt: 0 ,		// relative t, relative to stopAt (rt=1 if t=stopAt)
 		tOffset: - Date.now() / 1000
 	} ;
 	this.computed = {} ;
@@ -2515,12 +2516,11 @@ Parametric.prototype.update = function( data ) {
 		emptyObject( this.formula ) ;
 		emptyObject( this.ctx ) ;
 		emptyObject( this.computed ) ;
-		this.ctx.t = 0 ;
+		this.ctx.t = this.ctx.rt = 0 ;
 		this.ctx.tOffset = - Date.now() / 1000 ;
 	}
 	else if ( data.resetT ) {
 		this.ctx.tOffset = - Date.now() / 1000 ;
-		console.warn( "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNIGGA, please...." , this.ctx.tOffset ) ;
 	}
 
 	if ( typeof data.stopAt === 'number' ) {
@@ -2574,6 +2574,8 @@ Parametric.prototype.recursiveUpdate = function( self , data , computed ) {
 Parametric.prototype.compute = function( absoluteT , base ) {
 	this.ctx.t = absoluteT + this.ctx.tOffset ;
 	if ( this.ctx.t > this.stopAt ) { return null ; }
+
+	this.ctx.rt = this.ctx.t / this.stopAt ;
 
 	// /!\ RESET COMPUTED?
 	this.recursiveCompute( this.var , this.ctx ) ;
