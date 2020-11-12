@@ -457,7 +457,7 @@ function GEntity( dom , gScene , data ) {
 	this.gScene = gScene ;
 	this.usage = data.usage || 'sprite' ;	// immutable
 	this.transient = data.transient || undefined ;	// immutable
-	this.parent = data.parent || undefined ;	// immutable
+	this.parent = undefined ;	// immutable, set later in the constructor
 
 	this.show = false ;
 	this.persistent = true ;
@@ -481,19 +481,24 @@ function GEntity( dom , gScene , data ) {
 	this.engine = {} ;
 	this.parametric = null ;
 
+	// Internals
+	
 	this.clientMods = {		// Things that are not server-side
 		variant: null ,		// A variant affix that is automatically computed
 		xFlipVariant: null ,	// A variant that can be used flipped
 		xFlip: false
 	} ;
 
-	// Internal
 	this.updateMeshNeeded = true ;
 	this.updateMaterialNeeded = true ;
 	this.createLightNeeded = false ;
 	this.texturePackObject = null ;	// The TexturePack instance
 	this.variantObject = null ;		// The Variant instance
 	this.lightEmitting = false ;
+	
+	this.children = new Set() ;
+	if ( data.parent ) { this.setParent( data.parent ) ; }
+	
 	this.babylon = {
 		material: null ,
 		mesh: null ,
@@ -511,6 +516,33 @@ module.exports = GEntity ;
 
 
 GEntity.prototype.localBBoxSize = 1 ;
+
+
+
+// TODO
+GEntity.prototype.destroy = function() {
+	/*
+		Should destroy:
+		- All babylon object
+		- All children GEntities
+	*/
+} ;
+
+
+
+GEntity.prototype.setParent = function( parentId ) {
+	var parent = this.gScene.gEntities[ parentId ] ;
+	if ( ! parent ) { return ; }
+	this.parent = parent ;
+	parent.addChild( this ) ;
+} ;
+
+
+
+GEntity.prototype.addChild = function( child ) {
+	// Derivated class may have specific works here...
+	this.children.add( child ) ;
+} ;
 
 
 
@@ -848,6 +880,14 @@ GEntity.prototype.updatePosition = function( data , volatile = false ) {
 		this.position.y = y ;
 		this.position.z = z ;
 	}
+
+	/*
+	if ( this.parent ) {
+		x += this.parent.position.x ;
+		y += this.parent.position.y ;
+		z += this.parent.position.z ;
+	}
+	//*/
 
 	if ( data.transition ) {
 		//console.warn( "mesh:" , mesh ) ;
@@ -1579,17 +1619,22 @@ GEntityFloatingText.prototype.updateMaterial = function() {
 
 
 GEntityFloatingText.prototype.updateMesh = function() {
-	var mesh ,
+	var mesh , parentMesh ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
 
 	this.babylon.mesh = mesh = Babylon.PlaneBuilder.CreatePlane( 'floating-text' , { width: 80 , height: 5 } , scene ) ;
 	//mesh.position.x = 0 ; mesh.position.y = 10 ; mesh.position.z = 0 ;
-	mesh.billboardMode = Babylon.AbstractMesh.BILLBOARDMODE_ALL;
+	mesh.billboardMode = Babylon.AbstractMesh.BILLBOARDMODE_ALL ;
 
-	//mesh.scaling.x = this.size.x ;
-	//mesh.scaling.y = this.size.y ;
+	if ( this.parent && this.parent.babylon.mesh ) {
+		mesh.parent = parentMesh = this.parent.babylon.mesh ;
+
+		// Compensate for the parent scaling which enlarge and deform the floating text
+		mesh.scaling.x = 1 / parentMesh.scaling.x ;
+		mesh.scaling.y = 1 / parentMesh.scaling.y ;
+	}
 
 	console.warn( 'GEntityFloatingText .updateMesh() Mesh:' , mesh ) ;
 
