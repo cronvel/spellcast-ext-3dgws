@@ -453,6 +453,7 @@ const Promise = require( 'seventh' ) ;
 
 // !THIS SHOULD TRACK SERVER-SIDE GEntity! spellcast/lib/gfx/GEntity.js
 function GEntity( dom , gScene , data ) {
+	this.id = data.id || null ;
 	this.dom = dom ;	// Dom instance, immutable
 	this.gScene = gScene ;
 	this.usage = data.usage || 'sprite' ;	// immutable
@@ -506,6 +507,10 @@ function GEntity( dom , gScene , data ) {
 	} ;
 
 	this.defineStates( 'loaded' , 'loading' ) ;
+	
+	if ( this.transient ) {
+		setTimeout( () => this.destroy() , this.transient * 1000 ) ;
+	}
 }
 
 GEntity.prototype = Object.create( Ngev.prototype ) ;
@@ -521,11 +526,27 @@ GEntity.prototype.localBBoxSize = 1 ;
 
 // TODO
 GEntity.prototype.destroy = function() {
-	/*
-		Should destroy:
-		- All babylon object
-		- All children GEntities
-	*/
+	if ( this.children.size ) {
+		for ( let child of this.children ) {
+			child.destroy() ;
+		}
+	}
+
+	if ( this.babylon.mesh ) {
+		this.babylon.mesh.parent = null ;
+		this.babylon.mesh.dispose() ;
+	}
+
+	if ( this.babylon.material ) {
+		this.babylon.material.dispose(
+			false , // forceDisposeEffect
+			false , // forceDisposeTextures, keep texture, texture should be managed by gScene
+			true    // notBoundToMesh
+		) ;
+	}
+
+	this.gScene.removeGEntity( this.id ) ;
+	this.destroyed = true ;
 } ;
 
 
