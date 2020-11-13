@@ -1644,9 +1644,11 @@ GEntityFloatingText.prototype.updateMaterial = function() {
 		// Font size should be at most 3/4 of the texture height, but with shadow, it should be even less...
 		textBlock.fontSizeInPixels = 46 ;
 		//textBlock.text = "test Hq Ap|█" ;
+		textBlock.text = "test" ;
 		textBlock.text = this.special.content.text ;
 		textBlock.color = this.special.content.textColor ;
 		textBlock.alpha = this.opacity ;
+		textBlock.resizeToFit = true ;
 		advancedTexture.addControl( textBlock ) ;
 	}
 
@@ -1655,9 +1657,9 @@ GEntityFloatingText.prototype.updateMaterial = function() {
 	}
 	else {
 		this.babylon.icon = icon = new Babylon.GUI.Image( 'icon' , '/script/gfx/icons/heart.png' ) ;
-		//icon.width = 0.2 ; icon.height = "40px" ;
+		icon.width = 0.0625 ;
+		icon.height = 1 ;
 		advancedTexture.addControl( icon ) ;
-		console.warn( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" , icon ) ;
 	}
 
 	//mesh.material = material ;
@@ -1730,6 +1732,11 @@ GEntityFloatingText.prototype.updateContent = function( content ) {
 	if ( typeof content.textColor === 'string' ) { textBlock.color = this.special.content.textColor = content.textColor ; }
 	if ( typeof content.shadowColor === 'string' ) { textBlock.shadowColor = this.special.content.shadowColor = content.shadowColor ; }
 	if ( typeof content.shadowBlur === 'number' ) { textBlock.shadowBlur = this.special.content.shadowBlur = content.shadowBlur ; }
+
+	if ( this.babylon.icon ) {
+		this.babylon.icon.left = - 64 - textBlock.widthInPixels / 2 ;
+		console.warn( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" , textBlock.widthInPixels , textBlock.width , textBlock ) ;
+	}
 
 	//textBlock.shadowOffsetX = textBlock.shadowOffsetY = 1 ;
 	//advancedTexture.background = "rgba(255,0,255,0.2)" ;
