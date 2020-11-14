@@ -1615,6 +1615,17 @@ module.exports = GEntityFloatingText ;
 
 
 
+GEntityFloatingText.prototype.destroy = function() {
+	if ( this.babylon.advancedTexture ) {
+		this.babylon.advancedTexture.parent = null ;
+		this.babylon.advancedTexture.dispose() ;
+	}
+
+	GEntity.prototype.destroy.call( this ) ;
+} ;
+
+
+
 // This GEntity has no texture
 GEntityFloatingText.prototype.updateTexture = function() {} ;
 
@@ -1644,7 +1655,6 @@ GEntityFloatingText.prototype.updateMaterial = function() {
 		// Font size should be at most 3/4 of the texture height, but with shadow, it should be even less...
 		textBlock.fontSizeInPixels = 46 ;
 		//textBlock.text = "test Hq Ap|█" ;
-		textBlock.text = "test" ;
 		textBlock.text = this.special.content.text ;
 		textBlock.color = this.special.content.textColor ;
 		textBlock.alpha = this.opacity ;
@@ -1652,20 +1662,66 @@ GEntityFloatingText.prototype.updateMaterial = function() {
 		advancedTexture.addControl( textBlock ) ;
 	}
 
-	if ( this.babylon.icon ) {
-		icon = this.babylon.icon ;
-	}
-	else {
-		this.babylon.icon = icon = new Babylon.GUI.Image( 'icon' , '/script/gfx/icons/heart.png' ) ;
-		icon.width = 0.0625 ;
-		icon.height = 1 ;
-		advancedTexture.addControl( icon ) ;
-	}
 
 	//mesh.material = material ;
 	//mesh.material = null ;
 
 	this.updateMaterialNeeded = false ;
+} ;
+
+
+
+// Because font does not use 100% of height all the time...
+const ICON_HEIGHT_RATIO = 0.7 ;
+
+GEntityFloatingText.prototype.updateContent = function( content ) {
+	var icon ,
+		advancedTexture = this.babylon.advancedTexture ,
+		textBlock = this.babylon.textBlock ;
+
+	if ( ! textBlock ) { return ; }
+
+	if ( content.text !== undefined ) { textBlock.text = this.special.content.text = '' + content.text ; }
+	if ( typeof content.textColor === 'string' ) { textBlock.color = this.special.content.textColor = content.textColor ; }
+	if ( typeof content.outlineColor === 'string' ) { textBlock.outlineColor = this.special.content.outlineColor = content.outlineColor ; }
+	if ( typeof content.outlineWidth === 'number' ) { textBlock.outlineWidth = this.special.content.outlineWidth = content.outlineWidth ; }
+	if ( typeof content.shadowColor === 'string' ) { textBlock.shadowColor = this.special.content.shadowColor = content.shadowColor ; }
+	if ( typeof content.shadowBlur === 'number' ) { textBlock.shadowBlur = this.special.content.shadowBlur = content.shadowBlur ; }
+
+	if ( content.icon ) {
+		// /!\ Use a texture instead of a direct URL? So this could be preloaded?
+		if ( this.babylon.icon ) {
+			icon = this.babylon.icon ;
+			icon.source = this.dom.cleanUrl( content.icon ) ;
+			icon.width = ICON_HEIGHT_RATIO * 0.0625 ;
+			icon.height = ICON_HEIGHT_RATIO ;
+		}
+		else {
+			this.babylon.icon = icon = new Babylon.GUI.Image( 'icon' , this.dom.cleanUrl( content.icon ) ) ;
+			icon.width = ICON_HEIGHT_RATIO * 0.0625 ;
+			icon.height = ICON_HEIGHT_RATIO ;
+			advancedTexture.addControl( icon ) ;
+		}
+
+		this.iconPosition() ;
+	}
+
+	//textBlock.shadowOffsetX = textBlock.shadowOffsetY = 1 ;
+	//advancedTexture.background = "rgba(255,0,255,0.2)" ;
+} ;
+
+
+
+// Internal
+GEntityFloatingText.prototype.iconPosition = function() {
+	// The width of the TextBlock is not correctly synchronously detected,
+	// we have to wait a bit for the correct width to be computed.
+	if ( this.babylon.textBlock._width.isPixel ) {
+		this.babylon.icon.left = - 32 - this.babylon.textBlock.widthInPixels / 2 ;
+	}
+	else {
+		setTimeout( () => this.iconPosition() , 10 ) ;
+	}
 } ;
 
 
@@ -1677,14 +1733,14 @@ GEntityFloatingText.prototype.updateMaterialParams = function( params , volatile
 
 
 GEntityFloatingText.prototype.updateOpacity = function( opacity , volatile = false ) {
-	var textBlock = this.babylon.textBlock ;
-	if ( ! textBlock ) { return ; }
-
 	if ( opacity < 0 ) { opacity = 0 ; }
 	else if ( opacity > 1 ) { opacity = 1 ; }
 
 	if ( ! volatile ) { this.opacity = opacity ; }
-	textBlock.alpha = opacity ;
+
+	// It looks like changing the opacity of the whole advancedTexture does not works, so we have to change both the text and icon
+	if ( this.babylon.textBlock ) { this.babylon.textBlock.alpha = opacity ; }
+	if ( this.babylon.icon ) { this.babylon.icon.alpha = opacity ; }
 } ;
 
 
@@ -1719,27 +1775,6 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 	if ( data.special && data.special.content ) {
 		this.updateContent( data.special.content ) ;
 	}
-} ;
-
-
-
-GEntityFloatingText.prototype.updateContent = function( content ) {
-	var textBlock = this.babylon.textBlock ;
-
-	if ( ! textBlock ) { return ; }
-
-	if ( content.text !== undefined ) { textBlock.text = this.special.content.text = '' + content.text ; }
-	if ( typeof content.textColor === 'string' ) { textBlock.color = this.special.content.textColor = content.textColor ; }
-	if ( typeof content.shadowColor === 'string' ) { textBlock.shadowColor = this.special.content.shadowColor = content.shadowColor ; }
-	if ( typeof content.shadowBlur === 'number' ) { textBlock.shadowBlur = this.special.content.shadowBlur = content.shadowBlur ; }
-
-	if ( this.babylon.icon ) {
-		this.babylon.icon.left = - 64 - textBlock.widthInPixels / 2 ;
-		console.warn( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" , textBlock.widthInPixels , textBlock.width , textBlock ) ;
-	}
-
-	//textBlock.shadowOffsetX = textBlock.shadowOffsetY = 1 ;
-	//advancedTexture.background = "rgba(255,0,255,0.2)" ;
 } ;
 
 
@@ -2759,6 +2794,7 @@ function Parametric( data ) {
 	} ;
 	this.computed = {} ;
 	this.stopAt = Infinity ;
+	this.cleanStop = false ;
 
 	this.update( data ) ;
 }
@@ -2840,7 +2876,15 @@ Parametric.prototype.recursiveUpdate = function( self , data , computed ) {
 
 Parametric.prototype.compute = function( absoluteT , base ) {
 	this.ctx.t = absoluteT + this.ctx.tOffset ;
-	if ( this.ctx.t > this.stopAt ) { return null ; }
+
+	if ( this.ctx.t > this.stopAt ) {
+		if ( this.cleanStop ) { return null ; }
+		this.ctx.t = this.stopAt ;
+		this.cleanStop = true ;
+	}
+	else if ( this.ctx.t === this.stopAt ) {
+		this.cleanStop = true ;
+	}
 
 	this.ctx.rt = this.ctx.t / this.stopAt ;
 
