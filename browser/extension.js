@@ -2468,6 +2468,11 @@ const Promise = require( 'seventh' ) ;
 
 function GEntityUiFloatingText( dom , gScene , data ) {
 	GEntityFloatingText.call( this , dom , gScene , data ) ;
+
+	this.special.content.textSize = 0.05 ;
+
+	this.iconOffset = 0 ;
+	this.safeIconOffset = true ;
 	//this.fixIconTimer = null ;
 }
 
@@ -2506,9 +2511,6 @@ GEntityUiFloatingText.prototype.updateMaterial = function() {
 	}
 	else {
 		this.babylon.textBlock = textBlock = new Babylon.GUI.TextBlock() ;
-		// Font size should be at most 3/4 of the texture height, but with shadow, it should be even less...
-		textBlock.fontSizeInPixels = 46 ;
-		//textBlock.text = "test Hq Ap|█" ;
 		textBlock.text = this.special.content.text ;
 		textBlock.color = this.special.content.textColor ;
 		textBlock.alpha = this.opacity ;
@@ -2527,40 +2529,53 @@ GEntityUiFloatingText.prototype.updateMaterial = function() {
 GEntityUiFloatingText.prototype.updateContent = function( content ) {
 	var icon ,
 		ui = this.gScene.babylon.ui ,
+		uiSize = ui.getSize() ,
 		textBlock = this.babylon.textBlock ;
 
 	if ( ! textBlock ) { return ; }
 
-	if ( content.text !== undefined ) { textBlock.text = this.special.content.text = '' + content.text ; }
+	if ( content.text !== undefined ) {
+		this.safeIconOffset = false ;
+		textBlock.text = this.special.content.text = '' + content.text ;
+	}
+
+	if ( typeof content.fontSizeInPixels === 'string' ) {
+		this.safeIconOffset = false ;
+		textBlock.fontSizeInPixels = Math.round( this.special.content.textSize * uiSize.height ) ;
+	}
+
 	if ( typeof content.textColor === 'string' ) { textBlock.color = this.special.content.textColor = content.textColor ; }
 	if ( typeof content.outlineColor === 'string' ) { textBlock.outlineColor = this.special.content.outlineColor = content.outlineColor ; }
-	if ( typeof content.outlineWidth === 'number' ) { textBlock.outlineWidth = this.special.content.outlineWidth = content.outlineWidth ; }
+	if ( typeof content.outlineWidth === 'number' ) { textBlock.outlineWidth = this.special.content.outlineWidth = Math.round( content.outlineWidth * uiSize.height ) ; }
 	if ( typeof content.shadowColor === 'string' ) { textBlock.shadowColor = this.special.content.shadowColor = content.shadowColor ; }
-	if ( typeof content.shadowBlur === 'number' ) { textBlock.shadowBlur = this.special.content.shadowBlur = content.shadowBlur ; }
+	if ( typeof content.shadowBlur === 'number' ) { textBlock.shadowBlur = this.special.content.shadowBlur = Math.round( content.shadowBlur * uiSize.height ) ; }
 
 	if ( content.icon ) {
 		// /!\ Use a texture instead of a direct URL? So this could be preloaded?
 		if ( this.babylon.icon ) {
 			icon = this.babylon.icon ;
 			icon.source = this.dom.cleanUrl( content.icon ) ;
-			icon.width = 46 ;
-			icon.height = 46 ;
+			icon.width = textBlock.fontSizeInPixels ;
+			icon.height = textBlock.fontSizeInPixels ;
 		}
 		else {
 			this.babylon.icon = icon = new Babylon.GUI.Image( 'icon' , this.dom.cleanUrl( content.icon ) ) ;
-			icon.widthInPixels = 46 ;
-			icon.heightInPixels = 46 ;
+			icon.widthInPixels = textBlock.fontSizeInPixels ;
+			icon.heightInPixels = textBlock.fontSizeInPixels ;
 			ui.addControl( icon ) ;
 
-			let offset = textBlock._width.isPixel ? - 32 + this.babylon.textBlock.widthInPixels / 2 : - 132 ;
+			this.iconOffset = Math.round(
+				icon.widthInPixels / 2 +
+				( textBlock._width.isPixel ? textBlock.widthInPixels / 2 : 3 * textBlock.fontSizeInPixels )
+			) ;
 
 			// SHOULD BE DONE AFTER .addControl()
 			if ( this.parent ) {
 				icon.linkWithMesh( this.parent.babylon.mesh ) ;
-				icon.linkOffsetXInPixels = textBlock.linkOffsetXInPixels + offset ;
+				icon.linkOffsetXInPixels = textBlock.linkOffsetXInPixels - this.iconOffset ;
 			}
 			else {
-				icon.leftInPixels = textBlock.leftInPixels + offset ;
+				icon.leftInPixels = textBlock.leftInPixels - this.iconOffset ;
 			}
 		}
 
@@ -2589,12 +2604,12 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 	var textBlock = this.babylon.textBlock ,
 		icon = this.babylon.icon ,
 		ui = this.gScene.babylon.ui ,
+		uiSize = ui.getSize() ,
 		scene = this.gScene.babylon.scene ;
 
 	var iconX ,
 		x = data.position.x !== undefined ? data.position.x : this.position.x ,
-		y = data.position.y !== undefined ? data.position.y : this.position.y ,
-		uiSize = ui.getSize() ;
+		y = data.position.y !== undefined ? data.position.y : this.position.y ;
 
 	if ( ! volatile ) {
 		this.position.x = x ;
@@ -2630,7 +2645,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 			if ( icon ) {
 				icon.linkOffsetXInPixels = iconX ;
 				icon.linkOffsetYInPixels = y ;
-				if ( ! textBlock._width.isPixel ) { this.fixIcon() ; }
+				//if ( ! textBlock._width.isPixel ) { this.fixIcon() ; }
 			}
 		}
 	}
@@ -2651,7 +2666,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 			if ( icon ) {
 				icon.leftInPixels = iconX ;
 				icon.topInPixels = y ;
-				if ( ! textBlock._width.isPixel ) { this.fixIcon() ; }
+				//if ( ! textBlock._width.isPixel ) { this.fixIcon() ; }
 			}
 		}
 	}
@@ -2660,7 +2675,30 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 
 
 // Internal
-GEntityUiFloatingText.prototype.fixIcon = function( position ) {
+GEntityUiFloatingText.prototype.fixIcon = function( fn , retry = 3 , willBeSafe = false ) {
+	if ( ! willBeSafe && ! this.safeIconOffset ) {
+		setTimeout( () => this.fixIcon( fn , retry , true ) , 10 ) ;
+		return ;
+	}
+
+	var icon = this.babylon.icon ,
+		textBlock = this.babylon.textBlock ;
+
+	if ( ! icon ) { return ; }
+	if ( ! textBlock._width.isPixel ) {
+		if ( retry > 0 ) {
+			setTimeout( () => this.fixIcon( fn , retry - 1 , willBeSafe ) , 10 ) ;
+			return ;
+		}
+	}
+	if ( ! this.safeIconOffset ) {
+		this.safeIconOffset = true ;
+	}
+
+	this.iconOffset = Math.round(
+		icon.widthInPixels / 2 +
+		( textBlock._width.isPixel ? textBlock.widthInPixels / 2 : 3 * textBlock.fontSizeInPixels )
+	) ;
 } ;
 
 
