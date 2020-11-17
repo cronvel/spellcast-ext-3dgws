@@ -581,13 +581,6 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 	if ( data.engine !== undefined ) { await this.updateEngine( data.engine ) ; }
 
-	// /!\ This createLightNeeded thing is not coded very well, need refacto... /!\
-	if ( this.createLightNeeded ) {
-		this.createLightNeeded = false ;
-		this.lightEmitting = true ;
-		await this.createLight() ;
-	}
-
 	if ( data.special !== undefined ) { await this.updateSpecialStage1( data ) ; }
 
 	if ( data.texturePack !== undefined || data.variant !== undefined || data.theme !== undefined ) {
@@ -596,6 +589,13 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 	if ( this.updateMeshNeeded ) { await this.updateMesh() ; }
 	if ( this.updateMaterialNeeded ) { await this.updateMaterial() ; }
+
+	// /!\ This createLightNeeded thing is not coded very well, need refacto... /!\
+	if ( this.createLightNeeded ) {
+		this.createLightNeeded = false ;
+		this.lightEmitting = true ;
+		await this.createLight() ;
+	}
 
 	if ( data.special !== undefined ) { await this.updateSpecialStage2( data ) ; }
 
@@ -610,11 +610,7 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 	if ( data.direction !== undefined ) { this.updateDirection( data.direction ) ; }
 	if ( data.facing !== undefined ) { this.updateFacing( data.facing ) ; }
 
-	if ( data.position !== undefined || data.positionMode !== undefined ) {
-		this.updatePosition( data ) ;
-		if ( this.lightEmitting ) { this.updateLightPosition( data ) ; }
-	}
-
+	if ( data.position !== undefined || data.positionMode !== undefined ) { this.updatePosition( data ) ; }
 	if ( data.rotation !== undefined || data.rotationMode !== undefined ) { this.updateRotation( data ) ; }
 	if ( data.size !== undefined || data.sizeMode !== undefined ) { this.updateSize( data ) ; }
 
@@ -659,11 +655,7 @@ GEntity.prototype.parametricUpdate = function( absoluteT ) {
 
 	if ( typeof data.opacity === 'number' ) { this.updateOpacity( data.opacity , true ) ; }
 
-	if ( data.position !== undefined || data.positionMode !== undefined ) {
-		this.updatePosition( data , true ) ;
-		if ( this.lightEmitting ) { this.updateLightPosition( data ) ; }
-	}
-
+	if ( data.position !== undefined || data.positionMode !== undefined ) { this.updatePosition( data , true ) ; }
 	if ( data.rotation !== undefined || data.rotationMode !== undefined ) { this.updateRotation( data , true ) ; }
 	if ( data.size !== undefined || data.sizeMode !== undefined ) { this.updateSize( data , true ) ; }
 } ;
@@ -671,18 +663,15 @@ GEntity.prototype.parametricUpdate = function( absoluteT ) {
 
 
 GEntity.prototype.updateEngine = function( engineData ) {} ;
-
-
-
-GEntity.prototype.updateSpecialStage1 = function( data ) {
-	if ( data.special.light !== undefined ) {
-		this.updateLight( data ) ;
-	}
-} ;
+GEntity.prototype.updateSpecialStage1 = function( data ) {} ;
 
 
 
 GEntity.prototype.updateSpecialStage2 = function( data ) {
+	if ( data.special.light !== undefined ) {
+		this.updateLight( data ) ;
+	}
+
 	if ( data.special && data.special.material ) {
 		this.updateMaterialParams( data.special.material ) ;
 	}
@@ -920,14 +909,6 @@ GEntity.prototype.updatePosition = function( data , volatile = false ) {
 		this.position.z = z ;
 	}
 
-	/*
-	if ( this.parent ) {
-		x += this.parent.position.x ;
-		y += this.parent.position.y ;
-		z += this.parent.position.z ;
-	}
-	//*/
-
 	if ( data.transition ) {
 		//console.warn( "mesh:" , mesh ) ;
 		// Animation using easing
@@ -991,36 +972,6 @@ GEntity.prototype.updateSize = function( data , volatile = false ) {
 	mesh.scaling.x = x ;
 	mesh.scaling.y = y ;
 	mesh.scaling.z = z ;
-} ;
-
-
-
-GEntity.prototype.updateLightPosition = function( data ) {
-	//console.warn( "3D GEntity.updateLightPosition()" , data ) ;
-	var light = this.babylon.light ,
-		scene = this.gScene.babylon.scene ;
-
-	if ( ! light ) { return ; }
-
-	var x = data.position.x !== undefined ? data.position.x : this.position.x ,
-		y = data.position.y !== undefined ? data.position.y : this.position.y ,
-		z = data.position.z !== undefined ? data.position.z : this.position.z ;
-
-	if ( data.transition ) {
-		console.warn( "light:" , light ) ;
-		// Animation using easing
-
-		data.transition.createAnimation(
-			scene ,
-			light ,
-			'position' ,
-			Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
-			new Babylon.Vector3( x , y , z )
-		) ;
-	}
-	else {
-		light.position.set( x , y , z ) ;
-	}
 } ;
 
 
@@ -1106,6 +1057,10 @@ GEntity.prototype.updateLight = function( data , volatile = false ) {
 
 GEntity.prototype.createLight = function() {
 	console.warn( "@@@@@@@@@@@@@@@@@@@@@@@@@ GEntity.createLight()" ) ;
+	if ( ! this.babylon.mesh ) {
+		throw new Error( "Non pure light GEntity needs a mesh to be light-emitting" ) ;
+	}
+
 	var scene = this.gScene.babylon.scene ;
 
 	if ( ! this.special.light ) {
@@ -1118,9 +1073,11 @@ GEntity.prototype.createLight = function() {
 
 	this.babylon.light = new Babylon.PointLight(
 		"pointLight" ,
-		new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ,
+		new Babylon.Vector3( 0 , 0 , 0 ) ,
 		scene
 	) ;
+
+	this.babylon.light.parent = this.babylon.mesh ;
 
 	this.babylon.light.diffuse = this.special.light.diffuse ;
 	this.babylon.light.specular = this.special.light.specular ;
@@ -2079,10 +2036,73 @@ GEntityPointLight.prototype.constructor = GEntityPointLight ;
 
 module.exports = GEntityPointLight ;
 
-/*
-	Base GEntity already contains all GEntityPointLight as default for light emissive entity,
-	so there is nothing to do here for instance.
-*/
+
+
+GEntityPointLight.prototype.updatePosition = function( data , volatile = false ) {
+	//console.warn( "3D GEntityPointLight.updatePosition()" , data ) ;
+	var light = this.babylon.light ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( ! light ) { return ; }
+
+	var x = data.position.x !== undefined ? data.position.x : this.position.x ,
+		y = data.position.y !== undefined ? data.position.y : this.position.y ,
+		z = data.position.z !== undefined ? data.position.z : this.position.z ;
+
+	if ( ! volatile ) {
+		this.position.x = x ;
+		this.position.y = y ;
+		this.position.z = z ;
+	}
+
+	if ( data.transition ) {
+		//console.warn( "light:" , light ) ;
+		// Animation using easing
+
+		data.transition.createAnimation(
+			scene ,
+			light ,
+			'position' ,
+			Babylon.Animation.ANIMATIONTYPE_VECTOR3 ,
+			new Babylon.Vector3( x , y , z )
+		) ;
+	}
+	else {
+		light.position.set( x , y , z ) ;
+	}
+} ;
+
+
+
+// Re-use base GEntity .updateLight()
+//GEntityPointLight.prototype.updateLight = function( data , volatile = false )
+
+GEntityPointLight.prototype.updateMaterialParams = function() {} ;
+
+
+
+GEntityPointLight.prototype.createLight = function() {
+	var scene = this.gScene.babylon.scene ;
+	if ( this.babylon.light ) { console.warn( "GEntityPointLight.createLight(): light is already existing" ) ; return ; }
+
+	if ( ! this.special.light ) {
+		this.special.light = {
+			diffuse: new Babylon.Color3( 1 , 1 , 1 ) ,
+			specular: new Babylon.Color3( 0.5 , 0.5 , 0.5 ) ,
+			intensity: 1
+		} ;
+	}
+
+	this.babylon.light = new Babylon.PointLight(
+		"pointLight" ,
+		new Babylon.Vector3( this.position.x , this.position.y , this.position.z ) ,
+		scene
+	) ;
+
+	this.babylon.light.diffuse = this.special.light.diffuse ;
+	this.babylon.light.specular = this.special.light.specular ;
+	this.babylon.light.intensity = this.special.light.intensity ;
+} ;
 
 
 },{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"babylonjs":27,"seventh":41}],11:[function(require,module,exports){
