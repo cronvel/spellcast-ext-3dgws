@@ -3047,9 +3047,10 @@ GScene.prototype.update = function( data , awaiting = false , initial = false ) 
 
 
 GScene.prototype.updateColorGrading = function( data ) {
+	console.warn( ".updateColorGrading()" , this.special.colorGrading ) ;
 	var scene = this.babylon.scene ,
 		colorGrading = data.special.colorGrading ,
-		oldLevel , setLevel = false ,
+		url , oldLevel , setLevel = false ,
 		colorGradingTexture ;
 
 	if ( ! colorGrading ) {
@@ -3067,12 +3068,14 @@ GScene.prototype.updateColorGrading = function( data ) {
 
 	if ( typeof colorGrading !== 'object' ) { return ; }
 
+	if ( colorGrading.url && typeof colorGrading.url === 'string' ) { url = this.dom.cleanUrl( colorGrading.url ) ; }
+
 	if ( ! this.special.colorGrading ) {
 		// URL is mandatory if there is nothing yet
-		if ( ! colorGrading.url || typeof colorGrading.url !== 'string' ) { return ; }
+		if ( ! url ) { return ; }
 
 		this.special.colorGrading = {
-			url: this.dom.cleanUrl( colorGrading.url ) ,
+			url ,
 			level: typeof colorGrading.level === 'number' ? colorGrading.level : 1 
 		} ;
 
@@ -3085,34 +3088,31 @@ GScene.prototype.updateColorGrading = function( data ) {
 		scene.imageProcessingConfiguration.colorGradingWithGreenDepth = false ;
 		oldLevel = 0 ;
 		setLevel = true ;
-		//colorGradingTexture.level = this.special.colorGrading.level ;
 	}
 	else {
-		if ( colorGrading.url && typeof colorGrading.url === 'string' ) {
-			this.special.colorGrading.url = this.dom.cleanUrl( colorGrading.url ) ;
+		if ( url && url !== this.special.colorGrading.url ) {
+			this.special.colorGrading.url = url ;
 
-			//colorGradingTexture = new Babylon.ColorGradingTexture( this.special.colorGrading.url , scene ) ;
 			colorGradingTexture = new Babylon.Texture( this.special.colorGrading.url , scene , true , false ) ;
 			colorGradingTexture.wrapU = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 			colorGradingTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 
 			scene.imageProcessingConfiguration.colorGradingTexture = colorGradingTexture ;
-			//colorGradingTexture.level = this.special.colorGrading.level ;
 		}
 		else {
 			colorGradingTexture = scene.imageProcessingConfiguration.colorGradingTexture ;
 		}
 
 		if ( typeof colorGrading.level === 'number' ) {
-			this.special.colorGrading.level = colorGrading.level ;
 			oldLevel = this.special.colorGrading.level ;
 			setLevel = true ;
+			this.special.colorGrading.level = colorGrading.level ;
 		}
 	}
 
 	if ( setLevel ) {
+		console.warn( "level" , oldLevel , this.special.colorGrading.level , data.transition ) ;
 		if ( data.transition ) {
-			//console.warn( "mesh:" , mesh ) ;
 			// Animation using easing
 
 			data.transition.createAnimation(
