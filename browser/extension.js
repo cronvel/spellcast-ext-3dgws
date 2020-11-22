@@ -2912,6 +2912,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 
 const Babylon = require( 'babylonjs' ) ;
 const Camera = require( './Camera.js' ) ;
+const GTransition = require( './GTransition.js' ) ;
 
 const Ngev = require( 'nextgen-events/lib/browser.js' ) ;
 const Promise = require( 'seventh' ) ;
@@ -2929,6 +2930,7 @@ function GScene( dom , data ) {
 	this.paused = false ;
 	this.persistent = false ;
 	this.theme = 'default' ;
+	this.special = {} ;
 	this.engine = {} ;
 	this.texturePacks = {} ;
 	this.gEntityLocations = {} ;
@@ -3008,8 +3010,14 @@ GScene.prototype.initScene = function() {
 
 
 // !THIS SHOULD TRACK SERVER-SIDE GScene! spellcast/lib/gfx/GScene.js
-GScene.prototype.update = function( data ) {
+GScene.prototype.update = function( data , awaiting = false , initial = false ) {
+	console.warn( "3D GScene.update()" , data ) ;
 	var key ;
+
+	if ( data.transition ) {
+		if ( initial ) { delete data.transition ; }
+		else { data.transition = new GTransition( data.transition ) ; }
+	}
 
 	if ( data.active !== undefined ) {
 		this.active = !! data.active ;
@@ -3021,29 +3029,32 @@ GScene.prototype.update = function( data ) {
 	//if ( data.roles !== undefined ) { this.roles = data.roles ; }
 	if ( data.theme !== undefined ) { this.theme = data.theme || 'default' ; }
 
-	if ( data.engine && typeof data.engine === 'object' ) {
-		//Object.assign( this.engine , data.engine ) ;
-		if ( data.engine.colorGrading !== undefined ) {
-			this.updateColorGrading( data.engine.colorGrading ) ;
+	if ( data.special && typeof data.special === 'object' ) {
+		if ( data.special.colorGrading !== undefined ) {
+			this.updateColorGrading( data ) ;
 		}
 	}
 
+	if ( data.engine && typeof data.engine === 'object' ) {
+		Object.assign( this.engine , data.engine ) ;
+	}
 
 	if ( data.globalCamera !== undefined ) { this.globalCamera.update( data.globalCamera ) ; }
 
-	// For instance, there is no async code in GScene, but the API have to allow it
-	return Promise.resolved ;
+	return ( awaiting && data.transition && data.transition.promise ) || Promise.resolved ;
 } ;
 
 
 
-GScene.prototype.updateColorGrading = function( colorGrading ) {
+GScene.prototype.updateColorGrading = function( data ) {
 	var scene = this.babylon.scene ,
+		colorGrading = data.special.colorGrading ,
+		oldLevel , setLevel = false ,
 		colorGradingTexture ;
 
 	if ( ! colorGrading ) {
-		if ( this.engine.colorGrading ) {
-			this.engine.colorGrading = null ;
+		if ( this.special.colorGrading ) {
+			this.special.colorGrading = null ;
 		}
 
 		scene.imageProcessingConfiguration.colorGradingEnabled = false ;
@@ -3056,40 +3067,65 @@ GScene.prototype.updateColorGrading = function( colorGrading ) {
 
 	if ( typeof colorGrading !== 'object' ) { return ; }
 
-	if ( ! this.engine.colorGrading ) {
+	if ( ! this.special.colorGrading ) {
 		// URL is mandatory if there is nothing yet
 		if ( ! colorGrading.url || typeof colorGrading.url !== 'string' ) { return ; }
 
-		this.engine.colorGrading = {
+		this.special.colorGrading = {
 			url: this.dom.cleanUrl( colorGrading.url ) ,
 			level: typeof colorGrading.level === 'number' ? colorGrading.level : 1 
 		} ;
 
-		//colorGradingTexture = new Babylon.ColorGradingTexture( this.engine.colorGrading.url , scene ) ;
-		colorGradingTexture = new Babylon.Texture( this.engine.colorGrading.url , scene , true , false ) ;
+		colorGradingTexture = new Babylon.Texture( this.special.colorGrading.url , scene , true , false ) ;
 		colorGradingTexture.wrapU = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 		colorGradingTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 
 		scene.imageProcessingConfiguration.colorGradingEnabled = true ;
 		scene.imageProcessingConfiguration.colorGradingTexture = colorGradingTexture ;
-		scene.imageProcessingConfiguration.colorGradingWithGreenDepth = false;
-		colorGradingTexture.level = this.engine.colorGrading.level ;
+		scene.imageProcessingConfiguration.colorGradingWithGreenDepth = false ;
+		oldLevel = 0 ;
+		setLevel = true ;
+		//colorGradingTexture.level = this.special.colorGrading.level ;
 	}
 	else {
 		if ( colorGrading.url && typeof colorGrading.url === 'string' ) {
-			this.engine.colorGrading.url = this.dom.cleanUrl( colorGrading.url ) ;
+			this.special.colorGrading.url = this.dom.cleanUrl( colorGrading.url ) ;
 
-			//colorGradingTexture = new Babylon.ColorGradingTexture( this.engine.colorGrading.url , scene ) ;
-			colorGradingTexture = new Babylon.Texture( this.engine.colorGrading.url , scene , true , false ) ;
+			//colorGradingTexture = new Babylon.ColorGradingTexture( this.special.colorGrading.url , scene ) ;
+			colorGradingTexture = new Babylon.Texture( this.special.colorGrading.url , scene , true , false ) ;
 			colorGradingTexture.wrapU = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 			colorGradingTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 
 			scene.imageProcessingConfiguration.colorGradingTexture = colorGradingTexture ;
-			colorGradingTexture.level = this.engine.colorGrading.level ;
+			//colorGradingTexture.level = this.special.colorGrading.level ;
+		}
+		else {
+			colorGradingTexture = scene.imageProcessingConfiguration.colorGradingTexture ;
 		}
 
 		if ( typeof colorGrading.level === 'number' ) {
-			colorGradingTexture.level = this.engine.colorGrading.level = colorGrading.level ;
+			this.special.colorGrading.level = colorGrading.level ;
+			oldLevel = this.special.colorGrading.level ;
+			setLevel = true ;
+		}
+	}
+
+	if ( setLevel ) {
+		if ( data.transition ) {
+			//console.warn( "mesh:" , mesh ) ;
+			// Animation using easing
+
+			data.transition.createAnimation(
+				scene ,
+				colorGradingTexture ,
+				'level' ,
+				Babylon.Animation.ANIMATIONTYPE_FLOAT ,
+				this.special.colorGrading.level ,
+				oldLevel
+			) ;
+		}
+		else {
+			colorGradingTexture.level = this.special.colorGrading.level ;
 		}
 	}
 } ;
@@ -3109,7 +3145,7 @@ GScene.prototype.removeGEntity = function( gEntityId ) {
 } ;
 
 
-},{"./Camera.js":1,"babylonjs":28,"nextgen-events/lib/browser.js":32,"seventh":42}],16:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":16,"babylonjs":28,"nextgen-events/lib/browser.js":32,"seventh":42}],16:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
