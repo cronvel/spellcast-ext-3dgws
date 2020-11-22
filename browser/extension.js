@@ -2832,6 +2832,7 @@ function GScene( dom , data ) {
 	this.gEntityLocations = {} ;
 	this.gEntities = {} ;	// GEntities by name
 	this.parametricGEntities = new Set() ;	// Only GEntities having parametric animation
+	this.fallbackTransitions = new Set() ;	// GTransition for things that are not animatable in Babylon
 
 	this.globalCamera = null ;
 	this.roleCamera = null ;	// For multiplayer, not implemented yet
@@ -2887,8 +2888,15 @@ GScene.prototype.initScene = function() {
 	// Register a render loop to repeatedly render the scene
 	engine.runRenderLoop( () => {
 		if ( this.parametricGEntities.size ) {
+			let t = Date.now() / 1000 ;
 			for ( let gEntity of this.parametricGEntities ) {
-				gEntity.parametricUpdate( Date.now() / 1000 ) ;
+				gEntity.parametricUpdate( t ) ;
+			}
+		}
+
+		if ( this.fallbackTransitions.size ) {
+			for ( let transition of this.fallbackTransitions ) {
+				transition.nextStep() ;
 			}
 		}
 
@@ -2927,6 +2935,8 @@ GScene.prototype.update = function( data , awaiting = false , initial = false ) 
 
 	if ( data.special && typeof data.special === 'object' ) {
 		if ( data.special.ambient ) { this.updateAmbient( data ) ; }
+		if ( typeof data.special.contrast === 'number' ) { this.updateContrast( data ) ; }
+		if ( typeof data.special.exposure === 'number' ) { this.updateExposure( data ) ; }
 		if ( data.special.colorGrading ) { this.updateColorGrading( data ) ; }
 	}
 
@@ -2962,6 +2972,62 @@ GScene.prototype.updateAmbient = function( data ) {
 	else {
 		scene.ambientColor.set( this.special.ambient.r , this.special.ambient.g , this.special.ambient.b ) ;
 	}
+} ;
+
+
+
+GScene.prototype.updateContrast = function( data ) {
+	console.warn( ".updateContrast()" , this.special.contrast ) ;
+	var scene = this.babylon.scene ;
+
+	this.special.contrast = data.special.contrast ;
+
+	scene.imageProcessingConfiguration.contrast = this.special.contrast ;
+
+	// Animation doesn't work ATM, scene.imageProcessingConfiguration is not animatable,
+	// so it will need some house-code to handle this type of thing (could work like parametric animation)
+	/*
+	if ( data.transition ) {
+		data.transition.createAnimation(
+			scene ,
+			scene.imageProcessingConfiguration ,
+			'contrast' ,
+			Babylon.Animation.ANIMATIONTYPE_FLOAT ,
+			this.special.contrast
+		) ;
+	}
+	else {
+		scene.imageProcessingConfiguration.contrast = this.special.contrast ;
+	}
+	//*/
+} ;
+
+
+
+GScene.prototype.updateExposure = function( data ) {
+	console.warn( ".updateExposure()" , this.special.exposure ) ;
+	var scene = this.babylon.scene ;
+
+	this.special.exposure = data.special.exposure ;
+
+	scene.imageProcessingConfiguration.exposure = this.special.exposure ;
+
+	// Animation doesn't work ATM, scene.imageProcessingConfiguration is not animatable,
+	// so it will need some house-code to handle this type of thing (could work like parametric animation)
+	/*
+	if ( data.transition ) {
+		data.transition.createAnimation(
+			scene ,
+			scene.imageProcessingConfiguration ,
+			'exposure' ,
+			Babylon.Animation.ANIMATIONTYPE_FLOAT ,
+			this.special.exposure
+		) ;
+	}
+	else {
+		scene.imageProcessingConfiguration.exposure = this.special.exposure ;
+	}
+	//*/
 } ;
 
 
