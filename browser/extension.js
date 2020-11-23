@@ -2943,6 +2943,7 @@ GScene.prototype.update = function( data , awaiting = false , initial = false ) 
 		if ( typeof data.special.exposure === 'number' ) { this.updateExposure( data ) ; }
 		if ( data.special.colorGrading ) { this.updateColorGrading( data ) ; }
 		if ( data.special.colorCurves ) { this.updateColorCurves( data ) ; }
+		if ( data.special.vignette ) { this.updateVignette( data ) ; }
 	}
 
 	if ( data.engine && typeof data.engine === 'object' ) {
@@ -3071,6 +3072,96 @@ GScene.prototype.updateColorCurves = function( data ) {
 		else {
 			scene.imageProcessingConfiguration.colorCurves[ key ] = this.special.colorCurves[ key ] ;
 		}
+	}
+} ;
+
+
+
+const VIGNETTE_FLOAT_PROPERTIES = {
+	stretch: 'vignetteStretch' ,
+	centerX: 'vignetteCentreX' ,
+	centerY: 'vignetteCentreY' ,
+	weight: 'vignetteWeight'
+	//, color: 'vignetteColor'
+	//, blendMode: 'vignetteBlendMode'
+} ;
+
+GScene.prototype.updateVignette = function( data ) {
+	console.warn( ".updateVignette()" , this.special.vignette ) ;
+	var key , targetKey ,
+		vignette = data.special.vignette ,
+		scene = this.babylon.scene ;
+
+	if ( ! vignette ) {
+		if ( this.special.vignette ) { this.special.vignette = null ; }
+		scene.imageProcessingConfiguration.vignetteEnabled = false ;
+		return ;
+	}
+
+	if ( typeof vignette !== 'object' ) { return ; }
+
+	scene.imageProcessingConfiguration.vignetteEnabled = true ;
+	if ( ! this.special.vignette ) { this.special.vignette = {} ; }
+	if ( ! scene.imageProcessingConfiguration.vignette ) {
+		/*
+		scene.imageProcessingConfiguration.vignetteStretch = 0 ;
+		scene.imageProcessingConfiguration.vignetteCentreX = 0 ;
+		scene.imageProcessingConfiguration.vignetteCentreY = 0 ;
+		scene.imageProcessingConfiguration.vignetteWeight = 1.5 ;
+		scene.imageProcessingConfiguration.vignetteColor = new Babylon.Color4( 1 , 1 , 1 , 0.5 ) ;
+		scene.imageProcessingConfiguration.vignetteBlendMode = Babylon.ImageProcessingPostProcess.VIGNETTEMODE_MULTIPLY ;
+		*/
+	}
+
+	for ( key in vignette ) {
+		targetKey = VIGNETTE_FLOAT_PROPERTIES[ key ] ;
+		if ( ! targetKey ) { continue ; }
+		this.special.vignette[ key ] = vignette[ key ] ;
+
+		if ( data.transition ) {
+			data.transition.createAnimation(
+				scene ,
+				scene.imageProcessingConfiguration ,
+				targetKey ,
+				Babylon.Animation.ANIMATIONTYPE_FLOAT ,
+				this.special.vignette[ key ]
+			) ;
+		}
+		else {
+			scene.imageProcessingConfiguration[ targetKey ] = this.special.vignette[ key ] ;
+		}
+	}
+
+	if ( vignette.color ) {
+		this.special.vignette.color = vignette.color ;
+
+		if ( data.transition ) {
+			data.transition.createAnimation(
+				scene ,
+				scene.imageProcessingConfiguration ,
+				'vignetteColor' ,
+				Babylon.Animation.ANIMATIONTYPE_COLOR3 ,
+				new Babylon.Color3( vignette.color.r , vignette.color.g , vignette.color.b )
+			) ;
+		}
+		else {
+			scene.imageProcessingConfiguration.vignetteColor.set( vignette.color.r , vignette.color.g , vignette.color.b ) ;
+		}
+	}
+
+	if ( vignette.blendMode ) {
+		switch ( vignette.blendMode ) {
+			case 'multiply' :
+				this.special.vignette.blendMode = 0 ;	//Babylon.ImageProcessingPostProcess.VIGNETTEMODE_MULTIPLY ;
+				break ;
+			
+			case 'opaque' :
+			default :
+				this.special.vignette.blendMode = 1 ;	//Babylon.ImageProcessingPostProcess.VIGNETTEMODE_OPAQUE ;
+				break ;
+		}
+
+		scene.imageProcessingConfiguration.vignetteBlendMode = this.special.vignette.blendMode ;
 	}
 } ;
 
