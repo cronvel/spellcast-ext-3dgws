@@ -3119,8 +3119,8 @@ GScene.prototype.updateVignette = function( data ) {
 		this.special.vignette[ key ] = vignette[ key ] ;
 
 		if ( data.transition ) {
-			data.transition.createAnimation(
-				scene ,
+			data.transition.createAnimationFn(
+				this ,
 				scene.imageProcessingConfiguration ,
 				targetKey ,
 				Babylon.Animation.ANIMATIONTYPE_FLOAT ,
@@ -3136,8 +3136,8 @@ GScene.prototype.updateVignette = function( data ) {
 		this.special.vignette.color = vignette.color ;
 
 		if ( data.transition ) {
-			data.transition.createAnimation(
-				scene ,
+			data.transition.createAnimationFn(
+				this ,
 				scene.imageProcessingConfiguration ,
 				'vignetteColor' ,
 				Babylon.Animation.ANIMATIONTYPE_COLOR3 ,
@@ -3423,14 +3423,22 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 	) ;
 } ;
 
-
+const INTERPOLATE = [] ;
+// Re-use Babylon interpolation
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_COLOR3 ] = Babylon.Animation.prototype.color3InterpolateFunction ;
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_COLOR4 ] = Babylon.Animation.prototype.color4InterpolateFunction ;
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_FLOAT ] = ( start , end , gradient ) => start + gradient * ( end - start ) ;
+//INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_FLOAT ] = Babylon.Animation.prototype.floatInterpolateFunction ;
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_MATRIX ] = Babylon.Animation.prototype.matrixInterpolateFunction ;
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_QUATERNION ] = Babylon.Animation.prototype.quaternionInterpolateFunction ;
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_SIZE ] = Babylon.Animation.prototype.sizeInterpolateFunction ;
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_VECTOR2 ] = Babylon.Animation.prototype.vector2InterpolateFunction ;
+INTERPOLATE[ Babylon.Animation.ANIMATIONTYPE_VECTOR3 ] = Babylon.Animation.prototype.vector3InterpolateFunction ;
 
 // This is used when .createAnimation() won't work because the property is not animatable in Babylon.
 // It returns a unique function to be used inside the render loop, which return true when its jobs is done and can be deleted.
 GTransition.prototype.createAnimationFn = function( gScene , entity , property , animationType , newValue , oldValue = null ) {
-	if ( animationType !== Babylon.Animation.ANIMATIONTYPE_FLOAT ) {
-		throw new Error( ".createAnimationFn(): Only ANIMATIONTYPE_FLOAT is supported ATM" ) ;
-	}
+	//if ( animationType !== Babylon.Animation.ANIMATIONTYPE_FLOAT ) { throw new Error( ".createAnimationFn(): Only ANIMATIONTYPE_FLOAT is supported ATM" ) ; }
 
 	if ( oldValue === null ) {
 		oldValue = entity[ property ] ;
@@ -3462,8 +3470,8 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 			rt = dt / this.duration ;
 		}
 
-		// lerp
-		entity[ property ] = oldValue + rt * ( newValue - oldValue ) ;
+		//entity[ property ] = oldValue + rt * ( newValue - oldValue ) ;
+		entity[ property ] = INTERPOLATE[ animationType ]( oldValue , newValue , rt ) ;
 	} ;
 
 	// Add it to the gScene
