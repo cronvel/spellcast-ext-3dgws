@@ -466,6 +466,7 @@ function GEntity( dom , gScene , data ) {
 	this.theme = null ;
 	this.texturePack = null ;	// A name, not the instance, see this.texturePackObject for the instance
 	this.variant = 'default' ;	// A name, not the instance, see this.variantObject for the instance
+	this.frame = 0 ;			// An index, not the instance
 	this.opacity = 1 ;
 	this.location = null ;
 	this.origin = { x: 0 , y: 0 , z: 0 } ;
@@ -497,6 +498,7 @@ function GEntity( dom , gScene , data ) {
 	this.createLightNeeded = false ;
 	this.texturePackObject = null ;	// The TexturePack instance
 	this.variantObject = null ;		// The Variant instance
+	this.frameObject = null ;		// The Frame instance
 	this.lightEmitting = false ;
 	
 	this.children = new Set() ;
@@ -819,8 +821,8 @@ GEntity.prototype.updateOpacity = function( opacity , volatile = false ) {
 
 
 // Update the gEntity's texture
-GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId ) {
-	var texturePack , variant ;
+GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId , frameIndex ) {
+	var texturePack , variant , frame ;
 
 	if ( texturePackId !== undefined ) { this.texturePack = texturePackId || null ; }
 	if ( variantId !== undefined ) { this.variant = variantId || null ; }
@@ -867,8 +869,12 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		return ;
 	}
 
-	this.variantObject = variant ;
+	// Check if something changed
+	if ( variant === this.variantObject ) { return ; }
+
 	this.texturePackObject = texturePack ;
+	this.variantObject = variant ;
+	this.clientMods.frame = frameIndex || 0 ;
 	
 	// /!\ SHOULD CHECK IF SOMETHING CHANGED instead of always update the material
 	
@@ -2268,7 +2274,7 @@ GEntitySprite.prototype.updateFacing = function( facing ) {
 
 
 // Update the gEntity's material/texture
-GEntitySprite.prototype.updateMaterial = function() {
+GEntitySprite.prototype.updateMaterial = function( frameIndex = 0 ) {
 	var material ,
 		oldMaterial = this.babylon.material ,
 		scene = this.gScene.babylon.scene ,
@@ -2276,7 +2282,7 @@ GEntitySprite.prototype.updateMaterial = function() {
 
 	console.warn( "3D GEntitySprite.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
 
-	var frame = this.variantObject.frames[ 0 ] ;
+	var frame = this.variantObject.frames[ frameIndex ] ;
 	this.babylon.material = material = new Babylon.StandardMaterial( 'spriteMaterial' , scene ) ;
 	material.backFaceCulling = true ;
 
@@ -2323,7 +2329,7 @@ GEntitySprite.prototype.updateMaterial = function() {
 	*/
 
 	// X-flip and Y-Flip
-	if ( ! this.variantObject.frames[ 0 ].xFlip !== ! this.clientMods.xFlip ) {
+	if ( ! frame.xFlip !== ! this.clientMods.xFlip ) {
 		material.diffuseTexture.uScale = -1 ;
 		material.diffuseTexture.uOffset = 1 ;
 		if ( material.bumpTexture ) {
@@ -2336,7 +2342,7 @@ GEntitySprite.prototype.updateMaterial = function() {
 		}
 	}
 
-	if ( this.variantObject.frames[ 0 ].yFlip ) {
+	if ( ! frame.yFlip !== ! this.clientMods.yFlip ) {
 		material.diffuseTexture.vScale = -1 ;
 		material.diffuseTexture.vOffset = 1 ;
 		if ( material.bumpTexture ) {
