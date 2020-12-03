@@ -844,6 +844,7 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 	}
 
 
+	var oldXFlip = this.clientMods.xFlip ;
 	this.clientMods.xFlip = false ;
 
 	if ( this.clientMods.variant ) {
@@ -879,11 +880,16 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		this.frame = frameIndex !== undefined && variant.frames[ frameIndex ] ? + frameIndex : 0 ;
 	}
 
-	//frame = variant.frames[ frameIndex ] || variant.frames[ 0 ] ;
-	frame = variant.frames[ 0 ] ;
+	frame = variant.frames[ frameIndex ] || variant.frames[ 0 ] ;
+	//this.updateMaterialNeeded = true ;
 
 	// Check if something changed
-	if ( texturePack === this.texturePackObject && variant === this.variantObject && frame === this.frameObject ) { return ; }
+	if (
+		texturePack === this.texturePackObject && variant === this.variantObject &&
+		frame === this.frameObject && oldXFlip === this.clientMods.xFlip
+	) {
+		return ;
+	}
 
 	this.texturePackObject = texturePack ;
 	this.variantObject = variant ;
@@ -2292,7 +2298,6 @@ GEntitySprite.prototype.updateMaterial = function() {
 		mesh = this.babylon.mesh ;
 
 	console.warn( "3D GEntitySprite.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
-	//this.frameObject = this.variantObject.frames[ 0 ] ;
 
 	this.babylon.material = material = new Babylon.StandardMaterial( 'spriteMaterial' , scene ) ;
 	material.backFaceCulling = true ;
@@ -2353,7 +2358,8 @@ GEntitySprite.prototype.updateMaterial = function() {
 		}
 	}
 
-	if ( ! this.frameObject.yFlip !== ! this.clientMods.yFlip ) {
+	// this.clientMods.yFlip does not exist (xFlip is for autofacing, which only change azimuth)
+	if ( this.frameObject.yFlip ) {
 		material.diffuseTexture.vScale = -1 ;
 		material.diffuseTexture.vOffset = 1 ;
 		if ( material.bumpTexture ) {
