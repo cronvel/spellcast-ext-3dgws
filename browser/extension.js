@@ -486,7 +486,7 @@ function GEntity( dom , gScene , data ) {
 	this.parametric = null ;
 
 	// Internals
-	
+
 	this.clientMods = {		// Things that are not server-side
 		variant: null ,		// A variant affix that is automatically computed
 		xFlipVariant: null ,	// A variant that can be used flipped
@@ -500,10 +500,10 @@ function GEntity( dom , gScene , data ) {
 	this.variantObject = null ;		// The Variant instance
 	this.frameObject = null ;		// The Frame instance
 	this.lightEmitting = false ;
-	
+
 	this.children = new Set() ;
 	if ( data.parent ) { this.setParent( data.parent ) ; }
-	
+
 	this.babylon = {
 		material: null ,
 		mesh: null ,
@@ -511,7 +511,7 @@ function GEntity( dom , gScene , data ) {
 	} ;
 
 	this.defineStates( 'loaded' , 'loading' ) ;
-	
+
 	if ( this.transient ) {
 		setTimeout( () => this.destroy() , this.transient * 1000 ) ;
 	}
@@ -693,7 +693,7 @@ GEntity.prototype.updateMesh = function() { this.updateMeshNeeded = false ; } ;
 GEntity.prototype.refreshMaterial = function() {
 	this.updateTexture() ;
 	if ( this.updateMaterialNeeded ) { this.updateMaterial() ; }
-}
+} ;
 
 
 
@@ -716,7 +716,7 @@ GEntity.prototype.updateMaterial = function() {
 	material.backFaceCulling = true ;
 
 	if ( ! mesh ) { mesh = this.updateMesh() ; }
-	
+
 	//if ( ! mesh ) { console.warn( "@@@@@@@@@@@@@@@@@@!!!!!!!!!!! mesh undefined!" , Object.getPrototypeOf( this ).constructor.name ) ; }
 
 	mesh.material = material ;
@@ -751,7 +751,7 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 			this.special.ambient.g = g ;
 			this.special.ambient.b = b ;
 		}
-		
+
 		material.ambientColor.set( r , g , b ) ;
 	}
 
@@ -767,7 +767,7 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 			this.special.diffuse.g = g ;
 			this.special.diffuse.b = b ;
 		}
-		
+
 		material.diffuseColor.set( r , g , b ) ;
 	}
 
@@ -783,7 +783,7 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 			this.special.specular.g = g ;
 			this.special.specular.b = b ;
 		}
-		
+
 		material.specularColor.set( r , g , b ) ;
 	}
 
@@ -800,7 +800,7 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 			this.special.emissive.g = g ;
 			this.special.emissive.b = b ;
 		}
-		
+
 		material.emissiveColor.set( r , g , b ) ;
 	}
 } ;
@@ -821,6 +821,7 @@ GEntity.prototype.updateOpacity = function( opacity , volatile = false ) {
 
 
 // Update the gEntity's texture
+// frameIndex is optional, in this case either it does not change if variant remains unchanged, or it default to 0
 GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId , frameIndex ) {
 	var texturePack , variant , frame ;
 
@@ -849,7 +850,7 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		variant = texturePack.variants[ this.variant + '@' + this.clientMods.variant ] ;
 		if ( ! variant ) {
 			variant = texturePack.variants[ this.variant + '@' + this.clientMods.xFlipVariant ] ;
-			
+
 			if ( variant ) {
 				this.clientMods.xFlip = true ;
 			}
@@ -869,15 +870,25 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		return ;
 	}
 
+	if ( variant === this.variantObject ) {
+		if ( frameIndex !== undefined ) {
+			this.frame = variant.frames[ frameIndex ] ? + frameIndex : 0 ;
+		}
+	}
+	else {
+		this.frame = frameIndex !== undefined && variant.frames[ frameIndex ] ? + frameIndex : 0 ;
+	}
+
+	//frame = variant.frames[ frameIndex ] || variant.frames[ 0 ] ;
+	frame = variant.frames[ 0 ] ;
+
 	// Check if something changed
-	if ( variant === this.variantObject ) { return ; }
+	if ( texturePack === this.texturePackObject && variant === this.variantObject && frame === this.frameObject ) { return ; }
 
 	this.texturePackObject = texturePack ;
 	this.variantObject = variant ;
-	this.clientMods.frame = frameIndex || 0 ;
-	
-	// /!\ SHOULD CHECK IF SOMETHING CHANGED instead of always update the material
-	
+	this.frameObject = frame ;
+
 	this.updateMaterialNeeded = true ;
 } ;
 
@@ -991,7 +1002,7 @@ GEntity.prototype.updateLight = function( data , volatile = false ) {
 	// Create/remove light
 	if ( ! data.special.light !== ! this.lightEmitting ) {
 		this.lightEmitting = !! data.special.light ;
-		
+
 		if ( ! this.lightEmitting ) {
 			if ( this.babylon.light ) {
 				this.babylon.light.dispose() ;
@@ -999,7 +1010,7 @@ GEntity.prototype.updateLight = function( data , volatile = false ) {
 			this.special.light = null ;
 			return ;
 		}
-		
+
 		this.createLight() ;
 	}
 
@@ -2274,39 +2285,39 @@ GEntitySprite.prototype.updateFacing = function( facing ) {
 
 
 // Update the gEntity's material/texture
-GEntitySprite.prototype.updateMaterial = function( frameIndex = 0 ) {
+GEntitySprite.prototype.updateMaterial = function() {
 	var material ,
 		oldMaterial = this.babylon.material ,
 		scene = this.gScene.babylon.scene ,
 		mesh = this.babylon.mesh ;
 
 	console.warn( "3D GEntitySprite.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
+	//this.frameObject = this.variantObject.frames[ 0 ] ;
 
-	var frame = this.variantObject.frames[ frameIndex ] ;
 	this.babylon.material = material = new Babylon.StandardMaterial( 'spriteMaterial' , scene ) ;
 	material.backFaceCulling = true ;
 
 	material.ambientColor = new Babylon.Color3( 1 , 1 , 1 ) ;
 
 	// Diffuse/Albedo
-	var diffuseUrl = ( frame.maps && ( frame.maps.diffuse || frame.maps.albedo ) ) || frame.url
+	var diffuseUrl = ( this.frameObject.maps && ( this.frameObject.maps.diffuse || this.frameObject.maps.albedo ) ) || this.frameObject.url ;
 	material.diffuseTexture = new Babylon.Texture( this.dom.cleanUrl( diffuseUrl ) , scene ) ;
 	material.diffuseTexture.hasAlpha = true ;
 	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
 
 	// Normal/Bump
-	var bumpUrl = frame.maps && ( frame.maps.normal || frame.maps.bump ) ;
+	var bumpUrl = this.frameObject.maps && ( this.frameObject.maps.normal || this.frameObject.maps.bump ) ;
 	if ( bumpUrl ) {
 		material.bumpTexture = new Babylon.Texture( this.dom.cleanUrl( bumpUrl ) , scene ) ;
 		material.bumpTexture.wrapU = material.bumpTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
-		
+
 		// BabylonJS use DirectX normalmap, but most software export OpenGL normalmap
 		material.invertNormalMapX = true ;
 		material.invertNormalMapY = true ;
 	}
-	
+
 	// Specular
-	var specularUrl = frame.maps && frame.maps.specular ;
+	var specularUrl = this.frameObject.maps && this.frameObject.maps.specular ;
 	if ( specularUrl ) {
 		material.specularTexture = new Babylon.Texture( this.dom.cleanUrl( specularUrl ) , scene ) ;
 		material.specularTexture.wrapU = material.specularTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
@@ -2325,11 +2336,11 @@ GEntitySprite.prototype.updateMaterial = function( frameIndex = 0 ) {
 			.lightmapTexture
 			.reflectionTexture
 			.refractionTexture
-			
+
 	*/
 
 	// X-flip and Y-Flip
-	if ( ! frame.xFlip !== ! this.clientMods.xFlip ) {
+	if ( ! this.frameObject.xFlip !== ! this.clientMods.xFlip ) {
 		material.diffuseTexture.uScale = -1 ;
 		material.diffuseTexture.uOffset = 1 ;
 		if ( material.bumpTexture ) {
@@ -2342,7 +2353,7 @@ GEntitySprite.prototype.updateMaterial = function( frameIndex = 0 ) {
 		}
 	}
 
-	if ( ! frame.yFlip !== ! this.clientMods.yFlip ) {
+	if ( ! this.frameObject.yFlip !== ! this.clientMods.yFlip ) {
 		material.diffuseTexture.vScale = -1 ;
 		material.diffuseTexture.vOffset = 1 ;
 		if ( material.bumpTexture ) {
@@ -2452,7 +2463,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 		//this.direction
 		this.facing
 	) ;
-	
+
 	var sector = vectorUtils.degToSector[ this.special.spriteAutoFacing ]( angle ) ;
 
 	//console.warn( "@@@@@@@@@@ autoFacing() angle" , angle ) ;
