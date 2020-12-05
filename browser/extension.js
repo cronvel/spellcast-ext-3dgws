@@ -896,16 +896,16 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 		return ;
 	}
 
-	if ( variant.animation ) {
+	this.texturePackObject = texturePack ;
+	this.variantObject = variant ;
+	this.frameObject = frame ;
+
+	if ( this.variantObject.animation ) {
 		this.startTextureAnimation( ! keepAnimationSchedule ) ;
 	}
 	else {
 		this.stopTextureAnimation() ;
 	}
-
-	this.texturePackObject = texturePack ;
-	this.variantObject = variant ;
-	this.frameObject = frame ;
 
 	this.updateMaterialNeeded = true ;
 } ;
@@ -913,6 +913,7 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 
 
 GEntity.prototype.startTextureAnimation = function( reset = false ) {
+	//console.warn( "_____________________________ startTextureAnimation" , this.variantObject , this.variantObject.animation ) ;
 	if ( ! this.variantObject.animation ) {
 		if ( this.textureAnimationTimer ) {
 			clearTimeout( this.textureAnimationTimer ) ;
@@ -928,12 +929,14 @@ GEntity.prototype.startTextureAnimation = function( reset = false ) {
 		this.textureAnimationTimer = null ;
 	}
 
-	this.textureAnimationTimer = setTimeout( this.nextTextureFrame , this.frameObject.duration ) ;
+	//console.warn( "_____________________________ startTextureAnimation: ok for" , this.frameObject.duration ) ;
+	this.textureAnimationTimer = setTimeout( this.nextTextureFrame , 1000 * this.frameObject.duration ) ;
 } ;
 
 
 
 GEntity.prototype.stopTextureAnimation = function() {
+	//console.warn( "_____________________________ stopTextureAnimation" ) ;
 	if ( this.textureAnimationTimer ) {
 		clearTimeout( this.textureAnimationTimer ) ;
 		this.textureAnimationTimer = null ;
@@ -943,8 +946,8 @@ GEntity.prototype.stopTextureAnimation = function() {
 
 
 GEntity.prototype.nextTextureFrame = function() {
-	//this.variantObject.animation
-	if ( this.frame + 1 === this.variantObject.frames ) {
+	//console.warn( "___________________________ nextTextureFrame BEFORE" , this.frame , this.frameObject ) ;
+	if ( this.frame >= this.variantObject.frames.length - 1 ) {
 		if ( this.variantObject.animation === 'loop' ) {
 			this.frame = 0 ;
 		}
@@ -958,8 +961,9 @@ GEntity.prototype.nextTextureFrame = function() {
 	}
 
 	this.frameObject = this.variantObject.frames[ this.frame ] ;
+	//console.warn( "___________________________ nextTextureFrame AFTER" , this.frame , this.frameObject ) ;
 	this.updateMaterial() ;
-	this.textureAnimationTimer = setTimeout( this.nextTextureFrame , this.frameObject.duration ) ;
+	this.textureAnimationTimer = setTimeout( this.nextTextureFrame , 1000 * this.frameObject.duration ) ;
 } ;
 
 
