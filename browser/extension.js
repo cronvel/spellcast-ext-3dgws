@@ -696,9 +696,9 @@ GEntity.prototype.updateMesh = function() { this.updateMeshNeeded = false ; } ;
 
 
 // Refresh all the material stack, from texture to actual Babylon material
-GEntity.prototype.refreshMaterial = function() {
+GEntity.prototype.refreshMaterial = async function() {
 	this.updateTexture() ;
-	if ( this.updateMaterialNeeded ) { this.updateMaterial() ; }
+	if ( this.updateMaterialNeeded ) { await this.updateMaterial() ; }
 } ;
 
 
@@ -962,8 +962,8 @@ GEntity.prototype.nextTextureFrame = function() {
 
 	this.frameObject = this.variantObject.frames[ this.frame ] ;
 	//console.warn( "___________________________ nextTextureFrame AFTER" , this.frame , this.frameObject ) ;
-	this.updateMaterial() ;
 	this.textureAnimationTimer = setTimeout( this.nextTextureFrame , 1000 * this.frameObject.duration ) ;
+	this.updateMaterial() ;
 } ;
 
 
@@ -2391,7 +2391,7 @@ GEntitySprite.prototype.updateFacing = function( facing ) {
 
 
 // Update the gEntity's material/texture
-GEntitySprite.prototype.updateMaterial = function() {
+GEntitySprite.prototype.updateMaterial = async function() {
 	var material ,
 		oldMaterial = this.babylon.material ,
 		scene = this.gScene.babylon.scene ,
@@ -2406,7 +2406,38 @@ GEntitySprite.prototype.updateMaterial = function() {
 
 	// Diffuse/Albedo
 	var diffuseUrl = ( this.frameObject.maps && ( this.frameObject.maps.diffuse || this.frameObject.maps.albedo ) ) || this.frameObject.url ;
-	material.diffuseTexture = new Babylon.Texture( this.dom.cleanUrl( diffuseUrl ) , scene ) ;
+
+	
+	// Test loading images from html image
+	// https://playground.babylonjs.com/#YDO1F#582
+	
+	var imgTask = new Babylon.ImageAssetTask( 'imagetask' , this.dom.cleanUrl( diffuseUrl ) ) ;
+	console.warn( "imgTask BEFORE" , imgTask , imgTask.image ) ;
+	var prom = new Promise() ;
+	imgTask.runTask( scene ,
+		() => {
+			console.warn( "imgTask done" , imgTask , imgTask.image ) ;
+			prom.resolve() ;
+		} ,
+		(msg,error) => {
+			console.warn( "imgTask error" , error ) ;
+			prom.reject() ;
+		}
+	) ;
+	await prom ;
+	console.warn( "imgTask AFTER" , imgTask , imgTask.image ) ;
+	material.diffuseTexture = new Babylon.Texture(
+		null ,//url
+		scene , 
+		false ,//nomipmap
+		false ,//invertY
+		Babylon.Texture.NEAREST_SAMPLINGMODE ,//samplingMode
+		null ,//onLoad
+		null ,//onError
+		imgTask.image
+	) ;
+	
+	//material.diffuseTexture = new Babylon.Texture( this.dom.cleanUrl( diffuseUrl ) , scene ) ;
 	material.diffuseTexture.hasAlpha = true ;
 	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = Babylon.Texture.CLAMP_ADDRESSMODE ;
 
