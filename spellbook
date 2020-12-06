@@ -14,6 +14,8 @@
 [spell browser]
 	[summon]
 		- browser/extension.min.js
+		- browser/babylonjs.js
+		- browser/babylonjs.gui.js
 
 [summoning browser/extension.js]
 	[summon]
@@ -26,4 +28,16 @@
 		- browser/extension.js
 	[scroll]
 		- $> ${uglify} browser/extension.js -o browser/extension.min.js -m
+
+[summoning browser/babylonjs.js]
+	[summon]
+		- node_modules/babylonjs/babylon.js
+	[scroll]
+		- $> cp node_modules/babylonjs/babylon.js browser/babylonjs.js
+
+[summoning browser/babylonjs.gui.js]
+	[summon]
+		- node_modules/babylonjs-gui/babylon.gui.min.js
+	[scroll]
+		- $> cp node_modules/babylonjs-gui/babylon.gui.min.js browser/babylonjs.gui.js
 
