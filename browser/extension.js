@@ -891,6 +891,14 @@ GEntity.prototype.updateTexture = function( texturePackId , variantId , themeId 
 
 	frame = variant.frames[ this.frame ] || variant.frames[ 0 ] ;
 
+	// Preloading the texturePack on change
+	if ( texturePack !== this.texturePackObject ) {
+		this.whenTextureCacheReady().then( () => {
+			// Check that the texturePack has not changed in between, otherwise it would be useless
+			if ( texturePack === this.texturePackObject ) { this.preloadTexturePack() ; }
+		} ) ;
+	}
+
 	// Check if something changed
 	if (
 		texturePack === this.texturePackObject && variant === this.variantObject &&
@@ -1233,7 +1241,7 @@ GEntity.prototype.preloadTexturePack = function() {
 		variant = this.texturePackObject.variants[ variantName ] ;
 		for ( frame of variant.frames ) {
 			if ( frame.url ) { textures.push( this.getTexture( frame.url ) ) ; }
-			if ( frame.maps ) { 
+			if ( frame.maps ) {
 				for ( mapName in frame.maps ) {
 					textures.push( this.getTexture( frame.maps[ mapName ] ) ) ;
 				}
@@ -1242,6 +1250,13 @@ GEntity.prototype.preloadTexturePack = function() {
 	}
 
 	return new Promise( resolve => BABYLON.Texture.WhenAllReady( textures , () => resolve() ) ) ;
+} ;
+
+
+
+// Return a promise resolving when all texture in the cache are ready
+GEntity.prototype.whenTextureCacheReady = function() {
+	return new Promise( resolve => BABYLON.Texture.WhenAllReady( [ ... Object.values( this.textureCache ) ] , () => resolve() ) ) ;
 } ;
 
 
