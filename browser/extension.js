@@ -505,6 +505,7 @@ function GEntity( dom , gScene , data ) {
 	this.frameObject = null ;		// The Frame instance
 	this.lightEmitting = false ;
 
+	this.textureCache = {} ;
 	this.textureAnimationTimer = null ;
 
 	this.children = new Set() ;
@@ -1208,6 +1209,81 @@ GEntity.prototype.createLight = function() {
 	this.babylon.light.diffuse = this.special.light.diffuse ;
 	this.babylon.light.specular = this.special.light.specular ;
 	this.babylon.light.intensity = this.special.light.intensity ;
+} ;
+
+
+
+GEntity.prototype.getTexture = function( url ) {
+	var texture ,
+		scene = this.gScene.babylon.scene ;
+
+	url = this.dom.cleanUrl( url ) ;
+	if ( this.textureCache[ url ] ) { return this.textureCache[ url ] ; }
+	texture = this.textureCache[ url ] = new BABYLON.Texture( url , scene ) ;
+	return texture ;
+} ;
+
+
+
+// Preload the whole texturePack, return a promise resolving when its done
+GEntity.prototype.preloadTexturePack = function() {
+	var variantName , variant , frame , mapName , textures = [] ;
+
+	for ( variantName in this.texturePackObject.variants ) {
+		variant = this.texturePackObject.variants[ variantName ] ;
+		for ( frame of variant.frames ) {
+			if ( frame.url ) { textures.push( this.getTexture( frame.url ) ) ; }
+			if ( frame.maps ) { 
+				for ( mapName in frame.maps ) {
+					textures.push( this.getTexture( frame.maps[ mapName ] ) ) ;
+				}
+			}
+		}
+	}
+
+	return new Promise( resolve => BABYLON.Texture.WhenAllReady( textures , () => resolve() ) ) ;
+} ;
+
+
+
+GEntity.prototype.flipTexture = function( texture , xFlip , yFlip ) {
+	if ( xFlip ) {
+		texture.uScale = -1 ;
+		texture.uOffset = 1 ;
+	}
+	else {
+		texture.uScale = 1 ;
+		texture.uOffset = 0 ;
+	}
+
+	if ( yFlip ) {
+		texture.vScale = -1 ;
+		texture.vOffset = 1 ;
+	}
+	else {
+		texture.vScale = 1 ;
+		texture.vOffset = 0 ;
+	}
+} ;
+
+
+
+GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity ) {
+	var size ;
+
+	if ( texture.isReady() ) {
+		//console.warn( "++++++++++++++++++++++++++++ Already READY" ) ;
+		size = texture.getBaseSize() ;
+		this.updateSize( { x: size.width / pixelDensity , y: size.height / pixelDensity } , false , true ) ;
+	}
+	else {
+		//console.warn( "++++++++++++++++++++++++++++ When all ready: BEFORE" ) ;
+		BABYLON.Texture.WhenAllReady( [ texture ] , () => {
+			size = texture.getBaseSize() ;
+			//console.warn( "++++++++++++++++++++++++++++ When all ready: READY" , size , size.width / this.texturePackObject.pixelDensity , size.height / this.texturePackObject.pixelDensity ) ;
+			this.updateSize( { x: size.width / pixelDensity , y: size.height / pixelDensity } , false , true ) ;
+		} ) ;
+	}
 } ;
 
 
@@ -2354,7 +2430,6 @@ function GEntitySprite( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
 
 	this.autoFacing = this.autoFacing.bind( this ) ;
-
 	//this.babylon.billboardOrigin = new BABYLON.Vector3( 0 , 0 , 0 ) ;
 }
 
@@ -2387,12 +2462,6 @@ GEntitySprite.prototype.updateSpecialStage1 = function( data ) {
 
 
 
-/*
-GEntitySprite.prototype.updateDirection = function( direction ) {
-	this.direction = direction ;
-	if ( this.special.spriteAutoFacing ) { this.autoFacing() ; }
-} ;
-*/
 GEntitySprite.prototype.updateFacing = function( facing ) {
 	this.facing = facing ;
 	if ( this.special.spriteAutoFacing ) { this.autoFacing() ; }
@@ -2417,46 +2486,16 @@ GEntitySprite.prototype.updateMaterial = async function() {
 	// Diffuse/Albedo
 	var diffuseUrl = ( this.frameObject.maps && ( this.frameObject.maps.diffuse || this.frameObject.maps.albedo ) ) || this.frameObject.url ;
 
-	
-	/*
-	// Test loading images from HtmlImageElement
-	// https://playground.babylonjs.com/#YDO1F#583
-	
-	var imgTask = new BABYLON.ImageAssetTask( 'imagetask' , this.dom.cleanUrl( diffuseUrl ) ) ;
-	console.warn( "imgTask BEFORE" , imgTask , imgTask.image ) ;
-	var prom = new Promise() ;
-	imgTask.runTask( scene ,
-		() => {
-			console.warn( "imgTask done" , imgTask , imgTask.image ) ;
-			prom.resolve() ;
-		} ,
-		(msg,error) => {
-			console.warn( "imgTask error" , error ) ;
-			prom.reject() ;
-		}
-	) ;
-	await prom ;
-	console.warn( "imgTask AFTER" , imgTask , imgTask.image ) ;
-	material.diffuseTexture = new BABYLON.Texture(
-		null ,//url
-		scene , 
-		false ,//nomipmap
-		false ,//invertY
-		BABYLON.Texture.NEAREST_SAMPLINGMODE ,//samplingMode
-		null ,//onLoad
-		null ,//onError
-		imgTask.image
-	) ;
-	*/
-	
-	material.diffuseTexture = new BABYLON.Texture( this.dom.cleanUrl( diffuseUrl ) , scene ) ;
+	//material.diffuseTexture = new BABYLON.Texture( this.dom.cleanUrl( diffuseUrl ) , scene ) ;
+	material.diffuseTexture = this.getTexture( diffuseUrl ) ;
 	material.diffuseTexture.hasAlpha = true ;
 	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 
 	// Normal/Bump
 	var bumpUrl = this.frameObject.maps && ( this.frameObject.maps.normal || this.frameObject.maps.bump ) ;
 	if ( bumpUrl ) {
-		material.bumpTexture = new BABYLON.Texture( this.dom.cleanUrl( bumpUrl ) , scene ) ;
+		//material.bumpTexture = new BABYLON.Texture( this.dom.cleanUrl( bumpUrl ) , scene ) ;
+		material.bumpTexture = this.getTexture( bumpUrl ) ;
 		material.bumpTexture.wrapU = material.bumpTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 
 		// BABYLONJS use DirectX normalmap, but most software export OpenGL normalmap
@@ -2467,7 +2506,8 @@ GEntitySprite.prototype.updateMaterial = async function() {
 	// Specular
 	var specularUrl = this.frameObject.maps && this.frameObject.maps.specular ;
 	if ( specularUrl ) {
-		material.specularTexture = new BABYLON.Texture( this.dom.cleanUrl( specularUrl ) , scene ) ;
+		//material.specularTexture = new BABYLON.Texture( this.dom.cleanUrl( specularUrl ) , scene ) ;
+		material.specularTexture = this.getTexture( specularUrl ) ;
 		material.specularTexture.wrapU = material.specularTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 		//material.specularPower = 1 ;
 		material.useGlossinessFromSpecularMapAlpha = true ;
@@ -2491,31 +2531,9 @@ GEntitySprite.prototype.updateMaterial = async function() {
 	var xFlip = ! this.frameObject.xFlip !== ! this.clientMods.xFlip ,
 		yFlip = this.frameObject.yFlip ;	// this.clientMods.yFlip does not exist (xFlip is for autofacing, which only change azimuth)
 
-	if ( xFlip ) {
-		material.diffuseTexture.uScale = -1 ;
-		material.diffuseTexture.uOffset = 1 ;
-		if ( material.bumpTexture ) {
-			material.bumpTexture.uScale = -1 ;
-			material.bumpTexture.uOffset = 1 ;
-		}
-		if ( material.specularTexture ) {
-			material.specularTexture.uScale = -1 ;
-			material.specularTexture.uOffset = 1 ;
-		}
-	}
-
-	if ( yFlip ) {
-		material.diffuseTexture.vScale = -1 ;
-		material.diffuseTexture.vOffset = 1 ;
-		if ( material.bumpTexture ) {
-			material.bumpTexture.vScale = -1 ;
-			material.bumpTexture.vOffset = 1 ;
-		}
-		if ( material.specularTexture ) {
-			material.specularTexture.vScale = -1 ;
-			material.specularTexture.vOffset = 1 ;
-		}
-	}
+	this.flipTexture( material.diffuseTexture , xFlip , yFlip ) ;
+	if ( material.bumpTexture ) { this.flipTexture( material.bumpTexture , xFlip , yFlip ) ; }
+	if ( material.specularTexture ) { this.flipTexture( material.specularTexture , xFlip , yFlip ) ; }
 
 	// Override this.origin, if necessary
 	if ( this.frameObject.origin ) {
@@ -2537,34 +2555,7 @@ GEntitySprite.prototype.updateMaterial = async function() {
 
 	// Multiply with this.size, if necessary
 	if ( this.texturePackObject.pixelDensity ) {
-
-		// /!\ Images should be pre-loaded, this should not be done asynchronously
-
-		if ( material.diffuseTexture.isReady() ) {
-			//console.warn( "++++++++++++++++++++++++++++ Already READY" ) ;
-			let size = material.diffuseTexture.getBaseSize() ;
-			this.updateSize( {
-					x: size.width / this.texturePackObject.pixelDensity ,
-					y: size.height / this.texturePackObject.pixelDensity
-				} ,
-				false ,
-				true
-			) ;
-		}
-		else {
-			//console.warn( "++++++++++++++++++++++++++++ When all ready: BEFORE" ) ;
-			BABYLON.Texture.WhenAllReady( [ material.diffuseTexture ] , () => {
-				var size = material.diffuseTexture.getBaseSize() ;
-				//console.warn( "++++++++++++++++++++++++++++ When all ready: READY" , size , size.width / this.texturePackObject.pixelDensity , size.height / this.texturePackObject.pixelDensity ) ;
-				this.updateSize( {
-						x: size.width / this.texturePackObject.pixelDensity ,
-						y: size.height / this.texturePackObject.pixelDensity
-					} ,
-					false ,
-					true
-				) ;
-			} ) ;
-		}
+		this.updateSizeFromPixelDensity( material.diffuseTexture , this.texturePackObject.pixelDensity ) ;
 	}
 	else if ( this.frameObject.relSize ) {
 		this.updateSize( this.frameObject.relSize , false , true ) ;
