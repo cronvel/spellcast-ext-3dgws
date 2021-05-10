@@ -1,6 +1,6 @@
 {
   "name": "spellcast-ext-3dgws",
-  "version": "0.50.2",
+  "version": "0.50.3",
   "description": "3D Ground With Sprites - A Spellcast's Client Extension.",
   "main": "lib/extension.js",
   "engines": {
@@ -14,9 +14,9 @@
     "babylonjs": "^4.2.0",
     "babylonjs-gui": "^4.2.0",
     "dom-kit": "^0.4.1",
-    "exm": "^0.3.6",
-    "nextgen-events": "^1.3.3",
-    "seventh": "^0.7.36"
+    "exm": "^0.5.7",
+    "nextgen-events": "^1.3.4",
+    "seventh": "^0.7.40"
   },
   "devDependencies": {
     "browserify": "^16.5.2",
