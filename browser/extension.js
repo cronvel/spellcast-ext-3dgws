@@ -151,7 +151,7 @@ Camera.prototype.setMode = function( mode ) {
 	console.warn( "##### Camera.setMode()" , mode , this.mode ) ;
 	if ( mode === this.mode ) { return ; }
 	this.mode = mode ;
-	
+
 	switch ( this.mode ) {
 		case 'positions' :
 		case 'firstPerson' :
@@ -169,12 +169,12 @@ Camera.prototype.setMode = function( mode ) {
 					new BABYLON.Vector3( this.position.x , this.position.y , this.position.z ) ,
 					this.gScene.babylon.scene
 				) ;
-				
+
 				this.babylon.camera.onViewMatrixChangedObservable.add( () => {
 					this.gScene.changes.camera = true ;
 				} ) ;
 			}
-			
+
 			if ( this.mode === 'positions' ) {
 				this.babylon.camera.rotationQuaternion = BABYLON.Quaternion.FromEulerVector(
 					vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll * vectorUtils.DEG_TO_RAD )
@@ -228,9 +228,9 @@ Camera.prototype.setMode = function( mode ) {
 			}
 
 			break ;
-		
-		// Not supported ATM
-		//case 'orbitalQuaternion' :
+
+			// Not supported ATM
+			//case 'orbitalQuaternion' :
 
 		default :
 			return ;
@@ -278,7 +278,7 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 	if ( data.roll !== undefined ) { this.roll = data.roll ; }
 
 	// Rotation can't be animated properly without quaternion, so we use it everywhere
-	
+
 	if ( positionsMode ) {
 		// In this mode, any changes will always change the rotation
 		newRotationQuaternion = BABYLON.Quaternion.FromEulerVector(
@@ -290,21 +290,19 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 			newRotationQuaternion = new BABYLON.Quaternion( this.rotation.x , this.rotation.y , this.rotation.z , this.rotation.w ) ;
 		}
 	}
-	else {
-		if ( data.yaw !== undefined || data.pitch !== undefined || data.roll !== undefined ) {
-			newRotationQuaternion = BABYLON.Quaternion.FromEulerAngles(
-				this.pitch * vectorUtils.DEG_TO_RAD ,
-				this.yaw * vectorUtils.DEG_TO_RAD ,
-				this.roll * vectorUtils.DEG_TO_RAD
-			) ;
-		}
+	else if ( data.yaw !== undefined || data.pitch !== undefined || data.roll !== undefined ) {
+		newRotationQuaternion = BABYLON.Quaternion.FromEulerAngles(
+			this.pitch * vectorUtils.DEG_TO_RAD ,
+			this.yaw * vectorUtils.DEG_TO_RAD ,
+			this.roll * vectorUtils.DEG_TO_RAD
+		) ;
 	}
 
 	if ( data.transition ) {
 		oldRotationQuaternion =
 			camera.rotationQuaternion ? camera.rotationQuaternion :
 			BABYLON.Quaternion.FromEulerVector( camera.rotation ) ;
-		
+
 		console.warn( "[!] camera transition:" , camera , oldRotationQuaternion , newRotationQuaternion ) ;
 
 		if ( data.position ) {
@@ -346,17 +344,17 @@ Camera.prototype.updateOrbital = function( data ) {
 		scene = this.gScene.babylon.scene ;
 
 	if ( data.target ) { this.target = data.target ; }
-	
+
 	if ( data.yaw ) {
 		this.yaw = data.yaw ;
 		alpha = vectorUtils.toCameraAlpha( this.yaw ) ;
 	}
-	
+
 	if ( data.pitch ) {
 		this.pitch = data.pitch ;
 		beta = vectorUtils.toCameraBeta( this.pitch ) ;
 	}
-	
+
 	if ( data.distance ) { this.distance = data.distance ; }
 
 	if ( data.transition ) {
@@ -412,7 +410,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],2:[function(require,module,exports){
+},{"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],2:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1302,7 +1300,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":15,"./Parametric.js":16,"nextgen-events/lib/browser.js":29,"seventh":39}],3:[function(require,module,exports){
+},{"./GTransition.js":15,"./Parametric.js":16,"nextgen-events/lib/browser.js":29,"seventh":41}],3:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1380,7 +1378,7 @@ GEntityBackground.prototype.updateMaterial = function() {
 
 	// Use emissive instead of regular lighting?
 	//material.emissiveColor = new BABYLON.Color3( 1 , 1 , 1 ) ; material.disableLighting = true ;
-	
+
 	// TEMP!
 	material.backFaceCulling = false ;
 
@@ -1424,7 +1422,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"seventh":39}],4:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"seventh":41}],4:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1513,7 +1511,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 	mesh.scaling.x = this.size.x ;
 	mesh.scaling.y = this.size.y ;
 	mesh.scaling.z = this.size.z ;
-	
+
 	console.warn( '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Mesh:' , mesh ) ;
 
 	this.updateMeshNeeded = false ;
@@ -1521,7 +1519,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],5:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],5:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1630,7 +1628,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],6:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],6:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1790,7 +1788,7 @@ GEntityFloatingText.prototype.fixIcon = function() {
 	// The width of the TextBlock is not correctly synchronously detected,
 	// we have to wait a bit for the correct width to be computed.
 	if ( this.babylon.textBlock._width.isPixel ) {
-		this.babylon.icon.left = - 32 - this.babylon.textBlock.widthInPixels / 2 ;
+		this.babylon.icon.left = -32 - this.babylon.textBlock.widthInPixels / 2 ;
 	}
 	else {
 		setTimeout( () => this.fixIcon() , 10 ) ;
@@ -1851,7 +1849,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],7:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],7:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1936,7 +1934,7 @@ GEntityGround.prototype.updateMaterial = function() {
 	material.ambientTexture.uScale = 20 ;
 	material.ambientTexture.vScale = 20 ;
 	//*/
-	
+
 	// TEMP!
 	material.backFaceCulling = false ;
 
@@ -1974,7 +1972,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"seventh":39}],8:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"seventh":41}],8:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2102,7 +2100,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],9:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],9:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2223,7 +2221,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],10:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],10:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2341,7 +2339,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],11:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],11:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2399,7 +2397,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],12:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],12:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2559,8 +2557,8 @@ GEntitySprite.prototype.updateMaterial = async function() {
 		}
 		else {
 			origin = {
-				x: ( xFlip ? - this.frameObject.origin.x : this.frameObject.origin.x ) || 0 ,
-				y: ( yFlip ? - this.frameObject.origin.y : this.frameObject.origin.y ) || 0 ,
+				x: ( xFlip ? -this.frameObject.origin.x : this.frameObject.origin.x ) || 0 ,
+				y: ( yFlip ? -this.frameObject.origin.y : this.frameObject.origin.y ) || 0 ,
 				z: this.frameObject.origin.z || 0
 			} ;
 		}
@@ -2686,7 +2684,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":39}],13:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],13:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2979,24 +2977,22 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 			}
 		}
 	}
-	else {
-		if ( data.transition ) {
-			data.transition.createAnimation( scene , textBlock , 'leftInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , x ) ;
-			data.transition.createAnimation( scene , textBlock , 'topInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , y ) ;
+	else if ( data.transition ) {
+		data.transition.createAnimation( scene , textBlock , 'leftInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , x ) ;
+		data.transition.createAnimation( scene , textBlock , 'topInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , y ) ;
 
-			if ( icon ) {
-				data.transition.createAnimation( scene , icon , 'leftInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , iconX ) ;
-				data.transition.createAnimation( scene , icon , 'topInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , y ) ;
-			}
+		if ( icon ) {
+			data.transition.createAnimation( scene , icon , 'leftInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , iconX ) ;
+			data.transition.createAnimation( scene , icon , 'topInPixels' , BABYLON.Animation.ANIMATIONTYPE_FLOAT , y ) ;
 		}
-		else {
-			textBlock.leftInPixels = x ;
-			textBlock.topInPixels = y ;
+	}
+	else {
+		textBlock.leftInPixels = x ;
+		textBlock.topInPixels = y ;
 
-			if ( icon ) {
-				icon.leftInPixels = iconX ;
-				icon.topInPixels = y ;
-			}
+		if ( icon ) {
+			icon.leftInPixels = iconX ;
+			icon.topInPixels = y ;
 		}
 	}
 } ;
@@ -3084,7 +3080,7 @@ function GScene( dom , data ) {
 		scene: null ,
 		ui: null
 	} ;
-	
+
 	this.initScene() ;
 }
 
@@ -3131,10 +3127,10 @@ GScene.prototype.initScene = function() {
 
 		this.emitIfListener( 'render' , this.changes ) ;
 		this.changes.camera = false ;
-		
+
 		scene.render() ;
 	} ) ;
-	
+
 	// ResizeObserver is used to detect when the canvas element is resized, to avoid image streching
 	this.resizeObserver = new ResizeObserver( () => engine.resize() ) ;
 	this.resizeObserver.observe( this.$gscene ) ;
@@ -3164,7 +3160,7 @@ GScene.prototype.update = function( data , awaiting = false , initial = false ) 
 
 	if ( data.special && typeof data.special === 'object' ) {
 		if ( data.special.ambient ) { this.updateAmbient( data ) ; }
-		
+
 		// Post-processing, see:
 		// https://doc.babylonjs.com/divingDeeper/postProcesses/usePostProcesses
 		if ( typeof data.special.contrast === 'number' ) { this.updateContrast( data ) ; }
@@ -3278,9 +3274,15 @@ GScene.prototype.updateColorCurves = function( data ) {
 	if ( ! this.special.colorCurves ) { this.special.colorCurves = {} ; }
 	if ( ! scene.imageProcessingConfiguration.colorCurves ) {
 		scene.imageProcessingConfiguration.colorCurves = {
-			globalHue: 0 , globalDensity: 0 , globalSaturation: 0 ,
-			highlightsHue: 0 , highlightsDensity: 0 , highlightsSaturation: 0 ,
-			shadowsHue: 0 , shadowsDensity: 0 , shadowsSaturation: 0
+			globalHue: 0 ,
+			globalDensity: 0 ,
+			globalSaturation: 0 ,
+			highlightsHue: 0 ,
+			highlightsDensity: 0 ,
+			highlightsSaturation: 0 ,
+			shadowsHue: 0 ,
+			shadowsDensity: 0 ,
+			shadowsSaturation: 0
 		} ;
 	}
 
@@ -3382,7 +3384,7 @@ GScene.prototype.updateVignette = function( data ) {
 			case 'multiply' :
 				this.special.vignette.blendMode = 0 ;	//BABYLON.ImageProcessingPostProcess.VIGNETTEMODE_MULTIPLY ;
 				break ;
-			
+
 			case 'opaque' :
 			default :
 				this.special.vignette.blendMode = 1 ;	//BABYLON.ImageProcessingPostProcess.VIGNETTEMODE_OPAQUE ;
@@ -3425,7 +3427,7 @@ GScene.prototype.updateColorGrading = function( data ) {
 
 		this.special.colorGrading = {
 			url ,
-			level: typeof colorGrading.level === 'number' ? colorGrading.level : 1 
+			level: typeof colorGrading.level === 'number' ? colorGrading.level : 1
 		} ;
 
 		colorGradingTexture = new BABYLON.Texture( this.special.colorGrading.url , scene , true , false ) ;
@@ -3494,7 +3496,7 @@ GScene.prototype.removeGEntity = function( gEntityId ) {
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":15,"nextgen-events/lib/browser.js":29,"seventh":39}],15:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":15,"nextgen-events/lib/browser.js":29,"seventh":41}],15:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3631,7 +3633,7 @@ GTransition.prototype.createAnimation = function( scene , entity , property , an
 		// The promise is resolved in the "onAnimationEnd" callback, this one is a fallback.
 		this.promise.resolveTimeout( 1000 * this.duration + 20 ) ;
 	}
-	
+
 	// Finally, launch animation, from key 0 to last-key
 	this.running ++ ;
 	scene.beginAnimation(
@@ -3710,7 +3712,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":20,"seventh":39}],16:[function(require,module,exports){
+},{"array-kit":20,"seventh":41}],16:[function(require,module,exports){
 /*
 	Spellcast
 
@@ -3753,7 +3755,7 @@ function Parametric( data ) {
 	this.ctx = {
 		t: 0 ,
 		rt: 0 ,		// relative t, relative to stopAt (rt=1 if t=stopAt)
-		tOffset: - Date.now() / 1000
+		tOffset: -Date.now() / 1000
 	} ;
 	this.computed = {} ;
 	this.stopAt = Infinity ;
@@ -3783,10 +3785,10 @@ Parametric.prototype.update = function( data ) {
 		emptyObject( this.ctx ) ;
 		emptyObject( this.computed ) ;
 		this.ctx.t = this.ctx.rt = 0 ;
-		this.ctx.tOffset = - Date.now() / 1000 ;
+		this.ctx.tOffset = -Date.now() / 1000 ;
 	}
 	else if ( data.resetT ) {
-		this.ctx.tOffset = - Date.now() / 1000 ;
+		this.ctx.tOffset = -Date.now() / 1000 ;
 	}
 
 	if ( typeof data.stopAt === 'number' ) {
@@ -3810,7 +3812,7 @@ Parametric.prototype.recursiveUpdate = function( self , data , computed ) {
 	for ( key in data ) {
 		value = data[ key ] ;
 
-		if ( typeof value === null ) {
+		if ( value === null ) {
 			// We destroy that parametric formula along with any computed value
 			delete self[ key ] ;
 			if ( computed && typeof computed[ key ] === 'object' ) { delete computed[ key ] ; }
@@ -3830,7 +3832,7 @@ Parametric.prototype.recursiveUpdate = function( self , data , computed ) {
 				computed && typeof computed[ key ] === 'object' ? computed[ key ] : null
 			) ;
 		}
-		
+
 		console.warn( "########## k/v/V" , key , value , self[ key ] ) ;
 	}
 } ;
@@ -3854,7 +3856,7 @@ Parametric.prototype.compute = function( absoluteT , base ) {
 	// /!\ RESET COMPUTED?
 	this.recursiveCompute( this.var , this.ctx ) ;
 	this.recursiveCompute( this.formula , this.computed , base ) ;
-	
+
 	return this.computed ;
 } ;
 
@@ -3917,15 +3919,20 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 
 
 const BrowserExm = require( 'exm/lib/BrowserExm.js' ) ;
+const path = require( 'path' ) ;
 
-const extension = new BrowserExm.Extension( {
+
+
+const extension = BrowserExm.registerExtension( {
+	module ,
+	ns: 'spellcast.web-client' ,
 	id: '3dgws' ,
 	exports: {} ,
 	hooks: {
 		init: async () => {
 			console.warn( "Extension 3DGWS: starting init" ) ;
-			await import( '/ext/3dgws/babylonjs.js' ) ;
-			await import( '/ext/3dgws/babylonjs.gui.js' ) ;
+			await import( extension.dirPath + '/babylonjs.js' ) ;
+			await import( extension.dirPath + '/babylonjs.gui.js' ) ;
 			extension.host.api.addEngine( '3dgws' , require( './engine.js' ) ) ;
 			console.warn( "Extension 3DGWS fully loaded" ) ;
 		}
@@ -3935,7 +3942,7 @@ const extension = new BrowserExm.Extension( {
 module.exports = extension ;
 
 
-},{"./engine.js":18,"exm/lib/BrowserExm.js":26}],18:[function(require,module,exports){
+},{"./engine.js":18,"exm/lib/BrowserExm.js":26,"path":31}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4027,7 +4034,7 @@ module.exports = utils ;
 
 // Angle between two vectors projected on the ground plane, return ]-180;+180]
 utils.flatVectorsAngleDeg = ( base , vector ) => utils.normalizeAngleDeg(
-	( Math.atan2( - vector.x , vector.z ) - Math.atan2( - base.x , base.z ) ) * utils.RAD_TO_DEG
+	( Math.atan2( -vector.x , vector.z ) - Math.atan2( -base.x , base.z ) ) * utils.RAD_TO_DEG
 ) ;
 
 
@@ -4043,7 +4050,7 @@ utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => 
 */
 utils.facingAngleDeg = ( cameraPosition , objectPosition , facing ) => utils.normalizeAngleDeg(
 	facing
-	- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z ) * utils.RAD_TO_DEG
+	- Math.atan2( -( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z ) * utils.RAD_TO_DEG
 ) ;
 
 
@@ -4061,7 +4068,9 @@ utils.degToSector['4'] = angle => SECTOR_4[ Math.floor( ( angle + 45 ) / 90 ) ] 
 const SECTOR_4_DIAG = [ 'nw' , 'sw' , 'se' , 'ne' ] ;
 utils.degToSector['4-diag'] = angle => SECTOR_4_DIAG[ Math.floor( angle / 90 ) ] ;
 
-utils.xFlipSector = { n: 'n' , ne: 'nw' , e: 'w' , se: 'sw' , s: 's' , sw: 'se' , w: 'e' , nw: 'ne' } ;
+utils.xFlipSector = {
+	n: 'n' , ne: 'nw' , e: 'w' , se: 'sw' , s: 's' , sw: 'se' , w: 'e' , nw: 'ne'
+} ;
 
 
 
@@ -4083,7 +4092,7 @@ utils.cameraRotationFromOriginAndTarget = ( origin , target , rz = 0 ) => {
 
 
 // Orbital camera alpha and beta angles
-utils.toCameraAlpha = yaw => - utils.PI_2 - yaw * utils.DEG_TO_RAD ;
+utils.toCameraAlpha = yaw => -utils.PI_2 - yaw * utils.DEG_TO_RAD ;
 utils.toCameraBeta = pitch => utils.PI_2 - pitch * utils.DEG_TO_RAD ;
 
 
@@ -4487,11 +4496,11 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],26:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /*
 	EXM
 
-	Copyright (c) 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -4534,17 +4543,16 @@ function Exm( options = {} ) {
 module.exports = Exm ;
 
 Exm.prototype.__prototypeUID__ = 'exm/browser/Exm' ;
-Exm.prototype.__prototypeVersion__ = '0.3' ;
+Exm.prototype.__prototypeVersion__ = '0.5' ;
 
 
 
-Exm.ns = {} ;
 Exm.registerNs = function( options = {} ) {
-	if ( ! options.ns ) { throw new Error( "EXM: namespace ('ns' property) is required!" ) ; }
-	if ( Exm.ns[ options.ns ] ) { throw new Error( "EXM: namespace '" + options.ns + "' is already registered!" ) ; }
+	if ( ! options.ns || typeof options.ns !== 'string' ) { throw new Error( "EXM: namespace ('ns' property) is required!" ) ; }
+	if ( global.EXM.ns[ options.ns ] ) { throw new Error( "EXM: namespace '" + options.ns + "' is already registered!" ) ; }
 
 	var exm = new Exm( options ) ;
-	Exm.ns[ options.ns ] = exm ;
+	global.EXM.ns[ options.ns ] = exm ;
 	return exm ;
 } ;
 
@@ -4554,10 +4562,12 @@ Exm.prototype.requireExtension = async function( extName ) {
 	if ( this.extensions.has( extName ) ) { return this.extensions.get( extName ) ; }
 
 	var module_ ,
-		extModulePath = this.extensionPath + '/' + extName + this.suffix ;
+		extUid = this.ns + '.' + extName ,
+		extModuleDir = this.extensionPath + '/' + extUid ,
+		extModulePath = extModuleDir + this.suffix ;
 
 	try {
-		console.warn( "Trying" , extModulePath ) ;
+		console.warn( "Trying EXM extension: " , extModulePath ) ;
 		module_ = await import( extModulePath ) ;
 	}
 	catch ( error ) {
@@ -4566,7 +4576,7 @@ Exm.prototype.requireExtension = async function( extName ) {
 
 
 	if ( ! module_ || typeof module_ !== 'object' ) {
-		throw new Error( "EXM: this is not an EXM Extension" ) ;
+		throw new Error( "EXM: this is not an EXM Extension (not an object)" ) ;
 	}
 
 	if ( module_.extension ) {
@@ -4576,21 +4586,30 @@ Exm.prototype.requireExtension = async function( extName ) {
 	else {
 		// This is not an ES6 module (e.g. a CommonJS module), so import() somewhat failed except for side-effect.
 		// And since Extension save itself on the global scope as a workaround, we will use that.
-		module_ = global.EXM_EXTENSIONS && global.EXM_EXTENSIONS[ extName ] ;
+		module_ = global.EXM.extensions[ extUid ] ;
 		if ( ! module_ || typeof module_ !== 'object' ) {
-			throw new Error( "EXM: this is not an EXM Extension" ) ;
+			throw new Error( "EXM: this is not an EXM Extension (not an ES6 module extension and not registered)" ) ;
 		}
 	}
 
 	if ( ( module_.__prototypeUID__ !== 'exm/Extension' && module_.__prototypeUID__ !== 'exm/browser/Extension' ) ) {
-		throw new Error( "EXM: this is not an EXM Extension" ) ;
+		throw new Error( "EXM: this is not an EXM Extension (no prototype UID found)" ) ;
 	}
 
 	if ( module_.id !== extName ) {
 		throw new Error( "EXM: Extension ID mismatch (wanted '" + extName + "' but got " + module_.id + "'." ) ;
 	}
 
-	await module_.init( this ) ;
+	try {
+		await module_.init( this , extModulePath , extModuleDir ) ;
+		console.log( "Extension '" + module_.id + "'" + ( module_.version ? " (v" + module_.version + ") " : '' ) + "is loaded." ) ;
+	}
+	catch ( error ) {
+		let error_ = new Error( "EXM: Failed to init extension '" + extName + "': " + error ) ;
+		error_.from = error ;
+		throw error ;
+	}
+
 	this.extensions.set( extName , module_ ) ;
 	return module_ ;
 } ;
@@ -4599,16 +4618,17 @@ Exm.prototype.requireExtension = async function( extName ) {
 
 Exm.Extension = function( options = {} ) {
 	this.isInit = false ;
+	this.id = options.id ;	// this is the id of the extension
+	this.ns = options.ns ;	// this is the namespace of the host
+	this.uid = options.ns + '.' + options.id ;
+	this.version = options.version || null ;
 	this.host = null ;	// the host Exm
-	this.id = options.id || null ;
-	this.require = options.require ;
+	this.path = null ;
+	this.dirPath = null ;
+	this.fromModule = options.module ;
 	this.hooks = options.hooks || {} ;
 	this.api = options.api || {} ;
 	this.exports = options.exports || {} ;
-
-	// Necessary for CommonJS modules:
-	if ( ! global.EXM_EXTENSIONS ) { global.EXM_EXTENSIONS = {} ; }
-	global.EXM_EXTENSIONS[ this.id ] = this ;
 } ;
 
 Exm.Extension.prototype.__prototypeUID__ = 'exm/browser/Extension' ;
@@ -4616,19 +4636,52 @@ Exm.Extension.prototype.__prototypeVersion__ = Exm.prototype.__prototypeVersion_
 
 
 
-Exm.Extension.prototype.init = async function( host ) {
-	if ( this.isInit ) { return ; }
-	console.warn( "Extension loaded" , host ) ;
-	this.isInit = true ;
-	this.host = host ;
+Exm.registerExtension = Exm.Extension.register = function( options = {} ) {
+	if ( ! options.id || typeof options.id !== 'string' ) { throw new Error( "EXM Extension: ID ('id' property) is required!" ) ; }
+	if ( ! options.ns || typeof options.ns !== 'string' ) { throw new Error( "EXM Extension: namespace ('ns' property) is required!" ) ; }
 
-	if ( typeof this.hooks.init === 'function' ) { await this.hooks.init() ; }
+	var extension = new Exm.Extension( options ) ;
+
+	if ( global.EXM.extensions[ extension.uid ] ) {
+		throw new Error( "EXM Extension: ID '" + extension.id + "' is already registered for namespace '" + extension.ns + "'!" ) ;
+	}
+
+	global.EXM.extensions[ extension.uid ] = extension ;
+	return extension ;
 } ;
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+Exm.Extension.prototype.init = async function( host , path_ , dirPath ) {
+	if ( this.isInit ) { return ; }
+
+	if ( host.ns !== this.ns ) { throw new Error( "EXM Extension's namespace mismatches the Host!" ) ; }
+	if ( path_ ) { this.path = path_ ; }
+	if ( dirPath ) { this.dirPath = dirPath ; }
+	this.host = host ;
+
+	if ( typeof this.hooks.init === 'function' ) { await this.hooks.init() ; }
+
+	this.isInit = true ;
+} ;
+
+
+
+// Should be done at the end, when the whole file is loaded
+
+// Global storage is necessary
+if ( ! global.EXM ) {
+	global.EXM = {
+		master: null ,
+		ns: {} ,
+		extensions: {}
+	} ;
+}
+
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],27:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
 
@@ -4797,7 +4850,6 @@ NextGenEvents.mergeListeners = function( foreigners ) {
 
 	// Now we can scan by eventName first
 	Object.keys( this.__ngev.listeners ).forEach( eventName => {
-
 		var i , iMax , blacklist = [] ;
 
 		// First pass: find all removed listeners and add them to the blacklist
@@ -4969,28 +5021,34 @@ NextGenEvents.prototype.waitForAll = function( eventName ) {
 
 
 NextGenEvents.prototype.removeListener = function( eventName , id ) {
-	var i , length , newListeners = [] , removedListeners = [] ;
-
 	if ( ! eventName || typeof eventName !== 'string' ) { throw new TypeError( ".removeListener(): argument #0 should be a non-empty string" ) ; }
 
 	if ( ! this.__ngev ) { NextGenEvents.init.call( this ) ; }
-	if ( ! this.__ngev.listeners[ eventName ] ) { this.__ngev.listeners[ eventName ] = [] ; }
 
-	length = this.__ngev.listeners[ eventName ].length ;
+	var listeners = this.__ngev.listeners[ eventName ] ;
+	if ( ! listeners || ! listeners.length ) { return this ; }
 
-	// It's probably faster to create a new array of listeners
+	var i , removedListeners , removeCount = 0 ,
+		length = listeners.length ,
+		hasRemoveListener = this.__ngev.listeners.removeListener.length ;
+
+	if ( hasRemoveListener ) { removedListeners = [] ; }
+
+	// In-place remove (from the listener array)
 	for ( i = 0 ; i < length ; i ++ ) {
-		if ( this.__ngev.listeners[ eventName ][ i ].id === id ) {
-			removedListeners.push( this.__ngev.listeners[ eventName ][ i ] ) ;
+		if ( listeners[ i ].id === id ) {
+			removeCount ++ ;
+			if ( hasRemoveListener ) { removedListeners.push( listeners[ i ] ) ; }
 		}
-		else {
-			newListeners.push( this.__ngev.listeners[ eventName ][ i ] ) ;
+		else if ( removeCount ) {
+			listeners[ i - removeCount ] = listeners[ i ] ;
 		}
 	}
 
-	this.__ngev.listeners[ eventName ] = newListeners ;
+	// Adjust the length
+	if ( removeCount ) { listeners.length -= removeCount ; }
 
-	if ( removedListeners.length && this.__ngev.listeners.removeListener.length ) {
+	if ( hasRemoveListener && removedListeners.length ) {
 		this.emit( 'removeListener' , removedListeners ) ;
 	}
 
@@ -6033,8 +6091,8 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"../package.json":30,"./Proxy.js":28,"_process":31,"timers":41}],28:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+},{"../package.json":30,"./Proxy.js":28,"_process":32,"timers":43}],28:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -6582,7 +6640,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":27}],29:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Next-Gen Events
 
@@ -6626,41 +6684,49 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this,require('_process'))
-},{"./NextGenEvents.js":27,"_process":31}],30:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'))
+},{"./NextGenEvents.js":27,"_process":32}],30:[function(require,module,exports){
 module.exports={
-  "_from": "nextgen-events",
-  "_id": "nextgen-events@1.3.3",
-  "_inBundle": false,
-  "_integrity": "sha512-5h9U7had+Q+a95Rwgu4JL6otqXs3y4474g7ruQtd8TAsoG6ycvjccnuLxhXEv32/HOKTC09K+HkbFaITIexLkg==",
-  "_location": "/nextgen-events",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "tag",
-    "registry": true,
-    "raw": "nextgen-events",
-    "name": "nextgen-events",
-    "escapedName": "nextgen-events",
-    "rawSpec": "",
-    "saveSpec": null,
-    "fetchSpec": "latest"
+  "name": "nextgen-events",
+  "version": "1.3.4",
+  "description": "The next generation of events handling for javascript! New: abstract away the network!",
+  "main": "lib/NextGenEvents.js",
+  "engines": {
+    "node": ">=6.0.0"
   },
-  "_requiredBy": [
-    "#USER",
-    "/",
-    "/terminal-kit"
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^16.2.2",
+    "uglify-js-es6": "^2.8.9",
+    "ws": "^5.1.1"
+  },
+  "scripts": {
+    "test": "tea-time -R dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cronvel/nextgen-events.git"
+  },
+  "keywords": [
+    "events",
+    "async",
+    "emit",
+    "listener",
+    "context",
+    "series",
+    "serialize",
+    "namespace",
+    "proxy",
+    "network"
   ],
-  "_resolved": "https://registry.npmjs.org/nextgen-events/-/nextgen-events-1.3.3.tgz",
-  "_shasum": "3023cdf4299771918d6be1ad5f6049ca6b4d907d",
-  "_spec": "nextgen-events",
-  "_where": "/home/cedric/inside/github/spellcast-ext-3dgws",
-  "author": {
-    "name": "Cédric Ronvel"
-  },
+  "author": "Cédric Ronvel",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/cronvel/nextgen-events/issues"
   },
-  "bundleDependencies": false,
   "config": {
     "tea-time": {
       "coverDir": [
@@ -6675,48 +6741,316 @@ module.exports={
       2019
     ],
     "owner": "Cédric Ronvel"
-  },
-  "dependencies": {},
-  "deprecated": false,
-  "description": "The next generation of events handling for javascript! New: abstract away the network!",
-  "devDependencies": {
-    "browserify": "^16.2.2",
-    "uglify-js-es6": "^2.8.9",
-    "ws": "^5.1.1"
-  },
-  "directories": {
-    "test": "test"
-  },
-  "engines": {
-    "node": ">=6.0.0"
-  },
-  "homepage": "https://github.com/cronvel/nextgen-events#readme",
-  "keywords": [
-    "events",
-    "async",
-    "emit",
-    "listener",
-    "context",
-    "series",
-    "serialize",
-    "namespace",
-    "proxy",
-    "network"
-  ],
-  "license": "MIT",
-  "main": "lib/NextGenEvents.js",
-  "name": "nextgen-events",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cronvel/nextgen-events.git"
-  },
-  "scripts": {
-    "test": "tea-time -R dot"
-  },
-  "version": "1.3.3"
+  }
 }
 
 },{}],31:[function(require,module,exports){
+(function (process){(function (){
+// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+// backported and transplited with Babel, with backwards-compat fixes
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  if (path.length === 0) return '.';
+  var code = path.charCodeAt(0);
+  var hasRoot = code === 47 /*/*/;
+  var end = -1;
+  var matchedSlash = true;
+  for (var i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+      // We saw the first non-path separator
+      matchedSlash = false;
+    }
+  }
+
+  if (end === -1) return hasRoot ? '/' : '.';
+  if (hasRoot && end === 1) {
+    // return '//';
+    // Backwards-compat fix:
+    return '/';
+  }
+  return path.slice(0, end);
+};
+
+function basename(path) {
+  if (typeof path !== 'string') path = path + '';
+
+  var start = 0;
+  var end = -1;
+  var matchedSlash = true;
+  var i;
+
+  for (i = path.length - 1; i >= 0; --i) {
+    if (path.charCodeAt(i) === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // path component
+      matchedSlash = false;
+      end = i + 1;
+    }
+  }
+
+  if (end === -1) return '';
+  return path.slice(start, end);
+}
+
+// Uses a mixed approach for backwards-compatibility, as ext behavior changed
+// in new Node.js versions, so only basename() above is backported here
+exports.basename = function (path, ext) {
+  var f = basename(path);
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+exports.extname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  var startDot = -1;
+  var startPart = 0;
+  var end = -1;
+  var matchedSlash = true;
+  // Track the state of characters (if any) we see before our first dot and
+  // after any path separator we find
+  var preDotState = 0;
+  for (var i = path.length - 1; i >= 0; --i) {
+    var code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+    if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // extension
+      matchedSlash = false;
+      end = i + 1;
+    }
+    if (code === 46 /*.*/) {
+        // If this is our first dot, mark it as the start of our extension
+        if (startDot === -1)
+          startDot = i;
+        else if (preDotState !== 1)
+          preDotState = 1;
+    } else if (startDot !== -1) {
+      // We saw a non-dot and non-path separator before our dot, so we should
+      // have a good chance at having a non-empty extension
+      preDotState = -1;
+    }
+  }
+
+  if (startDot === -1 || end === -1 ||
+      // We saw a non-dot character immediately before the dot
+      preDotState === 0 ||
+      // The (right-most) trimmed path component is exactly '..'
+      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+    return '';
+  }
+  return path.slice(startDot, end);
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this)}).call(this,require('_process'))
+},{"_process":32}],32:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -6902,8 +7236,8 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],32:[function(require,module,exports){
-(function (process,global){
+},{}],33:[function(require,module,exports){
+(function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
 
@@ -7091,8 +7425,8 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":31}],33:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"_process":32}],34:[function(require,module,exports){
 /*
 	Seventh
 
@@ -7123,7 +7457,236 @@ process.umask = function() { return 0; };
 
 
 
-var Promise = require( './seventh.js' ) ;
+const Promise = require( './seventh.js' ) ;
+
+
+
+function Queue( jobRunner , concurrency = 4 ) {
+	this.jobRunner = jobRunner ;
+	this.jobs = new Map() ;			// all jobs
+	this.pendingJobs = new Map() ;	// only pending jobs (not run)
+	this.runningJobs = new Map() ;	// only running jobs (not done)
+	this.errorJobs = new Map() ;	// jobs that have failed
+	this.jobsDone = new Map() ;		// jobs that finished successfully
+	this.concurrency = + concurrency || 1 ;
+
+	// Internal
+	this.isQueueRunning = true ;
+	this.isLoopRunning = false ;
+	this.canLoopAgain = false ;
+	this.ready = Promise.resolved ;
+
+	// Misc
+	this.startTime = null ;		// timestamp at the first time the loop is run
+	this.endTime = null ;		// timestamp at the last time the loop exited
+
+	// External API, resolved when there is no jobs anymore in the queue, a new Promise is created when new element are injected
+	this.drained = Promise.resolved ;
+
+	// External API, resolved when the Queue has nothing to do: either it's drained or the pending jobs have dependencies that cannot be solved
+	this.idle = Promise.resolved ;
+}
+
+Promise.Queue = Queue ;
+
+
+
+function Job( id , dependencies = null , data = undefined ) {
+	this.id = id ;
+	this.dependencies = dependencies === null ? null : [ ... dependencies ] ;
+	this.data = data === undefined ? id : data ;
+	this.error = null ;
+	this.startTime = null ;
+	this.endTime = null ;
+}
+
+Queue.Job = Job ;
+
+
+
+Queue.prototype.setConcurrency = function( concurrency ) { this.concurrency = + concurrency || 1 ; } ;
+Queue.prototype.stop = Queue.prototype.pause = function() { this.isQueueRunning = false ; } ;
+Queue.prototype.has = function( id ) { return this.jobs.has( id ) ; } ;
+
+
+
+Queue.prototype.add = Queue.prototype.addJob = function( id , data , dependencies = null ) {
+	// Don't add it twice!
+	if ( this.jobs.has( id ) ) { return false ; }
+
+	var job = new Job( id , dependencies , data ) ;
+	this.jobs.set( id , job ) ;
+	this.pendingJobs.set( id , job ) ;
+	this.canLoopAgain = true ;
+	if ( this.isQueueRunning && ! this.isLoopRunning ) { this.run() ; }
+	if ( this.drained.isSettled() ) { this.drained = new Promise() ; }
+	return job ;
+} ;
+
+
+
+// Add a batch of jobs, with only id (data=id) and no dependencies
+Queue.prototype.addBatch = Queue.prototype.addJobBatch = function( ids ) {
+	var id , job ;
+
+	for ( id of ids ) {
+		// Don't add it twice!
+		if ( this.jobs.has( id ) ) { return false ; }
+		job = new Job( id ) ;
+		this.jobs.set( id , job ) ;
+		this.pendingJobs.set( id , job ) ;
+	}
+
+	this.canLoopAgain = true ;
+	if ( this.isQueueRunning && ! this.isLoopRunning ) { this.run() ; }
+	if ( this.drained.isSettled() ) { this.drained = new Promise() ; }
+} ;
+
+
+
+Queue.prototype.run = Queue.prototype.resume = async function() {
+	var job ;
+
+	this.isQueueRunning = true ;
+
+	if ( this.isLoopRunning ) { return ; }
+	this.isLoopRunning = true ;
+
+	if ( ! this.startTime ) { this.startTime = Date.now() ; }
+
+	do {
+		this.canLoopAgain = false ;
+
+		for ( job of this.pendingJobs.values() ) {
+			if ( job.dependencies && job.dependencies.some( dependencyId => ! this.jobsDone.has( dependencyId ) ) ) { continue ; }
+			// This should be done synchronously:
+			if ( this.idle.isSettled() ) { this.idle = new Promise() ; }
+			this.canLoopAgain = true ;
+
+			await this.ready ;
+
+			// Something has stopped the queue while we were awaiting.
+			// This check MUST be done only after "await", before is potentially synchronous, and things only change concurrently during an "await"
+			if ( ! this.isQueueRunning ) { this.finishRun() ; return ; }
+
+			this.runJob( job ) ;
+		}
+	} while ( this.canLoopAgain ) ;
+
+	this.finishRun() ;
+} ;
+
+
+
+// Finish current run
+Queue.prototype.finishRun = function() {
+	this.isLoopRunning = false ;
+
+	if ( ! this.pendingJobs.size ) { this.drained.resolve() ; }
+
+	if ( ! this.runningJobs.size ) {
+		this.endTime = Date.now() ;
+		this.idle.resolve() ;
+	}
+} ;
+
+
+
+Queue.prototype.runJob = async function( job ) {
+	// Immediately remove it synchronously from the pending queue and add it to the running one
+	this.pendingJobs.delete( job.id ) ;
+	this.runningJobs.set( job.id , job ) ;
+
+	if ( this.runningJobs.size >= this.concurrency ) { this.ready = new Promise() ; }
+
+	// Async part
+	try {
+		job.startTime = Date.now() ;
+		await this.jobRunner( job.data ) ;
+		job.endTime = Date.now() ;
+		this.jobsDone.set( job.id , job ) ;
+		this.canLoopAgain = true ;
+	}
+	catch ( error ) {
+		job.endTime = Date.now() ;
+		job.error = error ;
+		this.errorJobs.set( job.id , job ) ;
+	}
+
+	this.runningJobs.delete( job.id ) ;
+	if ( this.runningJobs.size < this.concurrency ) { this.ready.resolve() ; }
+
+	// This MUST come last, because it retry the loop: dependencies may have been unlocked!
+	if ( ! this.isLoopRunning ) {
+		if ( this.isQueueRunning && this.pendingJobs.size ) { this.run() ; }
+		else { this.finishRun() ; }
+	}
+} ;
+
+
+
+Queue.prototype.getJobTimes = function() {
+	var job , stats = {} ;
+	for ( job of this.jobsDone.values() ) { stats[ job.id ] = job.endTime - job.startTime ; }
+	return stats ;
+} ;
+
+
+
+Queue.prototype.getStats = function() {
+	var job , sum = 0 ,
+		stats = {
+			pending: this.pendingJobs.size ,
+			running: this.runningJobs.size ,
+			failed: this.errorJobs.size ,
+			done: this.jobsDone.size ,
+			averageJobTime: null ,
+			queueTime: null
+		} ;
+
+	if ( this.jobsDone.size ) {
+		for ( job of this.jobsDone.values() ) { sum += job.endTime - job.startTime ; }
+		stats.averageJobTime = sum / this.jobsDone.size ;
+	}
+
+	if ( this.endTime ) { stats.queueTime = this.endTime - this.startTime ; }
+
+	return stats ;
+} ;
+
+
+},{"./seventh.js":41}],35:[function(require,module,exports){
+/*
+	Seventh
+
+	Copyright (c) 2017 - 2020 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+
+
+const Promise = require( './seventh.js' ) ;
 
 
 
@@ -7176,7 +7739,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":39}],34:[function(require,module,exports){
+},{"./seventh.js":41}],36:[function(require,module,exports){
 /*
 	Seventh
 
@@ -7207,7 +7770,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-var Promise = require( './seventh.js' ) ;
+const Promise = require( './seventh.js' ) ;
 
 
 
@@ -7675,7 +8238,7 @@ Promise.concurrent = ( limit , iterable , iterator ) => {
 	// The array-like may contains promises that could be rejected before being handled
 	if ( Promise.warnUnhandledRejection ) { Promise._handleAll( iterable ) ; }
 
-	limit = limit || 1 ;
+	limit = + limit || 1 ;
 
 	const runBatch = () => {
 		while ( ! done && running < limit ) {
@@ -7785,8 +8348,8 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":39}],35:[function(require,module,exports){
-(function (process,global,setImmediate){
+},{"./seventh.js":41}],37:[function(require,module,exports){
+(function (process,global,setImmediate){(function (){
 /*
 	Seventh
 
@@ -8543,8 +9106,8 @@ if ( process.browser ) {
 }
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":31,"setimmediate":32,"timers":41}],36:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+},{"_process":32,"setimmediate":33,"timers":43}],38:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8575,7 +9138,7 @@ if ( process.browser ) {
 
 
 
-var Promise = require( './seventh.js' ) ;
+const Promise = require( './seventh.js' ) ;
 
 
 
@@ -9050,8 +9613,8 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 */
 
 
-},{"./seventh.js":39}],37:[function(require,module,exports){
-(function (process){
+},{"./seventh.js":41}],39:[function(require,module,exports){
+(function (process){(function (){
 /*
 	Seventh
 
@@ -9082,7 +9645,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 
-var Promise = require( './seventh.js' ) ;
+const Promise = require( './seventh.js' ) ;
 
 
 
@@ -9149,8 +9712,8 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this,require('_process'))
-},{"./seventh.js":39,"_process":31}],38:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'))
+},{"./seventh.js":41,"_process":32}],40:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9181,7 +9744,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 
-var Promise = require( './seventh.js' ) ;
+const Promise = require( './seventh.js' ) ;
 
 
 
@@ -9202,7 +9765,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":39}],39:[function(require,module,exports){
+},{"./seventh.js":41}],41:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9240,12 +9803,13 @@ module.exports = seventh ;
 require( './batch.js' ) ;
 require( './wrapper.js' ) ;
 require( './decorators.js' ) ;
+require( './Queue.js' ) ;
 require( './api.js' ) ;
 require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./api.js":33,"./batch.js":34,"./core.js":35,"./decorators.js":36,"./misc.js":37,"./parasite.js":38,"./wrapper.js":40}],40:[function(require,module,exports){
+},{"./Queue.js":34,"./api.js":35,"./batch.js":36,"./core.js":37,"./decorators.js":38,"./misc.js":39,"./parasite.js":40,"./wrapper.js":42}],42:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9276,7 +9840,7 @@ require( './misc.js' ) ;
 
 
 
-var Promise = require( './seventh.js' ) ;
+const Promise = require( './seventh.js' ) ;
 
 
 
@@ -9410,8 +9974,8 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":39}],41:[function(require,module,exports){
-(function (setImmediate,clearImmediate){
+},{"./seventh.js":41}],43:[function(require,module,exports){
+(function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -9488,5 +10052,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":31,"timers":41}]},{},[17]);
+}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+},{"process/browser.js":32,"timers":43}]},{},[17]);
