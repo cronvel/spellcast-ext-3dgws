@@ -522,6 +522,11 @@ function GEntity( dom , gScene , data ) {
 	if ( this.transient ) {
 		setTimeout( () => this.destroy() , this.transient * 1000 ) ;
 	}
+	
+	if ( this.noLocalLighting ) {
+		this.gScene.noLocalLightingGEntities.add( this ) ;
+		this.gScene.once( 'render' , () => this.gScene.updateLightExcludedMeshes() , { unique: true , id: 'updateLightExcludedMeshes' } ) ;
+	}
 }
 
 GEntity.prototype = Object.create( Ngev.prototype ) ;
@@ -532,11 +537,18 @@ module.exports = GEntity ;
 
 
 GEntity.prototype.localBBoxSize = 1 ;
+GEntity.prototype.noLocalLighting = false ;		// Is it sensible to local lights (point-light/spot-light)?
+GEntity.prototype.isLocalLight = true ;		// Is it a local light (point-light/spot-light)?
 
 
 
 // TODO
 GEntity.prototype.destroy = function() {
+	if ( this.noLocalLighting ) {
+		this.gScene.noLocalLightingGEntities.remove( this ) ;
+		this.gScene.once( 'render' , () => this.gScene.updateLightExcludedMeshes() , { unique: true , id: 'updateLightExcludedMeshes' } ) ;
+	}
+
 	if ( this.children.size ) {
 		for ( let child of this.children ) {
 			child.destroy() ;
@@ -1119,10 +1131,7 @@ GEntity.prototype.updateLight = function( data , volatile = false ) {
 		this.lightEmitting = !! data.special.light ;
 
 		if ( ! this.lightEmitting ) {
-			if ( this.babylon.light ) {
-				this.babylon.light.dispose() ;
-			}
-			this.special.light = null ;
+			this.destroyLight() ;
 			return ;
 		}
 
@@ -1215,6 +1224,34 @@ GEntity.prototype.createLight = function() {
 	this.babylon.light.diffuse = this.special.light.diffuse ;
 	this.babylon.light.specular = this.special.light.specular ;
 	this.babylon.light.intensity = this.special.light.intensity ;
+
+	if ( this.isLocalLight ) { this.registerLocalLight() ; }
+} ;
+
+
+
+GEntity.prototype.destroyLight = function() {
+	if ( this.isLocalLight ) { this.unregisterLocalLight() ; }
+
+	if ( this.babylon.light ) {
+		this.babylon.light.dispose() ;
+	}
+
+	this.special.light = null ;
+} ;
+
+
+
+GEntity.prototype.registerLocalLight = function() {
+	this.gScene.localLightGEntities.add( this ) ;
+	console.warn( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Local light! entity count:" , this.gScene.noLocalLightingGEntities.size ) ;
+	this.babylon.light.excludedMeshes = [ ... this.gScene.noLocalLightingGEntities ].map( e => e.babylon.mesh ) ;
+} ;
+
+
+
+GEntity.prototype.unregisterLocalLight = function() {
+	this.gScene.localLightGEntities.delete( this ) ;
 } ;
 
 
@@ -1356,6 +1393,7 @@ module.exports = GEntityBackground ;
 
 
 GEntityBackground.prototype.localBBoxSize = 1000 ;
+GEntityBackground.prototype.noLocalLighting = true ;	// Not sensible to point-light/spot-light, only ambient, hemispheric and directional
 
 
 
@@ -1377,7 +1415,8 @@ GEntityBackground.prototype.updateMaterial = function() {
 	material.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
 
 	// Use emissive instead of regular lighting?
-	//material.emissiveColor = new BABYLON.Color3( 1 , 1 , 1 ) ; material.disableLighting = true ;
+	//material.emissiveColor = new BABYLON.Color3( 0.1 , 0.1 , 0.1 ) ; 
+	//material.ambientColor = new BABYLON.Color3( 1 , 0 , 0 ) ; material.disableLighting = true ;
 
 	// TEMP!
 	material.backFaceCulling = false ;
@@ -1573,6 +1612,10 @@ module.exports = GEntityDirectionalLight ;
 
 
 
+GEntityDirectionalLight.prototype.isLocalLight = false ;   // It is world wide light
+
+
+
 // Light color/intensity/...
 GEntityDirectionalLight.prototype.updateLight = function( data ) {
 	console.warn( "3D GEntityDirectionalLight.updateLight()" , data ) ;
@@ -1625,6 +1668,8 @@ GEntityDirectionalLight.prototype.createLight = function() {
 	this.babylon.light.diffuse = this.special.light.diffuse ;
 	this.babylon.light.specular = this.special.light.specular ;
 	this.babylon.light.intensity = this.special.light.intensity ;
+
+	if ( this.isLocalLight ) { this.registerLocalLight() ; }
 } ;
 
 
@@ -2026,6 +2071,10 @@ module.exports = GEntityHemisphericLight ;
 
 
 
+GEntityHemisphericLight.prototype.isLocalLight = false ;   // It is world wide light
+
+
+
 // Light color/intensity/...
 GEntityHemisphericLight.prototype.updateLight = function( data ) {
 	console.warn( "3D GEntityHemisphericLight.updateLight()" , data ) ;
@@ -2097,6 +2146,8 @@ GEntityHemisphericLight.prototype.createLight = function() {
 	this.babylon.light.specular = this.special.light.specular ;
 	this.babylon.light.groundColor = this.special.light.ground ;
 	this.babylon.light.intensity = this.special.light.intensity ;
+
+	if ( this.isLocalLight ) { this.registerLocalLight() ; }
 } ;
 
 
@@ -2151,6 +2202,10 @@ GEntityPointLight.prototype = Object.create( GEntity.prototype ) ;
 GEntityPointLight.prototype.constructor = GEntityPointLight ;
 
 module.exports = GEntityPointLight ;
+
+
+
+GEntityPointLight.prototype.isLocalLight = true ;	// It is a local light
 
 
 
@@ -2218,6 +2273,8 @@ GEntityPointLight.prototype.createLight = function() {
 	this.babylon.light.diffuse = this.special.light.diffuse ;
 	this.babylon.light.specular = this.special.light.specular ;
 	this.babylon.light.intensity = this.special.light.intensity ;
+
+	if ( this.isLocalLight ) { this.registerLocalLight() ; }
 } ;
 
 
@@ -3056,6 +3113,8 @@ function GScene( dom , data ) {
 	this.gEntityLocations = {} ;
 	this.gEntities = {} ;	// GEntities by name
 	this.parametricGEntities = new Set() ;	// Only GEntities having parametric animation
+	this.noLocalLightingGEntities = new Set() ;	// GEntities without local lighting
+	this.localLightGEntities = new Set() ;	// GEntities that are local lights
 	this.animationFunctions = new Set() ;	// Animations for things that are not supported by Babylonjs, like contrast/exposure animation
 
 	this.globalCamera = null ;
@@ -3478,6 +3537,17 @@ GScene.prototype.updateColorGrading = function( data ) {
 		else {
 			colorGradingTexture.level = this.special.colorGrading.level ;
 		}
+	}
+} ;
+
+
+
+GScene.prototype.updateLightExcludedMeshes = function() {
+	var light ,
+		excludedMeshes = [ ... this.noLocalLightingGEntities ].map( e => e.babylon.mesh ) ;
+
+	for ( light of this.localLightGEntities ) {
+		light.babylon.light.excludedMeshes = excludedMeshes ;
 	}
 } ;
 
@@ -4922,6 +4992,14 @@ NextGenEvents.prototype.addListener = function( eventName , fn , options ) {
 
 	listener.fn = fn || options.fn ;
 	listener.id = options.id !== undefined ? options.id : listener.fn ;
+
+	if ( options.unique ) {
+		if ( this.__ngev.listeners[ eventName ].find( e => e.id === listener.id ) ) {
+			// Not unique! Return now!
+			return ;
+		}
+	}
+
 	listener.once = !! options.once ;
 	listener.async = !! options.async ;
 	listener.eventObject = !! options.eventObject ;
@@ -6688,7 +6766,7 @@ module.exports.isBrowser = true ;
 },{"./NextGenEvents.js":27,"_process":32}],30:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "description": "The next generation of events handling for javascript! New: abstract away the network!",
   "main": "lib/NextGenEvents.js",
   "engines": {
