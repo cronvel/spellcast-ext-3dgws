@@ -237,7 +237,7 @@ Camera.prototype.setMode = function( mode ) {
 	}
 
 	// Make the mouse wheel move less
-	//this.babylon.camera.wheelPrecision = 20 ;
+	this.babylon.camera.wheelPrecision = 100 ;
 
 	console.warn( "~~~~~~ Camera.setMode() done" ) ;
 } ;
@@ -410,7 +410,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],2:[function(require,module,exports){
+},{"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],2:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -522,7 +522,7 @@ function GEntity( dom , gScene , data ) {
 	if ( this.transient ) {
 		setTimeout( () => this.destroy() , this.transient * 1000 ) ;
 	}
-	
+
 	if ( this.noLocalLighting ) {
 		this.gScene.noLocalLightingGEntities.add( this ) ;
 		this.gScene.once( 'render' , () => this.gScene.updateLightExcludedMeshes() , { unique: true , id: 'updateLightExcludedMeshes' } ) ;
@@ -1244,7 +1244,6 @@ GEntity.prototype.destroyLight = function() {
 
 GEntity.prototype.registerLocalLight = function() {
 	this.gScene.localLightGEntities.add( this ) ;
-	console.warn( "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Local light! entity count:" , this.gScene.noLocalLightingGEntities.size ) ;
 	this.babylon.light.excludedMeshes = [ ... this.gScene.noLocalLightingGEntities ].map( e => e.babylon.mesh ) ;
 } ;
 
@@ -1337,7 +1336,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":15,"./Parametric.js":16,"nextgen-events/lib/browser.js":29,"seventh":41}],3:[function(require,module,exports){
+},{"./GTransition.js":16,"./Parametric.js":17,"nextgen-events/lib/browser.js":30,"seventh":42}],3:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1415,7 +1414,7 @@ GEntityBackground.prototype.updateMaterial = function() {
 	material.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
 
 	// Use emissive instead of regular lighting?
-	//material.emissiveColor = new BABYLON.Color3( 0.1 , 0.1 , 0.1 ) ; 
+	//material.emissiveColor = new BABYLON.Color3( 0.1 , 0.1 , 0.1 ) ;
 	//material.ambientColor = new BABYLON.Color3( 1 , 0 , 0 ) ; material.disableLighting = true ;
 
 	// TEMP!
@@ -1461,7 +1460,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"seventh":41}],4:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"seventh":42}],4:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1558,7 +1557,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],5:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],5:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1673,7 +1672,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],6:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],6:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1894,7 +1893,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],7:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],7:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2017,7 +2016,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"seventh":41}],8:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"seventh":42}],8:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2151,7 +2150,86 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],9:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],9:[function(require,module,exports){
+/*
+	Spellcast's Web Client Extension
+
+	Copyright (c) 2014 - 2020 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const GEntity = require( './GEntity.js' ) ;
+const GTransition = require( './GTransition.js' ) ;
+
+const vectorUtils = require( './vectorUtils.js' ) ;
+
+const Promise = require( 'seventh' ) ;
+
+
+
+function GEntityParticleSystem( dom , gScene , data ) {
+	GEntity.call( this , dom , gScene , data ) ;
+}
+
+GEntityParticleSystem.prototype = Object.create( GEntity.prototype ) ;
+GEntityParticleSystem.prototype.constructor = GEntityParticleSystem ;
+
+module.exports = GEntityParticleSystem ;
+
+
+
+GEntityParticleSystem.prototype.updateThings = function() {
+	// Rain particle system
+	
+	// Create a particle system
+	var particleSystem = new BABYLON.ParticleSystem( "particles" , 3000 ) ;
+
+	//Texture of each particle
+	particleSystem.particleTexture = new BABYLON.Texture( "textures/flare.png" ) ;
+
+	// Position where the particles are emitted from
+	particleSystem.emitter = new BABYLON.Vector3( 0 , 0 , 0 ) ;
+	//particleSystem.emitter = camera;
+
+	particleSystem.minEmitBox = new BABYLON.Vector3( -20 , 5 , -20 ) ;
+	particleSystem.maxEmitBox = new BABYLON.Vector3( 20 , 4 , 20 ) ;
+	particleSystem.direction1 = new BABYLON.Vector3( 0 , -1 , 0 ) ;
+	particleSystem.direction2 = new BABYLON.Vector3( 0 , -1 , 0 ) ;
+	particleSystem.emitRate = 500 ;
+	particleSystem.minLifeTime = 6 ;
+	particleSystem.maxLifeTime = 6 ;
+	particleSystem.updateSpeed = 0.04 ;
+
+	particleSystem.start() ;
+} ;
+
+
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],10:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2278,7 +2356,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],10:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],11:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2396,7 +2474,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],11:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],12:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2454,7 +2532,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],12:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],13:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2741,7 +2819,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":15,"./vectorUtils.js":19,"seventh":41}],13:[function(require,module,exports){
+},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],14:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3055,7 +3133,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 } ;
 
 
-},{"./GEntity.js":2,"./GEntityFloatingText.js":6}],14:[function(require,module,exports){
+},{"./GEntity.js":2,"./GEntityFloatingText.js":6}],15:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3189,6 +3267,8 @@ GScene.prototype.initScene = function() {
 
 		scene.render() ;
 	} ) ;
+
+	//setTimeout( () => new BABYLON.ParticleHelper.CreateAsync( "fire" , scene ).then( pSet => pSet.start() ) , 3000 ) ;
 
 	// ResizeObserver is used to detect when the canvas element is resized, to avoid image streching
 	this.resizeObserver = new ResizeObserver( () => engine.resize() ) ;
@@ -3566,7 +3646,7 @@ GScene.prototype.removeGEntity = function( gEntityId ) {
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":15,"nextgen-events/lib/browser.js":29,"seventh":41}],15:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":16,"nextgen-events/lib/browser.js":30,"seventh":42}],16:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3782,7 +3862,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":20,"seventh":41}],16:[function(require,module,exports){
+},{"array-kit":21,"seventh":42}],17:[function(require,module,exports){
 /*
 	Spellcast
 
@@ -3957,7 +4037,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 } ;
 
 
-},{"./browser-extension.js":17}],17:[function(require,module,exports){
+},{"./browser-extension.js":18}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4012,7 +4092,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":18,"exm/lib/BrowserExm.js":26,"path":31}],18:[function(require,module,exports){
+},{"./engine.js":19,"exm/lib/BrowserExm.js":27,"path":32}],19:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4057,6 +4137,7 @@ engine.perUsageGEntity = {
 	background: require( './GEntityBackground.js' ) ,
 	sprite: require( './GEntitySprite.js' ) ,
 	shadow: require( './GEntityShadow.js' ) ,
+	particleSystem: require( './GEntityParticleSystem.js' ) ,
 	floatingText: require( './GEntityFloatingText.js' ) ,
 	uiFloatingText: require( './GEntityUiFloatingText.js' ) ,
 	basicShape: require( './GEntityBasicShape.js' ) ,
@@ -4064,7 +4145,7 @@ engine.perUsageGEntity = {
 } ;
 
 
-},{"./Camera.js":1,"./GEntity.js":2,"./GEntityBackground.js":3,"./GEntityBasicShape.js":4,"./GEntityDirectionalLight.js":5,"./GEntityFloatingText.js":6,"./GEntityGround.js":7,"./GEntityHemisphericLight.js":8,"./GEntityPointLight.js":9,"./GEntityShadow.js":10,"./GEntitySpotLight.js":11,"./GEntitySprite.js":12,"./GEntityUiFloatingText.js":13,"./GScene.js":14}],19:[function(require,module,exports){
+},{"./Camera.js":1,"./GEntity.js":2,"./GEntityBackground.js":3,"./GEntityBasicShape.js":4,"./GEntityDirectionalLight.js":5,"./GEntityFloatingText.js":6,"./GEntityGround.js":7,"./GEntityHemisphericLight.js":8,"./GEntityParticleSystem.js":9,"./GEntityPointLight.js":10,"./GEntityShadow.js":11,"./GEntitySpotLight.js":12,"./GEntitySprite.js":13,"./GEntityUiFloatingText.js":14,"./GScene.js":15}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4216,7 +4297,7 @@ utils.epsilonAsin = utils.easin = v => {
 } ;
 
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4260,7 +4341,7 @@ module.exports = arrayKit ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 
 
-},{"./delete.js":21,"./deleteValue.js":22,"./inPlaceFilter.js":23,"./range.js":24,"./sample.js":25}],21:[function(require,module,exports){
+},{"./delete.js":22,"./deleteValue.js":23,"./inPlaceFilter.js":24,"./range.js":25,"./sample.js":26}],22:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4312,7 +4393,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4376,7 +4457,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4441,7 +4522,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4508,7 +4589,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4565,7 +4646,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 (function (global){(function (){
 /*
 	EXM
@@ -4750,7 +4831,7 @@ if ( ! global.EXM ) {
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
@@ -6170,7 +6251,7 @@ NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"../package.json":30,"./Proxy.js":28,"_process":32,"timers":43}],28:[function(require,module,exports){
+},{"../package.json":31,"./Proxy.js":29,"_process":33,"timers":44}],29:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -6717,7 +6798,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 } ;
 
 
-},{"./NextGenEvents.js":27}],29:[function(require,module,exports){
+},{"./NextGenEvents.js":28}],30:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Next-Gen Events
@@ -6763,7 +6844,7 @@ module.exports.isBrowser = true ;
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./NextGenEvents.js":27,"_process":32}],30:[function(require,module,exports){
+},{"./NextGenEvents.js":28,"_process":33}],31:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.4.0",
@@ -6822,7 +6903,7 @@ module.exports={
   }
 }
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process){(function (){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
@@ -7128,7 +7209,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":32}],32:[function(require,module,exports){
+},{"_process":33}],33:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -7314,7 +7395,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
@@ -7504,7 +7585,7 @@ process.umask = function() { return 0; };
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":32}],34:[function(require,module,exports){
+},{"_process":33}],35:[function(require,module,exports){
 /*
 	Seventh
 
@@ -7733,7 +7814,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":41}],35:[function(require,module,exports){
+},{"./seventh.js":42}],36:[function(require,module,exports){
 /*
 	Seventh
 
@@ -7817,7 +7898,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":41}],36:[function(require,module,exports){
+},{"./seventh.js":42}],37:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8426,7 +8507,7 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":41}],37:[function(require,module,exports){
+},{"./seventh.js":42}],38:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Seventh
@@ -9185,7 +9266,7 @@ if ( process.browser ) {
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":32,"setimmediate":33,"timers":43}],38:[function(require,module,exports){
+},{"_process":33,"setimmediate":34,"timers":44}],39:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9691,7 +9772,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 */
 
 
-},{"./seventh.js":41}],39:[function(require,module,exports){
+},{"./seventh.js":42}],40:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Seventh
@@ -9791,7 +9872,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./seventh.js":41,"_process":32}],40:[function(require,module,exports){
+},{"./seventh.js":42,"_process":33}],41:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9843,7 +9924,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":41}],41:[function(require,module,exports){
+},{"./seventh.js":42}],42:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9887,7 +9968,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":34,"./api.js":35,"./batch.js":36,"./core.js":37,"./decorators.js":38,"./misc.js":39,"./parasite.js":40,"./wrapper.js":42}],42:[function(require,module,exports){
+},{"./Queue.js":35,"./api.js":36,"./batch.js":37,"./core.js":38,"./decorators.js":39,"./misc.js":40,"./parasite.js":41,"./wrapper.js":43}],43:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10052,7 +10133,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":41}],43:[function(require,module,exports){
+},{"./seventh.js":42}],44:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -10131,4 +10212,4 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":32,"timers":43}]},{},[17]);
+},{"process/browser.js":33,"timers":44}]},{},[18]);
