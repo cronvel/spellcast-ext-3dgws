@@ -511,6 +511,7 @@ function GEntity( dom , gScene , data ) {
 
 	this.babylon = {
 		material: null ,
+		texture: null ,	// Only relevant for material-less entity, like particle system
 		mesh: null ,
 		light: null		// Attached light, if any
 	} ;
@@ -558,6 +559,7 @@ GEntity.prototype.destroy = function() {
 	if ( this.babylon.mesh ) {
 		this.babylon.mesh.parent = null ;
 		this.babylon.mesh.dispose() ;
+		this.babylon.mesh = null ;
 	}
 
 	if ( this.babylon.material ) {
@@ -566,6 +568,12 @@ GEntity.prototype.destroy = function() {
 			false , // forceDisposeTextures, keep texture, texture should be managed by gScene
 			true    // notBoundToMesh
 		) ;
+		this.babylon.material = null ;
+	}
+
+	if ( this.babylon.texture ) {
+		this.babylon.texture.dispose() ;
+		this.babylon.texture = null ;
 	}
 
 	this.gScene.removeGEntity( this.id ) ;
@@ -2200,6 +2208,77 @@ GEntityParticleSystem.prototype = Object.create( GEntity.prototype ) ;
 GEntityParticleSystem.prototype.constructor = GEntityParticleSystem ;
 
 module.exports = GEntityParticleSystem ;
+
+
+
+GEntityParticleSystem.prototype.updateMaterial = function() {
+	var texture ,
+		oldTexture = this.babylon.texture ,
+		scene = this.gScene.babylon.scene ,
+		particleSystem = this.babylon.mesh ;
+
+	console.warn( "3D GEntityParticleSystem.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
+
+	var url = this.variantObject.frames[ 0 ].url ;
+	this.babylon.texture = texture = new BABYLON.Texture( this.dom.cleanUrl( url ) , scene ) ;
+
+	if ( ! particleSystem ) { particleSystem = this.updateMesh() ; }
+
+	particleSystem.particleTexture = texture ;
+
+	if ( oldTexture ) {
+		oldTexture.dispose() ;
+	}
+
+	this.updateMaterialNeeded = false ;
+} ;
+
+
+
+GEntityParticleSystem.prototype.updateMesh = function() {
+	var particleSystem ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
+
+	// Create a particle system
+	this.babylon.mesh = particleSystem = new BABYLON.ParticleSystem( "particles" , 3000 ) ;
+
+	//Texture of each particle
+	//particleSystem.particleTexture = new BABYLON.Texture( "textures/flare.png" ) ;
+
+	// Position where the particles are emitted from
+	particleSystem.emitter = new BABYLON.Vector3( 0 , 0 , 0 ) ;
+	//particleSystem.emitter = camera;
+
+	particleSystem.minEmitBox = new BABYLON.Vector3( -80 , 50 , -80 ) ;
+	particleSystem.maxEmitBox = new BABYLON.Vector3( 80 , 40 , 80 ) ;
+	particleSystem.direction1 = new BABYLON.Vector3( 0 , -1 , 0 ) ;
+	particleSystem.direction2 = new BABYLON.Vector3( 0 , -1 , 0 ) ;
+	particleSystem.emitRate = 40 ;
+	particleSystem.minLifeTime = 50 ;
+	particleSystem.maxLifeTime = 50 ;
+	particleSystem.updateSpeed = 0.6 ;
+
+	particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD ;
+	particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ADD ;
+
+    particleSystem.targetStopDuration = 0 ;	// fade out time?
+
+	// Sprite scaling
+	particleSystem.minSize = 1 ;
+	particleSystem.maxSize = 1 ;
+	particleSystem.minScaleX = 0.25 ;
+	particleSystem.maxScaleX = 0.25 ;
+    particleSystem.minScaleY = 0.6 ;
+    particleSystem.maxScaleY = 0.6 ;
+
+	particleSystem.start() ;
+
+	this.updateMeshNeeded = false ;
+
+	return particleSystem ;
+} ;
 
 
 
