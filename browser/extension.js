@@ -511,9 +511,10 @@ function GEntity( dom , gScene , data ) {
 
 	this.babylon = {
 		material: null ,
-		texture: null ,	// Only relevant for material-less entity, like particle system
 		mesh: null ,
-		light: null		// Attached light, if any
+		light: null ,	// Attached light, if any
+		texture: null ,	// Only relevant for material-less entity, like particle system
+		particleSystem: null
 	} ;
 
 	this.nextTextureFrame = this.nextTextureFrame.bind( this ) ;
@@ -574,6 +575,11 @@ GEntity.prototype.destroy = function() {
 	if ( this.babylon.texture ) {
 		this.babylon.texture.dispose() ;
 		this.babylon.texture = null ;
+	}
+
+	if ( this.babylon.particleSystem ) {
+		this.babylon.particleSystem.dispose() ;
+		this.babylon.particleSystem = null ;
 	}
 
 	this.gScene.removeGEntity( this.id ) ;
@@ -2202,6 +2208,7 @@ const Promise = require( 'seventh' ) ;
 
 function GEntityParticleSystem( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
+	this.special.particleSystem = {} ;
 }
 
 GEntityParticleSystem.prototype = Object.create( GEntity.prototype ) ;
@@ -2211,38 +2218,33 @@ module.exports = GEntityParticleSystem ;
 
 
 
-GEntityParticleSystem.prototype.updateMaterial = function() {
-	var texture ,
-		oldTexture = this.babylon.texture ,
-		scene = this.gScene.babylon.scene ,
-		particleSystem = this.babylon.mesh ;
+GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
+	GEntity.prototype.updateSpecialStage2.call( this , data ) ;
 
-	console.warn( "3D GEntityParticleSystem.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
-
-	var url = this.variantObject.frames[ 0 ].url ;
-	this.babylon.texture = texture = new BABYLON.Texture( this.dom.cleanUrl( url ) , scene ) ;
-
-	if ( ! particleSystem ) { particleSystem = this.updateMesh() ; }
-
-	particleSystem.particleTexture = texture ;
-
-	if ( oldTexture ) {
-		oldTexture.dispose() ;
+	if ( data.special.particleSystem ) {
+		console.warn( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ data.special.particleSystem" , data.special.particleSystem ) ;
+		Object.assign( this.special.particleSystem , data.special.particleSystem ) ;
+		this.updateParticleSystem() ;
 	}
-
-	this.updateMaterialNeeded = false ;
 } ;
 
 
 
-GEntityParticleSystem.prototype.updateMesh = function() {
-	var particleSystem ,
+GEntityParticleSystem.prototype.updateParticleSystem = function() {
+	var texture , particleSystem ,
+		pData = this.special.particleSystem ,
 		scene = this.gScene.babylon.scene ;
 
-	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
+	console.warn( "3D GEntityParticleSystem.updateParticleSystem()" , this.texturePackObject , this.variantObject ) ;
+
+	if ( this.babylon.texture ) { this.babylon.texture.dispose() ; }
+	if ( this.babylon.particleSystem ) { this.babylon.particleSystem.dispose() ; }
+
+	var url = this.variantObject.frames[ 0 ].url ;
+	this.babylon.texture = texture = new BABYLON.Texture( this.dom.cleanUrl( url ) , scene ) ;
 
 	// Create a particle system
-	this.babylon.mesh = particleSystem = new BABYLON.ParticleSystem( "particles" , 3000 ) ;
+	this.babylon.particleSystem = particleSystem = new BABYLON.ParticleSystem( "particles" , 3000 ) ;
 
 	//Texture of each particle
 	//particleSystem.particleTexture = new BABYLON.Texture( "textures/flare.png" ) ;
@@ -2258,7 +2260,7 @@ GEntityParticleSystem.prototype.updateMesh = function() {
 	particleSystem.emitRate = 40 ;
 	particleSystem.minLifeTime = 50 ;
 	particleSystem.maxLifeTime = 50 ;
-	particleSystem.updateSpeed = 0.6 ;
+	particleSystem.updateSpeed = pData.velocity || 0.2 ;
 
 	particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD ;
 	particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ADD ;
@@ -2266,45 +2268,47 @@ GEntityParticleSystem.prototype.updateMesh = function() {
     particleSystem.targetStopDuration = 0 ;	// fade out time?
 
 	// Sprite scaling
-	particleSystem.minSize = 1 ;
-	particleSystem.maxSize = 1 ;
-	particleSystem.minScaleX = 0.25 ;
-	particleSystem.maxScaleX = 0.25 ;
-    particleSystem.minScaleY = 0.6 ;
-    particleSystem.maxScaleY = 0.6 ;
+	particleSystem.minSize = particleSystem.maxSize = 1 ;
+	particleSystem.minScaleX = particleSystem.maxScaleX = pData.size.x || 0.1 ;
+    particleSystem.minScaleY = particleSystem.maxScaleY = pData.size.y || 0.1 ;
 
+	particleSystem.particleTexture = texture ;
 	particleSystem.start() ;
 
-	this.updateMeshNeeded = false ;
-
-	return particleSystem ;
 } ;
 
 
 
-GEntityParticleSystem.prototype.updateThings = function() {
-	// Rain particle system
-	
-	// Create a particle system
-	var particleSystem = new BABYLON.ParticleSystem( "particles" , 3000 ) ;
+GEntityParticleSystem.prototype.updateMaterial = function() {
+	this.updateMaterialNeeded = false ;
+	return ;
+} ;
 
-	//Texture of each particle
-	particleSystem.particleTexture = new BABYLON.Texture( "textures/flare.png" ) ;
 
-	// Position where the particles are emitted from
-	particleSystem.emitter = new BABYLON.Vector3( 0 , 0 , 0 ) ;
-	//particleSystem.emitter = camera;
 
-	particleSystem.minEmitBox = new BABYLON.Vector3( -20 , 5 , -20 ) ;
-	particleSystem.maxEmitBox = new BABYLON.Vector3( 20 , 4 , 20 ) ;
-	particleSystem.direction1 = new BABYLON.Vector3( 0 , -1 , 0 ) ;
-	particleSystem.direction2 = new BABYLON.Vector3( 0 , -1 , 0 ) ;
-	particleSystem.emitRate = 500 ;
-	particleSystem.minLifeTime = 6 ;
-	particleSystem.maxLifeTime = 6 ;
-	particleSystem.updateSpeed = 0.04 ;
+GEntityParticleSystem.prototype.updateMesh = function() {
+	this.updateMeshNeeded = false ;
+	return ;
+} ;
 
-	particleSystem.start() ;
+
+
+GEntityParticleSystem.prototype.updateOrigin = function( newOrigin , isClientMod = false ) {
+} ;
+
+
+
+GEntityParticleSystem.prototype.updatePosition = function( data , volatile = false ) {
+} ;
+
+
+
+GEntityParticleSystem.prototype.updateRotation = function( data , volatile = false ) {
+} ;
+
+
+
+GEntityParticleSystem.prototype.updateSize = function( size , volatile = false , isClientMod = false ) {
 } ;
 
 
