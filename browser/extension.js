@@ -2230,7 +2230,7 @@ function GEntityParticleSystem( dom , gScene , data ) {
 		speed: {
 			x: 0 , y: 0 , z: 0 , xyzmin: 1 , xyzmax: 1
 		} ,
-		altSpeed: { x: 0 , y: 0 , z: 0 } ,
+		altSpeed: null ,	// { x: 0 , y: 0 , z: 0 } ,
 		rotation: { min: 0 , max: 0 } ,
 		rotationSpeed: { min: 0 , max: 0 } ,
 		acceleration: { x: 0 , y: 0 , z: 0 } ,
@@ -2240,12 +2240,8 @@ function GEntityParticleSystem( dom , gScene , data ) {
 		color: {
 			r: 1 , g: 1 , b: 1 , a: 1
 		} ,
-		altColor: {
-			r: 1 , g: 1 , b: 1 , a: 1
-		} ,
-		endColor: {
-			r: 1 , g: 1 , b: 1 , a: 1
-		} ,
+		altColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
+		endColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		autoFacing: 'all'
 	} ;
 
@@ -2259,14 +2255,41 @@ module.exports = GEntityParticleSystem ;
 
 
 
+const BLENDMODE = {
+	add: BABYLON.ParticleSystem.BLENDMODE_ADD ,
+	multiply: BABYLON.ParticleSystem.BLENDMODE_MULTIPLY ,
+	multiplyAdd: BABYLON.ParticleSystem.BLENDMODE_MULTIPLYADD ,
+	oneOne: BABYLON.ParticleSystem.BLENDMODE_ONEONE ,
+	standard: BABYLON.ParticleSystem.BLENDMODE_STANDARD
+} ;
+
+BLENDMODE.default = BLENDMODE.standard ;
+
+
+
+const EMITTER_SHAPE = {
+	box: 'box' ,
+	sphere: 'sphere'
+} ;
+
+
+
+const AUTOFACING = {
+	none: 'none' ,
+	all: 'all' ,
+	'all-axis': 'all' ,
+	y: 'y' ,
+	'y-axis': 'y'
+} ;
+
+
+
 GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 	var pData , newPData ;
 
 	GEntity.prototype.updateSpecialStage2.call( this , data ) ;
 
 	if ( data.special.particleSystem && typeof data.special.particleSystem === 'object' ) {
-		console.warn( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ data.special.particleSystem" , data.special.particleSystem ) ;
-
 		newPData = data.special.particleSystem ;
 		pData = this.special.particleSystem ;
 
@@ -2311,7 +2334,11 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			if ( Number.isFinite( newPData.speed.xyzmax ) ) { pData.speed.xyzmax = newPData.speed.xyzmax ; }
 		}
 
-		if ( newPData.altSpeed && typeof newPData.altSpeed === 'object' ) {
+		if ( newPData.altSpeed === null ) {
+			pData.altSpeed = null ;
+		}
+		else if ( newPData.altSpeed && typeof newPData.altSpeed === 'object' ) {
+			if ( ! pData.altSpeed ) { pData.altSpeed = { x: 0 , y: 0 , z: 0 } ; }
 			if ( Number.isFinite( newPData.altSpeed.x ) ) { pData.altSpeed.x = newPData.altSpeed.x ; }
 			if ( Number.isFinite( newPData.altSpeed.y ) ) { pData.altSpeed.y = newPData.altSpeed.y ; }
 			if ( Number.isFinite( newPData.altSpeed.z ) ) { pData.altSpeed.z = newPData.altSpeed.z ; }
@@ -2376,14 +2403,22 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			if ( Number.isFinite( newPData.color.a ) ) { pData.color.a = newPData.color.a ; }
 		}
 
-		if ( newPData.altColor && typeof newPData.altColor === 'object' ) {
+		if ( newPData.altColor === null ) {
+			pData.altColor = null ;
+		}
+		else if ( newPData.altColor && typeof newPData.altColor === 'object' ) {
+			if ( ! pData.altColor ) { pData.altColor = { r: 1 , g: 1 , b: 1 , a: 1 } ; }
 			if ( Number.isFinite( newPData.altColor.r ) ) { pData.altColor.r = newPData.altColor.r ; }
 			if ( Number.isFinite( newPData.altColor.g ) ) { pData.altColor.g = newPData.altColor.g ; }
 			if ( Number.isFinite( newPData.altColor.b ) ) { pData.altColor.b = newPData.altColor.b ; }
 			if ( Number.isFinite( newPData.altColor.a ) ) { pData.altColor.a = newPData.altColor.a ; }
 		}
 
-		if ( newPData.endColor && typeof newPData.endColor === 'object' ) {
+		if ( newPData.endColor === null ) {
+			pData.endColor = null ;
+		}
+		else if ( newPData.endColor && typeof newPData.endColor === 'object' ) {
+			if ( ! pData.endColor ) { pData.endColor = { r: 1 , g: 1 , b: 1 , a: 1 } ; }
 			if ( Number.isFinite( newPData.endColor.r ) ) { pData.endColor.r = newPData.endColor.r ; }
 			if ( Number.isFinite( newPData.endColor.g ) ) { pData.endColor.g = newPData.endColor.g ; }
 			if ( Number.isFinite( newPData.endColor.b ) ) { pData.endColor.b = newPData.endColor.b ; }
@@ -2400,35 +2435,6 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 
 		this.updateParticleSystem() ;
 	}
-} ;
-
-
-
-const BLENDMODE = {
-	add: BABYLON.ParticleSystem.BLENDMODE_ADD ,
-	multiply: BABYLON.ParticleSystem.BLENDMODE_MULTIPLY ,
-	multiplyAdd: BABYLON.ParticleSystem.BLENDMODE_MULTIPLYADD ,
-	oneOne: BABYLON.ParticleSystem.BLENDMODE_ONEONE ,
-	standard: BABYLON.ParticleSystem.BLENDMODE_STANDARD
-} ;
-
-BLENDMODE.default = BLENDMODE.standard ;
-
-
-
-const EMITTER_SHAPE = {
-	box: 'box' ,
-	sphere: 'sphere'
-} ;
-
-
-
-const AUTOFACING = {
-	none: 'none' ,
-	all: 'all' ,
-	'all-axis': 'all' ,
-	y: 'y' ,
-	'y-axis': 'y'
 } ;
 
 
@@ -2466,7 +2472,6 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	else {
 		// Should used origin
 		particleSystem.emitter = new BABYLON.Vector3( 0 , 0 , 0 ) ;
-		particleSystem.emitter = new BABYLON.Vector3( 0 , 5 , 0 ) ;
 	}
 
 	this.emitterShape = pData.shape.type ;
@@ -2496,7 +2501,9 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	// Particle movement
 	if ( ! fixedDirection ) {
 		particleSystem.direction1 = new BABYLON.Vector3( pData.speed.x , + pData.speed.y , + pData.speed.z ) ;
-		particleSystem.direction2 = new BABYLON.Vector3( pData.altSpeed.x , pData.altSpeed.y , pData.altSpeed.z ) ;
+		particleSystem.direction2 = 
+			pData.altSpeed ? new BABYLON.Vector3( pData.altSpeed.x , pData.altSpeed.y , pData.altSpeed.z ) :
+			new BABYLON.Vector3( pData.speed.x , + pData.speed.y , + pData.speed.z ) ;
 	}
 
 	particleSystem.minEmitPower = pData.speed.xyzmin ;
@@ -2517,8 +2524,12 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 
 	// Color tinting
 	particleSystem.color1 = new BABYLON.Color4( pData.color.r , pData.color.g , pData.color.b , pData.color.a ) ;
-	particleSystem.color2 = new BABYLON.Color4( pData.altColor.r , pData.altColor.g , pData.altColor.b , pData.altColor.a ) ;
-	particleSystem.colorDead = new BABYLON.Color4( pData.endColor.r , pData.endColor.g , pData.endColor.b , pData.endColor.a ) ;
+	particleSystem.color2 =
+		pData.altColor ? new BABYLON.Color4( pData.altColor.r , pData.altColor.g , pData.altColor.b , pData.altColor.a ) :
+		new BABYLON.Color4( pData.color.r , pData.color.g , pData.color.b , pData.color.a ) ;
+	particleSystem.colorDead =
+		pData.endColor ? new BABYLON.Color4( pData.endColor.r , pData.endColor.g , pData.endColor.b , pData.endColor.a ) :
+		new BABYLON.Color4( pData.color.r , pData.color.g , pData.color.b , pData.color.a ) ;
 
 	switch ( pData.autoFacing ) {
 		case 'none' :
@@ -2560,6 +2571,37 @@ GEntityParticleSystem.prototype.updateOrigin = function( newOrigin , isClientMod
 
 
 GEntityParticleSystem.prototype.updatePosition = function( data , volatile = false ) {
+	//console.warn( "3D GEntityParticleSystem.updatePosition()" , data ) ;
+	var particleSystem = this.babylon.particleSystem ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( ! particleSystem || this.special.particleSystem.attachToCamera ) { return ; }
+
+	var x = data.position.x !== undefined ? data.position.x : this.position.x ,
+		y = data.position.y !== undefined ? data.position.y : this.position.y ,
+		z = data.position.z !== undefined ? data.position.z : this.position.z ;
+
+	if ( ! volatile ) {
+		this.position.x = x ;
+		this.position.y = y ;
+		this.position.z = z ;
+	}
+
+	if ( data.transition ) {
+		//console.warn( "mesh:" , mesh ) ;
+		// Animation using easing
+
+		data.transition.createAnimation(
+			scene ,
+			particleSystem.emitter ,
+			'position' ,
+			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
+			new BABYLON.Vector3( x , y , z )
+		) ;
+	}
+	else {
+		particleSystem.emitter.set( x , y , z ) ;
+	}
 } ;
 
 
@@ -4991,7 +5033,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],27:[function(require,module,exports){
-(function (global){(function (){
+(function (global){
 /*
 	EXM
 
@@ -5174,9 +5216,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],28:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Next-Gen Events
 
@@ -6594,7 +6636,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":31,"./Proxy.js":29,"_process":33,"timers":44}],29:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -7143,7 +7185,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":28}],30:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Next-Gen Events
 
@@ -7187,7 +7229,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./NextGenEvents.js":28,"_process":33}],31:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -7248,7 +7290,7 @@ module.exports={
 }
 
 },{}],32:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -7552,7 +7594,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"_process":33}],33:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -7740,7 +7782,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],34:[function(require,module,exports){
-(function (process,global){(function (){
+(function (process,global){
 (function (global, undefined) {
     "use strict";
 
@@ -7928,7 +7970,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":33}],35:[function(require,module,exports){
 /*
 	Seventh
@@ -8852,7 +8894,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":42}],38:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Seventh
 
@@ -9609,7 +9651,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":33,"setimmediate":34,"timers":44}],39:[function(require,module,exports){
 /*
 	Seventh
@@ -10117,7 +10159,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":42}],40:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Seventh
 
@@ -10215,7 +10257,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./seventh.js":42,"_process":33}],41:[function(require,module,exports){
 /*
 	Seventh
@@ -10478,7 +10520,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":42}],44:[function(require,module,exports){
-(function (setImmediate,clearImmediate){(function (){
+(function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -10555,5 +10597,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":33,"timers":44}]},{},[18]);
