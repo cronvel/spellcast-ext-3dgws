@@ -2222,20 +2222,30 @@ function GEntityParticleSystem( dom , gScene , data ) {
 			zmin: 0 ,
 			zmax: 0 ,
 			minRadius: 0 ,
-			maxRadius: 0 ,
+			maxRadius: 0
 		} ,
 		emitRate: 100 ,
 		duration: { min: 10 , max: 10 } ,
 		blendMode: BLENDMODE.default ,
-		speed: { x: 0 , y: 0 , z: 0 , xyzmin: 1 , xyzmax: 1 } ,
+		speed: {
+			x: 0 , y: 0 , z: 0 , xyzmin: 1 , xyzmax: 1
+		} ,
 		altSpeed: { x: 0 , y: 0 , z: 0 } ,
-		rotation: { min: 10 , max: 10 } ,
-		rotationSpeed: { min: 10 , max: 10 } ,
+		rotation: { min: 0 , max: 0 } ,
+		rotationSpeed: { min: 0 , max: 0 } ,
 		acceleration: { x: 0 , y: 0 , z: 0 } ,
-		size: { x: 0 , y: 0 , xymin: 1 , xymax: 1 } ,
-		color: { r: 1 , g: 1 , b: 1 , a: 1 } ,
-		altColor: { r: 1 , g: 1 , b: 1 , a: 1 } ,
-		endColor: { r: 1 , g: 1 , b: 1 , a: 1 } ,
+		size: {
+			xmin: 1 , xmax: 1 , ymin: 1 , ymax: 1 , xymin: 1 , xymax: 1
+		} ,
+		color: {
+			r: 1 , g: 1 , b: 1 , a: 1
+		} ,
+		altColor: {
+			r: 1 , g: 1 , b: 1 , a: 1
+		} ,
+		endColor: {
+			r: 1 , g: 1 , b: 1 , a: 1
+		} ,
 		autoFacing: 'all'
 	} ;
 
@@ -2256,7 +2266,7 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 
 	if ( data.special.particleSystem && typeof data.special.particleSystem === 'object' ) {
 		console.warn( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ data.special.particleSystem" , data.special.particleSystem ) ;
-		
+
 		newPData = data.special.particleSystem ;
 		pData = this.special.particleSystem ;
 
@@ -2281,8 +2291,8 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 
 		if ( Number.isFinite( newPData.emitRate ) ) { pData.emitRate = newPData.emitRate ; }
 
-		if ( newPData.duration ) {
-			if ( typeof newPData.duration !== 'object' ) {
+		if ( newPData.duration !== undefined ) {
+			if ( typeof newPData.duration === 'object' ) {
 				if ( Number.isFinite( newPData.duration.min ) ) { pData.duration.min = newPData.duration.min ; }
 				if ( Number.isFinite( newPData.duration.max ) ) { pData.duration.max = newPData.duration.max ; }
 			}
@@ -2313,8 +2323,8 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			if ( Number.isFinite( newPData.acceleration.z ) ) { pData.acceleration.z = newPData.acceleration.z ; }
 		}
 
-		if ( newPData.rotation ) {
-			if ( typeof newPData.rotation !== 'object' ) {
+		if ( newPData.rotation !== undefined ) {
+			if ( typeof newPData.rotation === 'object' ) {
 				if ( Number.isFinite( newPData.rotation.min ) ) { pData.rotation.min = newPData.rotation.min ; }
 				if ( Number.isFinite( newPData.rotation.max ) ) { pData.rotation.max = newPData.rotation.max ; }
 			}
@@ -2323,8 +2333,8 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			}
 		}
 
-		if ( newPData.rotationSpeed ) {
-			if ( typeof newPData.rotationSpeed !== 'object' ) {
+		if ( newPData.rotationSpeed !== undefined ) {
+			if ( typeof newPData.rotationSpeed === 'object' ) {
 				if ( Number.isFinite( newPData.rotationSpeed.min ) ) { pData.rotationSpeed.min = newPData.rotationSpeed.min ; }
 				if ( Number.isFinite( newPData.rotationSpeed.max ) ) { pData.rotationSpeed.max = newPData.rotationSpeed.max ; }
 			}
@@ -2333,8 +2343,60 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			}
 		}
 
-		if ( newPData.rotation && typeof newPData.rotation !== 'object' ) { newPData.rotation = { min: + newPData.rotation , max: + newPData.rotation } ; }
-		if ( newPData.rotationSpeed && typeof newPData.rotationSpeed !== 'object' ) { newPData.rotationSpeed = { min: + newPData.rotationSpeed , max: + newPData.rotationSpeed } ; }
+		if ( newPData.size && typeof newPData.size === 'object' ) {
+			if ( Number.isFinite( newPData.size.x ) ) {
+				pData.size.xmin = pData.size.xmax = newPData.size.x ;
+			}
+			else {
+				if ( Number.isFinite( newPData.size.xmin ) ) { pData.size.xmin = newPData.size.xmin ; }
+				if ( Number.isFinite( newPData.size.xmax ) ) { pData.size.xmax = newPData.size.xmax ; }
+			}
+
+			if ( Number.isFinite( newPData.size.y ) ) {
+				pData.size.ymin = pData.size.ymax = newPData.size.y ;
+			}
+			else {
+				if ( Number.isFinite( newPData.size.ymin ) ) { pData.size.ymin = newPData.size.ymin ; }
+				if ( Number.isFinite( newPData.size.ymax ) ) { pData.size.ymax = newPData.size.ymax ; }
+			}
+
+			if ( Number.isFinite( newPData.size.xy ) ) {
+				pData.size.xymin = pData.size.xymax = newPData.size.xy ;
+			}
+			else {
+				if ( Number.isFinite( newPData.size.xymin ) ) { pData.size.xymin = newPData.size.xymin ; }
+				if ( Number.isFinite( newPData.size.xymax ) ) { pData.size.xymax = newPData.size.xymax ; }
+			}
+		}
+
+		if ( newPData.color && typeof newPData.color === 'object' ) {
+			if ( Number.isFinite( newPData.color.r ) ) { pData.color.r = newPData.color.r ; }
+			if ( Number.isFinite( newPData.color.g ) ) { pData.color.g = newPData.color.g ; }
+			if ( Number.isFinite( newPData.color.b ) ) { pData.color.b = newPData.color.b ; }
+			if ( Number.isFinite( newPData.color.a ) ) { pData.color.a = newPData.color.a ; }
+		}
+
+		if ( newPData.altColor && typeof newPData.altColor === 'object' ) {
+			if ( Number.isFinite( newPData.altColor.r ) ) { pData.altColor.r = newPData.altColor.r ; }
+			if ( Number.isFinite( newPData.altColor.g ) ) { pData.altColor.g = newPData.altColor.g ; }
+			if ( Number.isFinite( newPData.altColor.b ) ) { pData.altColor.b = newPData.altColor.b ; }
+			if ( Number.isFinite( newPData.altColor.a ) ) { pData.altColor.a = newPData.altColor.a ; }
+		}
+
+		if ( newPData.endColor && typeof newPData.endColor === 'object' ) {
+			if ( Number.isFinite( newPData.endColor.r ) ) { pData.endColor.r = newPData.endColor.r ; }
+			if ( Number.isFinite( newPData.endColor.g ) ) { pData.endColor.g = newPData.endColor.g ; }
+			if ( Number.isFinite( newPData.endColor.b ) ) { pData.endColor.b = newPData.endColor.b ; }
+			if ( Number.isFinite( newPData.endColor.a ) ) { pData.endColor.a = newPData.endColor.a ; }
+		}
+
+		if ( newPData.autoFacing !== undefined ) {
+			if ( newPData.autoFacing && AUTOFACING[ newPData.autoFacing ] ) { pData.autoFacing = AUTOFACING[ newPData.autoFacing ] ; }
+			else if ( newPData.autoFacing ) { pData.autoFacing = 'all' ; }
+			else { pData.autoFacing = 'none' ; }
+		}
+		
+		console.warn( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ data.special.particleSystem" , this.special.particleSystem ) ;
 
 		this.updateParticleSystem() ;
 	}
@@ -2361,6 +2423,16 @@ const EMITTER_SHAPE = {
 
 
 
+const AUTOFACING = {
+	none: 'none' ,
+	all: 'all' ,
+	'all-axis': 'all' ,
+	y: 'y' ,
+	'y-axis': 'y'
+} ;
+
+
+
 GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	var texture , particleSystem , emitter ,
 		fixedDirection = false ,
@@ -2378,11 +2450,11 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	// Create a particle system
 	this.babylon.particleSystem = particleSystem =
 		// For instance, GPU particles doesn't work with LUT... -_-'
-		//BABYLON.GPUParticleSystem.IsSupported ? new BABYLON.GPUParticleSystem( "particles" , pData.capacity || 100 ) :
-		new BABYLON.ParticleSystem( "particles" , pData.capacity || 100 ) ;
+		//BABYLON.GPUParticleSystem.IsSupported ? new BABYLON.GPUParticleSystem( "particles" , pData.capacity ) :
+		new BABYLON.ParticleSystem( "particles" , pData.capacity ) ;
 
 	// Global speed multiplier
-	particleSystem.updateSpeed = ( pData.updateRate || 1 ) * 0.01 ;
+	particleSystem.updateSpeed = pData.updateRate * 0.01 ;
 
 	// Texture of each particle
 	particleSystem.particleTexture = texture ;
@@ -2396,123 +2468,73 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 		particleSystem.emitter = new BABYLON.Vector3( 0 , 0 , 0 ) ;
 		particleSystem.emitter = new BABYLON.Vector3( 0 , 5 , 0 ) ;
 	}
-	
-	this.emitterShape = EMITTER_SHAPE[ pData.shape?.type ] || 'box' ;
+
+	this.emitterShape = pData.shape.type ;
 
 	switch ( this.emitterShape ) {
 		case 'box' :
-			particleSystem.minEmitBox = new BABYLON.Vector3( pData.shape?.xmin || 0 , pData.shape?.ymin || 0 , pData.shape?.zmin || 0 ) ;
-			particleSystem.maxEmitBox = new BABYLON.Vector3( pData.shape?.xmax || 0 , pData.shape?.ymax || 0 , pData.shape?.zmax || 0 ) ;
+			particleSystem.minEmitBox = new BABYLON.Vector3( pData.shape.xmin , pData.shape.ymin , pData.shape.zmin ) ;
+			particleSystem.maxEmitBox = new BABYLON.Vector3( pData.shape.xmax , pData.shape.ymax , pData.shape.zmax ) ;
 			break ;
 		case 'sphere' :
 			fixedDirection = true ;
 			emitter = particleSystem.createSphereEmitter() ;
-			emitter.radius =
-				pData.shape?.maxRadius !== undefined ? + pData.shape.maxRadius :
-				pData.shape?.radius !== undefined ? + pData.shape.radius :
-				0 ;
-			emitter.radiusRange = pData.shape?.minRadius !== undefined ? + 1 - ( pData.shape.minRadius / emitter.radius ) : 1 ;
+			emitter.radius = pData.shape.maxRadius ;
+			emitter.radiusRange = 1 - ( pData.shape.minRadius / pData.shape.maxRadius ) ;
 			break ;
 	}
-	
-	particleSystem.emitRate = pData.emitRate || 100 ;
-	particleSystem.minLifeTime = pData.duration?.min || 10 ;
-	particleSystem.maxLifeTime = pData.duration?.max || 10 ;
+
+	particleSystem.emitRate = pData.emitRate ;
+	particleSystem.minLifeTime = pData.duration.min ;
+	particleSystem.maxLifeTime = pData.duration.max ;
 	//particleSystem.minEmitPower / particleSystem.maxEmitPower seems to multiply the speed vector
 
-	particleSystem.blendMode = pData.blendMode && BLENDMODE[ pData.blendMode ] ? BLENDMODE[ pData.blendMode ] : BLENDMODE.default ;
+	particleSystem.blendMode = pData.blendMode ;
 
 	//particleSystem.targetStopDuration = 0 ;	// Duration of the particle system
 
 	// Particle movement
 	if ( ! fixedDirection ) {
-		particleSystem.direction1 = 
-			pData.speed1 && typeof pData.speed1 === 'object' ? new BABYLON.Vector3( + pData.speed1.x || 0 , + pData.speed1.y || 0 , + pData.speed1.z || 0 ) :
-			pData.speed && typeof pData.speed === 'object' ? new BABYLON.Vector3( + pData.speed.x || 0 , + pData.speed.y || 0 , + pData.speed.z || 0 ) :
-			new BABYLON.Vector3( 0 , -1 , 0 ) ;
-		particleSystem.direction2 = 
-			pData.speed2 && typeof pData.speed2 === 'object' ? new BABYLON.Vector3( + pData.speed2.x || 0 , + pData.speed2.y || 0 , + pData.speed2.z || 0 ) :
-			pData.speed && typeof pData.speed === 'object' ? new BABYLON.Vector3( + pData.speed.x || 0 , + pData.speed.y || 0 , + pData.speed.z || 0 ) :
-			new BABYLON.Vector3( 0 , -1 , 0 ) ;
+		particleSystem.direction1 = new BABYLON.Vector3( pData.speed.x , + pData.speed.y , + pData.speed.z ) ;
+		particleSystem.direction2 = new BABYLON.Vector3( pData.altSpeed.x , pData.altSpeed.y , pData.altSpeed.z ) ;
 	}
 
-	particleSystem.minEmitPower = pData.speed?.xyzmin !== undefined ? pData.speed.xyzmin : 1 ;
-	particleSystem.maxEmitPower = pData.speed?.xyzmax !== undefined ? pData.speed.xyzmax : 1 ;
-	particleSystem.minInitialRotation = pData.rotation?.min || 0 ;
-	particleSystem.maxInitialRotation = pData.rotation?.max || 0 ;
-	particleSystem.minAngularSpeed = pData.rotationSpeed?.min || 0 ;
-	particleSystem.maxAngularSpeed = pData.rotationSpeed?.max || 0 ;
-
-	if ( pData.acceleration && typeof pData.acceleration === 'object' ) {
-		particleSystem.gravity = new BABYLON.Vector3( + pData.acceleration.x || 0 , + pData.acceleration.y || 0 , + pData.acceleration.z || 0 ) ;
-	}
+	particleSystem.minEmitPower = pData.speed.xyzmin ;
+	particleSystem.maxEmitPower = pData.speed.xyzmax ;
+	particleSystem.minInitialRotation = pData.rotation.min ;
+	particleSystem.maxInitialRotation = pData.rotation.max ;
+	particleSystem.minAngularSpeed = pData.rotationSpeed.min ;
+	particleSystem.maxAngularSpeed = pData.rotationSpeed.max ;
+	particleSystem.gravity = new BABYLON.Vector3( pData.acceleration.x , pData.acceleration.y , pData.acceleration.z ) ;
 
 	// Sprite scaling
-	particleSystem.minSize =
-		pData.size.xymin !== undefined ? + pData.size.xymin :
-		pData.size.xy !== undefined ? + pData.size.xy :
-		1 ;
-	particleSystem.maxSize =
-		pData.size.xymax !== undefined ? + pData.size.xymax :
-		pData.size.xy !== undefined ? + pData.size.xy :
-		1 ;
-	particleSystem.minScaleX =
-		pData.size.xmin !== undefined ? + pData.size.xmin :
-		pData.size.x !== undefined ? + pData.size.x :
-		1 ;
-	particleSystem.maxScaleX =
-		pData.size.xmax !== undefined ? + pData.size.xmax :
-		pData.size.x !== undefined ? + pData.size.x :
-		1 ;
-	particleSystem.minScaleY =
-		pData.size.ymin !== undefined ? + pData.size.ymin :
-		pData.size.y !== undefined ? + pData.size.y :
-		1 ;
-	particleSystem.maxScaleY =
-		pData.size.ymax !== undefined ? + pData.size.ymax :
-		pData.size.y !== undefined ? + pData.size.y :
-		1 ;
+	particleSystem.minSize = pData.size.xymin ;
+	particleSystem.maxSize = pData.size.xymax ;
+	particleSystem.minScaleX = pData.size.xmin ;
+	particleSystem.maxScaleX = pData.size.xmax ;
+	particleSystem.minScaleY = pData.size.ymin ;
+	particleSystem.maxScaleY = pData.size.ymax ;
 
 	// Color tinting
-	particleSystem.color1 = 
-		pData.color1 && typeof pData.color1 === 'object' ? new BABYLON.Color4( + pData.color1.r || 0 , + pData.color1.g || 0 , + pData.color1.b || 0 , + pData.color1.a || 0 ) :
-		pData.color && typeof pData.color === 'object' ? new BABYLON.Color4( + pData.color.r || 0 , + pData.color.g || 0 , + pData.color.b || 0 , + pData.color.a || 0 ) :
-		new BABYLON.Color4( 1 , 1 , 1 , 1 ) ;
-	particleSystem.color2 = 
-		pData.color2 && typeof pData.color2 === 'object' ? new BABYLON.Color4( + pData.color2.r || 0 , + pData.color2.g || 0 , + pData.color2.b || 0 , + pData.color2.a || 0 ) :
-		pData.color && typeof pData.color === 'object' ? new BABYLON.Color4( + pData.color.r || 0 , + pData.color.g || 0 , + pData.color.b || 0 , + pData.color.a || 0 ) :
-		new BABYLON.Color4( 1 , 1 , 1 , 1 ) ;
-	particleSystem.colorDead = 
-		pData.endColor && typeof pData.endColor === 'object' ? new BABYLON.Color4( + pData.endColor.r || 0 , + pData.endColor.g || 0 , + pData.endColor.b || 0 , + pData.endColor.a || 0 ) :
-		pData.color && typeof pData.color === 'object' ? new BABYLON.Color4( + pData.color.r || 0 , + pData.color.g || 0 , + pData.color.b || 0 , + pData.color.a || 0 ) :
-		new BABYLON.Color4( 1 , 1 , 1 , 0 ) ;
+	particleSystem.color1 = new BABYLON.Color4( pData.color.r , pData.color.g , pData.color.b , pData.color.a ) ;
+	particleSystem.color2 = new BABYLON.Color4( pData.altColor.r , pData.altColor.g , pData.altColor.b , pData.altColor.a ) ;
+	particleSystem.colorDead = new BABYLON.Color4( pData.endColor.r , pData.endColor.g , pData.endColor.b , pData.endColor.a ) ;
 
-	if ( pData.autoFacing === false ) {
-		particleSystem.isBillboardBased = false ;
+	switch ( pData.autoFacing ) {
+		case 'none' :
+			particleSystem.isBillboardBased = false ;
+			break ;
+		case 'y' :
+			particleSystem.isBillboardBased = true ;
+			particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_Y ;
+			break ;
+		case 'all' :
+		default :
+			particleSystem.isBillboardBased = true ;
+			particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_ALL ;
+			break ;
 	}
-	else if ( pData.autoFacing === true ) {
-		particleSystem.isBillboardBased = true ;
-		particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_ALL ;
-	}
-	else if ( pData.autoFacing ) {
-		switch ( pData.autoFacing.toLowerCase() ) {
-			case 'none' : 
-				particleSystem.isBillboardBased = false ;
-				break ;
-			case 'y' : 
-			case 'y-axis' : 
-				particleSystem.isBillboardBased = true ;
-				particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_Y ;
-				break ;
-			case 'all' : 
-			case 'all-axis' : 
-			default :
-				particleSystem.isBillboardBased = true ;
-				particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_ALL ;
-				break ;
-		}
-	}
-	
+
 	particleSystem.start() ;
 } ;
 
