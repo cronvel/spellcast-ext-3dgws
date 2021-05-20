@@ -2209,6 +2209,7 @@ const Promise = require( 'seventh' ) ;
 function GEntityParticleSystem( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
 	this.special.particleSystem = {} ;
+	this.emitterShape = 'box' ;
 }
 
 GEntityParticleSystem.prototype = Object.create( GEntity.prototype ) ;
@@ -2249,8 +2250,16 @@ BLENDMODE.default = BLENDMODE.standard ;
 
 
 
+const EMITTER_SHAPE = {
+	box: 'box' ,
+	sphere: 'sphere'
+} ;
+
+
+
 GEntityParticleSystem.prototype.updateParticleSystem = function() {
-	var texture , particleSystem ,
+	var texture , particleSystem , emitter ,
+		fixedDirection = false ,
 		pData = this.special.particleSystem ,
 		scene = this.gScene.babylon.scene ;
 
@@ -2263,21 +2272,42 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	this.babylon.texture = texture = new BABYLON.Texture( this.dom.cleanUrl( url ) , scene ) ;
 
 	// Create a particle system
-	this.babylon.particleSystem = particleSystem = new BABYLON.ParticleSystem( "particles" , pData.capacity || 100 ) ;
+	this.babylon.particleSystem = particleSystem =
+		// For instance, GPU particles doesn't work with LUT... -_-'
+		//BABYLON.GPUParticleSystem.IsSupported ? new BABYLON.GPUParticleSystem( "particles" , pData.capacity || 100 ) :
+		new BABYLON.ParticleSystem( "particles" , pData.capacity || 100 ) ;
 
-	//Texture of each particle
-	//particleSystem.particleTexture = new BABYLON.Texture( "textures/flare.png" ) ;
-
-	// Position where the particles are emitted from
-	particleSystem.emitter = new BABYLON.Vector3( 0 , 0 , 0 ) ;
-	//particleSystem.emitter = camera;
-
-	particleSystem.minEmitBox = new BABYLON.Vector3( pData.emitBox?.xmin || 0 , pData.emitBox?.ymin || 0 , pData.emitBox?.zmin || 0 ) ;
-	particleSystem.maxEmitBox = new BABYLON.Vector3( pData.emitBox?.xmax || 0 , pData.emitBox?.ymax || 0 , pData.emitBox?.zmax || 0 ) ;
-	
 	// Global speed multiplier
 	particleSystem.updateSpeed = ( pData.updateRate || 1 ) * 0.01 ;
 
+	// Texture of each particle
+	particleSystem.particleTexture = texture ;
+
+	// Position where the particles are emitted from
+	if ( pData.attachToCamera ) {
+		particleSystem.emitter = this.gScene.globalCamera.babylon.camera ;
+	}
+	else {
+		// Should used origin
+		particleSystem.emitter = new BABYLON.Vector3( 0 , 0 , 0 ) ;
+		particleSystem.emitter = new BABYLON.Vector3( 0 , 5 , 0 ) ;
+	}
+	
+	this.emitterShape = EMITTER_SHAPE[ pData.shape?.type ] || 'box' ;
+
+	switch ( this.emitterShape ) {
+		case 'box' :
+			particleSystem.minEmitBox = new BABYLON.Vector3( pData.shape?.xmin || 0 , pData.shape?.ymin || 0 , pData.shape?.zmin || 0 ) ;
+			particleSystem.maxEmitBox = new BABYLON.Vector3( pData.shape?.xmax || 0 , pData.shape?.ymax || 0 , pData.shape?.zmax || 0 ) ;
+			break ;
+		case 'sphere' :
+			fixedDirection = true ;
+			emitter = particleSystem.createSphereEmitter( 1 ) ;
+			emitter.radius = pData.shape?.radius !== undefined ? + pData.shape.radius : 0 ;
+			emitter.radiusRange = pData.shape?.radiusRange !== undefined ? + pData.shape.radiusRange : 1 ;
+			break ;
+	}
+	
 	particleSystem.emitRate = pData.emitRate || 100 ;
 	particleSystem.minLifeTime = pData.duration?.min || 10 ;
 	particleSystem.maxLifeTime = pData.duration?.max || 10 ;
@@ -2287,21 +2317,27 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 
 	//particleSystem.targetStopDuration = 0 ;	// Duration of the particle system
 
-	// Particle speed
-	particleSystem.direction1 = 
-		pData.speed1 && typeof pData.speed1 === 'object' ? new BABYLON.Vector3( + pData.speed1.x || 0 , + pData.speed1.y || 0 , + pData.speed1.z || 0 ) :
-		pData.speed && typeof pData.speed === 'object' ? new BABYLON.Vector3( + pData.speed.x || 0 , + pData.speed.y || 0 , + pData.speed.z || 0 ) :
-		new BABYLON.Vector3( 0 , -1 , 0 ) ;
-	particleSystem.direction2 = 
-		pData.speed2 && typeof pData.speed2 === 'object' ? new BABYLON.Vector3( + pData.speed2.x || 0 , + pData.speed2.y || 0 , + pData.speed2.z || 0 ) :
-		pData.speed && typeof pData.speed === 'object' ? new BABYLON.Vector3( + pData.speed.x || 0 , + pData.speed.y || 0 , + pData.speed.z || 0 ) :
-		new BABYLON.Vector3( 0 , -1 , 0 ) ;
+	// Particle movement
+	if ( ! fixedDirection ) {
+		particleSystem.direction1 = 
+			pData.speed1 && typeof pData.speed1 === 'object' ? new BABYLON.Vector3( + pData.speed1.x || 0 , + pData.speed1.y || 0 , + pData.speed1.z || 0 ) :
+			pData.speed && typeof pData.speed === 'object' ? new BABYLON.Vector3( + pData.speed.x || 0 , + pData.speed.y || 0 , + pData.speed.z || 0 ) :
+			new BABYLON.Vector3( 0 , -1 , 0 ) ;
+		particleSystem.direction2 = 
+			pData.speed2 && typeof pData.speed2 === 'object' ? new BABYLON.Vector3( + pData.speed2.x || 0 , + pData.speed2.y || 0 , + pData.speed2.z || 0 ) :
+			pData.speed && typeof pData.speed === 'object' ? new BABYLON.Vector3( + pData.speed.x || 0 , + pData.speed.y || 0 , + pData.speed.z || 0 ) :
+			new BABYLON.Vector3( 0 , -1 , 0 ) ;
+	}
+
+	particleSystem.minEmitPower = pData.speed?.xyzmin !== undefined ? pData.speed.xyzmin : 1 ;
+	particleSystem.maxEmitPower = pData.speed?.xyzmax !== undefined ? pData.speed.xyzmax : 1 ;
 	particleSystem.minInitialRotation = pData.rotation?.min || 0 ;
 	particleSystem.maxInitialRotation = pData.rotation?.max || 0 ;
 	particleSystem.minAngularSpeed = pData.rotationSpeed?.min || 0 ;
 	particleSystem.maxAngularSpeed = pData.rotationSpeed?.max || 0 ;
-	if ( pData.gravity && typeof pData.gravity === 'object' ) {
-		particleSystem.gravity = new BABYLON.Vector3( + pData.gravity.x || 0 , + pData.gravity.y || 0 , + pData.gravity.z || 0 ) ;
+
+	if ( pData.acceleration && typeof pData.acceleration === 'object' ) {
+		particleSystem.gravity = new BABYLON.Vector3( + pData.acceleration.x || 0 , + pData.acceleration.y || 0 , + pData.acceleration.z || 0 ) ;
 	}
 
 	// Sprite scaling
@@ -2344,7 +2380,32 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 		pData.color && typeof pData.color === 'object' ? new BABYLON.Color4( + pData.color.r || 0 , + pData.color.g || 0 , + pData.color.b || 0 , + pData.color.a || 0 ) :
 		new BABYLON.Color4( 1 , 1 , 1 , 0 ) ;
 
-	particleSystem.particleTexture = texture ;
+	if ( pData.autoFacing === false ) {
+		particleSystem.isBillboardBased = false ;
+	}
+	else if ( pData.autoFacing === true ) {
+		particleSystem.isBillboardBased = true ;
+		particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_ALL ;
+	}
+	else if ( pData.autoFacing ) {
+		switch ( pData.autoFacing.toLowerCase() ) {
+			case 'none' : 
+				particleSystem.isBillboardBased = false ;
+				break ;
+			case 'y' : 
+			case 'y-axis' : 
+				particleSystem.isBillboardBased = true ;
+				particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_Y ;
+				break ;
+			case 'all' : 
+			case 'all-axis' : 
+			default :
+				particleSystem.isBillboardBased = true ;
+				particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_ALL ;
+				break ;
+		}
+	}
+	
 	particleSystem.start() ;
 } ;
 
