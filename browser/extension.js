@@ -2225,8 +2225,10 @@ function GEntityParticleSystem( dom , gScene , data ) {
 			x: 0 , y: 0 , z: 0 , xyzmin: 1 , xyzmax: 1
 		} ,
 		altSpeed: null ,	// { x: 0 , y: 0 , z: 0 } ,
+		speedGradient: null ,
 		rotation: { min: 0 , max: 0 } ,
 		rotationSpeed: { min: 0 , max: 0 } ,
+		rotationSpeedGradient: null ,
 		acceleration: { x: 0 , y: 0 , z: 0 } ,
 		size: {
 			xmin: 1 , xmax: 1 , ymin: 1 , ymax: 1 , xymin: 1 , xymax: 1
@@ -2236,7 +2238,7 @@ function GEntityParticleSystem( dom , gScene , data ) {
 		} ,
 		altColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		endColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
-		colorGradient: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
+		colorGradient: null ,
 		autoFacing: 'all'
 	} ;
 
@@ -2345,6 +2347,21 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			if ( Number.isFinite( newPData.altSpeed.z ) ) { pData.altSpeed.z = newPData.altSpeed.z ; }
 		}
 
+		if ( newPData.speedGradient === null ) {
+			pData.speedGradient = null ;
+		}
+		else if ( Array.isArray( newPData.speedGradient ) && newPData.speedGradient.length >= 2 ) {
+			if ( pData.speedGradient ) { pData.speedGradient.length = 0 ; }
+			else { pData.speedGradient = [] ; }
+			
+			for ( let newSpeed of newPData.speedGradient ) {
+				let speed = { t: 0 , xyz: 1 } ;
+				pData.speedGradient.push( speed ) ;
+				if ( Number.isFinite( newSpeed.t ) ) { speed.t = newSpeed.t ; }
+				if ( Number.isFinite( newSpeed.xyz ) ) { speed.xyz = newSpeed.xyz ; }
+			}
+		}
+
 		if ( newPData.acceleration && typeof newPData.acceleration === 'object' ) {
 			if ( Number.isFinite( newPData.acceleration.x ) ) { pData.acceleration.x = newPData.acceleration.x ; }
 			if ( Number.isFinite( newPData.acceleration.y ) ) { pData.acceleration.y = newPData.acceleration.y ; }
@@ -2368,6 +2385,21 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			}
 			else if ( Number.isFinite( newPData.rotationSpeed ) ) {
 				pData.rotationSpeed.min = pData.rotationSpeed.max = newPData.rotationSpeed ;
+			}
+		}
+
+		if ( newPData.rotationSpeedGradient === null ) {
+			pData.rotationSpeedGradient = null ;
+		}
+		else if ( Array.isArray( newPData.rotationSpeedGradient ) && newPData.rotationSpeedGradient.length >= 2 ) {
+			if ( pData.rotationSpeedGradient ) { pData.rotationSpeedGradient.length = 0 ; }
+			else { pData.rotationSpeedGradient = [] ; }
+			
+			for ( let newSpeed of newPData.rotationSpeedGradient ) {
+				let speed = { t: 0 , a: 1 } ;
+				pData.rotationSpeedGradient.push( speed ) ;
+				if ( Number.isFinite( newSpeed.t ) ) { speed.t = newSpeed.t ; }
+				if ( Number.isFinite( newSpeed.a ) ) { speed.a = newSpeed.a ; }
 			}
 		}
 
@@ -2531,7 +2563,6 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	particleSystem.emitRate = pData.emitRate ;
 	particleSystem.minLifeTime = pData.duration.min ;
 	particleSystem.maxLifeTime = pData.duration.max ;
-	//particleSystem.minEmitPower / particleSystem.maxEmitPower seems to multiply the speed vector
 
 	particleSystem.blendMode = pData.blendMode ;
 
@@ -2547,10 +2578,24 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 
 	particleSystem.minEmitPower = pData.speed.xyzmin ;
 	particleSystem.maxEmitPower = pData.speed.xyzmax ;
+
+	if ( pData.speedGradient ) {
+		for ( let speed of pData.speedGradient ) {
+			particleSystem.addVelocityGradient( speed.t , speed.xyz ) ;
+		}
+	}
+
 	particleSystem.minInitialRotation = pData.rotation.min ;
 	particleSystem.maxInitialRotation = pData.rotation.max ;
 	particleSystem.minAngularSpeed = pData.rotationSpeed.min ;
 	particleSystem.maxAngularSpeed = pData.rotationSpeed.max ;
+
+	if ( pData.rotationSpeedGradient ) {
+		for ( let speed of pData.rotationSpeedGradient ) {
+			particleSystem.addAngularSpeedGradient( speed.t , speed.a ) ;
+		}
+	}
+
 	particleSystem.gravity = new BABYLON.Vector3( pData.acceleration.x , pData.acceleration.y , pData.acceleration.z ) ;
 
 	// Sprite scaling
@@ -5101,7 +5146,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],27:[function(require,module,exports){
-(function (global){(function (){
+(function (global){
 /*
 	EXM
 
@@ -5284,9 +5329,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],28:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Next-Gen Events
 
@@ -6704,7 +6749,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":31,"./Proxy.js":29,"_process":33,"timers":44}],29:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -7253,7 +7298,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":28}],30:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Next-Gen Events
 
@@ -7297,7 +7342,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./NextGenEvents.js":28,"_process":33}],31:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -7358,7 +7403,7 @@ module.exports={
 }
 
 },{}],32:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -7662,7 +7707,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"_process":33}],33:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -7850,7 +7895,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],34:[function(require,module,exports){
-(function (process,global){(function (){
+(function (process,global){
 (function (global, undefined) {
     "use strict";
 
@@ -8038,7 +8083,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":33}],35:[function(require,module,exports){
 /*
 	Seventh
@@ -8962,7 +9007,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":42}],38:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Seventh
 
@@ -9719,7 +9764,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":33,"setimmediate":34,"timers":44}],39:[function(require,module,exports){
 /*
 	Seventh
@@ -10227,7 +10272,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":42}],40:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Seventh
 
@@ -10325,7 +10370,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./seventh.js":42,"_process":33}],41:[function(require,module,exports){
 /*
 	Seventh
@@ -10588,7 +10633,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":42}],44:[function(require,module,exports){
-(function (setImmediate,clearImmediate){(function (){
+(function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -10665,5 +10710,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":33,"timers":44}]},{},[18]);
