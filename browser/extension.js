@@ -52,7 +52,7 @@ function Camera( gScene ) {
 	this.pitch = 0 ;
 	this.roll = 0 ;
 	this.distance = 10 ;
-	this.fov = 90 ;
+	this.fov = Math.PI / 4 ;
 	this.perspective = 1 ;
 	this.free = false ;
 	this.trackingMode = null ;
@@ -121,20 +121,20 @@ Camera.prototype.update = function( data , awaiting = false ) {
 	}
 
 	if ( data.fov !== undefined ) {
-		this.fov = data.fov || 90 ;
-		// It looks like fov is divided by 2 in Babylon, hence the 360 instead of 180
+		this.fov = data.fov || Math.PI / 4 ;
 
+		// It looks like fov should be divided by 2 in Babylon
 		if ( data.transition ) {
 			data.transition.createAnimation(
 				scene ,
 				camera ,
 				'fov' ,
 				BABYLON.Animation.ANIMATIONTYPE_FLOAT ,
-				this.fov * Math.PI / 360
+				this.fov / 2
 			) ;
 		}
 		else {
-			camera.fov = this.fov * Math.PI / 360 ;
+			camera.fov = this.fov / 2 ;
 		}
 	}
 
@@ -177,7 +177,7 @@ Camera.prototype.setMode = function( mode ) {
 
 			if ( this.mode === 'positions' ) {
 				this.babylon.camera.rotationQuaternion = BABYLON.Quaternion.FromEulerVector(
-					vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll * vectorUtils.DEG_TO_RAD )
+					vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll )
 				) ;
 			}
 			else if ( this.mode === 'firstPersonQuaternion' ) {
@@ -189,11 +189,7 @@ Camera.prototype.setMode = function( mode ) {
 				) ;
 			}
 			else {
-				this.babylon.camera.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(
-					this.pitch * vectorUtils.DEG_TO_RAD ,
-					this.yaw * vectorUtils.DEG_TO_RAD ,
-					this.roll * vectorUtils.DEG_TO_RAD
-				) ;
+				this.babylon.camera.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles( this.pitch , this.yaw , this.roll ) ;
 			}
 
 			break ;
@@ -282,7 +278,7 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 	if ( positionsMode ) {
 		// In this mode, any changes will always change the rotation
 		newRotationQuaternion = BABYLON.Quaternion.FromEulerVector(
-			vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll * vectorUtils.DEG_TO_RAD )
+			vectorUtils.cameraRotationFromOriginAndTarget( this.position , this.target , this.roll )
 		) ;
 	}
 	else if ( quaternionMode ) {
@@ -291,11 +287,7 @@ Camera.prototype.updateFirstPerson = function( data , quaternionMode , positions
 		}
 	}
 	else if ( data.yaw !== undefined || data.pitch !== undefined || data.roll !== undefined ) {
-		newRotationQuaternion = BABYLON.Quaternion.FromEulerAngles(
-			this.pitch * vectorUtils.DEG_TO_RAD ,
-			this.yaw * vectorUtils.DEG_TO_RAD ,
-			this.roll * vectorUtils.DEG_TO_RAD
-		) ;
+		newRotationQuaternion = BABYLON.Quaternion.FromEulerAngles( this.pitch , this.yaw , this.roll ) ;
 	}
 
 	if ( data.transition ) {
@@ -2222,7 +2214,9 @@ function GEntityParticleSystem( dom , gScene , data ) {
 			zmin: 0 ,
 			zmax: 0 ,
 			minRadius: 0 ,
-			maxRadius: 0
+			maxRadius: 0 ,
+			height: 0 ,
+			angle: 0
 		} ,
 		emitRate: 100 ,
 		duration: { min: 10 , max: 10 } ,
@@ -2242,6 +2236,7 @@ function GEntityParticleSystem( dom , gScene , data ) {
 		} ,
 		altColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		endColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
+		colorGradient: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		autoFacing: 'all'
 	} ;
 
@@ -2269,7 +2264,11 @@ BLENDMODE.default = BLENDMODE.standard ;
 
 const EMITTER_SHAPE = {
 	box: 'box' ,
-	sphere: 'sphere'
+	sphere: 'sphere' ,
+	hemisphere: 'hemisphere' ,
+	hemispheric: 'hemisphere' ,
+	cylinder: 'cylinder' ,
+	cone: 'cone'
 } ;
 
 
@@ -2310,6 +2309,8 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			if ( Number.isFinite( newPData.shape.minRadius ) ) { pData.shape.minRadius = newPData.shape.minRadius ; }
 			if ( Number.isFinite( newPData.shape.maxRadius ) ) { pData.shape.maxRadius = newPData.shape.maxRadius ; }
 			else if ( Number.isFinite( newPData.shape.radius ) ) { pData.shape.maxRadius = newPData.shape.radius ; }
+			if ( Number.isFinite( newPData.shape.height ) ) { pData.shape.height = newPData.shape.height ; }
+			if ( Number.isFinite( newPData.shape.angle ) ) { pData.shape.angle = newPData.shape.angle ; }
 		}
 
 		if ( Number.isFinite( newPData.emitRate ) ) { pData.emitRate = newPData.emitRate ; }
@@ -2425,6 +2426,24 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			if ( Number.isFinite( newPData.endColor.a ) ) { pData.endColor.a = newPData.endColor.a ; }
 		}
 
+		if ( newPData.colorGradient === null ) {
+			pData.colorGradient = null ;
+		}
+		else if ( Array.isArray( newPData.colorGradient ) && newPData.colorGradient.length >= 2 ) {
+			if ( pData.colorGradient ) { pData.colorGradient.length = 0 ; }
+			else { pData.colorGradient = [] ; }
+			
+			for ( let newColor of newPData.colorGradient ) {
+				let color = { t: 0 , r: 1 , g: 1 , b: 1 , a: 1 } ;
+				pData.colorGradient.push( color ) ;
+				if ( Number.isFinite( newColor.t ) ) { color.t = newColor.t ; }
+				if ( Number.isFinite( newColor.r ) ) { color.r = newColor.r ; }
+				if ( Number.isFinite( newColor.g ) ) { color.g = newColor.g ; }
+				if ( Number.isFinite( newColor.b ) ) { color.b = newColor.b ; }
+				if ( Number.isFinite( newColor.a ) ) { color.a = newColor.a ; }
+			}
+		}
+
 		if ( newPData.autoFacing !== undefined ) {
 			if ( newPData.autoFacing && AUTOFACING[ newPData.autoFacing ] ) { pData.autoFacing = AUTOFACING[ newPData.autoFacing ] ; }
 			else if ( newPData.autoFacing ) { pData.autoFacing = 'all' ; }
@@ -2487,6 +2506,26 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 			emitter.radius = pData.shape.maxRadius ;
 			emitter.radiusRange = 1 - ( pData.shape.minRadius / pData.shape.maxRadius ) ;
 			break ;
+		case 'hemisphere' :
+			fixedDirection = true ;
+			emitter = particleSystem.createHemisphericEmitter() ;
+			emitter.radius = pData.shape.maxRadius ;
+			emitter.radiusRange = 1 - ( pData.shape.minRadius / pData.shape.maxRadius ) ;
+			break ;
+		case 'cylinder' :
+			fixedDirection = true ;
+			emitter = particleSystem.createCylinderEmitter() ;
+			emitter.radius = pData.shape.maxRadius ;
+			emitter.radiusRange = 1 - ( pData.shape.minRadius / pData.shape.maxRadius ) ;
+			emitter.height = pData.shape.height ;
+			break ;
+		case 'cone' :
+			fixedDirection = true ;
+			emitter = particleSystem.createConeEmitter() ;
+			emitter.radius = pData.shape.maxRadius ;
+			emitter.radiusRange = 1 - ( pData.shape.minRadius / pData.shape.maxRadius ) ;
+			emitter.angle = pData.shape.angle ;
+			break ;
 	}
 
 	particleSystem.emitRate = pData.emitRate ;
@@ -2530,6 +2569,21 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	particleSystem.colorDead =
 		pData.endColor ? new BABYLON.Color4( pData.endColor.r , pData.endColor.g , pData.endColor.b , pData.endColor.a ) :
 		new BABYLON.Color4( pData.color.r , pData.color.g , pData.color.b , pData.color.a ) ;
+
+	if ( pData.colorGradient ) {
+		for ( let color of pData.colorGradient ) {
+			particleSystem.addColorGradient( color.t , new BABYLON.Color4( color.r , color.g , color.b , color.a ) ) ;
+		}
+	}
+
+	// Various gradient doc: https://doc.babylonjs.com/divingDeeper/particles/particle_system/tuning_gradients
+	/*	Velocity gradient test
+	particleSystem.addVelocityGradient( 0 , 0.1 ) ;
+	particleSystem.addVelocityGradient( 0.2 , 0.2 ) ;
+	particleSystem.addVelocityGradient( 0.3 , 2 ) ;
+	particleSystem.addVelocityGradient( 0.4 , 0.1 ) ;
+	particleSystem.addVelocityGradient( 1 , 0.1 ) ;
+	//*/
 
 	switch ( pData.autoFacing ) {
 		case 'none' :
@@ -4643,8 +4697,8 @@ utils.cameraRotationFromOriginAndTarget = ( origin , target , rz = 0 ) => {
 
 
 // Orbital camera alpha and beta angles
-utils.toCameraAlpha = yaw => -utils.PI_2 - yaw * utils.DEG_TO_RAD ;
-utils.toCameraBeta = pitch => utils.PI_2 - pitch * utils.DEG_TO_RAD ;
+utils.toCameraAlpha = yaw => -utils.PI_2 - yaw ;	// * utils.DEG_TO_RAD ;
+utils.toCameraBeta = pitch => utils.PI_2 - pitch ;	// * utils.DEG_TO_RAD ;
 
 
 
