@@ -2545,6 +2545,9 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 			particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_ALL ;
 			break ;
 	}
+	
+	// Use rendering group 1 instead of 0, so it is rendered AFTER alpha-blended mesh like GEntityShadow
+	particleSystem.renderingGroupId = 1 ;
 
 	particleSystem.start() ;
 } ;
@@ -2593,8 +2596,8 @@ GEntityParticleSystem.prototype.updatePosition = function( data , volatile = fal
 
 		data.transition.createAnimation(
 			scene ,
-			particleSystem.emitter ,
-			'position' ,
+			particleSystem ,
+			'emitter' ,
 			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
 			new BABYLON.Vector3( x , y , z )
 		) ;
@@ -2803,9 +2806,10 @@ GEntityShadow.prototype.updateMaterial = function() {
 		mesh = this.babylon.mesh ;
 
 	this.babylon.material = material = new BABYLON.StandardMaterial( 'spriteMaterial' , scene ) ;
-	material.backFaceCulling = true ;
+	material.backFaceCulling = true ;	// Mandatory for alpha transparency
 
-	material.diffuseColor = new BABYLON.Color3( 0 , 0 , 0 ) ;
+	//*
+	//material.diffuseColor = new BABYLON.Color3( 0 , 0 , 0 ) ;
 	material.diffuseColor = new BABYLON.Color3( 0.5 , 0.5 , 0.5 ) ;
 	//material.diffuseTexture.hasAlpha = true ;
 	//material.specularColor = new BABYLON.Color3( 0 , 0 , 0 ) ;
@@ -2814,9 +2818,15 @@ GEntityShadow.prototype.updateMaterial = function() {
 
 	material.opacityTexture = new BABYLON.Texture( '/textures/shadow.png' , scene ) ;
 	material.opacityTexture.wrapU = material.opacityTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
+	//*/
 
-	// /!\ TEMP! Easier to debug!
-	//material.backFaceCulling = false ;
+	/*
+	material.diffuseTexture = new BABYLON.Texture( '/textures/shadow.png' , scene ) ;
+	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
+	material.diffuseTexture.hasAlpha = true ;
+	material.disableLighting = true ;
+	material.useAlphaFromDiffuseTexture = true ;
+	//*/
 
 	if ( ! mesh ) { mesh = this.updateMesh() ; }
 
@@ -3628,6 +3638,10 @@ GScene.prototype.initScene = function() {
 	// Optimizations
 	scene.autoClear = false ;		// Don't clear the color buffer between frame (skybox expected!)
 	scene.autoClearDepthAndStencil = false ;	// Same with depth and stencil buffer
+
+	// Don't clear Depth and Stencil for rendering group 1 which is used for game scene (not GUI),
+	// specifically for Particle System wich caused trouble with alpha-blended GEntityShadow.
+	scene.setRenderingAutoClearDepthStencil( 1 , false ) ;
 
 	// Add a camera to the scene and attach it to the canvas
 	this.globalCamera = new Camera( this ) ;
@@ -5033,7 +5047,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],27:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /*
 	EXM
 
@@ -5216,9 +5230,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],28:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
 
@@ -6636,7 +6650,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":31,"./Proxy.js":29,"_process":33,"timers":44}],29:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -7185,7 +7199,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":28}],30:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Next-Gen Events
 
@@ -7229,7 +7243,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./NextGenEvents.js":28,"_process":33}],31:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -7290,7 +7304,7 @@ module.exports={
 }
 
 },{}],32:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -7594,7 +7608,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":33}],33:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -7782,7 +7796,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],34:[function(require,module,exports){
-(function (process,global){
+(function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
 
@@ -7970,7 +7984,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":33}],35:[function(require,module,exports){
 /*
 	Seventh
@@ -8894,7 +8908,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":42}],38:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Seventh
 
@@ -9651,7 +9665,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":33,"setimmediate":34,"timers":44}],39:[function(require,module,exports){
 /*
 	Seventh
@@ -10159,7 +10173,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":42}],40:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Seventh
 
@@ -10257,7 +10271,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./seventh.js":42,"_process":33}],41:[function(require,module,exports){
 /*
 	Seventh
@@ -10520,7 +10534,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":42}],44:[function(require,module,exports){
-(function (setImmediate,clearImmediate){
+(function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -10597,5 +10611,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":33,"timers":44}]},{},[18]);
