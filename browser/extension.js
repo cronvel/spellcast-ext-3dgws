@@ -2225,7 +2225,7 @@ function GEntityParticleSystem( dom , gScene , data ) {
 			x: 0 , y: 0 , z: 0 , xyzmin: 1 , xyzmax: 1
 		} ,
 		altSpeed: null ,	// { x: 0 , y: 0 , z: 0 } ,
-		speedGradient: null ,
+		speedFactorGradient: null ,
 		rotation: { min: 0 , max: 0 } ,
 		rotationSpeed: { min: 0 , max: 0 } ,
 		rotationSpeedGradient: null ,
@@ -2233,6 +2233,7 @@ function GEntityParticleSystem( dom , gScene , data ) {
 		size: {
 			xmin: 1 , xmax: 1 , ymin: 1 , ymax: 1 , xymin: 1 , xymax: 1
 		} ,
+		sizeGradient: null ,
 		color: { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		altColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		endColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
@@ -2345,19 +2346,22 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			if ( Number.isFinite( newPData.altSpeed.z ) ) { pData.altSpeed.z = newPData.altSpeed.z ; }
 		}
 
-		if ( newPData.speedGradient === null ) {
-			pData.speedGradient = null ;
+		if ( newPData.speedFactorGradient === null ) {
+			pData.speedFactorGradient = null ;
 		}
-		else if ( Array.isArray( newPData.speedGradient ) && newPData.speedGradient.length >= 2 ) {
-			if ( pData.speedGradient ) { pData.speedGradient.length = 0 ; }
-			else { pData.speedGradient = [] ; }
+		else if ( Array.isArray( newPData.speedFactorGradient ) && newPData.speedFactorGradient.length >= 2 ) {
+			if ( pData.speedFactorGradient ) { pData.speedFactorGradient.length = 0 ; }
+			else { pData.speedFactorGradient = [] ; }
 			
-			for ( newStep of newPData.speedGradient ) {
-				step = { t: 0 , factor: 1 , altFactor: null } ;
-				pData.speedGradient.push( step ) ;
+			for ( newStep of newPData.speedFactorGradient ) {
+				step = { t: 0 , min: 1 , max: 1 } ;
+				pData.speedFactorGradient.push( step ) ;
 				if ( Number.isFinite( newStep.t ) ) { step.t = newStep.t ; }
-				if ( Number.isFinite( newStep.factor ) ) { step.factor = newStep.factor ; }
-				if ( Number.isFinite( newStep.altFactor ) ) { step.altFactor = newStep.altFactor ; }
+				if ( Number.isFinite( newStep.v ) ) { step.min = step.max = newStep.v ; }
+				else {
+					if ( Number.isFinite( newStep.min ) ) { step.min = newStep.min ; }
+					if ( Number.isFinite( newStep.max ) ) { step.max = newStep.max ; }
+				}
 			}
 		}
 
@@ -2395,11 +2399,14 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			else { pData.rotationSpeedGradient = [] ; }
 			
 			for ( newStep of newPData.rotationSpeedGradient ) {
-				step = { t: 0 , factor: 1 , altFactor: null } ;
+				step = { t: 0 , min: 1 , max: 1 } ;
 				pData.rotationSpeedGradient.push( step ) ;
 				if ( Number.isFinite( newStep.t ) ) { step.t = newStep.t ; }
-				if ( Number.isFinite( newStep.factor ) ) { step.factor = newStep.factor ; }
-				if ( Number.isFinite( newStep.altFactor ) ) { step.altFactor = newStep.altFactor ; }
+				if ( Number.isFinite( newStep.v ) ) { step.min = step.max = newStep.v ; }
+				else {
+					if ( Number.isFinite( newStep.min ) ) { step.min = newStep.min ; }
+					if ( Number.isFinite( newStep.max ) ) { step.max = newStep.max ; }
+				}
 			}
 		}
 
@@ -2426,6 +2433,25 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			else {
 				if ( Number.isFinite( newPData.size.xymin ) ) { pData.size.xymin = newPData.size.xymin ; }
 				if ( Number.isFinite( newPData.size.xymax ) ) { pData.size.xymax = newPData.size.xymax ; }
+			}
+		}
+
+		if ( newPData.sizeGradient === null ) {
+			pData.sizeGradient = null ;
+		}
+		else if ( Array.isArray( newPData.sizeGradient ) && newPData.sizeGradient.length >= 2 ) {
+			if ( pData.sizeGradient ) { pData.sizeGradient.length = 0 ; }
+			else { pData.sizeGradient = [] ; }
+			
+			for ( newStep of newPData.sizeGradient ) {
+				step = { t: 0 , min: 1 , max: 1 } ;
+				pData.sizeGradient.push( step ) ;
+				if ( Number.isFinite( newStep.t ) ) { step.t = newStep.t ; }
+				if ( Number.isFinite( newStep.v ) ) { step.min = step.max = newStep.v ; }
+				else {
+					if ( Number.isFinite( newStep.min ) ) { step.min = newStep.min ; }
+					if ( Number.isFinite( newStep.max ) ) { step.max = newStep.max ; }
+				}
 			}
 		}
 
@@ -2598,9 +2624,9 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	particleSystem.minEmitPower = pData.speed.xyzmin ;
 	particleSystem.maxEmitPower = pData.speed.xyzmax ;
 
-	if ( pData.speedGradient ) {
-		for ( step of pData.speedGradient ) {
-			particleSystem.addVelocityGradient( step.t , step.factor , step.altFactor ) ;
+	if ( pData.speedFactorGradient ) {
+		for ( step of pData.speedFactorGradient ) {
+			particleSystem.addVelocityGradient( step.t , step.min , step.max ) ;
 		}
 	}
 
@@ -2611,19 +2637,25 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 
 	if ( pData.rotationSpeedGradient ) {
 		for ( step of pData.rotationSpeedGradient ) {
-			particleSystem.addAngularSpeedGradient( step.t , step.factor , step.altFactor ) ;
+			particleSystem.addAngularSpeedGradient( step.t , step.min , step.max ) ;
 		}
 	}
 
 	particleSystem.gravity = new BABYLON.Vector3( pData.acceleration.x , pData.acceleration.y , pData.acceleration.z ) ;
 
 	// Sprite scaling
-	particleSystem.minSize = pData.size.xymin ;
-	particleSystem.maxSize = pData.size.xymax ;
 	particleSystem.minScaleX = pData.size.xmin ;
 	particleSystem.maxScaleX = pData.size.xmax ;
 	particleSystem.minScaleY = pData.size.ymin ;
 	particleSystem.maxScaleY = pData.size.ymax ;
+	particleSystem.minSize = pData.size.xymin ;
+	particleSystem.maxSize = pData.size.xymax ;
+
+	if ( pData.sizeGradient ) {
+		for ( step of pData.sizeGradient ) {
+			particleSystem.addSizeGradient( step.t , step.min , step.max ) ;
+		}
+	}
 
 	// Color tinting
 	particleSystem.color1 = new BABYLON.Color4( pData.color.r , pData.color.g , pData.color.b , pData.color.a ) ;
