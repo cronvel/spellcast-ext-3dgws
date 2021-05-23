@@ -1,1 +1,197 @@
-https://playground.babylonjs.com/#BEFOO#1174
+https://playground.babylonjs.com/#JJGVMJ#5
+
+Playground code (at #5):
+
+
+
+var createScene = function () {
+    // Parameters
+    var dieCount = 5 ,
+        dieSize = 0.2 ,
+        cameraHeight = 3.8 ,
+        physicTimeStep = 10 ,
+        // Set gravity higher than usual, to scale it with oversized dice
+        gravity = 20 ,
+        friction = 0.9 ,
+        restitution = 0.6 ,
+        wallVisibility = false ,
+        wallSize = 3 ,
+        //Good thickness prevents bug of dice escaping the box
+        wallThickness = 0.5 ;
+
+    // This creates a basic Babylon Scene object (non-mesh)
+    var scene = new BABYLON.Scene(engine);
+
+	scene.enablePhysics(new BABYLON.Vector3(0, -gravity, 0),
+        new BABYLON.CannonJSPlugin()
+        //new BABYLON.AmmoJSPlugin()
+        //new BABYLON.OimoJSPlugin()
+    );
+
+    // 100 update per seconds (seems to make it deterministic)
+    var physicsEngine = scene.getPhysicsEngine();
+    physicsEngine.setSubTimeStep( physicTimeStep );
+
+    // This creates and positions a free camera (non-mesh)
+    var camera = new BABYLON.ArcRotateCamera("camera", 0, BABYLON.Tools.ToRadians(0), cameraHeight, BABYLON.Vector3.Zero(), scene);
+    camera.wheelPrecision = 1000 ;
+    camera.minZ = 0.05;
+
+    // This targets the camera to scene origin
+    camera.setTarget(BABYLON.Vector3.Zero());
+
+    // This attaches the camera to the canvas
+    camera.attachControl(canvas, true);
+
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(-0.3, 1, -0.3), scene);
+
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+
+	var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
+	groundMat.diffuseTexture = new BABYLON.Texture("http://i.imgur.com/Wk1cGEq.png", scene);
+	groundMat.bumpTexture = new BABYLON.Texture("http://i.imgur.com/wGyk6os.png", scene);
+    groundMat.diffuseTexture.uScale = groundMat.diffuseTexture.vScale = groundMat.bumpTexture.uScale = groundMat.bumpTexture.vScale = 6 ;
+
+    var diceMat = new BABYLON.StandardMaterial("diceMat", scene);
+    diceMat.diffuseTexture = new BABYLON.Texture("https://i.imgur.com/nzFvRJA.png", scene);
+
+    var columns = 6;
+    var dieFaceReindex = [ 0,5,1,4,2,3 ] ;
+    var faceUV = new Array( 6 ) ;
+
+    // Create face UVs for the dice
+    for (let i = 0; i < 6; i++) {
+        let j = dieFaceReindex[ i ];
+        faceUV[i] = new BABYLON.Vector4(j / columns, 0, (j + 1) / columns, 1 );
+    }
+
+    var ground = BABYLON.Mesh.CreateGround("ground", 15, 15, 2, scene);
+    ground.material = groundMat ;
+
+    var nWall = BABYLON.MeshBuilder.CreateBox("north", {width:wallSize,height:wallSize,depth:wallThickness}, scene);
+    nWall.position.y = wallSize/2;
+    nWall.position.z = wallSize/2;
+	nWall.physicsImpostor = new BABYLON.PhysicsImpostor(nWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution , friction }, scene);
+
+    var sWall = BABYLON.MeshBuilder.CreateBox("south", {width:wallSize,height:wallSize,depth:wallThickness}, scene);
+    sWall.position.y = wallSize/2;
+    sWall.position.z = - wallSize/2;
+	sWall.physicsImpostor = new BABYLON.PhysicsImpostor(sWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution , friction }, scene);
+
+    var eWall = BABYLON.MeshBuilder.CreateBox("east", {width:wallThickness,height:wallSize,depth:wallSize}, scene);
+    eWall.position.y = wallSize/2;
+    eWall.position.x = wallSize/2;
+	eWall.physicsImpostor = new BABYLON.PhysicsImpostor(eWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution , friction }, scene);
+
+    var wWall = BABYLON.MeshBuilder.CreateBox("west", {width:wallThickness,height:wallSize,depth:wallSize}, scene);
+    wWall.position.y = wallSize/2;
+    wWall.position.x = - wallSize/2;
+	wWall.physicsImpostor = new BABYLON.PhysicsImpostor(wWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution , friction }, scene);
+
+    var tWall = BABYLON.MeshBuilder.CreateBox("top", {width:wallSize,height:wallThickness,depth:wallSize}, scene);
+    tWall.position.y = wallSize;
+	tWall.physicsImpostor = new BABYLON.PhysicsImpostor(tWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution , friction }, scene);
+
+    var bWall = BABYLON.MeshBuilder.CreateBox("bottom", {width:wallSize,height:wallThickness,depth:wallSize}, scene);
+	bWall.physicsImpostor = new BABYLON.PhysicsImpostor(bWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution , friction }, scene);
+
+    if ( ! wallVisibility ) {
+        nWall.setEnabled( false ) ;
+        sWall.setEnabled( false ) ;
+        eWall.setEnabled( false ) ;
+        wWall.setEnabled( false ) ;
+        tWall.setEnabled( false ) ;
+        bWall.setEnabled( false ) ;
+    }
+
+    var dice = [] ;
+    for ( let i = 0 ; i < dieCount ; i ++ ) {
+        let die = BABYLON.MeshBuilder.CreateBox("die", {size: dieSize, faceUV , wrap: true }, scene);
+        die.material = diceMat ;
+
+        let yOffset = Math.round( i / 8 ) ;
+        let zOffset = i % 8 ;
+        die.position.x = wallSize/2 * 0.75 ;
+        die.position.y = 0.4 + yOffset * dieSize * 1.2;
+        die.position.z = -wallSize/2 + 2 * wallThickness + zOffset * dieSize * 1.2;
+        die.rotation.x = 2 * Math.PI * Math.random();
+        die.rotation.y = 2 * Math.PI * Math.random();
+        die.rotation.z = 2 * Math.PI * Math.random();
+
+        die.physicsImpostor = new BABYLON.PhysicsImpostor(die, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution , friction }, scene);
+        die.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-10 - 10*Math.random() , 3 * ( 2 * Math.random() - 1 ) , 8 * ( 2 * Math.random() - 1 )));
+
+        dice.push( die ) ;
+    }
+
+    function getUpmostBoxMeshFace(boxMesh) {
+        var quat = boxMesh.rotationQuaternion ;
+        var r = new BABYLON.Vector3(0,0,0);
+
+        BABYLON.Vector3.Right().rotateByQuaternionToRef( quat , r );
+        if ( r.y >= Math.SQRT1_2 ) {
+            // +X is up, it is face #2
+            return 2 ;
+        }
+        else if ( r.y <= -Math.SQRT1_2 ) {
+            // -X is up, it is face #3
+            return 3 ;
+        }
+
+        BABYLON.Vector3.Up().rotateByQuaternionToRef( quat , r );
+        if ( r.y >= Math.SQRT1_2 ) {
+            // +Y is up, it is face #4
+            return 4 ;
+        }
+        else if ( r.y <= -Math.SQRT1_2 ) {
+            // -Y is up, it is face #5
+            return 5 ;
+        }
+
+        BABYLON.Vector3.Forward().rotateByQuaternionToRef( quat , r );
+        if ( r.y >= Math.SQRT1_2 ) {
+            // +Z is up, it is face #0
+            return 0 ;
+        }
+        else if ( r.y <= -Math.SQRT1_2 ) {
+            // -Z is up, it is face #1
+            return 1 ;
+        }
+
+        return 0 ;
+    }
+
+    function getDieValue(die) {
+        var faceId = getUpmostBoxMeshFace(die);
+        return dieFaceReindex[ faceId ] + 1 ;
+    }
+
+    setTimeout( () => {
+        // GUI
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        let text = new BABYLON.GUI.TextBlock();
+        var str = "> " , accumulator = 0 ;
+        
+        for ( let i = 0 ; i < dieCount ; i ++ ) {
+            let value = getDieValue( dice[i] ) ;
+            accumulator += value ;
+            if ( i ) { str += " + " ; }
+            str += value ;
+        }
+
+        str += " = " + accumulator ;
+
+        text.text = str ;
+        text.color = "black";
+        text.fontSize = 24;
+        text.top = "40%";
+        //text.left = "-0%";
+        //text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        advancedTexture.addControl(text);
+    } , 1500 );
+
+    return scene;
+};
+
