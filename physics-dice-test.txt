@@ -1,6 +1,6 @@
-https://playground.babylonjs.com/#JJGVMJ#5
+https://playground.babylonjs.com/#JJGVMJ#15
 
-Playground code (at #5):
+Playground code (at #15):
 
 
 
@@ -9,6 +9,10 @@ var createScene = function () {
     var dieCount = 5 ,
         dieSize = 0.2 ,
         cameraHeight = 3.8 ,
+        // Force computing the roll after this timelimit
+        diceRollTimeLimit = 3000 ,
+        minThrowingPower = 5 ,
+        arrowLength = 0.4 ,
         physicTimeStep = 10 ,
         // Set gravity higher than usual, to scale it with oversized dice
         gravity = 20 ,
@@ -16,8 +20,10 @@ var createScene = function () {
         restitution = 0.6 ,
         wallVisibility = false ,
         wallSize = 3 ,
-        //Good thickness prevents bug of dice escaping the box
-        wallThickness = 0.5 ;
+        // Good thickness prevents bug of dice escaping the box
+        wallThickness = 0.5 ,
+        // 100 update per seconds (seems to make it deterministic)
+        stillnessVelocitySumLimit = 0.01 ;
 
     // This creates a basic Babylon Scene object (non-mesh)
     var scene = new BABYLON.Scene(engine);
@@ -28,25 +34,18 @@ var createScene = function () {
         //new BABYLON.OimoJSPlugin()
     );
 
-    // 100 update per seconds (seems to make it deterministic)
     var physicsEngine = scene.getPhysicsEngine();
     physicsEngine.setSubTimeStep( physicTimeStep );
 
-    // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.ArcRotateCamera("camera", 0, BABYLON.Tools.ToRadians(0), cameraHeight, BABYLON.Vector3.Zero(), scene);
+    // Camera
+    var camera = new BABYLON.ArcRotateCamera("camera", BABYLON.Tools.ToRadians(-90), BABYLON.Tools.ToRadians(0), cameraHeight, BABYLON.Vector3.Zero(), scene);
     camera.wheelPrecision = 1000 ;
     camera.minZ = 0.05;
-
-    // This targets the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero());
+    //camera.attachControl(canvas, true);
 
-    // This attaches the camera to the canvas
-    camera.attachControl(canvas, true);
-
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    // Light
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(-0.3, 1, -0.3), scene);
-
-    // Default intensity is 1. Let's dim the light a small amount
     light.intensity = 0.7;
 
 	var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
@@ -57,11 +56,16 @@ var createScene = function () {
     var diceMat = new BABYLON.StandardMaterial("diceMat", scene);
     diceMat.diffuseTexture = new BABYLON.Texture("https://i.imgur.com/nzFvRJA.png", scene);
 
+    var arrowMat = new BABYLON.StandardMaterial("arrowMat", scene);
+    arrowMat.diffuseTexture = new BABYLON.Texture("https://i.imgur.com/VB6SDdj.png", scene);
+    arrowMat.diffuseTexture.hasAlpha = true ;
+    arrowMat.backFaceCulling = false ;
+
+    // Create face UVs for the dice
     var columns = 6;
     var dieFaceReindex = [ 0,5,1,4,2,3 ] ;
     var faceUV = new Array( 6 ) ;
 
-    // Create face UVs for the dice
     for (let i = 0; i < 6; i++) {
         let j = dieFaceReindex[ i ];
         faceUV[i] = new BABYLON.Vector4(j / columns, 0, (j + 1) / columns, 1 );
@@ -69,6 +73,13 @@ var createScene = function () {
 
     var ground = BABYLON.Mesh.CreateGround("ground", 15, 15, 2, scene);
     ground.material = groundMat ;
+
+    var arrow = BABYLON.MeshBuilder.CreatePlane("arrow", {height:0.5,width:arrowLength}, scene);
+    arrow.material = arrowMat ;
+    arrow.rotation.x = Math.PI / 2;
+    arrow.rotation.y = 0 ;//Math.PI;
+    arrow.position.y = 1;
+    arrow.position.x = -0.8;
 
     var nWall = BABYLON.MeshBuilder.CreateBox("north", {width:wallSize,height:wallSize,depth:wallThickness}, scene);
     nWall.position.y = wallSize/2;
@@ -111,19 +122,66 @@ var createScene = function () {
         let die = BABYLON.MeshBuilder.CreateBox("die", {size: dieSize, faceUV , wrap: true }, scene);
         die.material = diceMat ;
 
-        let yOffset = Math.round( i / 8 ) ;
-        let zOffset = i % 8 ;
-        die.position.x = wallSize/2 * 0.75 ;
-        die.position.y = 0.4 + yOffset * dieSize * 1.2;
-        die.position.z = -wallSize/2 + 2 * wallThickness + zOffset * dieSize * 1.2;
+        let yOffset = Math.round( i / 6 ) ;
+        let zOffset = i % 6 ;
+        die.position.x = - wallSize/2 * 0.5 ;
+        die.position.y = wallThickness/2 + 0.4 + yOffset * dieSize * 1.2;
+        die.position.z = -wallSize/2 + 2 * wallThickness + zOffset * dieSize * 1.5;
         die.rotation.x = 2 * Math.PI * Math.random();
         die.rotation.y = 2 * Math.PI * Math.random();
         die.rotation.z = 2 * Math.PI * Math.random();
 
-        die.physicsImpostor = new BABYLON.PhysicsImpostor(die, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution , friction }, scene);
-        die.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-10 - 10*Math.random() , 3 * ( 2 * Math.random() - 1 ) , 8 * ( 2 * Math.random() - 1 )));
+        //die.physicsImpostor = new BABYLON.PhysicsImpostor(die, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution , friction }, scene);
+        //die.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-10 - 10*Math.random() , 3 * ( 2 * Math.random() - 1 ) , 8 * ( 2 * Math.random() - 1 )));
 
         dice.push( die ) ;
+    }
+
+    scene.onPointerDown = () => {
+        scene.onPointerDown = null ;
+        var startAt = Date.now() ,
+            direction = new BABYLON.Vector3( 10 , 0 , 0 ) ;
+
+        var timer = setInterval( () => {
+            arrow.scaling.x += 0.04 ;
+            arrow.position.x += 0.02 * arrowLength ;
+            var dnorm = direction.normalizeToNew() ;
+            arrow.rotation.y = Math.atan2( dnorm.y , dnorm.x ) ;
+        }, 10 );
+
+        scene.onPointerMove = (event) => {
+            direction.x += event.movementX ;
+            direction.y += event.movementY ;
+        } ;
+
+        scene.onPointerUp = () => {
+            scene.onPointerUp = scene.onPointerMove = null ;
+            clearInterval( timer ) ;
+            arrow.setEnabled( false ) ;
+            var power = Math.sqrt( ( Date.now() - startAt ) / 1000 ) ;
+            
+            // Convert the screen Y to the 3D Z
+            direction.z = - direction.y ;
+            direction.y = 0 ;
+            direction.normalize() ;
+            direction.y = 0.6 ;   // Force throwing a bit in the up direction
+            direction.normalize() ;
+
+            throwDice( power , direction ) ;
+        } ;
+    } ;
+
+    function throwDice( power , direction ) {
+        power = Math.max( 6 * power , minThrowingPower ) ;
+
+        for ( let i = 0 ; i < dieCount ; i ++ ) {
+            let die = dice[i] ;
+            die.physicsImpostor = new BABYLON.PhysicsImpostor(die, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution , friction }, scene);
+            die.physicsImpostor.setLinearVelocity(new BABYLON.Vector3( power * direction.x , power * direction.y , power * direction.z ));
+        }
+        
+        setTimeout( checkDiceRolled , 200 ) ;
+        setTimeout( computeDiceRoll , diceRollTimeLimit ) ;
     }
 
     function getUpmostBoxMeshFace(boxMesh) {
@@ -168,7 +226,29 @@ var createScene = function () {
         return dieFaceReindex[ faceId ] + 1 ;
     }
 
-    setTimeout( () => {
+    function isStill(object) {
+        var body = object.physicsImpostor.physicsBody;
+        var sum = Math.abs( body.velocity.x ) + Math.abs( body.velocity.y ) + Math.abs( body.velocity.z ) +
+            Math.abs( body.angularVelocity.x ) + Math.abs( body.angularVelocity.y ) + Math.abs( body.angularVelocity.z ) ;
+        console.warn( "velocity sum:" , sum );
+        return sum < stillnessVelocitySumLimit ;
+    }
+
+    var isRolled = false;
+
+    function checkDiceRolled() {
+        if ( isRolled ) { return ; }
+        if ( ! dice.every( e => isStill( e ) ) ) {
+            setTimeout( checkDiceRolled , 200 ) ;
+            return ;
+        }
+        computeDiceRoll();
+    }
+
+    function computeDiceRoll() {
+        if ( isRolled ) { return ; }
+        isRolled = true ;
+
         // GUI
         var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         let text = new BABYLON.GUI.TextBlock();
@@ -190,8 +270,8 @@ var createScene = function () {
         //text.left = "-0%";
         //text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
         advancedTexture.addControl(text);
-    } , 1500 );
+    }
 
     return scene;
-};
+}
 
