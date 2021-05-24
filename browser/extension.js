@@ -452,6 +452,7 @@ function DiceRoller( gScene , params ) {
 
 	// Parameters
 	this.dieCount = params.dice ;
+	this.faceValues = params.values ;
 	this.dieSize = 0.2 ;
 	this.dieFaceReindex = [ 0 , 5 , 1 , 4 , 2 , 3 ] ;	// Because 1 is opposite of 6, 2 of 5 and 3 of 4
 	this.diceRollTimeLimit = 3000 ;	// Force computing the roll after this timelimit
@@ -467,8 +468,6 @@ function DiceRoller( gScene , params ) {
 	this.wallThickness = 0.5 ;	// Good thickness prevents bug of dice escaping the box
 	this.stillnessVelocitySumLimit = 0.01 ;	// 100 update per seconds (seems to make it deterministic)
 	
-	this.isRolled = false ;
-
 	// Babylon stuffs
 	this.babylon = {
 		scene: null ,
@@ -641,8 +640,8 @@ DiceRoller.prototype.roll = function() {
 			direction.y = 0.6 ;   // Force throwing a bit in the up direction
 			direction.normalize() ;
 
-			this.throwDice( power , direction ) ;//.toPromise( promise ) ;
-			promise.resolveTimeout( 5000 ) ;
+			//this.throwDice( power , direction ) ;
+			Promise.propagate( this.throwDice( power , direction ) , promise ) ;
 		} ;
 	} ;
 
@@ -651,8 +650,9 @@ DiceRoller.prototype.roll = function() {
 
 
 
-DiceRoller.prototype.throwDice = function( power , direction ) {
-	var scene = this.babylon.scene ;
+DiceRoller.prototype.throwDice = async function( power , direction ) {
+	var result = {} ,
+		scene = this.babylon.scene ;
 
 	power = Math.max( 6 * power , this.minThrowingPower ) ;
 
@@ -662,44 +662,37 @@ DiceRoller.prototype.throwDice = function( power , direction ) {
 		die.physicsImpostor.setLinearVelocity( new BABYLON.Vector3( power * direction.x , power * direction.y , power * direction.z ) ) ;
 	}
 
-	setTimeout( () => this.checkDiceRolled() , 200 ) ;
-	setTimeout( () => this.computeDiceRoll() , this.diceRollTimeLimit ) ;
-} ;
+	var startAt = Date.now() ;
 
+	do {
+		if ( this.babylon.dice.every( die => this.isStill( die ) ) ) { break ; }
+		await Promise.resolveTimeout( 100 ) ;
+	} while ( Date.now() - startAt < this.diceRollTimeLimit ) ;
 
-
-DiceRoller.prototype.checkDiceRolled = function() {
-	if ( this.isRolled ) { return ; }
-	if ( ! this.babylon.dice.every( e => this.isStill( e ) ) ) {
-		setTimeout( () => this.checkDiceRolled() , 200 ) ;
-		return ;
+	result.dice = this.babylon.dice.map( die => this.getDieFace( die ) ) ;
+	result.sum = 0 ;
+	if ( this.faceValues ) {
+		result.values = result.dice.map( faceIndex => {
+			var v = this.faceValues[ faceIndex ] ;
+			if ( typeof v === 'number' ) { result.sum += v || 0 ; }
+			else if ( typeof v !== 'string' ) { v = null ; }
+			return v ;
+		} ) ;
 	}
+
+	console.warn( "Dice roll: " , result ) ;
+	this.displayDiceRoll( result ) ;
 	
-	this.computeDiceRoll() ;
+	return result ;
 } ;
 
 
 
-DiceRoller.prototype.computeDiceRoll = function() {
-	if ( this.isRolled ) { return ; }
-	this.isRolled = true ;
-
+DiceRoller.prototype.displayDiceRoll = function( result ) {
 	// GUI
 	var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI( "UI" ) ;
 	let text = new BABYLON.GUI.TextBlock() ;
-	var str = "> " , accumulator = 0 ;
-
-	for ( let i = 0 ; i < this.dieCount ; i ++ ) {
-		let value = this.getDieValue( this.babylon.dice[i] ) ;
-		accumulator += value ;
-		if ( i ) { str += " + " ; }
-		str += value ;
-	}
-
-	str += " = " + accumulator ;
-
-	console.warn( "Dice roll: " + str ) ;
-	text.text = str ;
+	text.text = "> " + result.values.join( '+' ) + '=' + result.sum ;
 	text.color = "black" ;
 	text.fontSize = 24 ;
 	text.top = "40%" ;
@@ -710,19 +703,19 @@ DiceRoller.prototype.computeDiceRoll = function() {
 
 
 
-DiceRoller.prototype.getDieValue = function( die ) {
-	var faceId = meshUtils.getUpmostBoxMeshFace( die ) ;
-	return this.dieFaceReindex[ faceId ] + 1 ;
-} ;
-
-
-
 DiceRoller.prototype.isStill = function( object ) {
 	var body = object.physicsImpostor.physicsBody ;
 	var sum = Math.abs( body.velocity.x ) + Math.abs( body.velocity.y ) + Math.abs( body.velocity.z ) +
 		Math.abs( body.angularVelocity.x ) + Math.abs( body.angularVelocity.y ) + Math.abs( body.angularVelocity.z ) ;
 	console.warn( "velocity sum:" , sum ) ;
 	return sum < this.stillnessVelocitySumLimit ;
+} ;
+
+
+
+DiceRoller.prototype.getDieFace = function( die ) {
+	var faceIndex = meshUtils.getUpmostBoxMeshFace( die ) ;
+	return this.dieFaceReindex[ faceIndex ] ;
 } ;
 
 
@@ -5592,7 +5585,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],29:[function(require,module,exports){
-(function (global){(function (){
+(function (global){
 /*
 	EXM
 
@@ -5775,9 +5768,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],30:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Next-Gen Events
 
@@ -7195,7 +7188,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":33,"./Proxy.js":31,"_process":35,"timers":46}],31:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -7744,7 +7737,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":30}],32:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Next-Gen Events
 
@@ -7788,7 +7781,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./NextGenEvents.js":30,"_process":35}],33:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -7849,7 +7842,7 @@ module.exports={
 }
 
 },{}],34:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -8153,7 +8146,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"_process":35}],35:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -8341,7 +8334,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],36:[function(require,module,exports){
-(function (process,global){(function (){
+(function (process,global){
 (function (global, undefined) {
     "use strict";
 
@@ -8529,7 +8522,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":35}],37:[function(require,module,exports){
 /*
 	Seventh
@@ -9453,7 +9446,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":44}],40:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Seventh
 
@@ -10210,7 +10203,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":35,"setimmediate":36,"timers":46}],41:[function(require,module,exports){
 /*
 	Seventh
@@ -10718,7 +10711,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":44}],42:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Seventh
 
@@ -10816,7 +10809,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./seventh.js":44,"_process":35}],43:[function(require,module,exports){
 /*
 	Seventh
@@ -11079,7 +11072,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":44}],46:[function(require,module,exports){
-(function (setImmediate,clearImmediate){(function (){
+(function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -11156,5 +11149,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":35,"timers":46}]},{},[19]);
