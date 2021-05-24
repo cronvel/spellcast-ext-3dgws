@@ -402,7 +402,331 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],2:[function(require,module,exports){
+},{"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],2:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+/*
+	https://playground.babylonjs.com/#JJGVMJ#15
+	Playground code (at #15)
+*/
+
+
+
+const Promise = require( 'seventh' ) ;
+const meshUtils = require( './meshUtils.js' ) ;
+
+
+
+function DiceRoller( gScene , params ) {
+	this.gScene = gScene ;
+
+	// Parameters
+	this.dieCount = params.dice ;
+	this.dieSize = 0.2 ;
+	this.dieFaceReindex = [ 0 , 5 , 1 , 4 , 2 , 3 ] ;	// Because 1 is opposite of 6, 2 of 5 and 3 of 4
+	this.diceRollTimeLimit = 3000 ;	// Force computing the roll after this timelimit
+	this.minThrowingPower = 5 ;
+	this.arrowLength = 0.4 ;
+	this.physicsTimeStep = 10 ;
+	this.gravity = 20 ;	// Set gravity higher than usual, to scale it with oversized dice
+	this.friction = 0.9 ;
+	this.restitution = 0.6 ;
+	this.cameraHeight = 3.8 ;
+	this.wallVisibility = false ;
+	this.wallSize = 3 ;
+	this.wallThickness = 0.5 ;	// Good thickness prevents bug of dice escaping the box
+	this.stillnessVelocitySumLimit = 0.01 ;	// 100 update per seconds (seems to make it deterministic)
+	
+	this.isRolled = false ;
+
+	// Babylon stuffs
+	this.babylon = {
+		scene: null ,
+		physicsEngine: null ,
+		camera: null ,
+		light: null ,
+		dice: [] ,
+		arrow: null ,
+		ui: null
+	} ;
+}
+
+module.exports = DiceRoller ;
+
+
+
+DiceRoller.prototype.init = function() {
+	if ( this.gScene.babylon.diceRollerScene ) { throw new Error( "Dang! there is already a diceRollerScene !" ) ; }
+	var scene = this.babylon.scene = new BABYLON.Scene( this.gScene.babylon.engine ) ;
+	this.gScene.babylon.diceRollerScene = scene ;
+
+	scene.autoClear = false ;       // Don't clear the color buffer between frame (skybox expected!)
+	//scene.autoClearDepthAndStencil = false ;    // Same with depth and stencil buffer
+
+	scene.enablePhysics( new BABYLON.Vector3( 0 , -this.gravity , 0 ) ,
+		new BABYLON.CannonJSPlugin()
+		//new BABYLON.AmmoJSPlugin()
+		//new BABYLON.OimoJSPlugin()
+	) ;
+
+	this.babylon.physicsEngine = scene.getPhysicsEngine() ;
+	this.babylon.physicsEngine.setSubTimeStep( this.physicsTimeStep ) ;
+
+	// Camera
+	var camera = this.babylon.camera = new BABYLON.ArcRotateCamera( 'camera' , -Math.PI / 2 , 0 , this.cameraHeight , BABYLON.Vector3.Zero() , scene ) ;
+	camera.wheelPrecision = 1000 ;
+	camera.minZ = 0.05 ;
+	camera.setTarget( BABYLON.Vector3.Zero() ) ;
+	//camera.attachControl(canvas, true);
+
+	// Light
+	this.babylon.light = new BABYLON.HemisphericLight( 'light' , new BABYLON.Vector3( -0.3 , 1 , -0.3 ) , scene ) ;
+	this.babylon.light.intensity = 0.7 ;
+
+	var diceMat = new BABYLON.StandardMaterial( 'diceMaterial' , scene ) ;
+	diceMat.diffuseTexture = new BABYLON.Texture( "https://i.imgur.com/nzFvRJA.png" , scene ) ;
+
+	var arrowMat = new BABYLON.StandardMaterial( 'arrowMaterial' , scene ) ;
+	arrowMat.diffuseTexture = new BABYLON.Texture( "https://i.imgur.com/VB6SDdj.png" , scene ) ;
+	arrowMat.diffuseTexture.hasAlpha = true ;
+	arrowMat.backFaceCulling = false ;
+
+	// Create face UVs for the dice
+	var columns = 6 ;
+	var faceUV = new Array( 6 ) ;
+
+	for ( let i = 0 ; i < 6 ; i ++ ) {
+		let j = this.dieFaceReindex[ i ] ;
+		faceUV[ i ] = new BABYLON.Vector4( j / columns , 0 , ( j + 1 ) / columns , 1 ) ;
+	}
+
+	var arrow = this.babylon.arrow = BABYLON.MeshBuilder.CreatePlane( "arrow" , { height: 0.5 , width: this.arrowLength } , scene ) ;
+	arrow.material = arrowMat ;
+	arrow.rotation.x = Math.PI / 2 ;
+	arrow.rotation.y = 0 ;//Math.PI;
+	arrow.position.y = 1 ;
+	arrow.position.x = -0.8 ;
+
+	var nWall = BABYLON.MeshBuilder.CreateBox( "north" , { width: this.wallSize , height: this.wallSize , depth: this.wallThickness } , scene ) ;
+	nWall.position.y = this.wallSize / 2 ;
+	nWall.position.z = this.wallSize / 2 ;
+	nWall.physicsImpostor = new BABYLON.PhysicsImpostor( nWall , BABYLON.PhysicsImpostor.BoxImpostor , { mass: 0 , restitution: this.restitution , friction: this.friction } , scene ) ;
+
+	var sWall = BABYLON.MeshBuilder.CreateBox( "south" , { width: this.wallSize , height: this.wallSize , depth: this.wallThickness } , scene ) ;
+	sWall.position.y = this.wallSize / 2 ;
+	sWall.position.z = -this.wallSize / 2 ;
+	sWall.physicsImpostor = new BABYLON.PhysicsImpostor( sWall , BABYLON.PhysicsImpostor.BoxImpostor , { mass: 0 , restitution: this.restitution , friction: this.friction } , scene ) ;
+
+	var eWall = BABYLON.MeshBuilder.CreateBox( "east" , { width: this.wallThickness , height: this.wallSize , depth: this.wallSize } , scene ) ;
+	eWall.position.y = this.wallSize / 2 ;
+	eWall.position.x = this.wallSize / 2 ;
+	eWall.physicsImpostor = new BABYLON.PhysicsImpostor( eWall , BABYLON.PhysicsImpostor.BoxImpostor , { mass: 0 , restitution: this.restitution , friction: this.friction } , scene ) ;
+
+	var wWall = BABYLON.MeshBuilder.CreateBox( "west" , { width: this.wallThickness , height: this.wallSize , depth: this.wallSize } , scene ) ;
+	wWall.position.y = this.wallSize / 2 ;
+	wWall.position.x = -this.wallSize / 2 ;
+	wWall.physicsImpostor = new BABYLON.PhysicsImpostor( wWall , BABYLON.PhysicsImpostor.BoxImpostor , { mass: 0 , restitution: this.restitution , friction: this.friction } , scene ) ;
+
+	var tWall = BABYLON.MeshBuilder.CreateBox( "top" , { width: this.wallSize , height: this.wallThickness , depth: this.wallSize } , scene ) ;
+	tWall.position.y = this.wallSize ;
+	tWall.physicsImpostor = new BABYLON.PhysicsImpostor( tWall , BABYLON.PhysicsImpostor.BoxImpostor , { mass: 0 , restitution: this.restitution , friction: this.friction } , scene ) ;
+
+	var bWall = BABYLON.MeshBuilder.CreateBox( "bottom" , { width: this.wallSize , height: this.wallThickness , depth: this.wallSize } , scene ) ;
+	bWall.physicsImpostor = new BABYLON.PhysicsImpostor( bWall , BABYLON.PhysicsImpostor.BoxImpostor , { mass: 0 , restitution: this.restitution , friction: this.friction } , scene ) ;
+
+	if ( ! this.wallVisibility ) {
+		nWall.setEnabled( false ) ;
+		sWall.setEnabled( false ) ;
+		eWall.setEnabled( false ) ;
+		wWall.setEnabled( false ) ;
+		tWall.setEnabled( false ) ;
+		bWall.setEnabled( false ) ;
+	}
+
+	for ( let i = 0 ; i < this.dieCount ; i ++ ) {
+		let die = BABYLON.MeshBuilder.CreateBox( "die" , { size: this.dieSize , faceUV , wrap: true } , scene ) ;
+		die.material = diceMat ;
+
+		let yOffset = Math.round( i / 6 ) ;
+		let zOffset = i % 6 ;
+		die.position.x = -this.wallSize / 2 * 0.5 ;
+		die.position.y = this.wallThickness / 2 + 0.4 + yOffset * this.dieSize * 1.2 ;
+		die.position.z = -this.wallSize / 2 + 2 * this.wallThickness + zOffset * this.dieSize * 1.5 ;
+		die.rotation.x = 2 * Math.PI * Math.random() ;
+		die.rotation.y = 2 * Math.PI * Math.random() ;
+		die.rotation.z = 2 * Math.PI * Math.random() ;
+
+		//die.physicsImpostor = new BABYLON.PhysicsImpostor(die, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: this.restitution , friction: this.friction }, scene);
+		//die.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-10 - 10*Math.random() , 3 * ( 2 * Math.random() - 1 ) , 8 * ( 2 * Math.random() - 1 )));
+
+		this.babylon.dice.push( die ) ;
+	}
+	
+	console.warn( "DirceRoller init done!" ) ;
+} ;
+
+
+
+DiceRoller.prototype.roll = function() {
+	console.warn( "DirceRoller roll" ) ;
+	var scene = this.babylon.scene ,
+		arrow = this.babylon.arrow ,
+		promise = new Promise() ;
+
+	this.gScene.globalCamera.babylon.camera.detachControl() ;
+	
+	promise.then( () => {
+		if ( this.gScene.globalCamera.free ) {
+			this.gScene.globalCamera.babylon.camera.attachControl() ;
+		}
+	} ) ;
+
+	scene.onPointerDown = () => {
+		scene.onPointerDown = null ;
+		var startAt = Date.now() ,
+			direction = new BABYLON.Vector3( 10 , 0 , 0 ) ;
+
+		var timer = setInterval( () => {
+			arrow.scaling.x += 0.04 ;
+			arrow.position.x += 0.02 * this.arrowLength ;
+			var dnorm = direction.normalizeToNew() ;
+			arrow.rotation.y = Math.atan2( dnorm.y , dnorm.x ) ;
+		} , 10 ) ;
+
+		scene.onPointerMove = ( event ) => {
+			direction.x += event.movementX ;
+			direction.y += event.movementY ;
+		} ;
+
+		scene.onPointerUp = () => {
+			scene.onPointerUp = scene.onPointerMove = null ;
+			clearInterval( timer ) ;
+			arrow.setEnabled( false ) ;
+			var power = Math.sqrt( ( Date.now() - startAt ) / 1000 ) ;
+
+			// Convert the screen Y to the 3D Z
+			direction.z = -direction.y ;
+			direction.y = 0 ;
+			direction.normalize() ;
+			direction.y = 0.6 ;   // Force throwing a bit in the up direction
+			direction.normalize() ;
+
+			this.throwDice( power , direction ) ;//.toPromise( promise ) ;
+			promise.resolveTimeout( 5000 ) ;
+		} ;
+	} ;
+
+	return promise ;
+} ;
+
+
+
+DiceRoller.prototype.throwDice = function( power , direction ) {
+	var scene = this.babylon.scene ;
+
+	power = Math.max( 6 * power , this.minThrowingPower ) ;
+
+	for ( let i = 0 ; i < this.dieCount ; i ++ ) {
+		let die = this.babylon.dice[i] ;
+		die.physicsImpostor = new BABYLON.PhysicsImpostor( die , BABYLON.PhysicsImpostor.BoxImpostor , { mass: 1 , restitution: this.restitution , friction: this.friction } , scene ) ;
+		die.physicsImpostor.setLinearVelocity( new BABYLON.Vector3( power * direction.x , power * direction.y , power * direction.z ) ) ;
+	}
+
+	setTimeout( () => this.checkDiceRolled() , 200 ) ;
+	setTimeout( () => this.computeDiceRoll() , this.diceRollTimeLimit ) ;
+} ;
+
+
+
+DiceRoller.prototype.checkDiceRolled = function() {
+	if ( this.isRolled ) { return ; }
+	if ( ! this.babylon.dice.every( e => this.isStill( e ) ) ) {
+		setTimeout( () => this.checkDiceRolled() , 200 ) ;
+		return ;
+	}
+	
+	this.computeDiceRoll() ;
+} ;
+
+
+
+DiceRoller.prototype.computeDiceRoll = function() {
+	if ( this.isRolled ) { return ; }
+	this.isRolled = true ;
+
+	// GUI
+	var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI( "UI" ) ;
+	let text = new BABYLON.GUI.TextBlock() ;
+	var str = "> " , accumulator = 0 ;
+
+	for ( let i = 0 ; i < this.dieCount ; i ++ ) {
+		let value = this.getDieValue( this.babylon.dice[i] ) ;
+		accumulator += value ;
+		if ( i ) { str += " + " ; }
+		str += value ;
+	}
+
+	str += " = " + accumulator ;
+
+	console.warn( "Dice roll: " + str ) ;
+	text.text = str ;
+	text.color = "black" ;
+	text.fontSize = 24 ;
+	text.top = "40%" ;
+	//text.left = "-0%";
+	//text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+	advancedTexture.addControl( text ) ;
+} ;
+
+
+
+DiceRoller.prototype.getDieValue = function( die ) {
+	var faceId = meshUtils.getUpmostBoxMeshFace( die ) ;
+	return this.dieFaceReindex[ faceId ] + 1 ;
+} ;
+
+
+
+DiceRoller.prototype.isStill = function( object ) {
+	var body = object.physicsImpostor.physicsBody ;
+	var sum = Math.abs( body.velocity.x ) + Math.abs( body.velocity.y ) + Math.abs( body.velocity.z ) +
+		Math.abs( body.angularVelocity.x ) + Math.abs( body.angularVelocity.y ) + Math.abs( body.angularVelocity.z ) ;
+	console.warn( "velocity sum:" , sum ) ;
+	return sum < this.stillnessVelocitySumLimit ;
+} ;
+
+
+},{"./meshUtils.js":21,"seventh":44}],3:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1342,7 +1666,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":16,"./Parametric.js":17,"nextgen-events/lib/browser.js":30,"seventh":42}],3:[function(require,module,exports){
+},{"./GTransition.js":17,"./Parametric.js":18,"nextgen-events/lib/browser.js":32,"seventh":44}],4:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1466,7 +1790,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"seventh":42}],4:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"seventh":44}],5:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1563,7 +1887,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],5:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],6:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1678,7 +2002,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],6:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],7:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1899,7 +2223,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],8:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2022,7 +2346,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"seventh":42}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"seventh":44}],9:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2156,7 +2480,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],10:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2763,7 +3087,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],11:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2890,7 +3214,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],12:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3015,7 +3339,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],13:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3073,7 +3397,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],14:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3360,7 +3684,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":2,"./GTransition.js":16,"./vectorUtils.js":20,"seventh":42}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],15:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3674,7 +3998,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 } ;
 
 
-},{"./GEntity.js":2,"./GEntityFloatingText.js":6}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GEntityFloatingText.js":7}],16:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3720,7 +4044,7 @@ function GScene( dom , data ) {
 	this.dom = dom ;    // Dom instance, immutable
 	//this.id = data.id ;		// immutable
 	this.engineId = data.engineId ;	// immutable
-	this.rightHanded = data.rightHanded !== undefined ? !! data.rightHanded : true ;    // immutable
+	//this.rightHanded = data.rightHanded !== undefined ? !! data.rightHanded : true ;    // immutable
 
 	this.active = false ;
 	this.paused = false ;
@@ -3756,6 +4080,7 @@ function GScene( dom , data ) {
 	this.babylon = {
 		engine: null ,
 		scene: null ,
+		diceRollerScene: null ,
 		ui: null
 	} ;
 
@@ -3811,6 +4136,7 @@ GScene.prototype.initScene = function() {
 		this.changes.camera = false ;
 
 		scene.render() ;
+		if ( this.babylon.diceRollerScene ) { this.babylon.diceRollerScene.render() ; }
 	} ) ;
 
 	//setTimeout( () => new BABYLON.ParticleHelper.CreateAsync( "fire" , scene ).then( pSet => pSet.start() ) , 3000 ) ;
@@ -4191,7 +4517,7 @@ GScene.prototype.removeGEntity = function( gEntityId ) {
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":16,"nextgen-events/lib/browser.js":30,"seventh":42}],16:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":17,"nextgen-events/lib/browser.js":32,"seventh":44}],17:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -4407,7 +4733,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":21,"seventh":42}],17:[function(require,module,exports){
+},{"array-kit":23,"seventh":44}],18:[function(require,module,exports){
 /*
 	Spellcast
 
@@ -4582,7 +4908,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 } ;
 
 
-},{"./browser-extension.js":18}],18:[function(require,module,exports){
+},{"./browser-extension.js":19}],19:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4628,6 +4954,7 @@ const extension = BrowserExm.registerExtension( {
 			console.warn( "Extension 3DGWS: starting init" ) ;
 			await import( extension.dirPath + '/babylonjs.js' ) ;
 			await import( extension.dirPath + '/babylonjs.gui.js' ) ;
+			await import( extension.dirPath + '/cannon.js' ) ;
 			extension.host.api.addEngine( '3dgws' , require( './engine.js' ) ) ;
 			console.warn( "Extension 3DGWS fully loaded" ) ;
 		}
@@ -4637,7 +4964,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":19,"exm/lib/BrowserExm.js":27,"path":32}],19:[function(require,module,exports){
+},{"./engine.js":20,"exm/lib/BrowserExm.js":29,"path":34}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4689,8 +5016,81 @@ engine.perUsageGEntity = {
 	ground: require( './GEntityGround.js' )
 } ;
 
+engine.DiceRoller = require( './DiceRoller.js' ) ;
 
-},{"./Camera.js":1,"./GEntity.js":2,"./GEntityBackground.js":3,"./GEntityBasicShape.js":4,"./GEntityDirectionalLight.js":5,"./GEntityFloatingText.js":6,"./GEntityGround.js":7,"./GEntityHemisphericLight.js":8,"./GEntityParticleSystem.js":9,"./GEntityPointLight.js":10,"./GEntityShadow.js":11,"./GEntitySpotLight.js":12,"./GEntitySprite.js":13,"./GEntityUiFloatingText.js":14,"./GScene.js":15}],20:[function(require,module,exports){
+
+},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityDirectionalLight.js":6,"./GEntityFloatingText.js":7,"./GEntityGround.js":8,"./GEntityHemisphericLight.js":9,"./GEntityParticleSystem.js":10,"./GEntityPointLight.js":11,"./GEntityShadow.js":12,"./GEntitySpotLight.js":13,"./GEntitySprite.js":14,"./GEntityUiFloatingText.js":15,"./GScene.js":16}],21:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+exports.getUpmostBoxMeshFace = boxMesh => {
+	var quat = boxMesh.rotationQuaternion ;
+	var r = new BABYLON.Vector3( 0 , 0 , 0 ) ;
+
+	BABYLON.Vector3.Right().rotateByQuaternionToRef( quat , r ) ;
+	if ( r.y >= Math.SQRT1_2 ) {
+		// +X is up, it is face #2
+		return 2 ;
+	}
+	else if ( r.y <= -Math.SQRT1_2 ) {
+		// -X is up, it is face #3
+		return 3 ;
+	}
+
+	BABYLON.Vector3.Up().rotateByQuaternionToRef( quat , r ) ;
+	if ( r.y >= Math.SQRT1_2 ) {
+		// +Y is up, it is face #4
+		return 4 ;
+	}
+	else if ( r.y <= -Math.SQRT1_2 ) {
+		// -Y is up, it is face #5
+		return 5 ;
+	}
+
+	BABYLON.Vector3.Forward().rotateByQuaternionToRef( quat , r ) ;
+	if ( r.y >= Math.SQRT1_2 ) {
+		// +Z is up, it is face #0
+		return 0 ;
+	}
+	else if ( r.y <= -Math.SQRT1_2 ) {
+		// -Z is up, it is face #1
+		return 1 ;
+	}
+
+	return 0 ;
+} ;
+
+
+},{}],22:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4842,7 +5242,7 @@ utils.epsilonAsin = utils.easin = v => {
 } ;
 
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4886,7 +5286,7 @@ module.exports = arrayKit ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 
 
-},{"./delete.js":22,"./deleteValue.js":23,"./inPlaceFilter.js":24,"./range.js":25,"./sample.js":26}],22:[function(require,module,exports){
+},{"./delete.js":24,"./deleteValue.js":25,"./inPlaceFilter.js":26,"./range.js":27,"./sample.js":28}],24:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -4938,7 +5338,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5002,7 +5402,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5067,7 +5467,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5134,7 +5534,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5191,8 +5591,8 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],27:[function(require,module,exports){
-(function (global){
+},{}],29:[function(require,module,exports){
+(function (global){(function (){
 /*
 	EXM
 
@@ -5375,9 +5775,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],28:[function(require,module,exports){
-(function (process,global,setImmediate){
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],30:[function(require,module,exports){
+(function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
 
@@ -6795,8 +7195,8 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"../package.json":31,"./Proxy.js":29,"_process":33,"timers":44}],29:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+},{"../package.json":33,"./Proxy.js":31,"_process":35,"timers":46}],31:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -7343,8 +7743,8 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 } ;
 
 
-},{"./NextGenEvents.js":28}],30:[function(require,module,exports){
-(function (process){
+},{"./NextGenEvents.js":30}],32:[function(require,module,exports){
+(function (process){(function (){
 /*
 	Next-Gen Events
 
@@ -7388,8 +7788,8 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this,require('_process'))
-},{"./NextGenEvents.js":28,"_process":33}],31:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'))
+},{"./NextGenEvents.js":30,"_process":35}],33:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.4.0",
@@ -7448,8 +7848,8 @@ module.exports={
   }
 }
 
-},{}],32:[function(require,module,exports){
-(function (process){
+},{}],34:[function(require,module,exports){
+(function (process){(function (){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -7753,8 +8153,8 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,require('_process'))
-},{"_process":33}],33:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'))
+},{"_process":35}],35:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -7940,8 +8340,8 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],34:[function(require,module,exports){
-(function (process,global){
+},{}],36:[function(require,module,exports){
+(function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
 
@@ -8129,8 +8529,8 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":33}],35:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"_process":35}],37:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8359,7 +8759,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":42}],36:[function(require,module,exports){
+},{"./seventh.js":44}],38:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8443,7 +8843,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":42}],37:[function(require,module,exports){
+},{"./seventh.js":44}],39:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9052,8 +9452,8 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":42}],38:[function(require,module,exports){
-(function (process,global,setImmediate){
+},{"./seventh.js":44}],40:[function(require,module,exports){
+(function (process,global,setImmediate){(function (){
 /*
 	Seventh
 
@@ -9810,8 +10210,8 @@ if ( process.browser ) {
 }
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":33,"setimmediate":34,"timers":44}],39:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+},{"_process":35,"setimmediate":36,"timers":46}],41:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10317,8 +10717,8 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 */
 
 
-},{"./seventh.js":42}],40:[function(require,module,exports){
-(function (process){
+},{"./seventh.js":44}],42:[function(require,module,exports){
+(function (process){(function (){
 /*
 	Seventh
 
@@ -10416,8 +10816,8 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this,require('_process'))
-},{"./seventh.js":42,"_process":33}],41:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'))
+},{"./seventh.js":44,"_process":35}],43:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10469,7 +10869,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":42}],42:[function(require,module,exports){
+},{"./seventh.js":44}],44:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10513,7 +10913,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":35,"./api.js":36,"./batch.js":37,"./core.js":38,"./decorators.js":39,"./misc.js":40,"./parasite.js":41,"./wrapper.js":43}],43:[function(require,module,exports){
+},{"./Queue.js":37,"./api.js":38,"./batch.js":39,"./core.js":40,"./decorators.js":41,"./misc.js":42,"./parasite.js":43,"./wrapper.js":45}],45:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10678,8 +11078,8 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":42}],44:[function(require,module,exports){
-(function (setImmediate,clearImmediate){
+},{"./seventh.js":44}],46:[function(require,module,exports){
+(function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -10756,5 +11156,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":33,"timers":44}]},{},[18]);
+}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+},{"process/browser.js":35,"timers":46}]},{},[19]);
