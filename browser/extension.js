@@ -454,7 +454,9 @@ function DiceRoller( gScene , params ) {
 	this.dieSize = 0.2 ;
 	this.dieFaceReindex = [ 0 , 5 , 1 , 4 , 2 , 3 ] ;	// Because 1 is opposite of 6, 2 of 5 and 3 of 4
 	this.diceRollTimeLimit = 3000 ;	// Force computing the roll after this timelimit
+	this.maxPowerDuration = 1000 ;
 	this.minThrowingPower = 5 ;
+	this.maxThrowingPower = 20 ;
 	this.arrowLength = 0.4 ;
 	this.physicsTimeStep = 10 ; // 100 update per seconds (seems to make it deterministic)
 	this.gravity = 20 ;	// Set gravity higher than usual, to scale it with oversized dice
@@ -537,12 +539,13 @@ DiceRoller.prototype.init = function() {
 	this.babylon.light.intensity = 0.7 ;
 
 	var diceMat = this.babylon.diceMaterial = new BABYLON.StandardMaterial( 'diceMaterial' , scene ) ;
-	diceMat.diffuseTexture =
-		this.dieDiffuseUrl ? this.gScene.dom.cleanUrl( this.dieDiffuseUrl ) :
-		new BABYLON.Texture( "/media/textures/die.png" , scene ) ;
+	diceMat.diffuseTexture = new BABYLON.Texture(
+		this.dieDiffuseUrl ? this.gScene.dom.cleanUrl( this.dieDiffuseUrl ) : "/textures/die.png" ,
+		scene
+	) ;
 
 	var arrowMat = this.babylon.arrowMaterial = new BABYLON.StandardMaterial( 'arrowMaterial' , scene ) ;
-	arrowMat.diffuseTexture = new BABYLON.Texture( "/media/textures/arrow.png" , scene ) ;
+	arrowMat.diffuseTexture = new BABYLON.Texture( "/textures/arrow.png" , scene ) ;
 	arrowMat.diffuseTexture.hasAlpha = true ;
 	arrowMat.backFaceCulling = false ;
 
@@ -639,26 +642,18 @@ DiceRoller.prototype.roll = function() {
 
 	scene.onPointerDown = () => {
 		scene.onPointerDown = null ;
-		var startAt = Date.now() ,
+
+		var refreshTimeout = 10 ,
+			startAt = Date.now() ,
 			direction = new BABYLON.Vector3( 10 , 0 , 0 ) ;
 
-		var timer = setInterval( () => {
-			arrow.scaling.x += 0.04 ;
-			arrow.position.x += 0.02 * this.arrowLength ;
-			var dnorm = direction.normalizeToNew() ;
-			arrow.rotation.y = Math.atan2( dnorm.y , dnorm.x ) ;
-		} , 10 ) ;
-
-		scene.onPointerMove = ( event ) => {
-			direction.x += event.movementX ;
-			direction.y += event.movementY ;
-		} ;
-
-		scene.onPointerUp = async () => {
-			scene.onPointerUp = scene.onPointerMove = null ;
+		var release = async () => {
+			scene.onPointerUp = scene.onPointerMove = scene.onPointerUp = null ;
 			clearInterval( timer ) ;
 			arrow.setEnabled( false ) ;
-			var power = Math.sqrt( ( Date.now() - startAt ) / 1000 ) ;
+			
+			// Scale power from 0 to 1
+			var power = Math.min( 1 , ( Date.now() - startAt ) / this.maxPowerDuration ) ;
 
 			// Convert the screen Y to the 3D Z
 			direction.z = -direction.y ;
@@ -680,6 +675,22 @@ DiceRoller.prototype.roll = function() {
 			this.destroy() ;
 			promise.resolve( result ) ;
 		} ;
+
+		var growing = 6 * refreshTimeout / this.maxPowerDuration ;
+		var timer = setInterval( () => {
+			arrow.scaling.x += growing ;
+			arrow.position.x += growing * 0.5 * this.arrowLength ;
+			var dnorm = direction.normalizeToNew() ;
+			arrow.rotation.y = Math.atan2( dnorm.y , dnorm.x ) ;
+			if ( Date.now() - startAt > this.maxPowerDuration ) { release() ; }
+		} , refreshTimeout ) ;
+
+		scene.onPointerMove = ( event ) => {
+			direction.x += event.movementX ;
+			direction.y += event.movementY ;
+		} ;
+
+		scene.onPointerUp = release ;
 	} ;
 
 	return promise ;
@@ -691,7 +702,7 @@ DiceRoller.prototype.throwDice = async function( power , direction ) {
 	var result = {} ,
 		scene = this.babylon.scene ;
 
-	power = Math.max( 6 * power , this.minThrowingPower ) ;
+	power = this.maxThrowingPower * power + this.minThrowingPower * ( 1 - power ) ;
 
 	for ( let i = 0 ; i < this.dieCount ; i ++ ) {
 		let die = this.babylon.dice[i] ;
@@ -2912,8 +2923,8 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	// Create a particle system
 	this.babylon.particleSystem = particleSystem =
 		// For instance, GPU particles doesn't work with LUT... -_-'
-		//BABYLON.GPUParticleSystem.IsSupported ? new BABYLON.GPUParticleSystem( "particles" , pData.capacity ) :
-		new BABYLON.ParticleSystem( "particles" , pData.capacity ) ;
+		//BABYLON.GPUParticleSystem.IsSupported ? new BABYLON.GPUParticleSystem( "particles" , pData.capacity , scene ) :
+		new BABYLON.ParticleSystem( "particles" , pData.capacity , scene ) ;
 
 	// Global speed multiplier
 	particleSystem.updateSpeed = pData.updateRate * 0.01 ;
