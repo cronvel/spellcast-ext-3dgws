@@ -435,10 +435,7 @@ Camera.prototype.updateOrbital = function( data ) {
 
 
 
-/*
-	https://playground.babylonjs.com/#JJGVMJ#15
-	Playground code (at #15)
-*/
+// Prototyped by cronvel here: https://playground.babylonjs.com/#JJGVMJ#15
 
 
 
@@ -453,12 +450,13 @@ function DiceRoller( gScene , params ) {
 	// Parameters
 	this.dieCount = params.dice ;
 	this.faceValues = params.values ;
+	this.dieDiffuseUrl = params.skinUrl || null ;
 	this.dieSize = 0.2 ;
 	this.dieFaceReindex = [ 0 , 5 , 1 , 4 , 2 , 3 ] ;	// Because 1 is opposite of 6, 2 of 5 and 3 of 4
 	this.diceRollTimeLimit = 3000 ;	// Force computing the roll after this timelimit
 	this.minThrowingPower = 5 ;
 	this.arrowLength = 0.4 ;
-	this.physicsTimeStep = 10 ;
+	this.physicsTimeStep = 10 ; // 100 update per seconds (seems to make it deterministic)
 	this.gravity = 20 ;	// Set gravity higher than usual, to scale it with oversized dice
 	this.friction = 0.9 ;
 	this.restitution = 0.6 ;
@@ -466,7 +464,9 @@ function DiceRoller( gScene , params ) {
 	this.wallVisibility = false ;
 	this.wallSize = 3 ;
 	this.wallThickness = 0.5 ;	// Good thickness prevents bug of dice escaping the box
-	this.stillnessVelocitySumLimit = 0.01 ;	// 100 update per seconds (seems to make it deterministic)
+	this.stillnessVelocitySumLimit = 0.01 ;	// Used to detect if the dices are still
+	
+	this.destroyed = false ;
 	
 	// Babylon stuffs
 	this.babylon = {
@@ -474,6 +474,8 @@ function DiceRoller( gScene , params ) {
 		physicsEngine: null ,
 		camera: null ,
 		light: null ,
+		diceMaterial: null ,
+		arrowMaterial: null ,
 		dice: [] ,
 		arrow: null ,
 		ui: null
@@ -484,10 +486,32 @@ module.exports = DiceRoller ;
 
 
 
+DiceRoller.prototype.destroy = function() {
+	if ( this.destroyed ) { return ; }
+
+	this.babylon.dice.forEach( die => die.dispose() ) ;
+	this.babylon.dice.length = 0 ;
+	if ( this.babylon.arrow ) { this.babylon.arrow.dispose() ; this.babylon.arrow = null ; }
+	if ( this.babylon.diceMaterial ) { this.babylon.diceMaterial.dispose() ; this.babylon.diceMaterial = null ; }
+	if ( this.babylon.arrowMaterial ) { this.babylon.arrowMaterial.dispose() ; this.babylon.arrowMaterial = null ; }
+	if ( this.babylon.physicsEngine ) { this.babylon.physicsEngine.dispose() ; this.babylon.physicsEngine = null ; }
+	if ( this.babylon.light ) { this.babylon.light.dispose() ; this.babylon.light = null ; }
+	if ( this.babylon.ui ) { this.babylon.ui.dispose() ; this.babylon.ui = null ; }
+	if ( this.babylon.camera ) { this.babylon.camera.dispose() ; this.babylon.camera = null ; }
+	if ( this.babylon.scene ) { this.babylon.scene.dispose() ; this.babylon.scene = this.gScene.babylon.diceRollerScene = null ; }
+
+	this.destroyed = true ;
+} ;
+
+
+
 DiceRoller.prototype.init = function() {
-	if ( this.gScene.babylon.diceRollerScene ) { throw new Error( "Dang! there is already a diceRollerScene !" ) ; }
-	var scene = this.babylon.scene = new BABYLON.Scene( this.gScene.babylon.engine ) ;
-	this.gScene.babylon.diceRollerScene = scene ;
+	if ( this.gScene.babylon.diceRollerScene ) { throw new Error( "DiceRoller: there is already a diceRollerScene for these GScene" ) ; }
+
+	var scene =
+		this.babylon.scene =
+		this.gScene.babylon.diceRollerScene =
+			new BABYLON.Scene( this.gScene.babylon.engine ) ;
 
 	scene.autoClear = false ;       // Don't clear the color buffer between frame (skybox expected!)
 	//scene.autoClearDepthAndStencil = false ;    // Same with depth and stencil buffer
@@ -512,11 +536,13 @@ DiceRoller.prototype.init = function() {
 	this.babylon.light = new BABYLON.HemisphericLight( 'light' , new BABYLON.Vector3( -0.3 , 1 , -0.3 ) , scene ) ;
 	this.babylon.light.intensity = 0.7 ;
 
-	var diceMat = new BABYLON.StandardMaterial( 'diceMaterial' , scene ) ;
-	diceMat.diffuseTexture = new BABYLON.Texture( "https://i.imgur.com/nzFvRJA.png" , scene ) ;
+	var diceMat = this.babylon.diceMaterial = new BABYLON.StandardMaterial( 'diceMaterial' , scene ) ;
+	diceMat.diffuseTexture =
+		this.dieDiffuseUrl ? this.gScene.dom.cleanUrl( this.dieDiffuseUrl ) :
+		new BABYLON.Texture( "/media/textures/die.png" , scene ) ;
 
-	var arrowMat = new BABYLON.StandardMaterial( 'arrowMaterial' , scene ) ;
-	arrowMat.diffuseTexture = new BABYLON.Texture( "https://i.imgur.com/VB6SDdj.png" , scene ) ;
+	var arrowMat = this.babylon.arrowMaterial = new BABYLON.StandardMaterial( 'arrowMaterial' , scene ) ;
+	arrowMat.diffuseTexture = new BABYLON.Texture( "/media/textures/arrow.png" , scene ) ;
 	arrowMat.diffuseTexture.hasAlpha = true ;
 	arrowMat.backFaceCulling = false ;
 
@@ -598,7 +624,8 @@ DiceRoller.prototype.init = function() {
 
 DiceRoller.prototype.roll = function() {
 	console.warn( "DirceRoller roll" ) ;
-	var scene = this.babylon.scene ,
+	var result ,
+		scene = this.babylon.scene ,
 		arrow = this.babylon.arrow ,
 		promise = new Promise() ;
 
@@ -627,7 +654,7 @@ DiceRoller.prototype.roll = function() {
 			direction.y += event.movementY ;
 		} ;
 
-		scene.onPointerUp = () => {
+		scene.onPointerUp = async () => {
 			scene.onPointerUp = scene.onPointerMove = null ;
 			clearInterval( timer ) ;
 			arrow.setEnabled( false ) ;
@@ -640,8 +667,18 @@ DiceRoller.prototype.roll = function() {
 			direction.y = 0.6 ;   // Force throwing a bit in the up direction
 			direction.normalize() ;
 
-			//this.throwDice( power , direction ) ;
-			Promise.propagate( this.throwDice( power , direction ) , promise ) ;
+			try {
+				result = await this.throwDice( power , direction ) ;
+				await this.displayDiceRollResult( result ) ;
+			}
+			catch ( error ) {
+				this.destroy() ;
+				promise.reject( error ) ;
+				return ;
+			}
+
+			this.destroy() ;
+			promise.resolve( result ) ;
 		} ;
 	} ;
 
@@ -681,24 +718,7 @@ DiceRoller.prototype.throwDice = async function( power , direction ) {
 	}
 
 	console.warn( "Dice roll: " , result ) ;
-	this.displayDiceRoll( result ) ;
-	
 	return result ;
-} ;
-
-
-
-DiceRoller.prototype.displayDiceRoll = function( result ) {
-	// GUI
-	var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI( "UI" ) ;
-	let text = new BABYLON.GUI.TextBlock() ;
-	text.text = "> " + result.values.join( '+' ) + '=' + result.sum ;
-	text.color = "black" ;
-	text.fontSize = 24 ;
-	text.top = "40%" ;
-	//text.left = "-0%";
-	//text.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-	advancedTexture.addControl( text ) ;
 } ;
 
 
@@ -716,6 +736,29 @@ DiceRoller.prototype.isStill = function( object ) {
 DiceRoller.prototype.getDieFace = function( die ) {
 	var faceIndex = meshUtils.getUpmostBoxMeshFace( die ) ;
 	return this.dieFaceReindex[ faceIndex ] ;
+} ;
+
+
+
+DiceRoller.prototype.displayDiceRollResult = function( result ) {
+	var ui = this.babylon.ui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI( "UI" ) ;
+
+	var rect = new BABYLON.GUI.Rectangle() ;
+	rect.width = 0.2 ;
+	rect.height = "40px" ;
+	rect.cornerRadius = 20 ;
+	rect.color = "orange" ;
+	rect.thickness = 4 ;
+	rect.background = "green" ;
+	ui.addControl( rect ) ;    	
+
+	var text = new BABYLON.GUI.TextBlock() ;
+	text.text = result.values.join( '+' ) + ' = ' + result.sum ;
+	text.color = "white" ;
+	text.fontSize = 24 ;
+	rect.addControl( text ) ;
+
+	return Promise.resolveTimeout( 2000 ) ;
 } ;
 
 
@@ -5585,7 +5628,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],29:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /*
 	EXM
 
@@ -5768,9 +5811,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],30:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
 
@@ -7188,7 +7231,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":33,"./Proxy.js":31,"_process":35,"timers":46}],31:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -7737,7 +7780,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":30}],32:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Next-Gen Events
 
@@ -7781,7 +7824,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./NextGenEvents.js":30,"_process":35}],33:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -7842,7 +7885,7 @@ module.exports={
 }
 
 },{}],34:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -8146,7 +8189,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":35}],35:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -8334,7 +8377,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],36:[function(require,module,exports){
-(function (process,global){
+(function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
 
@@ -8522,7 +8565,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":35}],37:[function(require,module,exports){
 /*
 	Seventh
@@ -9446,7 +9489,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":44}],40:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Seventh
 
@@ -10203,7 +10246,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":35,"setimmediate":36,"timers":46}],41:[function(require,module,exports){
 /*
 	Seventh
@@ -10711,7 +10754,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":44}],42:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Seventh
 
@@ -10809,7 +10852,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./seventh.js":44,"_process":35}],43:[function(require,module,exports){
 /*
 	Seventh
@@ -11072,7 +11115,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":44}],46:[function(require,module,exports){
-(function (setImmediate,clearImmediate){
+(function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -11149,5 +11192,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":35,"timers":46}]},{},[19]);
