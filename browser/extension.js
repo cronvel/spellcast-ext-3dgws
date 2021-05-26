@@ -510,10 +510,9 @@ DiceRoller.prototype.destroy = function() {
 DiceRoller.prototype.init = function() {
 	if ( this.gScene.babylon.diceRollerScene ) { throw new Error( "DiceRoller: there is already a diceRollerScene for these GScene" ) ; }
 
-	var scene =
-		this.babylon.scene =
-		this.gScene.babylon.diceRollerScene =
-			new BABYLON.Scene( this.gScene.babylon.engine ) ;
+	var engine = this.gScene.babylon.engine ,
+		scene = this.babylon.scene = this.gScene.babylon.diceRollerScene = new BABYLON.Scene( engine ) ,
+		ratio = engine.getRenderWidth() / engine.getRenderHeight() ;
 
 	scene.autoClear = false ;       // Don't clear the color buffer between frame (skybox expected!)
 	//scene.autoClearDepthAndStencil = false ;    // Same with depth and stencil buffer
@@ -528,11 +527,12 @@ DiceRoller.prototype.init = function() {
 	this.babylon.physicsEngine.setSubTimeStep( this.physicsTimeStep ) ;
 
 	// Camera
-	var camera = this.babylon.camera = new BABYLON.ArcRotateCamera( 'camera' , -Math.PI / 2 , 0 , this.cameraHeight , BABYLON.Vector3.Zero() , scene ) ;
+	var camera , cx = 0 , cz = 0 ;
+	if ( ratio > 1 ) { cx = ( ratio - 1 ) * 0.25 * this.cameraHeight ; }
+	else if ( ratio < 1 ) { cz = - ( 1 - ratio ) * 0.25 * this.cameraHeight ; }
+	camera = this.babylon.camera = new BABYLON.ArcRotateCamera( 'camera' , -Math.PI / 2 , 0 , this.cameraHeight , new BABYLON.Vector3( cx , 0 , cz ) , scene ) ;
 	camera.wheelPrecision = 1000 ;
 	camera.minZ = 0.05 ;
-	camera.setTarget( BABYLON.Vector3.Zero() ) ;
-	//camera.attachControl(canvas, true);
 
 	// Light
 	this.babylon.light = new BABYLON.HemisphericLight( 'light' , new BABYLON.Vector3( -0.3 , 1 , -0.3 ) , scene ) ;
@@ -607,7 +607,7 @@ DiceRoller.prototype.init = function() {
 
 		let yOffset = Math.round( i / 6 ) ;
 		let zOffset = i % 6 ;
-		die.position.x = -this.wallSize / 2 * 0.5 ;
+		die.position.x = -this.wallSize / 2 * 0.75 ;
 		die.position.y = this.wallThickness / 2 + 0.4 + yOffset * this.dieSize * 1.2 ;
 		die.position.z = -this.wallSize / 2 + 2 * this.wallThickness + zOffset * this.dieSize * 1.5 ;
 		die.rotation.x = 2 * Math.PI * Math.random() ;
@@ -5642,7 +5642,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],29:[function(require,module,exports){
-(function (global){(function (){
+(function (global){
 /*
 	EXM
 
@@ -5825,9 +5825,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],30:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Next-Gen Events
 
@@ -7245,7 +7245,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":33,"./Proxy.js":31,"_process":35,"timers":46}],31:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -7794,7 +7794,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":30}],32:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Next-Gen Events
 
@@ -7838,7 +7838,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./NextGenEvents.js":30,"_process":35}],33:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -7899,7 +7899,7 @@ module.exports={
 }
 
 },{}],34:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -8203,7 +8203,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"_process":35}],35:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -8391,7 +8391,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],36:[function(require,module,exports){
-(function (process,global){(function (){
+(function (process,global){
 (function (global, undefined) {
     "use strict";
 
@@ -8579,7 +8579,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":35}],37:[function(require,module,exports){
 /*
 	Seventh
@@ -9503,7 +9503,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":44}],40:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Seventh
 
@@ -10260,7 +10260,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":35,"setimmediate":36,"timers":46}],41:[function(require,module,exports){
 /*
 	Seventh
@@ -10768,7 +10768,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":44}],42:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Seventh
 
@@ -10866,7 +10866,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./seventh.js":44,"_process":35}],43:[function(require,module,exports){
 /*
 	Seventh
@@ -11129,7 +11129,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":44}],46:[function(require,module,exports){
-(function (setImmediate,clearImmediate){(function (){
+(function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -11206,5 +11206,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":35,"timers":46}]},{},[19]);
