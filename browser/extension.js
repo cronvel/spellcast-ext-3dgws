@@ -528,8 +528,10 @@ DiceRoller.prototype.init = function() {
 
 	// Camera
 	var camera , cx = 0 , cz = 0 ;
+	/*
 	if ( ratio > 1 ) { cx = ( ratio - 1 ) * 0.25 * this.cameraHeight ; }
 	else if ( ratio < 1 ) { cz = - ( 1 - ratio ) * 0.25 * this.cameraHeight ; }
+	*/
 	camera = this.babylon.camera = new BABYLON.ArcRotateCamera( 'camera' , -Math.PI / 2 , 0 , this.cameraHeight , new BABYLON.Vector3( cx , 0 , cz ) , scene ) ;
 	camera.wheelPrecision = 1000 ;
 	camera.minZ = 0.05 ;
@@ -543,6 +545,7 @@ DiceRoller.prototype.init = function() {
 		this.dieDiffuseUrl ? this.gScene.dom.cleanUrl( this.dieDiffuseUrl ) : "/textures/die.png" ,
 		scene
 	) ;
+	diceMat.specularColor = new BABYLON.Color3( 0.3 , 0.3 , 0.3 ) ;
 
 	var arrowMat = this.babylon.arrowMaterial = new BABYLON.StandardMaterial( 'arrowMaterial' , scene ) ;
 	arrowMat.diffuseTexture = new BABYLON.Texture( "/textures/arrow.png" , scene ) ;
@@ -563,7 +566,9 @@ DiceRoller.prototype.init = function() {
 	arrow.rotation.x = Math.PI / 2 ;
 	arrow.rotation.y = 0 ;//Math.PI;
 	arrow.position.y = 1 ;
-	arrow.position.x = -0.8 ;
+	arrow.position.x = -0.8 - this.arrowLength / 2 ;
+	arrow.bakeTransformIntoVertices( BABYLON.Matrix.Translation( this.arrowLength / 2 , 0 , 0 ) ) ;
+
 
 	var nWall = BABYLON.MeshBuilder.CreateBox( "north" , { width: this.wallSize , height: this.wallSize , depth: this.wallThickness } , scene ) ;
 	nWall.position.y = this.wallSize / 2 ;
@@ -676,10 +681,10 @@ DiceRoller.prototype.roll = function() {
 		scene.onPointerDown = null ;
 		startAt = Date.now() ;
 
-		var growing = 6 * refreshTimeout / this.maxPowerDuration ;
+		var growing = 4 * refreshTimeout / this.maxPowerDuration ;
 		intervalTimer = setInterval( () => {
 			arrow.scaling.x += growing ;
-			arrow.position.x += growing * 0.5 * this.arrowLength ;
+			//arrow.position.x += growing * 0.5 * this.arrowLength ;
 			var dnorm = direction.normalizeToNew() ;
 			arrow.rotation.y = Math.atan2( dnorm.y , dnorm.x ) ;
 			if ( Date.now() - startAt > this.maxPowerDuration ) { release() ; }
@@ -1154,12 +1159,13 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 		material.ambientColor.set( r , g , b ) ;
 	}
 
-	if ( params.diffuse && typeof params.diffuse === 'object' ) {
+	var diffuse = params.diffuse || params.albedo ;
+	if ( diffuse && typeof diffuse === 'object' ) {
 		if ( ! this.special.diffuse ) { this.special.diffuse = { r: 0 , g: 0 , b: 0 } ; }
 
-		r = params.diffuse.r !== undefined ? params.diffuse.r : this.special.diffuse.r ,
-		g = params.diffuse.g !== undefined ? params.diffuse.g : this.special.diffuse.g ,
-		b = params.diffuse.b !== undefined ? params.diffuse.b : this.special.diffuse.b ;
+		r = diffuse.r !== undefined ? diffuse.r : this.special.diffuse.r ,
+		g = diffuse.g !== undefined ? diffuse.g : this.special.diffuse.g ,
+		b = diffuse.b !== undefined ? diffuse.b : this.special.diffuse.b ;
 
 		if ( ! volatile ) {
 			this.special.diffuse.r = r ;
@@ -5642,7 +5648,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],29:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /*
 	EXM
 
@@ -5825,9 +5831,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],30:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
 
@@ -7245,7 +7251,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":33,"./Proxy.js":31,"_process":35,"timers":46}],31:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -7794,7 +7800,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":30}],32:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Next-Gen Events
 
@@ -7838,7 +7844,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./NextGenEvents.js":30,"_process":35}],33:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -7899,7 +7905,7 @@ module.exports={
 }
 
 },{}],34:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -8203,7 +8209,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":35}],35:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -8391,7 +8397,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],36:[function(require,module,exports){
-(function (process,global){
+(function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
 
@@ -8579,7 +8585,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":35}],37:[function(require,module,exports){
 /*
 	Seventh
@@ -9503,7 +9509,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":44}],40:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Seventh
 
@@ -10260,7 +10266,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":35,"setimmediate":36,"timers":46}],41:[function(require,module,exports){
 /*
 	Seventh
@@ -10768,7 +10774,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":44}],42:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Seventh
 
@@ -10866,7 +10872,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./seventh.js":44,"_process":35}],43:[function(require,module,exports){
 /*
 	Seventh
@@ -11129,7 +11135,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":44}],46:[function(require,module,exports){
-(function (setImmediate,clearImmediate){
+(function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -11206,5 +11212,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":35,"timers":46}]},{},[19]);
