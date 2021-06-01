@@ -830,8 +830,8 @@ function GEntity( dom , gScene , data ) {
 
 	this.dom = dom ;	// Dom instance, immutable
 	this.usage = data.usage || 'sprite' ;	// immutable
-	this.transient = data.transient || undefined ;	// immutable
 	this.parent = undefined ;	// immutable, set later in the constructor
+	this.transient = data.transient || undefined ;	// immutable
 	this.destroyed = false ;
 
 	this.show = false ;
@@ -869,6 +869,7 @@ function GEntity( dom , gScene , data ) {
 		size: null
 	} ;
 
+	this.firstUpdate = true ;
 	this.updateMeshNeeded = true ;
 	this.updateMaterialNeeded = true ;
 	this.createLightNeeded = false ;
@@ -894,10 +895,6 @@ function GEntity( dom , gScene , data ) {
 	this.nextTextureFrame = this.nextTextureFrame.bind( this ) ;
 
 	this.defineStates( 'loaded' , 'loading' ) ;
-
-	if ( this.transient ) {
-		setTimeout( () => this.destroy() , this.transient * 1000 ) ;
-	}
 
 	if ( this.noLocalLighting ) {
 		this.gScene.noLocalLightingGEntities.add( this ) ;
@@ -983,6 +980,11 @@ GEntity.prototype.addChild = function( child ) {
 // !THIS SHOULD TRACK SERVER-SIDE GEntity! spellcast/lib/gfx/GEntity.js
 GEntity.prototype.update = async function( data , awaiting = false , initial = false ) {
 	console.warn( "3D GEntity.update()" , data ) ;
+	if ( data.delay ) { await Promise.resolveTimeout( data.delay * 1000 ) ; }
+	if ( this.firstUpdate ) {
+		if ( this.transient ) { setTimeout( () => this.destroy() , this.transient * 1000 ) ; }
+		this.firstUpdate = false ;
+	}
 
 	if ( data.transition ) {
 		if ( initial ) { delete data.transition ; }
