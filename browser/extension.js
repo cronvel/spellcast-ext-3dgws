@@ -1265,7 +1265,6 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 
 
 GEntity.prototype.updateOpacity = function( opacity , volatile = false ) {
-	console.warn( "??????????????????? opacity" , opacity , this.babylon.material ) ;
 	var material = this.babylon.material ;
 	if ( ! material ) { return ; }
 
@@ -1509,7 +1508,23 @@ GEntity.prototype.updateRotation = function( data , volatile = false ) {
 		this.rotation.z = z ;
 	}
 
-	mesh.angle = z ;
+	//mesh.angle = z ;
+
+	if ( data.transition ) {
+		//console.warn( "mesh:" , mesh ) ;
+		// Animation using easing
+
+		data.transition.createAnimation(
+			scene ,
+			mesh ,
+			'rotation' ,
+			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
+			new BABYLON.Vector3( x , y , z )
+		) ;
+	}
+	else {
+		mesh.rotation.set( x , y , z ) ;
+	}
 } ;
 
 
@@ -2399,11 +2414,10 @@ GEntityFx.prototype.updateMaterial = async function() {
 	console.warn( "3D GEntityFx.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
 
 	this.babylon.material = material = new BABYLON.StandardMaterial( 'fxMaterial' , scene ) ;
-	material.backFaceCulling = true ;	// Mandatory for alpha transparency
+	material.backFaceCulling = false ;
 	material.transparencyMode = BABYLON.Material.MATERIAL_ALPHATESTANDBLEND ;
 	material.useAlphaFromDiffuseTexture = true ;
-	//material.alpha = 0.5 ;
-	//setTimeout( () => material.alpha = 0.5 , 10 ) ;
+	material.alpha = oldMaterial ? oldMaterial.alpha : this.opacity ;
 
 	material.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
 
@@ -2489,30 +2503,12 @@ GEntityFx.prototype.updateMesh = function() {
 	//mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_X | BABYLON.AbstractMesh.BILLBOARDMODE_Y ;
 
 	if ( this.parent ) { this.updateMeshParent() ; }
+	//mesh.rotation.y = Math.PI / 2 ;
 
 	console.warn( 'FX Mesh:' , mesh ) ;
 
 	this.updateMeshNeeded = false ;
 	return mesh ;
-} ;
-
-
-
-GEntityFx.prototype.updateRotation = function( data , volatile = false ) {
-	var mesh = this.babylon.mesh ,
-		scene = this.gScene.babylon.scene ;
-
-	var x = data.rotation.x !== undefined ? data.rotation.x : this.rotation.x ,
-		y = data.rotation.y !== undefined ? data.rotation.y : this.rotation.y ,
-		z = data.rotation.z !== undefined ? data.rotation.z : this.rotation.z ;
-
-	if ( ! volatile ) {
-		this.rotation.x = x ;
-		this.rotation.y = y ;
-		this.rotation.z = z ;
-	}
-
-	mesh.rotation.z = z ;
 } ;
 
 
@@ -3934,25 +3930,6 @@ GEntitySprite.prototype.updateMesh = function() {
 
 // Disable billboard changes ATM, it is forced to X|Y
 GEntitySprite.prototype.updateBillboard = function() {} ;
-
-
-
-GEntitySprite.prototype.updateRotation = function( data , volatile = false ) {
-	var mesh = this.babylon.mesh ,
-		scene = this.gScene.babylon.scene ;
-
-	var x = data.rotation.x !== undefined ? data.rotation.x : this.rotation.x ,
-		y = data.rotation.y !== undefined ? data.rotation.y : this.rotation.y ,
-		z = data.rotation.z !== undefined ? data.rotation.z : this.rotation.z ;
-
-	if ( ! volatile ) {
-		this.rotation.x = x ;
-		this.rotation.y = y ;
-		this.rotation.z = z ;
-	}
-
-	mesh.rotation.z = z ;
-} ;
 
 
 
@@ -5907,7 +5884,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],30:[function(require,module,exports){
-(function (global){(function (){
+(function (global){
 /*
 	EXM
 
@@ -6090,9 +6067,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],31:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Next-Gen Events
 
@@ -7510,7 +7487,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":34,"./Proxy.js":32,"_process":36,"timers":47}],32:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -8059,7 +8036,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":31}],33:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Next-Gen Events
 
@@ -8103,7 +8080,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./NextGenEvents.js":31,"_process":36}],34:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -8164,7 +8141,7 @@ module.exports={
 }
 
 },{}],35:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -8468,7 +8445,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"_process":36}],36:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -8656,7 +8633,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],37:[function(require,module,exports){
-(function (process,global){(function (){
+(function (process,global){
 (function (global, undefined) {
     "use strict";
 
@@ -8844,7 +8821,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":36}],38:[function(require,module,exports){
 /*
 	Seventh
@@ -9768,7 +9745,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":45}],41:[function(require,module,exports){
-(function (process,global,setImmediate){(function (){
+(function (process,global,setImmediate){
 /*
 	Seventh
 
@@ -10525,7 +10502,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":36,"setimmediate":37,"timers":47}],42:[function(require,module,exports){
 /*
 	Seventh
@@ -11033,7 +11010,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":45}],43:[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /*
 	Seventh
 
@@ -11131,7 +11108,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./seventh.js":45,"_process":36}],44:[function(require,module,exports){
 /*
 	Seventh
@@ -11394,7 +11371,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":45}],47:[function(require,module,exports){
-(function (setImmediate,clearImmediate){(function (){
+(function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -11471,5 +11448,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":36,"timers":47}]},{},[20]);
