@@ -402,7 +402,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],2:[function(require,module,exports){
+},{"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],2:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -781,7 +781,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 } ;
 
 
-},{"./meshUtils.js":21,"seventh":44}],3:[function(require,module,exports){
+},{"./meshUtils.js":22,"seventh":45}],3:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -825,11 +825,14 @@ const Promise = require( 'seventh' ) ;
 // !THIS SHOULD TRACK SERVER-SIDE GEntity! spellcast/lib/gfx/GEntity.js
 function GEntity( dom , gScene , data ) {
 	this.id = data.id || null ;
-	this.dom = dom ;	// Dom instance, immutable
 	this.gScene = gScene ;
+	this.gScene.registerGEntity( this.id , this ) ;	// Immediately check that we can register it
+
+	this.dom = dom ;	// Dom instance, immutable
 	this.usage = data.usage || 'sprite' ;	// immutable
 	this.transient = data.transient || undefined ;	// immutable
 	this.parent = undefined ;	// immutable, set later in the constructor
+	this.destroyed = false ;
 
 	this.show = false ;
 	this.persistent = true ;
@@ -849,6 +852,7 @@ function GEntity( dom , gScene , data ) {
 	this.rotationMode = 'default' ;
 	this.direction = { x: 1 , y: 0 , z: 0 } ;
 	this.facing = 0 ;
+	this.billboard = null ;
 	this.opacity = 1 ;
 
 	this.special = {} ;
@@ -911,12 +915,14 @@ module.exports = GEntity ;
 
 GEntity.prototype.localBBoxSize = 1 ;
 GEntity.prototype.noLocalLighting = false ;		// Is it sensible to local lights (point-light/spot-light)?
-GEntity.prototype.isLocalLight = true ;		// Is it a local light (point-light/spot-light)?
+GEntity.prototype.isLocalLight = true ;			// Is it a local light (point-light/spot-light)?
+GEntity.prototype.noParentScaling = false ;		// Is scaling dependent on parent?
 
 
 
-// TODO
 GEntity.prototype.destroy = function() {
+	if ( this.destroyed ) { return ; }
+
 	if ( this.noLocalLighting ) {
 		this.gScene.noLocalLightingGEntities.remove( this ) ;
 		this.gScene.once( 'render' , () => this.gScene.updateLightExcludedMeshes() , { unique: true , id: 'updateLightExcludedMeshes' } ) ;
@@ -953,7 +959,7 @@ GEntity.prototype.destroy = function() {
 		this.babylon.particleSystem = null ;
 	}
 
-	this.gScene.removeGEntity( this.id ) ;
+	this.gScene.unregisterGEntity( this.id ) ;
 	this.destroyed = true ;
 } ;
 
@@ -1090,6 +1096,21 @@ GEntity.prototype.updateSpecialStage2 = function( data ) {
 GEntity.prototype.updateDirection = function( direction ) { this.direction = direction ; } ;
 GEntity.prototype.updateFacing = function( facing ) { this.facing = facing ; } ;
 GEntity.prototype.updateMesh = function() { this.updateMeshNeeded = false ; } ;
+
+
+
+// Called by .updateMesh()
+GEntity.prototype.updateMeshParent = function() {
+	if ( ! this.parent ) { return ; }
+
+	var mesh = this.babylon.mesh ,
+		parentMesh = this.parent.babylon.mesh ;
+
+	if ( parentMesh ) {
+		mesh.parent = parentMesh ;
+		if ( this.noParentScaling ) { this.updateSize( this.size ) ; }
+	}
+} ;
 
 
 
@@ -1498,8 +1519,13 @@ GEntity.prototype.updateSize = function( size , volatile = false , isClientMod =
 		z *= this.clientMods.size.z ;
 	}
 
-	//mesh.width = this.size.x ;
-	//mesh.height = this.size.y ;
+	if ( this.parent && this.noParentScaling ) {
+		// Compensate for the parent scaling which enlarge and deform the child
+		x /= parentMesh.scaling.x ;
+		y /= parentMesh.scaling.y ;
+		z /= parentMesh.scaling.z ;
+	}
+
 	mesh.scaling.x = x ;
 	mesh.scaling.y = y ;
 	mesh.scaling.z = z ;
@@ -1722,7 +1748,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":17,"./Parametric.js":18,"nextgen-events/lib/browser.js":32,"seventh":44}],4:[function(require,module,exports){
+},{"./GTransition.js":18,"./Parametric.js":19,"nextgen-events/lib/browser.js":33,"seventh":45}],4:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1846,7 +1872,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"seventh":44}],5:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":45}],5:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -1943,7 +1969,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],6:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],6:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2058,7 +2084,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],7:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2113,6 +2139,11 @@ GEntityFloatingText.prototype = Object.create( GEntity.prototype ) ;
 GEntityFloatingText.prototype.constructor = GEntityFloatingText ;
 
 module.exports = GEntityFloatingText ;
+
+
+
+// Compensate for the parent scaling which enlarge and deform the floating text
+GEntityFloatingText.prototype.noParentScaling = true ;
 
 
 
@@ -2247,7 +2278,7 @@ GEntityFloatingText.prototype.updateOpacity = function( opacity , volatile = fal
 
 
 GEntityFloatingText.prototype.updateMesh = function() {
-	var mesh , parentMesh ,
+	var mesh ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
@@ -2256,13 +2287,7 @@ GEntityFloatingText.prototype.updateMesh = function() {
 	//mesh.position.x = 0 ; mesh.position.y = 10 ; mesh.position.z = 0 ;
 	mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL ;
 
-	if ( this.parent && this.parent.babylon.mesh ) {
-		mesh.parent = parentMesh = this.parent.babylon.mesh ;
-
-		// Compensate for the parent scaling which enlarge and deform the floating text
-		mesh.scaling.x = 1 / parentMesh.scaling.x ;
-		mesh.scaling.y = 1 / parentMesh.scaling.y ;
-	}
+	if ( this.parent ) { this.updateMeshParent() ; }
 
 	console.warn( 'GEntityFloatingText .updateMesh() Mesh:' , mesh ) ;
 
@@ -2279,7 +2304,183 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],8:[function(require,module,exports){
+/*
+	Spellcast's Web Client Extension
+
+	Copyright (c) 2014 - 2020 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const GEntity = require( './GEntity.js' ) ;
+const GTransition = require( './GTransition.js' ) ;
+
+const vectorUtils = require( './vectorUtils.js' ) ;
+
+const Promise = require( 'seventh' ) ;
+
+
+
+function GEntityFx( dom , gScene , data ) {
+	GEntity.call( this , dom , gScene , data ) ;
+}
+
+GEntityFx.prototype = Object.create( GEntity.prototype ) ;
+GEntityFx.prototype.constructor = GEntityFx ;
+
+module.exports = GEntityFx ;
+
+
+
+// Update the gEntity's material/texture
+GEntityFx.prototype.updateMaterial = async function() {
+	var material ,
+		oldMaterial = this.babylon.material ,
+		scene = this.gScene.babylon.scene ,
+		mesh = this.babylon.mesh ;
+
+	console.warn( "3D GEntityFx.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
+
+	this.babylon.material = material = new BABYLON.StandardMaterial( 'fxMaterial' , scene ) ;
+	//material.backFaceCulling = true ;
+
+	material.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
+
+	// Diffuse/Albedo
+	var diffuseUrl = ( this.frameObject.maps && ( this.frameObject.maps.diffuse || this.frameObject.maps.albedo ) ) || this.frameObject.url ;
+
+	//material.diffuseTexture = new BABYLON.Texture( this.dom.cleanUrl( diffuseUrl ) , scene ) ;
+	material.diffuseTexture = this.getTexture( diffuseUrl ) ;
+	material.diffuseTexture.hasAlpha = true ;
+	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
+
+	//material.specularPower = 0 ;	// This is the sharpness of the highlight
+	material.specularColor = new BABYLON.Color3( 0 , 0 , 0 ) ;
+
+	/*
+		Also:
+			.ambientTexture is for ambient/occlusion
+			.emissiveTexture
+			.lightmapTexture
+			.reflectionTexture
+			.refractionTexture
+
+	*/
+
+	// X-flip and Y-Flip
+	var xFlip = this.frameObject.xFlip ,
+		yFlip = this.frameObject.yFlip ;
+
+	this.flipTexture( material.diffuseTexture , xFlip , yFlip ) ;
+
+	// Override this.origin, if necessary
+	if ( this.frameObject.origin ) {
+		let origin ;
+
+		if ( ! xFlip && ! yFlip ) {
+			origin = this.frameObject.origin ;
+		}
+		else {
+			origin = {
+				x: ( xFlip ? -this.frameObject.origin.x : this.frameObject.origin.x ) || 0 ,
+				y: ( yFlip ? -this.frameObject.origin.y : this.frameObject.origin.y ) || 0 ,
+				z: this.frameObject.origin.z || 0
+			} ;
+		}
+
+		this.updateOrigin( origin , true ) ;
+	}
+
+	// Multiply with this.size, if necessary
+	if ( this.texturePackObject.pixelDensity ) {
+		this.updateSizeFromPixelDensity( material.diffuseTexture , this.texturePackObject.pixelDensity ) ;
+	}
+	else if ( this.frameObject.relSize ) {
+		this.updateSize( this.frameObject.relSize , false , true ) ;
+	}
+
+	if ( ! mesh ) { mesh = this.updateMesh() ; }
+
+	mesh.material = material ;
+
+	if ( oldMaterial ) {
+		oldMaterial.dispose(
+			false ,	// forceDisposeEffect
+			false , // forceDisposeTextures, keep texture, texture should be managed by gScene
+			true	// notBoundToMesh
+		) ;
+	}
+
+	this.updateMaterialNeeded = false ;
+} ;
+
+
+
+GEntityFx.prototype.updateMesh = function() {
+	var mesh ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
+
+	this.babylon.mesh = mesh = BABYLON.Mesh.CreatePlane( 'fx' , undefined , scene ) ;	//, true ) ;
+
+	//mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
+	//mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_X | BABYLON.AbstractMesh.BILLBOARDMODE_Y ;
+
+	if ( this.parent ) { this.updateMeshParent() ; }
+
+	console.warn( 'FX Mesh:' , mesh ) ;
+
+	this.updateMeshNeeded = false ;
+	return mesh ;
+} ;
+
+
+
+GEntityFx.prototype.updateRotation = function( data , volatile = false ) {
+	var mesh = this.babylon.mesh ,
+		scene = this.gScene.babylon.scene ;
+
+	var x = data.rotation.x !== undefined ? data.rotation.x : this.rotation.x ,
+		y = data.rotation.y !== undefined ? data.rotation.y : this.rotation.y ,
+		z = data.rotation.z !== undefined ? data.rotation.z : this.rotation.z ;
+
+	if ( ! volatile ) {
+		this.rotation.x = x ;
+		this.rotation.y = y ;
+		this.rotation.z = z ;
+	}
+
+	mesh.rotation.z = z ;
+} ;
+
+
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],9:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2322,8 +2523,13 @@ const Promise = require( 'seventh' ) ;
 /*
 	Ground howto:
 	https://doc.babylonjs.com/how_to/set_shapes#ground
+
 	Tiled ground demo:
 	https://www.babylonjs-playground.com/#1XBLWB#6
+
+	>>> Super impressive multi-texture rendering + dynamic mix texture (the one I want?):
+	https://playground.babylonjs.com/#9MPPSY
+
 	Multi-material for tiles:
 	https://makina-corpus.com/blog/metier/2014/how-to-use-multimaterials-with-a-tiled-ground-in-babylonjs
 */
@@ -2402,7 +2608,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"seventh":44}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":45}],10:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2536,7 +2742,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],11:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -2618,7 +2824,7 @@ function GEntityParticleSystem( dom , gScene , data ) {
 		altColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		endColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		colorGradient: null ,
-		autoFacing: 'all'
+		billboard: 'all'
 	} ;
 
 	this.emitterShape = 'box' ;
@@ -2654,7 +2860,7 @@ const EMITTER_SHAPE = {
 
 
 
-const AUTOFACING = {
+const BILLBOARD_MODES = {
 	none: 'none' ,
 	all: 'all' ,
 	'all-axis': 'all' ,
@@ -2901,10 +3107,10 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			}
 		}
 
-		if ( newPData.autoFacing !== undefined ) {
-			if ( newPData.autoFacing && AUTOFACING[ newPData.autoFacing ] ) { pData.autoFacing = AUTOFACING[ newPData.autoFacing ] ; }
-			else if ( newPData.autoFacing ) { pData.autoFacing = 'all' ; }
-			else { pData.autoFacing = 'none' ; }
+		if ( newPData.billboard !== undefined ) {
+			if ( newPData.billboard && BILLBOARD_MODES[ newPData.billboard ] ) { pData.billboard = BILLBOARD_MODES[ newPData.billboard ] ; }
+			else if ( newPData.billboard ) { pData.billboard = 'all' ; }
+			else { pData.billboard = 'none' ; }
 		}
 		
 		console.warn( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ data.special.particleSystem" , this.special.particleSystem ) ;
@@ -3056,7 +3262,7 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 		}
 	}
 
-	switch ( pData.autoFacing ) {
+	switch ( pData.billboard ) {
 		case 'none' :
 			particleSystem.isBillboardBased = false ;
 			break ;
@@ -3143,7 +3349,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],12:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3270,7 +3476,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],13:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3395,7 +3601,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],14:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3453,7 +3659,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],15:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -3661,9 +3867,6 @@ GEntitySprite.prototype.updateMesh = function() {
 	//mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
 	mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_X | BABYLON.AbstractMesh.BILLBOARDMODE_Y ;
 
-	mesh.scaling.x = this.size.x ;
-	mesh.scaling.y = this.size.y ;
-
 	// Billboard mode is not sensible to pivot (as of v4.2.0-alpha31), this is a workaround for that, see:
 	// https://forum.babylonjs.com/t/sprite-planting-i-e-sprite-origin-at-the-bottom/13337/8
 	// Alternative is to mesh.bakeTransformIntoVertices(), done by this.updateOrigin()
@@ -3684,7 +3887,7 @@ GEntitySprite.prototype.updateMesh = function() {
 	} ) ;
 	*/
 
-	console.warn( 'Mesh:' , mesh ) ;
+	console.warn( 'Sprite Mesh:' , mesh ) ;
 
 	this.updateMeshNeeded = false ;
 	return mesh ;
@@ -3740,7 +3943,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":17,"./vectorUtils.js":22,"seventh":44}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],16:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -4054,7 +4257,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 } ;
 
 
-},{"./GEntity.js":3,"./GEntityFloatingText.js":7}],16:[function(require,module,exports){
+},{"./GEntity.js":3,"./GEntityFloatingText.js":7}],17:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -4562,18 +4765,31 @@ GScene.prototype.updateLightExcludedMeshes = function() {
 
 GScene.prototype.hasGEntity = function( gEntityId ) { return gEntityId in this.gEntities ; } ;
 GScene.prototype.getGEntity = function( gEntityId ) { return this.gEntities[ gEntityId ] ; } ;
-GScene.prototype.addGEntity = function( gEntityId , gEntity ) { this.gEntities[ gEntityId ] = gEntity ; } ;
+
+
+
+GScene.prototype.registerGEntity = function( gEntityId , gEntity ) {
+	if ( this.gEntities[ gEntityId ] ) { throw new Error( "Entity '" + gEntityId + "' already exists for this gScene" ) ; }
+	this.gEntities[ gEntityId ] = gEntity ;
+} ;
+
+
+
+GScene.prototype.unregisterGEntity = function( gEntityId ) {
+	delete this.gEntities[ gEntityId ] ;
+} ;
+
+
 
 GScene.prototype.removeGEntity = function( gEntityId ) {
 	var gEntity = this.gEntities[ gEntityId ] ;
 	if ( ! gEntity ) { return false ; }
-
-	delete this.gEntities[ gEntityId ] ;
+	gEntity.destroy() ;
 	return true ;
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":17,"nextgen-events/lib/browser.js":32,"seventh":44}],17:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":18,"nextgen-events/lib/browser.js":33,"seventh":45}],18:[function(require,module,exports){
 /*
 	Spellcast's Web Client Extension
 
@@ -4789,7 +5005,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":23,"seventh":44}],18:[function(require,module,exports){
+},{"array-kit":24,"seventh":45}],19:[function(require,module,exports){
 /*
 	Spellcast
 
@@ -4964,7 +5180,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 } ;
 
 
-},{"./browser-extension.js":19}],19:[function(require,module,exports){
+},{"./browser-extension.js":20}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5020,7 +5236,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":20,"exm/lib/BrowserExm.js":29,"path":34}],20:[function(require,module,exports){
+},{"./engine.js":21,"exm/lib/BrowserExm.js":30,"path":35}],21:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5065,6 +5281,7 @@ engine.perUsageGEntity = {
 	background: require( './GEntityBackground.js' ) ,
 	sprite: require( './GEntitySprite.js' ) ,
 	shadow: require( './GEntityShadow.js' ) ,
+	fx: require( './GEntityFx.js' ) ,
 	particleSystem: require( './GEntityParticleSystem.js' ) ,
 	floatingText: require( './GEntityFloatingText.js' ) ,
 	uiFloatingText: require( './GEntityUiFloatingText.js' ) ,
@@ -5075,7 +5292,7 @@ engine.perUsageGEntity = {
 engine.DiceRoller = require( './DiceRoller.js' ) ;
 
 
-},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityDirectionalLight.js":6,"./GEntityFloatingText.js":7,"./GEntityGround.js":8,"./GEntityHemisphericLight.js":9,"./GEntityParticleSystem.js":10,"./GEntityPointLight.js":11,"./GEntityShadow.js":12,"./GEntitySpotLight.js":13,"./GEntitySprite.js":14,"./GEntityUiFloatingText.js":15,"./GScene.js":16}],21:[function(require,module,exports){
+},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityDirectionalLight.js":6,"./GEntityFloatingText.js":7,"./GEntityFx.js":8,"./GEntityGround.js":9,"./GEntityHemisphericLight.js":10,"./GEntityParticleSystem.js":11,"./GEntityPointLight.js":12,"./GEntityShadow.js":13,"./GEntitySpotLight.js":14,"./GEntitySprite.js":15,"./GEntityUiFloatingText.js":16,"./GScene.js":17}],22:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5146,7 +5363,7 @@ exports.getUpmostBoxMeshFace = boxMesh => {
 } ;
 
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5298,7 +5515,7 @@ utils.epsilonAsin = utils.easin = v => {
 } ;
 
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5342,7 +5559,7 @@ module.exports = arrayKit ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 
 
-},{"./delete.js":24,"./deleteValue.js":25,"./inPlaceFilter.js":26,"./range.js":27,"./sample.js":28}],24:[function(require,module,exports){
+},{"./delete.js":25,"./deleteValue.js":26,"./inPlaceFilter.js":27,"./range.js":28,"./sample.js":29}],25:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5394,7 +5611,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5458,7 +5675,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5523,7 +5740,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5590,7 +5807,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5647,7 +5864,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (global){(function (){
 /*
 	EXM
@@ -5832,7 +6049,7 @@ if ( ! global.EXM ) {
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
@@ -7252,7 +7469,7 @@ NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"../package.json":33,"./Proxy.js":31,"_process":35,"timers":46}],31:[function(require,module,exports){
+},{"../package.json":34,"./Proxy.js":32,"_process":36,"timers":47}],32:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -7799,7 +8016,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 } ;
 
 
-},{"./NextGenEvents.js":30}],32:[function(require,module,exports){
+},{"./NextGenEvents.js":31}],33:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Next-Gen Events
@@ -7845,7 +8062,7 @@ module.exports.isBrowser = true ;
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./NextGenEvents.js":30,"_process":35}],33:[function(require,module,exports){
+},{"./NextGenEvents.js":31,"_process":36}],34:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.4.0",
@@ -7904,7 +8121,7 @@ module.exports={
   }
 }
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 (function (process){(function (){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
@@ -8210,7 +8427,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":35}],35:[function(require,module,exports){
+},{"_process":36}],36:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -8396,7 +8613,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
@@ -8586,7 +8803,7 @@ process.umask = function() { return 0; };
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":35}],37:[function(require,module,exports){
+},{"_process":36}],38:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8815,7 +9032,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":44}],38:[function(require,module,exports){
+},{"./seventh.js":45}],39:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8899,7 +9116,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":44}],39:[function(require,module,exports){
+},{"./seventh.js":45}],40:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9508,7 +9725,7 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":44}],40:[function(require,module,exports){
+},{"./seventh.js":45}],41:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Seventh
@@ -10267,7 +10484,7 @@ if ( process.browser ) {
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":35,"setimmediate":36,"timers":46}],41:[function(require,module,exports){
+},{"_process":36,"setimmediate":37,"timers":47}],42:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10773,7 +10990,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 */
 
 
-},{"./seventh.js":44}],42:[function(require,module,exports){
+},{"./seventh.js":45}],43:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Seventh
@@ -10873,7 +11090,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./seventh.js":44,"_process":35}],43:[function(require,module,exports){
+},{"./seventh.js":45,"_process":36}],44:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10925,7 +11142,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":44}],44:[function(require,module,exports){
+},{"./seventh.js":45}],45:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10969,7 +11186,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":37,"./api.js":38,"./batch.js":39,"./core.js":40,"./decorators.js":41,"./misc.js":42,"./parasite.js":43,"./wrapper.js":45}],45:[function(require,module,exports){
+},{"./Queue.js":38,"./api.js":39,"./batch.js":40,"./core.js":41,"./decorators.js":42,"./misc.js":43,"./parasite.js":44,"./wrapper.js":46}],46:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11134,7 +11351,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":44}],46:[function(require,module,exports){
+},{"./seventh.js":45}],47:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -11213,4 +11430,4 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":35,"timers":46}]},{},[19]);
+},{"process/browser.js":36,"timers":47}]},{},[20]);
