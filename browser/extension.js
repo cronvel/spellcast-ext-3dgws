@@ -841,7 +841,6 @@ function GEntity( dom , gScene , data ) {
 	this.texturePack = null ;	// A name, not the instance, see this.texturePackObject for the instance
 	this.variant = 'default' ;	// A name, not the instance, see this.variantObject for the instance
 	this.frame = 0 ;			// An index, not the instance
-	this.opacity = 1 ;
 	this.location = null ;
 	this.origin = { x: 0 , y: 0 , z: 0 } ;
 	this.position = { x: 0 , y: 0 , z: 0 } ;
@@ -1022,6 +1021,7 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 
 	if ( data.direction !== undefined ) { this.updateDirection( data.direction ) ; }
 	if ( data.facing !== undefined ) { this.updateFacing( data.facing ) ; }
+	if ( data.billboard !== undefined ) { this.updateBillboard( data.billboard ) ; }
 
 	if ( data.position !== undefined || data.positionMode !== undefined ) { this.updatePosition( data ) ; }
 	if ( data.rotation !== undefined || data.rotationMode !== undefined ) { this.updateRotation( data ) ; }
@@ -1099,6 +1099,37 @@ GEntity.prototype.updateMesh = function() { this.updateMeshNeeded = false ; } ;
 
 
 
+const BBM_X = BABYLON.AbstractMesh.BILLBOARDMODE_X ,
+	BBM_Y = BABYLON.AbstractMesh.BILLBOARDMODE_Y ,
+	BBM_Z = BABYLON.AbstractMesh.BILLBOARDMODE_Z ;
+
+const BILLBOARD_MODES = {
+	none: 0 ,
+	all: BBM_X | BBM_Y | BBM_Z ,
+	xyz: BBM_X | BBM_Y | BBM_Z ,
+	xy: BBM_X | BBM_Y ,
+	xz: BBM_X | BBM_Z ,
+	yz: BBM_Y | BBM_Z ,
+	x: BBM_X ,
+	y: BBM_Y ,
+	z: BBM_Z
+} ;
+
+GEntity.BILLBOARD_MODES = BILLBOARD_MODES ;	// Could useful for derivated classes
+
+
+
+GEntity.prototype.updateBillboard = function( billboard ) {
+	var mesh = this.babylon.mesh ;
+	this.billboard = billboard ;
+
+	if ( mesh ) {
+		mesh.billboardMode = BILLBOARD_MODES[ this.billboard ] || 0 ;
+	}
+} ;
+
+
+
 // Called by .updateMesh()
 GEntity.prototype.updateMeshParent = function() {
 	if ( ! this.parent ) { return ; }
@@ -1106,7 +1137,7 @@ GEntity.prototype.updateMeshParent = function() {
 	var mesh = this.babylon.mesh ,
 		parentMesh = this.parent.babylon.mesh ;
 
-	if ( parentMesh ) {
+	if ( mesh && parentMesh ) {
 		mesh.parent = parentMesh ;
 		if ( this.noParentScaling ) { this.updateSize( this.size ) ; }
 	}
@@ -1234,6 +1265,7 @@ GEntity.prototype.updateMaterialParams = function( params , volatile = false ) {
 
 
 GEntity.prototype.updateOpacity = function( opacity , volatile = false ) {
+	console.warn( "??????????????????? opacity" , opacity , this.babylon.material ) ;
 	var material = this.babylon.material ;
 	if ( ! material ) { return ; }
 
@@ -2367,7 +2399,11 @@ GEntityFx.prototype.updateMaterial = async function() {
 	console.warn( "3D GEntityFx.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
 
 	this.babylon.material = material = new BABYLON.StandardMaterial( 'fxMaterial' , scene ) ;
-	//material.backFaceCulling = true ;
+	material.backFaceCulling = true ;	// Mandatory for alpha transparency
+	material.transparencyMode = BABYLON.Material.MATERIAL_ALPHATESTANDBLEND ;
+	material.useAlphaFromDiffuseTexture = true ;
+	//material.alpha = 0.5 ;
+	//setTimeout( () => material.alpha = 0.5 , 10 ) ;
 
 	material.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
 
@@ -3864,6 +3900,7 @@ GEntitySprite.prototype.updateMesh = function() {
 
 	this.babylon.mesh = mesh = BABYLON.Mesh.CreatePlane( 'sprite' , undefined , scene ) ;	//, true ) ;
 
+	// Force billboard mode
 	//mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
 	mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_X | BABYLON.AbstractMesh.BILLBOARDMODE_Y ;
 
@@ -3892,6 +3929,11 @@ GEntitySprite.prototype.updateMesh = function() {
 	this.updateMeshNeeded = false ;
 	return mesh ;
 } ;
+
+
+
+// Disable billboard changes ATM, it is forced to X|Y
+GEntitySprite.prototype.updateBillboard = function() {} ;
 
 
 
