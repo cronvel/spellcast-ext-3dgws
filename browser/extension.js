@@ -913,6 +913,7 @@ GEntity.prototype.localBBoxSize = 1 ;
 GEntity.prototype.noLocalLighting = false ;		// Is it sensible to local lights (point-light/spot-light)?
 GEntity.prototype.isLocalLight = true ;			// Is it a local light (point-light/spot-light)?
 GEntity.prototype.noParentScaling = false ;		// Is scaling dependent on parent?
+GEntity.prototype.forceZScalingToX = false ;	// Force z-scale to X, useful for sprite-like
 
 
 
@@ -982,7 +983,7 @@ GEntity.prototype.update = async function( data , awaiting = false , initial = f
 	console.warn( "3D GEntity.update()" , data ) ;
 	if ( data.delay ) { await Promise.resolveTimeout( data.delay * 1000 ) ; }
 	if ( this.firstUpdate ) {
-		if ( this.transient ) { setTimeout( () => this.destroy() , this.transient * 1000 ) ; }
+		if ( typeof this.transient === 'number' ) { setTimeout( () => this.destroy() , this.transient * 1000 ) ; }
 		this.firstUpdate = false ;
 	}
 
@@ -1577,7 +1578,7 @@ GEntity.prototype.updateSize = function( size , volatile = false , isClientMod =
 
 	mesh.scaling.x = x ;
 	mesh.scaling.y = y ;
-	mesh.scaling.z = z ;
+	mesh.scaling.z = this.forceZScalingToX ? x : z ;
 } ;
 
 
@@ -2417,7 +2418,8 @@ GEntityFx.prototype.updateMaterial = async function() {
 
 	this.babylon.material = material = new BABYLON.StandardMaterial( 'fxMaterial' , scene ) ;
 	material.backFaceCulling = false ;
-	material.transparencyMode = BABYLON.Material.MATERIAL_ALPHATESTANDBLEND ;
+	//material.transparencyMode = BABYLON.Material.MATERIAL_ALPHATESTANDBLEND ;
+	material.transparencyMode = BABYLON.Material.MATERIAL_ALPHABLEND ;
 	material.useAlphaFromDiffuseTexture = true ;
 	material.alpha = oldMaterial ? oldMaterial.alpha : this.opacity ;
 
@@ -3571,9 +3573,9 @@ GEntityShadow.prototype.updateMaterial = function() {
 		mesh = this.babylon.mesh ;
 
 	this.babylon.material = material = new BABYLON.StandardMaterial( 'spriteMaterial' , scene ) ;
-	material.backFaceCulling = true ;	// Mandatory for alpha transparency
+	material.backFaceCulling = true ;	// Mandatory for alpha transparency?
 
-	//*
+	/*
 	//material.diffuseColor = new BABYLON.Color3( 0 , 0 , 0 ) ;
 	material.diffuseColor = new BABYLON.Color3( 0.5 , 0.5 , 0.5 ) ;
 	//material.diffuseTexture.hasAlpha = true ;
@@ -3585,12 +3587,14 @@ GEntityShadow.prototype.updateMaterial = function() {
 	material.opacityTexture.wrapU = material.opacityTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 	//*/
 
-	/*
+	//*
 	material.diffuseTexture = new BABYLON.Texture( '/textures/shadow.png' , scene ) ;
 	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 	material.diffuseTexture.hasAlpha = true ;
-	material.disableLighting = true ;
 	material.useAlphaFromDiffuseTexture = true ;
+	//material.transparencyMode = BABYLON.Material.MATERIAL_ALPHATESTANDBLEND ;
+	material.transparencyMode = BABYLON.Material.MATERIAL_ALPHABLEND ;
+	material.disableLighting = true ;
 	//*/
 
 	if ( ! mesh ) { mesh = this.updateMesh() ; }
@@ -3624,9 +3628,7 @@ GEntityShadow.prototype.updateMesh = function() {
 	//mesh.position.z = 0.5 ;
 	mesh.bakeCurrentTransformIntoVertices() ;
 
-	mesh.scaling.x = this.size.x ;
-	//mesh.scaling.y = this.size.y ;
-	mesh.scaling.z = this.size.z ;
+	if ( this.parent ) { this.updateMeshParent() ; }
 
 	console.warn( 'Mesh:' , mesh ) ;
 
@@ -3746,6 +3748,10 @@ GEntitySprite.prototype = Object.create( GEntity.prototype ) ;
 GEntitySprite.prototype.constructor = GEntitySprite ;
 
 module.exports = GEntitySprite ;
+
+
+
+GEntitySprite.prototype.forceZScalingToX = true ;
 
 
 
@@ -3921,6 +3927,8 @@ GEntitySprite.prototype.updateMesh = function() {
 		matrix.multiplyToRef( worldMatrix , worldMatrix ) ;
 	} ) ;
 	*/
+
+	if ( this.parent ) { this.updateMeshParent() ; }
 
 	console.warn( 'Sprite Mesh:' , mesh ) ;
 
