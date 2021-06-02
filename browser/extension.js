@@ -1,8 +1,8 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -406,7 +406,7 @@ Camera.prototype.updateOrbital = function( data ) {
 /*
 	3D Ground With Sprites
 
-	Copyright (c) 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -783,9 +783,9 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 
 },{"./meshUtils.js":22,"seventh":45}],3:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -1799,9 +1799,9 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 
 },{"./GTransition.js":18,"./Parametric.js":19,"nextgen-events/lib/browser.js":33,"seventh":45}],4:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -1923,9 +1923,9 @@ GEntityBackground.prototype.updateMesh = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"seventh":45}],5:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -2020,9 +2020,9 @@ GEntityBasicShape.prototype.updateMesh = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],6:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -2135,9 +2135,9 @@ GEntityDirectionalLight.prototype.createLight = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],7:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -2355,9 +2355,9 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],8:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -2516,9 +2516,9 @@ GEntityFx.prototype.updateMesh = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],9:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -2644,9 +2644,9 @@ GEntityGround.prototype.updateMesh = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"seventh":45}],10:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -2778,9 +2778,9 @@ GEntityHemisphericLight.prototype.createLight = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],11:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -3385,9 +3385,9 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],12:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -3512,9 +3512,9 @@ GEntityPointLight.prototype.createLight = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],13:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -3637,9 +3637,9 @@ GEntityShadow.prototype.updateMesh = function() {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],14:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -3695,9 +3695,9 @@ module.exports = GEntitySpotLight ;
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],15:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -3966,9 +3966,9 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 
 },{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":23,"seventh":45}],16:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -4280,9 +4280,9 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 
 },{"./GEntity.js":3,"./GEntityFloatingText.js":7}],17:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -4812,9 +4812,9 @@ GScene.prototype.removeGEntity = function( gEntityId ) {
 
 },{"./Camera.js":1,"./GTransition.js":18,"nextgen-events/lib/browser.js":33,"seventh":45}],18:[function(require,module,exports){
 /*
-	Spellcast's Web Client Extension
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -5028,9 +5028,9 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 
 },{"array-kit":24,"seventh":45}],19:[function(require,module,exports){
 /*
-	Spellcast
+	3D Ground With Sprites
 
-	Copyright (c) 2014 - 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -5205,7 +5205,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 /*
 	3D Ground With Sprites
 
-	Copyright (c) 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -5261,7 +5261,7 @@ module.exports = extension ;
 /*
 	3D Ground With Sprites
 
-	Copyright (c) 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -5317,7 +5317,7 @@ engine.DiceRoller = require( './DiceRoller.js' ) ;
 /*
 	3D Ground With Sprites
 
-	Copyright (c) 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -5388,7 +5388,7 @@ exports.getUpmostBoxMeshFace = boxMesh => {
 /*
 	3D Ground With Sprites
 
-	Copyright (c) 2020 Cédric Ronvel
+	Copyright (c) 2020 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
