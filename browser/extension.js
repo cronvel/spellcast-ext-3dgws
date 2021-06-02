@@ -3754,7 +3754,7 @@ GEntitySprite.prototype.updateSpecialStage1 = function( data ) {
 
 	if (
 		data.special.spriteAutoFacing !== undefined
-		&& ( data.special.spriteAutoFacing === false || vectorUtils.degToSector[ data.special.spriteAutoFacing ] )
+		&& ( data.special.spriteAutoFacing === false || vectorUtils.radToSector[ data.special.spriteAutoFacing ] )
 		&& data.special.spriteAutoFacing !== this.special.spriteAutoFacing
 	) {
 		this.special.spriteAutoFacing = data.special.spriteAutoFacing ;
@@ -3945,14 +3945,14 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 	// IMPORTANT: use actual babylon.mesh's position, not gEntity's position
 	// This is because parametric animation only exists in babylon.mesh,
 	// while gEntity continue tracking the server-side position.
-	var angle = vectorUtils.facingAngleDeg(
+	var angle = vectorUtils.facingAngleRad(
 		this.gScene.globalCamera.babylon.camera.position ,
 		this.babylon.mesh.position ,
 		//this.direction
 		this.facing
 	) ;
 
-	var sector = vectorUtils.degToSector[ this.special.spriteAutoFacing ]( angle ) ;
+	var sector = vectorUtils.radToSector[ this.special.spriteAutoFacing ]( angle ) ;
 
 	//console.warn( "@@@@@@@@@@ autoFacing() angle" , angle ) ;
 	if ( this.clientMods.variant === sector ) { return ; }
@@ -5422,41 +5422,46 @@ module.exports = utils ;
 
 
 
-// Angle between two vectors projected on the ground plane, return ]-180;+180]
-utils.flatVectorsAngleDeg = ( base , vector ) => utils.normalizeAngleDeg(
-	( Math.atan2( -vector.x , vector.z ) - Math.atan2( -base.x , base.z ) ) * utils.RAD_TO_DEG
+const DEG_0 = 0 ,	// n
+    DEG_22_5 = Math.PI / 8 ,
+    DEG_45 = Math.PI / 4 ,	// nw
+	DEG_90 = Math.PI / 2 ,	// w
+	DEG_135 = Math.PI * 3 / 4 ,	// sw
+	DEG_180 = Math.PI ,	// s
+	DEG_225 = Math.PI * 5 / 4 ,	// se
+	DEG_270 = Math.PI * 3 / 2 ,	// e
+	DEG_315 = Math.PI * 7 / 4 ,	// ne
+	DEG_360 = 2 * Math.PI ;
+
+
+
+// Angle between two vectors projected on the ground plane, return ]-PI;+PI]
+utils.flatVectorsAngleRad = ( base , vector ) => utils.normalizeAngleRad(
+	( Math.atan2( -vector.x , vector.z ) - Math.atan2( -base.x , base.z ) )
 ) ;
 
 
 
 // The facing angle of an object relative to the camera, return ]-180;+180]
-/*
-utils.facingAngleDeg = ( cameraPosition , objectPosition , objectDirection ) => utils.normalizeAngleDeg(
-	(
-		Math.atan2( - objectDirection.x , objectDirection.z )
-		- Math.atan2( - ( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z )
-	) * utils.RAD_TO_DEG
-) ;
-*/
-utils.facingAngleDeg = ( cameraPosition , objectPosition , facing ) => utils.normalizeAngleDeg(
+utils.facingAngleRad = ( cameraPosition , objectPosition , facing ) => utils.normalizeAngleRad(
 	facing
-	- Math.atan2( -( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z ) * utils.RAD_TO_DEG
+	- Math.atan2( -( objectPosition.x - cameraPosition.x ) , objectPosition.z - cameraPosition.z )
 ) ;
 
 
 
-utils.degToSector = {} ;
-utils.degToSector['ns'] = angle => angle <= 90 || angle >= 270 ? 'n' : 's' ;
-utils.degToSector['we'] = angle => angle <= 180 ? 'w' : 'e' ;
+utils.radToSector = {} ;
+utils.radToSector['ns'] = angle => angle <= DEG_90 || angle >= DEG_270 ? 'n' : 's' ;
+utils.radToSector['we'] = angle => angle <= DEG_180 ? 'w' : 'e' ;
 
 const SECTOR_8 = [ 'n' , 'nw' , 'w' , 'sw' , 's' , 'se' , 'e' , 'ne' , 'n' ] ;
-utils.degToSector['8'] = angle => SECTOR_8[ Math.floor( ( angle + 22.5 ) / 45 ) ] ;
+utils.radToSector['8'] = angle => SECTOR_8[ Math.floor( ( angle + DEG_22_5 ) / DEG_45 ) ] ;
 
 const SECTOR_4 = [ 'n' , 'w' , 's' , 'e' , 'n' ] ;
-utils.degToSector['4'] = angle => SECTOR_4[ Math.floor( ( angle + 45 ) / 90 ) ] ;
+utils.radToSector['4'] = angle => SECTOR_4[ Math.floor( ( angle + DEG_45 ) / DEG_90 ) ] ;
 
 const SECTOR_4_DIAG = [ 'nw' , 'sw' , 'se' , 'ne' ] ;
-utils.degToSector['4-diag'] = angle => SECTOR_4_DIAG[ Math.floor( angle / 90 ) ] ;
+utils.radToSector['4-diag'] = angle => SECTOR_4_DIAG[ Math.floor( angle / DEG_90 ) ] ;
 
 utils.xFlipSector = {
 	n: 'n' , ne: 'nw' , e: 'w' , se: 'sw' , s: 's' , sw: 'se' , w: 'e' , nw: 'ne'
@@ -5495,8 +5500,8 @@ utils.PI_2 = Math.PI / 2 ;
 
 
 
-// Return an angle between [0;360[
-utils.normalizeAngleDeg = a => a >= 0 ? a % 360 : 360 + a % 360 ;
+// Return an angle between [0;2pi[
+utils.normalizeAngleRad = a => a >= DEG_0 ? a % DEG_360 : DEG_360 + a % DEG_360 ;
 
 
 
@@ -5886,7 +5891,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 
 
 },{}],30:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /*
 	EXM
 
@@ -6069,9 +6074,9 @@ if ( ! global.EXM ) {
 }
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],31:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Next-Gen Events
 
@@ -7489,7 +7494,7 @@ if ( global.AsyncTryCatch ) {
 NextGenEvents.Proxy = require( './Proxy.js' ) ;
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"../package.json":34,"./Proxy.js":32,"_process":36,"timers":47}],32:[function(require,module,exports){
 /*
 	Next-Gen Events
@@ -8038,7 +8043,7 @@ RemoteService.prototype.receiveAckEmit = function( message ) {
 
 
 },{"./NextGenEvents.js":31}],33:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Next-Gen Events
 
@@ -8082,7 +8087,7 @@ module.exports = require( './NextGenEvents.js' ) ;
 module.exports.isBrowser = true ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./NextGenEvents.js":31,"_process":36}],34:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
@@ -8143,7 +8148,7 @@ module.exports={
 }
 
 },{}],35:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
 
@@ -8447,7 +8452,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":36}],36:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -8635,7 +8640,7 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],37:[function(require,module,exports){
-(function (process,global){
+(function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
 
@@ -8823,7 +8828,7 @@ process.umask = function() { return 0; };
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":36}],38:[function(require,module,exports){
 /*
 	Seventh
@@ -9747,7 +9752,7 @@ Promise.race = ( iterable ) => {
 
 
 },{"./seventh.js":45}],41:[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 /*
 	Seventh
 
@@ -10504,7 +10509,7 @@ if ( process.browser ) {
 }
 
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"_process":36,"setimmediate":37,"timers":47}],42:[function(require,module,exports){
 /*
 	Seventh
@@ -11012,7 +11017,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 
 
 },{"./seventh.js":45}],43:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /*
 	Seventh
 
@@ -11110,7 +11115,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 } ;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./seventh.js":45,"_process":36}],44:[function(require,module,exports){
 /*
 	Seventh
@@ -11373,7 +11378,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 
 
 },{"./seventh.js":45}],47:[function(require,module,exports){
-(function (setImmediate,clearImmediate){
+(function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -11450,5 +11455,5 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":36,"timers":47}]},{},[20]);
