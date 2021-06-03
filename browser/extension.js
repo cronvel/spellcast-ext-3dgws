@@ -884,6 +884,8 @@ function GEntity( dom , gScene , data ) {
 	this.textureAnimationTimer = null ;
 
 	this.children = new Set() ;
+	this.transformNodes = {} ;
+	this.perPropertyTransformNodes = {} ;
 	if ( data.parent ) { this.setParent( data.parent , data.parentMode ) ; }
 
 	this.babylon = {
@@ -932,6 +934,10 @@ GEntity.prototype.destroy = function() {
 		for ( let child of this.children ) {
 			child.destroy() ;
 		}
+	}
+
+	for ( let transformNode in this.transformNodes ) {
+		transformNode.dispose() ;
 	}
 
 	if ( this.babylon.mesh ) {
@@ -983,12 +989,9 @@ GEntity.prototype.setParent = function( parentId , parentMode ) {
 		mesh: !! parentMode.mesh ,
 		position: !! parentMode.position
 	} ;
-	
-	if ( this.parentMode.position ) {
-		this.parent.on( 'position' , () => this.updatePosition() ) ;
-	}
 
 	parent.addChild( this ) ;
+	this.parentMode.transformNode = parent.ensureTransformNode( this.parentMode ) ;
 } ;
 
 
@@ -1157,14 +1160,20 @@ GEntity.prototype.updateBillboard = function( billboard ) {
 
 // Called by .updateMesh()
 GEntity.prototype.updateMeshParent = function() {
-	if ( ! this.parent || ! this.parentMode.mesh ) { return ; }
+	if ( ! this.parent || ! this.babylon.mesh ) { return ; }
 
-	var mesh = this.babylon.mesh ,
-		parentMesh = this.parent.babylon.mesh ;
+	var pNode , mesh = this.babylon.mesh ;
+	
+	if ( this.parentMode.mesh ) {
+		pNode = this.parent.babylon.mesh ;
 
-	if ( mesh && parentMesh ) {
-		mesh.parent = parentMesh ;
-		if ( this.noParentScaling ) { this.updateSize( this.size ) ; }
+		if ( pNode ) {
+			mesh.parent = pNode ;
+			if ( this.noParentScaling ) { this.updateSize( this.size ) ; }
+		}
+	}
+	else if ( this.parentMode.transformNode ) {
+		mesh.parent = this.parentMode.transformNode ;
 	}
 } ;
 
@@ -1491,12 +1500,6 @@ GEntity.prototype.updatePosition = function( data , volatile = false , transitio
 		y = data.position.y !== undefined ? data.position.y : this.position.y ,
 		z = data.position.z !== undefined ? data.position.z : this.position.z ;
 
-	if ( this.parentMode?.position ) {
-		x += this.parent.position.x ;
-		y += this.parent.position.y ;
-		z += this.parent.position.z ;
-	}
-	
 	if ( ! volatile ) {
 		this.position.x = x ;
 		this.position.y = y ;
@@ -1506,7 +1509,6 @@ GEntity.prototype.updatePosition = function( data , volatile = false , transitio
 	if ( transition ) {
 		//console.warn( "mesh:" , mesh ) ;
 		// Animation using easing
-
 		transition.createAnimation(
 			scene ,
 			mesh ,
@@ -1514,11 +1516,61 @@ GEntity.prototype.updatePosition = function( data , volatile = false , transitio
 			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
 			new BABYLON.Vector3( x , y , z )
 		) ;
-		this.emit( 'positionTransition' , x , y , z , transition ) ;
+		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodesWithTransition( transition , x , y , z ) ; }
 	}
 	else {
 		mesh.position.set( x , y , z ) ;
-		this.emit( 'position' , x , y , z ) ;
+		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodes( x , y , z ) ; }
+	}
+} ;
+
+
+
+GEntity.prototype.ensureTransformNode = function( params ) {
+	var key = '' ;
+	if ( params.position ) { key += 'pall' ; }
+
+	if ( this.transformNodes[ key ] ) { return this.transformNodes[ key ] ; }
+
+	var node = this.transformNodes[ key ] = new BABYLON.TransformNode( key , this.scene ) ;
+	node.__key = key ;
+
+	if ( params.position ) {
+		node.position.set( this.position.x , this.position.y , this.position.z ) ;
+		node.__px = node.__py = node.__pz = 1 ;
+		if ( ! this.perPropertyTransformNodes.position ) { this.perPropertyTransformNodes.position = [] ; }
+		this.perPropertyTransformNodes.position.push( node ) ;
+	}
+	/*
+	else {
+		if ( params.position.x ) { node.position.x = this.position.x ; }
+		if ( params.position.y ) { node.position.y = this.position.y ; }
+		if ( params.position.z ) { node.position.z = this.position.z ; }
+	}
+	*/
+
+	return node ;
+} ;
+
+
+
+GEntity.prototype.updatePositionOfTransformNodes = function( x , y , z ) {
+	for ( let node of this.perPropertyTransformNodes.position ) {
+		node.position.set( node.__px * x , node.__py * y , node.__pz * z ) ;
+	}
+} ;
+
+
+
+GEntity.prototype.updatePositionOfTransformNodesWithTransition = function( transition , x , y , z ) {
+	for ( let node of this.perPropertyTransformNodes.position ) {
+		transition.createAnimation(
+			this.scene ,
+			node ,
+			'position' ,
+			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
+			new BABYLON.Vector3( node.__px * x , node.__py * y , node.__pz * z )
+		) ;
 	}
 } ;
 
@@ -3940,26 +3992,6 @@ GEntitySprite.prototype.updateMesh = function() {
 	// Force billboard mode
 	//mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
 	mesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_X | BABYLON.AbstractMesh.BILLBOARDMODE_Y ;
-
-	// Billboard mode is not sensible to pivot (as of v4.2.0-alpha31), this is a workaround for that, see:
-	// https://forum.babylonjs.com/t/sprite-planting-i-e-sprite-origin-at-the-bottom/13337/8
-	// Alternative is to mesh.bakeTransformIntoVertices(), done by this.updateOrigin()
-	// Otherwise if/when 'usePivotForBillboardMode' option is accepted, use simply mesh.setPivot*()
-	/*
-	//this.babylon.billboardOrigin.y = -0.5 ;
-	mesh.onAfterWorldMatrixUpdateObservable.add( () => {
-		var pivot = this.babylon.billboardOrigin ,
-			matrix = BABYLON.TmpVectors.Matrix[ 0 ] ,
-			worldMatrix = mesh.getWorldMatrix() ;
-
-		// Apply pivot point
-		matrix.setRowFromFloats( 0 , 1 , 0 , 0 , 0 ) ;
-		matrix.setRowFromFloats( 1 , 0 , 1 , 0 , 0 ) ;
-		matrix.setRowFromFloats( 2 , 0 , 0 , 1 , 0 ) ;
-		matrix.setRowFromFloats( 3 , -pivot.x , -pivot.y , -pivot.z , 1 ) ;
-		matrix.multiplyToRef( worldMatrix , worldMatrix ) ;
-	} ) ;
-	*/
 
 	if ( this.parent ) { this.updateMeshParent() ; }
 
