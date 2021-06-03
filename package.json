@@ -15,12 +15,12 @@
     "babylonjs-gui": "^4.2.0",
     "dom-kit": "^0.4.1",
     "exm": "^0.5.12",
-    "nextgen-events": "^1.5.1",
+    "nextgen-events": "^1.5.2",
     "seventh": "^0.7.40"
   },
   "devDependencies": {
-    "browserify": "^16.5.2",
-    "uglify-js": "^3.13.7"
+    "browserify": "^17.0.0",
+    "uglify-js": "^3.13.8"
   },
   "scripts": {
     "test": "tea-time -R dot -O"

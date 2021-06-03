@@ -832,6 +832,7 @@ function GEntity( dom , gScene , data ) {
 	this.dom = dom ;	// Dom instance, immutable
 	this.usage = data.usage || 'sprite' ;	// immutable
 	this.parent = undefined ;	// immutable, set later in the constructor
+	this.parentMode = undefined ;	// immutable, set later in the constructor
 	this.transient = data.transient || undefined ;	// immutable
 	this.destroyed = false ;
 
@@ -883,7 +884,7 @@ function GEntity( dom , gScene , data ) {
 	this.textureAnimationTimer = null ;
 
 	this.children = new Set() ;
-	if ( data.parent ) { this.setParent( data.parent ) ; }
+	if ( data.parent ) { this.setParent( data.parent , data.parentMode ) ; }
 
 	this.babylon = {
 		material: null ,
@@ -964,10 +965,29 @@ GEntity.prototype.destroy = function() {
 
 
 
-GEntity.prototype.setParent = function( parentId ) {
+const PARENT_MODES = {
+	default: { mesh: true } ,
+} ;
+
+
+
+GEntity.prototype.setParent = function( parentId , parentMode ) {
 	var parent = this.gScene.gEntities[ parentId ] ;
 	if ( ! parent ) { return ; }
 	this.parent = parent ;
+
+	if ( typeof parentMode === 'string' ) { parentMode = PARENT_MODES[ parentMode ] || PARENT_MODES.default ; }
+	if ( ! parentMode || typeof parentMode !== 'object' ) { parentMode = PARENT_MODES.default ; }
+
+	this.parentMode = {
+		mesh: !! parentMode.mesh ,
+		position: !! parentMode.position
+	} ;
+	
+	if ( this.parentMode.position ) {
+		this.parent.on( 'position' , () => this.updatePosition() ) ;
+	}
+
 	parent.addChild( this ) ;
 } ;
 
@@ -1065,7 +1085,7 @@ GEntity.prototype.parametricUpdate = function( absoluteT ) {
 	var data = this.parametric.compute( absoluteT , this ) ;
 
 	if ( ! data ) {
-		// If data is null, then the animation have finished, we can remove it.
+		// If data is null, then the animation has finished, we can remove it.
 		this.parametric = null ;
 		this.gScene.parametricGEntities.delete( this ) ;
 		return ;
@@ -1137,7 +1157,7 @@ GEntity.prototype.updateBillboard = function( billboard ) {
 
 // Called by .updateMesh()
 GEntity.prototype.updateMeshParent = function() {
-	if ( ! this.parent ) { return ; }
+	if ( ! this.parent || ! this.parentMode.mesh ) { return ; }
 
 	var mesh = this.babylon.mesh ,
 		parentMesh = this.parent.babylon.mesh ;
@@ -1460,7 +1480,7 @@ GEntity.prototype.updateOrigin = function( newOrigin , isClientMod = false ) {
 
 
 
-GEntity.prototype.updatePosition = function( data , volatile = false ) {
+GEntity.prototype.updatePosition = function( data , volatile = false , transition = data.transition ) {
 	//console.warn( "3D GEntity.updatePosition()" , data ) ;
 	var mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
@@ -1471,26 +1491,34 @@ GEntity.prototype.updatePosition = function( data , volatile = false ) {
 		y = data.position.y !== undefined ? data.position.y : this.position.y ,
 		z = data.position.z !== undefined ? data.position.z : this.position.z ;
 
+	if ( this.parentMode?.position ) {
+		x += this.parent.position.x ;
+		y += this.parent.position.y ;
+		z += this.parent.position.z ;
+	}
+	
 	if ( ! volatile ) {
 		this.position.x = x ;
 		this.position.y = y ;
 		this.position.z = z ;
 	}
 
-	if ( data.transition ) {
+	if ( transition ) {
 		//console.warn( "mesh:" , mesh ) ;
 		// Animation using easing
 
-		data.transition.createAnimation(
+		transition.createAnimation(
 			scene ,
 			mesh ,
 			'position' ,
 			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
 			new BABYLON.Vector3( x , y , z )
 		) ;
+		this.emit( 'positionTransition' , x , y , z , transition ) ;
 	}
 	else {
 		mesh.position.set( x , y , z ) ;
+		this.emit( 'position' , x , y , z ) ;
 	}
 } ;
 
@@ -1572,6 +1600,9 @@ GEntity.prototype.updateSize = function( size , volatile = false , isClientMod =
 	}
 
 	if ( this.parent && this.noParentScaling ) {
+	//if ( this.parentMode?.mesh && this.noParentScaling && this.parent.babylon.mesh ) {
+		let parentMesh = this.parent.babylon.mesh ;
+
 		// Compensate for the parent scaling which enlarge and deform the child
 		x /= parentMesh.scaling.x ;
 		y /= parentMesh.scaling.y ;
@@ -6092,7 +6123,7 @@ if ( ! global.EXM ) {
 /*
 	Next-Gen Events
 
-	Copyright (c) 2015 - 2019 Cédric Ronvel
+	Copyright (c) 2015 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -6127,7 +6158,7 @@ LeanEvents.prototype.__prototypeVersion__ = require( '../package.json' ).version
 
 
 // .addListener( eventName , fn , [id] )
-LeanEvents.prototype.addListener = function( eventName , fn , id , once ) {
+LeanEvents.prototype.on = LeanEvents.prototype.addListener = function( eventName , fn , id , once ) {
 	if ( ! this.__listeners ) { this.__listeners = {} ; }
 	if ( ! this.__listeners[ eventName ] ) { this.__listeners[ eventName ] = [] ; }
 
@@ -6145,14 +6176,14 @@ LeanEvents.prototype.addListener = function( eventName , fn , id , once ) {
 		once: !! once
 	} ;
 
-	this.__listeners[ eventName ].push( listener ) ;
+	//this.__listeners[ eventName ].push( listener ) ;	// .push() is slower
+	var listeners = this.__listeners[ eventName ] ;
+	listeners[ listeners.length ] = listener ;
 
 	if ( stateArgs ) {
 		fn( ... stateArgs ) ;
 	}
 } ;
-
-LeanEvents.prototype.on = LeanEvents.prototype.addListener ;
 
 
 
@@ -6182,15 +6213,26 @@ LeanEvents.prototype.waitForAll = function( eventName ) {
 
 
 
-LeanEvents.prototype.removeListener = function( eventName , id ) {
+LeanEvents.prototype.off = LeanEvents.prototype.removeListener = function( eventName , id ) {
 	if ( ! this.__listeners || ! this.__listeners[ eventName ] || ! this.__listeners[ eventName ].length ) { return ; }
 
 	// Don't modify the listener array in place, an emit may be in progress (could cause recursive trouble).
 	// We assume that it's less frequent to remove a listener than to emit an event.
 	this.__listeners[ eventName ] = this.__listeners[ eventName ].filter( listener => listener.id !== id ) ;
-} ;
 
-LeanEvents.prototype.off = LeanEvents.prototype.removeListener ;
+	/*	Same speed than .filter()
+	var i , iMax , iNew , newListeners = [] , listeners = this.__listeners[ eventName ] ;
+	for ( i = 0 , iMax = listeners.length , iNew = 0 ; i < iMax ; i ++ ) {
+		if ( listeners[ i ].id !== id ) {
+			newListeners[ iNew ++ ] = listeners[ i ] ;
+		}
+	}
+
+	this.__listeners[ eventName ] = newListeners ;
+	//*/
+
+	return this ;
+} ;
 
 
 
@@ -6206,6 +6248,8 @@ LeanEvents.prototype.removeAllListeners = function( eventName ) {
 		// Remove all listeners for any events
 		this.__listeners = {} ;
 	}
+
+	return this ;
 } ;
 
 
@@ -6214,21 +6258,21 @@ LeanEvents.prototype.removeAllListeners = function( eventName ) {
 	emit( eventName , [arg1] , [arg2] , [...] )
 */
 LeanEvents.prototype.emit = function( eventName , ... args ) {
-	var i , iMax , listeners , listener ;
+	var i , iMax , listeners , listener , stateArgs , stateGroup ;
 
-	// This is a state event, register it NOW even if there is no listener!
 	// Note that when a state is off, it is set to null, hence checking undefined is the way to know if it is a state event.
-	if ( this.__states && this.__states[ eventName ] !== undefined ) {
-		let stateArgs = this.__states[ eventName ] ;
+	if ( this.__states && ( stateArgs = this.__states[ eventName ] ) !== undefined ) {
+		// This is a state event, register it NOW even if there is no listener!
 
-		if ( stateArgs && args.length === stateArgs.length && args.every( ( arg , index ) => arg === stateArgs[ index ] ) ) {
+		if ( stateArgs && args.length === stateArgs.length && ( ! args.length || args.every( ( arg , index ) => arg === stateArgs[ index ] ) ) ) {
 			// The emitter is already in this exact state, skip it now!
 			return ;
 		}
 
 		// Unset all states of that group
-		for ( i = 0 , iMax = this.__stateGroups[ eventName ].length ; i < iMax ; i ++ ) {
-			this.__states[ this.__stateGroups[ eventName ][ i ] ] = null ;
+		stateGroup = this.__stateGroups[ eventName ] ;
+		for ( i = 0 , iMax = stateGroup.length ; i < iMax ; i ++ ) {
+			this.__states[ stateGroup[ i ] ] = null ;
 		}
 
 		this.__states[ eventName ] = args ;
@@ -6236,6 +6280,7 @@ LeanEvents.prototype.emit = function( eventName , ... args ) {
 
 	if ( ! this.__listeners ) { return ; }
 
+	// listeners AND listeners.length MUST be cached, to avoid recursive trouble (adding/removing a listener inside of a listener)
 	listeners = this.__listeners[ eventName ] ;
 	if ( ! listeners || ! listeners.length ) { return ; }
 
@@ -6249,6 +6294,7 @@ LeanEvents.prototype.emit = function( eventName , ... args ) {
 
 		listener.fn( ... args ) ;
 	}
+	return this ;
 } ;
 
 
@@ -6302,20 +6348,21 @@ LeanEvents.prototype.getAllStates = function() {
 },{"../package.json":32}],32:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "The next generation of events handling for javascript! New: abstract away the network!",
   "main": "lib/NextGenEvents.js",
   "engines": {
     "node": ">=6.0.0"
   },
   "directories": {
-    "test": "test"
+    "test": "test",
+    "bench": "bench"
   },
   "dependencies": {},
   "devDependencies": {
-    "browserify": "^16.2.2",
+    "browserify": "^17.0.0",
     "uglify-js-es6": "^2.8.9",
-    "ws": "^5.1.1"
+    "ws": "^7.4.6"
   },
   "scripts": {
     "test": "tea-time -R dot"
@@ -6352,7 +6399,7 @@ module.exports={
     "title": "Next-Gen Events",
     "years": [
       2015,
-      2019
+      2021
     ],
     "owner": "Cédric Ronvel"
   }
@@ -6360,8 +6407,8 @@ module.exports={
 
 },{}],33:[function(require,module,exports){
 (function (process){(function (){
-// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
-// backported and transplited with Babel, with backwards-compat fixes
+// 'path' module extracted from Node.js v8.11.1 (only the posix part)
+// transplited with Babel
 
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6384,284 +6431,511 @@ module.exports={
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
+'use strict';
 
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
+function assertPath(path) {
+  if (typeof path !== 'string') {
+    throw new TypeError('Path must be a string. Received ' + JSON.stringify(path));
   }
-
-  return parts;
 }
 
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
+// Resolves . and .. elements in a path with directory names
+function normalizeStringPosix(path, allowAboveRoot) {
+  var res = '';
+  var lastSegmentLength = 0;
+  var lastSlash = -1;
+  var dots = 0;
+  var code;
+  for (var i = 0; i <= path.length; ++i) {
+    if (i < path.length)
+      code = path.charCodeAt(i);
+    else if (code === 47 /*/*/)
       break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function (path) {
-  if (typeof path !== 'string') path = path + '';
-  if (path.length === 0) return '.';
-  var code = path.charCodeAt(0);
-  var hasRoot = code === 47 /*/*/;
-  var end = -1;
-  var matchedSlash = true;
-  for (var i = path.length - 1; i >= 1; --i) {
-    code = path.charCodeAt(i);
+    else
+      code = 47 /*/*/;
     if (code === 47 /*/*/) {
-        if (!matchedSlash) {
-          end = i;
-          break;
+      if (lastSlash === i - 1 || dots === 1) {
+        // NOOP
+      } else if (lastSlash !== i - 1 && dots === 2) {
+        if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== 46 /*.*/ || res.charCodeAt(res.length - 2) !== 46 /*.*/) {
+          if (res.length > 2) {
+            var lastSlashIndex = res.lastIndexOf('/');
+            if (lastSlashIndex !== res.length - 1) {
+              if (lastSlashIndex === -1) {
+                res = '';
+                lastSegmentLength = 0;
+              } else {
+                res = res.slice(0, lastSlashIndex);
+                lastSegmentLength = res.length - 1 - res.lastIndexOf('/');
+              }
+              lastSlash = i;
+              dots = 0;
+              continue;
+            }
+          } else if (res.length === 2 || res.length === 1) {
+            res = '';
+            lastSegmentLength = 0;
+            lastSlash = i;
+            dots = 0;
+            continue;
+          }
+        }
+        if (allowAboveRoot) {
+          if (res.length > 0)
+            res += '/..';
+          else
+            res = '..';
+          lastSegmentLength = 2;
         }
       } else {
-      // We saw the first non-path separator
-      matchedSlash = false;
+        if (res.length > 0)
+          res += '/' + path.slice(lastSlash + 1, i);
+        else
+          res = path.slice(lastSlash + 1, i);
+        lastSegmentLength = i - lastSlash - 1;
+      }
+      lastSlash = i;
+      dots = 0;
+    } else if (code === 46 /*.*/ && dots !== -1) {
+      ++dots;
+    } else {
+      dots = -1;
     }
   }
-
-  if (end === -1) return hasRoot ? '/' : '.';
-  if (hasRoot && end === 1) {
-    // return '//';
-    // Backwards-compat fix:
-    return '/';
-  }
-  return path.slice(0, end);
-};
-
-function basename(path) {
-  if (typeof path !== 'string') path = path + '';
-
-  var start = 0;
-  var end = -1;
-  var matchedSlash = true;
-  var i;
-
-  for (i = path.length - 1; i >= 0; --i) {
-    if (path.charCodeAt(i) === 47 /*/*/) {
-        // If we reached a path separator that was not part of a set of path
-        // separators at the end of the string, stop now
-        if (!matchedSlash) {
-          start = i + 1;
-          break;
-        }
-      } else if (end === -1) {
-      // We saw the first non-path separator, mark this as the end of our
-      // path component
-      matchedSlash = false;
-      end = i + 1;
-    }
-  }
-
-  if (end === -1) return '';
-  return path.slice(start, end);
+  return res;
 }
 
-// Uses a mixed approach for backwards-compatibility, as ext behavior changed
-// in new Node.js versions, so only basename() above is backported here
-exports.basename = function (path, ext) {
-  var f = basename(path);
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
+function _format(sep, pathObject) {
+  var dir = pathObject.dir || pathObject.root;
+  var base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
+  if (!dir) {
+    return base;
   }
-  return f;
-};
+  if (dir === pathObject.root) {
+    return dir + base;
+  }
+  return dir + sep + base;
+}
 
-exports.extname = function (path) {
-  if (typeof path !== 'string') path = path + '';
-  var startDot = -1;
-  var startPart = 0;
-  var end = -1;
-  var matchedSlash = true;
-  // Track the state of characters (if any) we see before our first dot and
-  // after any path separator we find
-  var preDotState = 0;
-  for (var i = path.length - 1; i >= 0; --i) {
-    var code = path.charCodeAt(i);
-    if (code === 47 /*/*/) {
-        // If we reached a path separator that was not part of a set of path
-        // separators at the end of the string, stop now
-        if (!matchedSlash) {
-          startPart = i + 1;
-          break;
-        }
+var posix = {
+  // path.resolve([from ...], to)
+  resolve: function resolve() {
+    var resolvedPath = '';
+    var resolvedAbsolute = false;
+    var cwd;
+
+    for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+      var path;
+      if (i >= 0)
+        path = arguments[i];
+      else {
+        if (cwd === undefined)
+          cwd = process.cwd();
+        path = cwd;
+      }
+
+      assertPath(path);
+
+      // Skip empty entries
+      if (path.length === 0) {
         continue;
       }
-    if (end === -1) {
-      // We saw the first non-path separator, mark this as the end of our
-      // extension
-      matchedSlash = false;
-      end = i + 1;
-    }
-    if (code === 46 /*.*/) {
-        // If this is our first dot, mark it as the start of our extension
-        if (startDot === -1)
-          startDot = i;
-        else if (preDotState !== 1)
-          preDotState = 1;
-    } else if (startDot !== -1) {
-      // We saw a non-dot and non-path separator before our dot, so we should
-      // have a good chance at having a non-empty extension
-      preDotState = -1;
-    }
-  }
 
-  if (startDot === -1 || end === -1 ||
-      // We saw a non-dot character immediately before the dot
-      preDotState === 0 ||
-      // The (right-most) trimmed path component is exactly '..'
-      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
-    return '';
-  }
-  return path.slice(startDot, end);
+      resolvedPath = path + '/' + resolvedPath;
+      resolvedAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    }
+
+    // At this point the path should be resolved to a full absolute path, but
+    // handle relative paths to be safe (might happen when process.cwd() fails)
+
+    // Normalize the path
+    resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute);
+
+    if (resolvedAbsolute) {
+      if (resolvedPath.length > 0)
+        return '/' + resolvedPath;
+      else
+        return '/';
+    } else if (resolvedPath.length > 0) {
+      return resolvedPath;
+    } else {
+      return '.';
+    }
+  },
+
+  normalize: function normalize(path) {
+    assertPath(path);
+
+    if (path.length === 0) return '.';
+
+    var isAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    var trailingSeparator = path.charCodeAt(path.length - 1) === 47 /*/*/;
+
+    // Normalize the path
+    path = normalizeStringPosix(path, !isAbsolute);
+
+    if (path.length === 0 && !isAbsolute) path = '.';
+    if (path.length > 0 && trailingSeparator) path += '/';
+
+    if (isAbsolute) return '/' + path;
+    return path;
+  },
+
+  isAbsolute: function isAbsolute(path) {
+    assertPath(path);
+    return path.length > 0 && path.charCodeAt(0) === 47 /*/*/;
+  },
+
+  join: function join() {
+    if (arguments.length === 0)
+      return '.';
+    var joined;
+    for (var i = 0; i < arguments.length; ++i) {
+      var arg = arguments[i];
+      assertPath(arg);
+      if (arg.length > 0) {
+        if (joined === undefined)
+          joined = arg;
+        else
+          joined += '/' + arg;
+      }
+    }
+    if (joined === undefined)
+      return '.';
+    return posix.normalize(joined);
+  },
+
+  relative: function relative(from, to) {
+    assertPath(from);
+    assertPath(to);
+
+    if (from === to) return '';
+
+    from = posix.resolve(from);
+    to = posix.resolve(to);
+
+    if (from === to) return '';
+
+    // Trim any leading backslashes
+    var fromStart = 1;
+    for (; fromStart < from.length; ++fromStart) {
+      if (from.charCodeAt(fromStart) !== 47 /*/*/)
+        break;
+    }
+    var fromEnd = from.length;
+    var fromLen = fromEnd - fromStart;
+
+    // Trim any leading backslashes
+    var toStart = 1;
+    for (; toStart < to.length; ++toStart) {
+      if (to.charCodeAt(toStart) !== 47 /*/*/)
+        break;
+    }
+    var toEnd = to.length;
+    var toLen = toEnd - toStart;
+
+    // Compare paths to find the longest common path from root
+    var length = fromLen < toLen ? fromLen : toLen;
+    var lastCommonSep = -1;
+    var i = 0;
+    for (; i <= length; ++i) {
+      if (i === length) {
+        if (toLen > length) {
+          if (to.charCodeAt(toStart + i) === 47 /*/*/) {
+            // We get here if `from` is the exact base path for `to`.
+            // For example: from='/foo/bar'; to='/foo/bar/baz'
+            return to.slice(toStart + i + 1);
+          } else if (i === 0) {
+            // We get here if `from` is the root
+            // For example: from='/'; to='/foo'
+            return to.slice(toStart + i);
+          }
+        } else if (fromLen > length) {
+          if (from.charCodeAt(fromStart + i) === 47 /*/*/) {
+            // We get here if `to` is the exact base path for `from`.
+            // For example: from='/foo/bar/baz'; to='/foo/bar'
+            lastCommonSep = i;
+          } else if (i === 0) {
+            // We get here if `to` is the root.
+            // For example: from='/foo'; to='/'
+            lastCommonSep = 0;
+          }
+        }
+        break;
+      }
+      var fromCode = from.charCodeAt(fromStart + i);
+      var toCode = to.charCodeAt(toStart + i);
+      if (fromCode !== toCode)
+        break;
+      else if (fromCode === 47 /*/*/)
+        lastCommonSep = i;
+    }
+
+    var out = '';
+    // Generate the relative path based on the path difference between `to`
+    // and `from`
+    for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
+      if (i === fromEnd || from.charCodeAt(i) === 47 /*/*/) {
+        if (out.length === 0)
+          out += '..';
+        else
+          out += '/..';
+      }
+    }
+
+    // Lastly, append the rest of the destination (`to`) path that comes after
+    // the common path parts
+    if (out.length > 0)
+      return out + to.slice(toStart + lastCommonSep);
+    else {
+      toStart += lastCommonSep;
+      if (to.charCodeAt(toStart) === 47 /*/*/)
+        ++toStart;
+      return to.slice(toStart);
+    }
+  },
+
+  _makeLong: function _makeLong(path) {
+    return path;
+  },
+
+  dirname: function dirname(path) {
+    assertPath(path);
+    if (path.length === 0) return '.';
+    var code = path.charCodeAt(0);
+    var hasRoot = code === 47 /*/*/;
+    var end = -1;
+    var matchedSlash = true;
+    for (var i = path.length - 1; i >= 1; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          if (!matchedSlash) {
+            end = i;
+            break;
+          }
+        } else {
+        // We saw the first non-path separator
+        matchedSlash = false;
+      }
+    }
+
+    if (end === -1) return hasRoot ? '/' : '.';
+    if (hasRoot && end === 1) return '//';
+    return path.slice(0, end);
+  },
+
+  basename: function basename(path, ext) {
+    if (ext !== undefined && typeof ext !== 'string') throw new TypeError('"ext" argument must be a string');
+    assertPath(path);
+
+    var start = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i;
+
+    if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
+      if (ext.length === path.length && ext === path) return '';
+      var extIdx = ext.length - 1;
+      var firstNonSlashEnd = -1;
+      for (i = path.length - 1; i >= 0; --i) {
+        var code = path.charCodeAt(i);
+        if (code === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else {
+          if (firstNonSlashEnd === -1) {
+            // We saw the first non-path separator, remember this index in case
+            // we need it if the extension ends up not matching
+            matchedSlash = false;
+            firstNonSlashEnd = i + 1;
+          }
+          if (extIdx >= 0) {
+            // Try to match the explicit extension
+            if (code === ext.charCodeAt(extIdx)) {
+              if (--extIdx === -1) {
+                // We matched the extension, so mark this as the end of our path
+                // component
+                end = i;
+              }
+            } else {
+              // Extension does not match, so our result is the entire path
+              // component
+              extIdx = -1;
+              end = firstNonSlashEnd;
+            }
+          }
+        }
+      }
+
+      if (start === end) end = firstNonSlashEnd;else if (end === -1) end = path.length;
+      return path.slice(start, end);
+    } else {
+      for (i = path.length - 1; i >= 0; --i) {
+        if (path.charCodeAt(i) === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else if (end === -1) {
+          // We saw the first non-path separator, mark this as the end of our
+          // path component
+          matchedSlash = false;
+          end = i + 1;
+        }
+      }
+
+      if (end === -1) return '';
+      return path.slice(start, end);
+    }
+  },
+
+  extname: function extname(path) {
+    assertPath(path);
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+    for (var i = path.length - 1; i >= 0; --i) {
+      var code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1)
+            startDot = i;
+          else if (preDotState !== 1)
+            preDotState = 1;
+      } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+        // We saw a non-dot character immediately before the dot
+        preDotState === 0 ||
+        // The (right-most) trimmed path component is exactly '..'
+        preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      return '';
+    }
+    return path.slice(startDot, end);
+  },
+
+  format: function format(pathObject) {
+    if (pathObject === null || typeof pathObject !== 'object') {
+      throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof pathObject);
+    }
+    return _format('/', pathObject);
+  },
+
+  parse: function parse(path) {
+    assertPath(path);
+
+    var ret = { root: '', dir: '', base: '', ext: '', name: '' };
+    if (path.length === 0) return ret;
+    var code = path.charCodeAt(0);
+    var isAbsolute = code === 47 /*/*/;
+    var start;
+    if (isAbsolute) {
+      ret.root = '/';
+      start = 1;
+    } else {
+      start = 0;
+    }
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i = path.length - 1;
+
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+
+    // Get non-dir info
+    for (; i >= start; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1) startDot = i;else if (preDotState !== 1) preDotState = 1;
+        } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+    // We saw a non-dot character immediately before the dot
+    preDotState === 0 ||
+    // The (right-most) trimmed path component is exactly '..'
+    preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      if (end !== -1) {
+        if (startPart === 0 && isAbsolute) ret.base = ret.name = path.slice(1, end);else ret.base = ret.name = path.slice(startPart, end);
+      }
+    } else {
+      if (startPart === 0 && isAbsolute) {
+        ret.name = path.slice(1, startDot);
+        ret.base = path.slice(1, end);
+      } else {
+        ret.name = path.slice(startPart, startDot);
+        ret.base = path.slice(startPart, end);
+      }
+      ret.ext = path.slice(startDot, end);
+    }
+
+    if (startPart > 0) ret.dir = path.slice(0, startPart - 1);else if (isAbsolute) ret.dir = '/';
+
+    return ret;
+  },
+
+  sep: '/',
+  delimiter: ':',
+  win32: null,
+  posix: null
 };
 
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
+posix.posix = posix;
 
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
+module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
 },{"_process":34}],34:[function(require,module,exports){
