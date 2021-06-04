@@ -833,6 +833,7 @@ function GEntity( dom , gScene , data ) {
 	this.usage = data.usage || 'sprite' ;	// immutable
 	this.parent = undefined ;	// immutable, set later in the constructor
 	this.parentMode = undefined ;	// immutable, set later in the constructor
+	this.parentTransformNode = undefined ;	// immutable, set later in the constructor
 	this.transient = data.transient || undefined ;	// immutable
 	this.destroyed = false ;
 
@@ -868,6 +869,7 @@ function GEntity( dom , gScene , data ) {
 		xFlipVariant: null ,	// A variant that can be used flipped
 		xFlip: false ,
 		origin: null ,
+		position: null ,
 		size: null
 	} ;
 
@@ -987,11 +989,23 @@ GEntity.prototype.setParent = function( parentId , parentMode ) {
 
 	this.parentMode = {
 		mesh: !! parentMode.mesh ,
-		position: !! parentMode.position
+		position: { all: false , x: false , y: false , z: false } ,
 	} ;
+	
+	if ( parentMode.position ) {
+		if ( typeof parentMode.position === 'object' ) {
+			this.parentMode.position.x = !! parentMode.position.x ;
+			this.parentMode.position.y = !! parentMode.position.y ;
+			this.parentMode.position.z = !! parentMode.position.z ;
+			this.parentMode.position.all = this.parentMode.position.x && this.parentMode.position.y && this.parentMode.position.z ;
+		}
+		else {
+			this.parentMode.position.all = this.parentMode.position.x = this.parentMode.position.y = this.parentMode.position.z = true ;
+		}
+	}
 
 	parent.addChild( this ) ;
-	this.parentMode.transformNode = parent.ensureTransformNode( this.parentMode ) ;
+	this.parentTransformNode = parent.ensureTransformNode( this.parentMode ) ;
 } ;
 
 
@@ -1172,8 +1186,8 @@ GEntity.prototype.updateMeshParent = function() {
 			if ( this.noParentScaling ) { this.updateSize( this.size ) ; }
 		}
 	}
-	else if ( this.parentMode.transformNode ) {
-		mesh.parent = this.parentMode.transformNode ;
+	else if ( this.parentTransformNode ) {
+		mesh.parent = this.parentTransformNode ;
 	}
 } ;
 
@@ -1461,7 +1475,7 @@ GEntity.prototype.nextTextureFrame = function() {
 
 
 
-// Here clientMod is an override
+// Here clientMods is an override
 GEntity.prototype.updateOrigin = function( newOrigin , isClientMod = false ) {
 	if ( this.clientMods.origin && ! isClientMod ) {
 		this.origin = newOrigin ;
@@ -1489,34 +1503,54 @@ GEntity.prototype.updateOrigin = function( newOrigin , isClientMod = false ) {
 
 
 
-GEntity.prototype.updatePosition = function( data , volatile = false , transition = data.transition ) {
+GEntity.prototype.updatePosition = function( data , volatile = false , isClientMod = false ) {
 	//console.warn( "3D GEntity.updatePosition()" , data ) ;
-	var mesh = this.babylon.mesh ,
+	var x , y , z ,
+		position = data.position ,
+		mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
+
+	if ( isClientMod ) {
+		this.clientMods.position = {
+			x: position.x !== undefined ? position.x : 0 ,
+			y: position.y !== undefined ? position.y : 0 ,
+			z: position.z !== undefined ? position.z : 0
+		} ;
+
+		x = this.position.x ;
+		y = this.position.y ;
+		z = this.position.z ;
+	}
+	else if ( volatile ) {
+		x = position.x !== undefined ? position.x : this.position.x ;
+		y = position.y !== undefined ? position.y : this.position.y ;
+		z = position.z !== undefined ? position.z : this.position.z ;
+	}
+	else {
+		x = this.position.x = position.x !== undefined ? position.x : this.position.x ;
+		y = this.position.y = position.y !== undefined ? position.y : this.position.y ;
+		z = this.position.z = position.z !== undefined ? position.z : this.position.z ;
+	}
 
 	if ( ! mesh ) { return ; }
 
-	var x = data.position.x !== undefined ? data.position.x : this.position.x ,
-		y = data.position.y !== undefined ? data.position.y : this.position.y ,
-		z = data.position.z !== undefined ? data.position.z : this.position.z ;
-
-	if ( ! volatile ) {
-		this.position.x = x ;
-		this.position.y = y ;
-		this.position.z = z ;
+	if ( this.clientMods.position ) {
+		x += this.clientMods.position.x ;
+		y += this.clientMods.position.y ;
+		z += this.clientMods.position.z ;
 	}
 
-	if ( transition ) {
+	if ( data.transition ) {
 		//console.warn( "mesh:" , mesh ) ;
 		// Animation using easing
-		transition.createAnimation(
+		data.transition.createAnimation(
 			scene ,
 			mesh ,
 			'position' ,
 			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
 			new BABYLON.Vector3( x , y , z )
 		) ;
-		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodesWithTransition( transition , x , y , z ) ; }
+		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodesWithTransition( data.transition , x , y , z ) ; }
 	}
 	else {
 		mesh.position.set( x , y , z ) ;
@@ -1528,26 +1562,33 @@ GEntity.prototype.updatePosition = function( data , volatile = false , transitio
 
 GEntity.prototype.ensureTransformNode = function( params ) {
 	var key = '' ;
-	if ( params.position ) { key += 'pall' ; }
+
+	if ( params.position.all ) { key += 'Pall' ; }
+	else {
+		if ( params.position.x ) { key += 'Px' ; }
+		if ( params.position.y ) { key += 'Py' ; }
+		if ( params.position.z ) { key += 'Pz' ; }
+	}
 
 	if ( this.transformNodes[ key ] ) { return this.transformNodes[ key ] ; }
 
 	var node = this.transformNodes[ key ] = new BABYLON.TransformNode( key , this.scene ) ;
 	node.__key = key ;
+	node.__px = node.__py = node.__pz = 0 ;
 
-	if ( params.position ) {
+	if ( params.position.all ) {
 		node.position.set( this.position.x , this.position.y , this.position.z ) ;
 		node.__px = node.__py = node.__pz = 1 ;
 		if ( ! this.perPropertyTransformNodes.position ) { this.perPropertyTransformNodes.position = [] ; }
 		this.perPropertyTransformNodes.position.push( node ) ;
 	}
-	/*
-	else {
-		if ( params.position.x ) { node.position.x = this.position.x ; }
-		if ( params.position.y ) { node.position.y = this.position.y ; }
-		if ( params.position.z ) { node.position.z = this.position.z ; }
+	else if ( params.position.x || params.position.y || params.position.z ) {
+		if ( params.position.x ) { node.position.x = this.position.x ; node.__px = 1 ; }
+		if ( params.position.y ) { node.position.y = this.position.y ; node.__py = 1 ; }
+		if ( params.position.z ) { node.position.z = this.position.z ; node.__pz = 1 ; }
+		if ( ! this.perPropertyTransformNodes.position ) { this.perPropertyTransformNodes.position = [] ; }
+		this.perPropertyTransformNodes.position.push( node ) ;
 	}
-	*/
 
 	return node ;
 } ;
@@ -1614,7 +1655,7 @@ GEntity.prototype.updateRotation = function( data , volatile = false ) {
 
 
 
-// Here clientMod multiply over base size
+// Here clientMods multiply over base size
 GEntity.prototype.updateSize = function( size , volatile = false , isClientMod = false ) {
 	console.warn( "3D GEntity.updateSize()" , size ) ;
 	var x , y , z ,
@@ -1651,8 +1692,8 @@ GEntity.prototype.updateSize = function( size , volatile = false , isClientMod =
 		z *= this.clientMods.size.z ;
 	}
 
+	// /!\ USELESS! Should use indirect parenting (e.g. parentMode.position)
 	if ( this.parent && this.noParentScaling ) {
-	//if ( this.parentMode?.mesh && this.noParentScaling && this.parent.babylon.mesh ) {
 		let parentMesh = this.parent.babylon.mesh ;
 
 		// Compensate for the parent scaling which enlarge and deform the child
@@ -4009,31 +4050,25 @@ GEntitySprite.prototype.updateBillboard = function() {} ;
 
 
 GEntitySprite.prototype.autoFacing = function( changes = null ) {
-	//console.warn( "@@@@@@@@@@ autoFacing()" , changes ) ;
 	if ( changes ) {
 		if ( ! changes.camera && ! this.parametric ) { return ; }
 	}
-	//console.warn( "@@@@@@@@@@ autoFacing() GO!" , changes && changes.camera ) ;
 
 	// IMPORTANT: use actual babylon.mesh's position, not gEntity's position
 	// This is because parametric animation only exists in babylon.mesh,
 	// while gEntity continue tracking the server-side position.
-	var angle = vectorUtils.facingAngleRad(
-		this.gScene.globalCamera.babylon.camera.position ,
-		this.babylon.mesh.position ,
-		//this.direction
-		this.facing
-	) ;
+	var cameraPosition = this.gScene.globalCamera.babylon.camera.position ,
+		angle = vectorUtils.facingAngleRad( cameraPosition , this.babylon.mesh.position , this.facing ) ,
+		sector = vectorUtils.radToSector[ this.special.spriteAutoFacing ]( angle ) ;
 
-	var sector = vectorUtils.radToSector[ this.special.spriteAutoFacing ]( angle ) ;
-
-	//console.warn( "@@@@@@@@@@ autoFacing() angle" , angle ) ;
-	if ( this.clientMods.variant === sector ) { return ; }
-	//console.warn( "@@@@@@@@@@ autoFacing() new sector" , sector ) ;
-
-	this.clientMods.variant = sector ;
-	this.clientMods.xFlipVariant = vectorUtils.xFlipSector[ sector ] ;
-	this.refreshMaterial() ;
+	var vector = cameraPosition.subtract( this.babylon.mesh.position ).normalize().scale(2) ;
+	vector.y = 0 ;
+	this.updatePosition( { position: vector } , false , true ) ;
+	if ( this.clientMods.variant !== sector ) {
+		this.clientMods.variant = sector ;
+		this.clientMods.xFlipVariant = vectorUtils.xFlipSector[ sector ] ;
+		this.refreshMaterial() ;
+	}
 } ;
 
 
