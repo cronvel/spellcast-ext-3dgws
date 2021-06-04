@@ -1221,7 +1221,7 @@ GEntity.prototype.updateMaterial = function() {
 
 	if ( ! mesh ) { mesh = this.updateMesh() ; }
 
-	//if ( ! mesh ) { console.warn( "@@@@@@@@@@@@@@@@@@!!!!!!!!!!! mesh undefined!" , Object.getPrototypeOf( this ).constructor.name ) ; }
+	//if ( ! mesh ) { console.warn( "@@@@@@@@@@@@@@@@@@!!!!!!!!!!! mesh undefined!" , Object.getPrototypeOf( this ).constructor.name , this.id ) ; }
 
 	mesh.material = material ;
 
@@ -1505,21 +1505,33 @@ GEntity.prototype.updateOrigin = function( newOrigin , isClientMod = false ) {
 
 GEntity.prototype.updatePosition = function( data , volatile = false , isClientMod = false ) {
 	//console.warn( "3D GEntity.updatePosition()" , data ) ;
-	var x , y , z ,
+	var x , y , z , trNodeX , trNodeY , trNodeZ ,
+		oldCMPosition = this.clientMods.position ,
 		position = data.position ,
 		mesh = this.babylon.mesh ,
 		scene = this.gScene.babylon.scene ;
 
 	if ( isClientMod ) {
-		this.clientMods.position = {
-			x: position.x !== undefined ? position.x : 0 ,
-			y: position.y !== undefined ? position.y : 0 ,
-			z: position.z !== undefined ? position.z : 0
-		} ;
+		// Don't use this.position, it would mess with parametric animation, use actual mesh's position
+		if ( oldCMPosition ) {
+			// Early exit
+			if ( position.x === oldCMPosition.x && position.y === oldCMPosition.y && position.z === oldCMPosition.z ) { return ; }
 
-		x = this.position.x ;
-		y = this.position.y ;
-		z = this.position.z ;
+			// We use the delta
+			x = mesh.position.x - oldCMPosition.x ;
+			y = mesh.position.y - oldCMPosition.y ;
+			z = mesh.position.z - oldCMPosition.z ;
+		}
+		else {
+			// Early exit
+			if ( ! position.x && ! position.y && ! position.z ) { return ; }
+
+			x = mesh.position.x ;
+			y = mesh.position.y ;
+			z = mesh.position.z ;
+		}
+
+		this.clientMods.position = position ;
 	}
 	else if ( volatile ) {
 		x = position.x !== undefined ? position.x : this.position.x ;
@@ -1533,12 +1545,18 @@ GEntity.prototype.updatePosition = function( data , volatile = false , isClientM
 	}
 
 	if ( ! mesh ) { return ; }
-
+	
+	trNodeX = x ;
+	trNodeY = y ;
+	trNodeZ = z ;
+	
+	//*
 	if ( this.clientMods.position ) {
 		x += this.clientMods.position.x ;
 		y += this.clientMods.position.y ;
 		z += this.clientMods.position.z ;
 	}
+	//*/
 
 	if ( data.transition ) {
 		//console.warn( "mesh:" , mesh ) ;
@@ -1550,11 +1568,11 @@ GEntity.prototype.updatePosition = function( data , volatile = false , isClientM
 			BABYLON.Animation.ANIMATIONTYPE_VECTOR3 ,
 			new BABYLON.Vector3( x , y , z )
 		) ;
-		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodesWithTransition( data.transition , x , y , z ) ; }
+		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodesWithTransition( data.transition , trNodeX , trNodeY , trNodeZ ) ; }
 	}
 	else {
 		mesh.position.set( x , y , z ) ;
-		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodes( x , y , z ) ; }
+		if ( this.perPropertyTransformNodes.position?.length ) { this.updatePositionOfTransformNodes( trNodeX , trNodeY , trNodeZ ) ; }
 	}
 } ;
 
@@ -4057,13 +4075,25 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 	// IMPORTANT: use actual babylon.mesh's position, not gEntity's position
 	// This is because parametric animation only exists in babylon.mesh,
 	// while gEntity continue tracking the server-side position.
-	var cameraPosition = this.gScene.globalCamera.babylon.camera.position ,
-		angle = vectorUtils.facingAngleRad( cameraPosition , this.babylon.mesh.position , this.facing ) ,
+	var offset ,
+		mesh = this.babylon.mesh ,
+		position = mesh.position ,
+		cameraPosition = this.gScene.globalCamera.babylon.camera.position ,
+		angle = vectorUtils.facingAngleRad( cameraPosition , position , this.facing ) ,
 		sector = vectorUtils.radToSector[ this.special.spriteAutoFacing ]( angle ) ;
 
-	var vector = cameraPosition.subtract( this.babylon.mesh.position ).normalize().scale(2) ;
-	vector.y = 0 ;
-	this.updatePosition( { position: vector } , false , true ) ;
+	//*
+	if ( this.frameObject.zOffset !== null ) {
+		offset = cameraPosition.subtract( position ) ;
+		offset.y = 0 ;
+		// mesh.scaling.y would give better results but would also cause redraw bug: change of frame would change zOffset,
+		// that in turn could change frame due to autoFacing, and cause a bad looking loop
+		offset.normalize().scaleInPlace( this.frameObject.zOffset * this.size.y ) ;
+		//console.warn( "offset:" , offset.x , offset.y , offset.z ) ;
+		this.updatePosition( { position: offset } , false , true ) ;
+	}
+	//*/
+
 	if ( this.clientMods.variant !== sector ) {
 		this.clientMods.variant = sector ;
 		this.clientMods.xFlipVariant = vectorUtils.xFlipSector[ sector ] ;
