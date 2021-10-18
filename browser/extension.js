@@ -5199,7 +5199,8 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 
 
 const extension = require( './browser-extension.js' ) ;
-const operators = extension.host.exports.expressionOperators ;
+const op = extension.host.exports.op ;
+const xop = extension.host.exports.xop ;
 
 
 
@@ -5276,7 +5277,7 @@ Parametric.prototype.recursiveUpdate = function( self , data , computed ) {
 			self[ key ] = value ;
 		}
 		else if ( typeof value === 'string' ) {
-			self[ key ] = new Function( 'op' , 'ctx' , 'return ( ' + value + ' ) ;' ) ;
+			self[ key ] = new Function( 'op' , 'xop' , 'ctx' , 'return ( ' + value + ' ) ;' ) ;
 			//self[ key ] = new Function( 'ctx' , 'return ( ' + value + ' ) ;' ) ;
 		}
 		else if ( typeof value === 'object' ) {
@@ -5329,7 +5330,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 		}
 		else if ( typeof value === 'function' ) {
 			this.ctx.base = baseValue ;
-			computed[ key ] = value( operators , this.ctx ) ;
+			computed[ key ] = value( op , xop , this.ctx ) ;
 			//computed[ key ] = value( this.ctx ) ;
 		}
 		else if ( value && typeof value === 'object' ) {
