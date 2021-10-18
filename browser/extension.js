@@ -4951,6 +4951,15 @@ GScene.prototype.removeGEntity = function( gEntityId ) {
 } ;
 
 
+
+// Event catching/dispatching
+
+GScene.prototype.addMessage = function( text , options ) {
+	console.warn( "!!!!!!!!! Catching message:" , text ) ;
+	return Promise.resolved ;
+} ;
+
+
 },{"./Camera.js":1,"./GTransition.js":18,"nextgen-events/lib/LeanEvents.js":31,"seventh":43}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
