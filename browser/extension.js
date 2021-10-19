@@ -5214,7 +5214,8 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 
 
 
-//const Promise = require( 'seventh' ) ;
+const extension = require( './browser-extension.js' ) ;
+const Promise = require( 'seventh' ) ;
 
 
 
@@ -5226,9 +5227,8 @@ function Message( dom , gScene , text , options = {} ) {
     this.options = options ;
 
     this.babylon = {
-		material: null ,
-		mesh: null ,
-		texture: null , // Only relevant for material-less entity, like particle system
+    	rectangle: null ,
+    	textBlock: null
 	} ;
 }
 
@@ -5240,30 +5240,69 @@ module.exports = Message ;
 
 
 Message.prototype.destroy = function() {
-	//if ( this.babylon.textBlock ) { this.babylon.textBlock.dispose() ; }
-	//if ( this.babylon.icon ) { this.babylon.icon.dispose() ; }
+	if ( this.babylon.textBlock ) { this.babylon.textBlock.dispose() ; }
+	if ( this.babylon.rectangle ) { this.babylon.rectangle.dispose() ; }
 } ;
 
 
 
-Message.prototype.run = function() {
-	var ui = this.gScene.getUi() ;
+const THEME = {} ;
 
-	var textBlock = new BABYLON.GUI.TextBlock() ;
+THEME.default = {
+	panel: {
+		"background-color": "green" ,
+		"border-color": "orange" ,
+		"border-width": 4 ,
+		"corner-radius": 20
+	}
+} ;
+
+
+
+Message.prototype.create = function() {
+	var ui = this.gScene.getUi() ,
+		theme = this.dom.themeConfig?.message?.default ;
+
+	var rectangle = this.babylon.rectangle = new BABYLON.GUI.Rectangle() ;
+	rectangle.width = 0.2 ;
+	rectangle.height = "40px" ;
+	rectangle.bottom = 10 ;
+	rectangle.cornerRadius = theme?.panel?.['corner-radius'] ?? THEME.default.panel['corner-radius'] ;
+	rectangle.color = theme?.panel?.['border-color'] ?? THEME.default.panel['border-color'] ;
+	rectangle.thickness = theme?.panel?.['border-width'] ?? THEME.default.panel['border-width'] ;
+	rectangle.background = theme?.panel?.['background-color'] ?? THEME.default.panel['background-color'] ;
+	ui.addControl( rectangle ) ;
+
+
+	var textBlock = this.babylon.textBlock = new BABYLON.GUI.TextBlock() ;
 	//textBlock.height = "50px" ;
 	textBlock.color = "white" ;
-	
-	textBlock.text = this.text ;
+	textBlock.text = extension.host.exports.toolkit.stripMarkup( this.text ) ;
 	textBlock.textWrapping = true ;
-	
+
 	//textBlock.color = this.special.content.textColor ;
 	//textBlock.alpha = this.opacity ;
 	//textBlock.resizeToFit = true ;
+	rectangle.addControl( textBlock ) ;
 	ui.addControl( textBlock ) ;
 } ;
 
 
-},{}],20:[function(require,module,exports){
+
+Message.prototype.confirm = function() {
+	return Promise.resolveTimeout( 2000 ) ;
+} ;
+
+
+
+Message.prototype.run = async function() {
+	this.create() ;
+	await this.confirm() ;
+	this.destroy() ;
+} ;
+
+
+},{"./browser-extension.js":21,"seventh":44}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
