@@ -5221,14 +5221,15 @@ const Promise = require( 'seventh' ) ;
 
 function Message( dom , gScene , text , options = {} ) {
 	this.gScene = gScene ;
-    this.dom = dom ;    // Dom instance, immutable
-    
-    this.text = text ;
-    this.options = options ;
+	this.dom = dom ;    // Dom instance, immutable
 
-    this.babylon = {
-    	rectangle: null ,
-    	textBlock: null
+	this.text = text ;
+	this.options = options ;
+
+	this.babylon = {
+		rectangle: null ,
+		image: null ,
+		textBlock: null
 	} ;
 }
 
@@ -5242,6 +5243,7 @@ module.exports = Message ;
 Message.prototype.destroy = function() {
 	if ( this.babylon.textBlock ) { this.babylon.textBlock.dispose() ; }
 	if ( this.babylon.rectangle ) { this.babylon.rectangle.dispose() ; }
+	if ( this.babylon.image ) { this.babylon.image.dispose() ; }
 } ;
 
 
@@ -5250,47 +5252,121 @@ const THEME = {} ;
 
 THEME.default = {
 	panel: {
-		"background-color": "green" ,
-		"border-color": "orange" ,
-		"border-width": 4 ,
-		"corner-radius": 20
+		backgroundColor: "green" ,
+		borderColor: "orange" ,
+		borderWidth: 4 ,
+		cornerRadius: 20
+	} ,
+	text: {
+		color: "white" ,
+		padding: "10px"
+	}
+} ;
+
+
+
+Message.prototype.setControlAlignment = function( control , type ) {
+	switch ( type ) {
+		case 'top' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			break ;
+		case 'bottom' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			break ;
+		case 'left' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'right' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'top-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'top-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'bottom-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'bottom-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'center' :
+		default :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
 	}
 } ;
 
 
 
 Message.prototype.create = function() {
-	var ui = this.gScene.getUi() ,
-		theme = this.dom.themeConfig?.message?.default ;
+	var rectangle , image , textBlock ,
+		ui = this.gScene.getUi() ,
+		theme = this.dom.themeConfig?.message?.default ,
+		defaultTheme = THEME.default ;
 
-	var rectangle = this.babylon.rectangle = new BABYLON.GUI.Rectangle() ;
-	rectangle.width = 0.2 ;
-	rectangle.height = "40px" ;
-	rectangle.bottom = 10 ;
-	rectangle.cornerRadius = theme?.panel?.['corner-radius'] ?? THEME.default.panel['corner-radius'] ;
-	rectangle.color = theme?.panel?.['border-color'] ?? THEME.default.panel['border-color'] ;
-	rectangle.thickness = theme?.panel?.['border-width'] ?? THEME.default.panel['border-width'] ;
-	rectangle.background = theme?.panel?.['background-color'] ?? THEME.default.panel['background-color'] ;
+	rectangle = this.babylon.rectangle = new BABYLON.GUI.Rectangle() ;
+	rectangle.width = 0.5 ;
+	rectangle.height = "160px" ;
+	rectangle.thickness = 0 ;
+
+	if ( theme?.position ?? defaultTheme?.position ) {
+		this.setControlAlignment( rectangle , theme?.position ?? defaultTheme?.position ) ;
+	}
+
 	ui.addControl( rectangle ) ;
 
+	console.warn( "THEME:" , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
+	//if ( false ) {
+	if ( theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) {
+		image = this.babylon.image = new BABYLON.GUI.Image( 'message-background' , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
+		//image.width = "200px";
+		//image.height = "300px";
+		image.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
+		image.sliceLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
+		image.sliceTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
+		image.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? image.width ;
+		image.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? image.height ;
 
-	var textBlock = this.babylon.textBlock = new BABYLON.GUI.TextBlock() ;
+		rectangle.addControl( image ) ;
+	}
+	else {
+		rectangle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
+		rectangle.color = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
+		rectangle.thickness = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
+		rectangle.background = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
+	}
+
+	textBlock = this.babylon.textBlock = new BABYLON.GUI.TextBlock() ;
 	//textBlock.height = "50px" ;
-	textBlock.color = "white" ;
 	textBlock.text = extension.host.exports.toolkit.stripMarkup( this.text ) ;
+	textBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
+	textBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
+	textBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
+	textBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
+
+	if ( theme?.text?.padding ?? defaultTheme?.text?.padding ) {
+		textBlock.paddingLeft = textBlock.paddingRight = textBlock.paddingTop = textBlock.paddingBottom = theme?.text?.padding ?? defaultTheme?.text?.padding ;
+	}
+
 	textBlock.textWrapping = true ;
 
 	//textBlock.color = this.special.content.textColor ;
 	//textBlock.alpha = this.opacity ;
 	//textBlock.resizeToFit = true ;
 	rectangle.addControl( textBlock ) ;
-	ui.addControl( textBlock ) ;
 } ;
 
 
 
 Message.prototype.confirm = function() {
-	return Promise.resolveTimeout( 2000 ) ;
+	return Promise.resolveTimeout( 20000 ) ;
 } ;
 
 
