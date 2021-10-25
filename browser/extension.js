@@ -5303,7 +5303,11 @@ Message.prototype.setControlAlignment = function( control , type ) {
 	}
 } ;
 
-
+/*
+	New TextBlock tests:
+	https://playground.babylonjs.com/#G5H9IN#74
+	https://harlequin-silkworm-ygwlmhhr.ws-eu17.gitpod.io/
+*/
 
 Message.prototype.create = function() {
 	var rectangle , image , textBlock ,
