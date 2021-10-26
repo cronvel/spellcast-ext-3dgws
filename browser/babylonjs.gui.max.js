@@ -12908,6 +12908,95 @@ var TextBlock = /** @class */ (function (_super) {
             context.closePath();
         }
     };
+    
+    //++CR
+    TextBlock.prototype._drawTextArray = function (textArray, textWidth, y, context) {
+        var attr ,
+        	x = 0 ,
+        	width = this._currentMeasure.width ;
+
+        switch (this._textHorizontalAlignment) {
+            case _control__WEBPACK_IMPORTED_MODULE_3__["Control"].HORIZONTAL_ALIGNMENT_LEFT:
+                x = 0;
+                break;
+            case _control__WEBPACK_IMPORTED_MODULE_3__["Control"].HORIZONTAL_ALIGNMENT_RIGHT:
+                x = width - textWidth;
+                break;
+            case _control__WEBPACK_IMPORTED_MODULE_3__["Control"].HORIZONTAL_ALIGNMENT_CENTER:
+                x = (width - textWidth) / 2;
+                break;
+        }
+        
+        for ( part of textArray ) {
+			attr = this._inheritAttributes( part ) ;
+			this._setContextAttributes( context , attr ) ;
+
+			if (attr.outlineWidth) {
+				context.strokeText(text, this._currentMeasure.left + x, y);
+			}
+			context.fillText(text, this._currentMeasure.left + x, y);
+
+			if (attr._underline) {
+				context.beginPath();
+				context.lineWidth = Math.round(this.fontSizeInPixels * 0.05);
+				context.moveTo(this._currentMeasure.left + x, y + 3);
+				context.lineTo(this._currentMeasure.left + x + part.width, y + 3);
+				context.stroke();
+				context.closePath();
+			}
+
+			if (attr._lineThrough) {
+				context.beginPath();
+				context.lineWidth = Math.round(this.fontSizeInPixels * 0.05);
+				context.moveTo(this._currentMeasure.left + x, y - this.fontSizeInPixels / 3);
+				context.lineTo(this._currentMeasure.left + x + part.width, y - this.fontSizeInPixels / 3);
+				context.stroke();
+				context.closePath();
+			}
+			
+			x += part.width ;
+        }
+    };
+    //--CR
+    
+    //++CR
+    // Compute an attribute object from a text's part, inheriting from this
+	TextBlock.prototype._inheritAttributes = function (part) {
+		return {
+			color: part.color ?? this.color ,
+			outlineWidth: part.outlineWidth ?? this._outlineWidth ,
+			outlineColor: part.outlineColor ?? this._outlineColor ,
+			shadowColor: part.shadowColor ?? this.shadowColor ,
+			shadowBlur: part.shadowBlur ?? this.shadowBlur ,
+			shadowOffsetX: part.shadowOffsetX ?? this.shadowOffsetX ,
+			shadowOffsetY: part.shadowOffsetY ?? this.shadowOffsetY ,
+			underline: part.underline ?? this._underline ,
+			lineThrough: part.lineThrough ?? this._lineThrough ,
+		} ;
+	} ;
+    //--CR
+
+    //++CR
+    // It's like ._applyStates(), but for each line parts
+	TextBlock.prototype._setContextAttributes = function (context, attr) {
+		context.fillStyle = attr.color ;
+		
+		if (attr.shadowBlur || attr.shadowOffsetX || attr.shadowOffsetY) {
+			context.shadowColor = attr.shadowColor;
+			context.shadowBlur = attr.shadowBlur;
+			context.shadowOffsetX = attr.shadowOffsetX;
+			context.shadowOffsetY = attr.shadowOffsetY;
+		}
+
+		if ( attr.outlineWidth ) {
+			context.lineWidth = attr.outlineWidth ;
+			context.strokeStyle = attr.outlineColor ;
+			context.lineJoin = 'miter';
+			context.miterLimit = 2;
+		}
+	}
+    //--CR
+    
     /** @hidden */
     TextBlock.prototype._draw = function (context, invalidatedRectangle) {
         context.save();
@@ -12925,6 +13014,13 @@ var TextBlock = /** @class */ (function (_super) {
             context.miterLimit = 2;
         }
     };
+
+    //++CR
+    TextBlock.prototype._breakLines = function (refWidth, context) {
+        if ( Array.isArray( this.text ) ) { return this._arrayBreakLines( refWidth , context ) ; }
+        else { return this._stringBreakLines( refWidth , context ) ; }
+    };
+    //--CR
 
     //CR: this is the original ._breakLines() method
     TextBlock.prototype._stringBreakLines = function (refWidth, context) {
@@ -12976,16 +13072,14 @@ var TextBlock = /** @class */ (function (_super) {
 			}
 		}
 			
-		// CR:TODO
-		
         if (this._textWrapping === TextWrapping.Ellipsis) {
             for ( let _line of _lines) {
-                lines.push(this._parseLineEllipsis(_line, refWidth, context));
+                lines.push(this._parseArrayLineEllipsis(_line, refWidth, context));
             }
         }
         else if (this._textWrapping === TextWrapping.WordWrap) {
             for ( let _line of _lines) {
-                lines.push(...this._parseLineWordWrap(_line, refWidth, context));
+                lines.push(...this._parseArrayLineWordWrap(_line, refWidth, context));
             }
         }
         else {
@@ -12998,13 +13092,6 @@ var TextBlock = /** @class */ (function (_super) {
     };
     //--CR
     
-    //++CR
-    TextBlock.prototype._breakLines = function (refWidth, context) {
-        if ( Array.isArray( this.text ) ) { return this._arrayBreakLines( refWidth , context ) ; }
-        else { return this._stringBreakLines( refWidth , context ) ; }
-    };
-    //--CR
-
     TextBlock.prototype._parseLine = function (line, context) {
         if (line === void 0) { line = ""; }
         return { text: line, width: context.measureText(line).width };
@@ -13186,7 +13273,14 @@ var TextBlock = /** @class */ (function (_super) {
                     rootY = rootY + this._lineSpacing.getValue(this._host) * this._height.getValueInPixel(this._host, this._cachedParentMeasure.height);
                 }
             }
-            this._drawText(line.text, line.width, rootY, context);
+            //++CR
+            if ( line.parts ) {
+	            this._drawTextArray(line.parts, line.width, rootY, context);
+            }
+            else {
+	            this._drawText(line.text, line.width, rootY, context);
+            }
+            //--CR
             rootY += this._fontOffset.height;
         }
     };
