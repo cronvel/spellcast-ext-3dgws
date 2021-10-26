@@ -13044,7 +13044,7 @@ var TextBlock = /** @class */ (function (_super) {
         else {
             while (characters.length && lineWidth > width) {
                 characters.pop();
-                line = characters.join("") + "...";
+                line = characters.join("") + "…";	//==CR it was joining with "..." instead of "…"
                 lineWidth = context.measureText(line).width;
             }
         }
@@ -13052,33 +13052,36 @@ var TextBlock = /** @class */ (function (_super) {
     };
 
     //++CR
+    TextBlock.prototype._textArrayWidth = function (textArray, context) {
+		return textArray.reduce( ( width , part ) => {
+			// CR:TODO change context style
+			var textMetrics = context.measureText( part.text ) ;
+			width += Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
+		} , 0 ) ;
+    };
+    //--CR
+
+    //++CR
     TextBlock.prototype._parseArrayLineEllipsis = function (line, width, context) {
-        var textMetrics = context.measureText(line);
-        var lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+		var characters ,
+			lineWidth = this._textArrayWidth( line , width , context ) ;
 
-        if (lineWidth > width) {
-            line += "…";
-        }
-        // unicode support. split('') does not work with unicode!
-        // make sure Array.from is available
-        const characters = Array.from && Array.from(line);
-        if (!characters) {
-            // no array.from, use the old method
-            while (line.length > 2 && lineWidth > width) {
-                line = line.slice(0, -2) + "…";
-                textMetrics = context.measureText(line);
-                lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-            }
-        } else {
-            while (characters.length && lineWidth > width) {
-                characters.pop();
-                line = `${characters.join("")}...`;
-                textMetrics = context.measureText(line);
-                lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-            }
-        }
+		while ( line.length && lineWidth > width ) {
+			characters = Array.from( line[ line.length - 1 ] ) ;
 
-        return { text: line, width: lineWidth };
+			while ( characters.length && lineWidth > width ) {
+				characters.pop() ;
+
+				line[ line.length - 1 ] = characters.join('') + "…" ;
+				lineWidth = this._textArrayWidth( line , width , context ) ;
+			}
+			
+			if ( lineWidth > width ) {
+				line.pop() ;
+			}
+		}
+
+		return { parts: line, width: lineWidth } ;
 	};
 	//--CR
 
