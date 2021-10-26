@@ -12950,6 +12950,7 @@ var TextBlock = /** @class */ (function (_super) {
         }
         return lines;
     };
+
     //++CR
     TextBlock.prototype._arrayBreakLines = function (refWidth, context) {
 		var lines = [] ,
@@ -13056,6 +13057,8 @@ var TextBlock = /** @class */ (function (_super) {
 		return textArray.reduce( ( width , part ) => {
 			// CR:TODO change context style
 			var textMetrics = context.measureText( part.text ) ;
+			
+			//width += textMetrics.width ;
 			width += Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
 		} , 0 ) ;
     };
@@ -13064,7 +13067,7 @@ var TextBlock = /** @class */ (function (_super) {
     //++CR
     TextBlock.prototype._parseArrayLineEllipsis = function (line, width, context) {
 		var characters ,
-			lineWidth = this._textArrayWidth( line , width , context ) ;
+			lineWidth = this._textArrayWidth( line , context ) ;
 
 		while ( line.length && lineWidth > width ) {
 			characters = Array.from( line[ line.length - 1 ] ) ;
@@ -13073,7 +13076,7 @@ var TextBlock = /** @class */ (function (_super) {
 				characters.pop() ;
 
 				line[ line.length - 1 ] = characters.join('') + "…" ;
-				lineWidth = this._textArrayWidth( line , width , context ) ;
+				lineWidth = this._textArrayWidth( line , context ) ;
 			}
 			
 			if ( lineWidth > width ) {
@@ -13088,7 +13091,7 @@ var TextBlock = /** @class */ (function (_super) {
     TextBlock.prototype._parseLineWordWrap = function (line, width, context) {
         if (line === void 0) { line = ""; }
         var lines = [];
-        var words = this.wordSplittingFunction ? this.wordSplittingFunction(line) : line.split(" ");
+        var words = this.wordSplittingFunction ? this.wordSplittingFunction(line) : line.split( ' ' );	//==CR replace line.split(' ')
         var lineWidth = 0;
         for (var n = 0; n < words.length; n++) {
             var testLine = n > 0 ? line + " " + words[n] : words[0];
@@ -13107,6 +13110,56 @@ var TextBlock = /** @class */ (function (_super) {
         lines.push({ text: line, width: lineWidth });
         return lines;
     };
+    
+    //++CR
+	//TextBlock._defaultWordSplittingFunction = str => str.split( / +/ ) ;
+	TextBlock._defaultWordSplittingFunction = str => str.split( ' ' ) ;
+	//--CR
+
+    //++CR
+	TextBlock._joinTextArray = textArray => textArray.reduce( ( text , part ) => text + part.text ) ;
+	//--CR
+
+    //++CR
+	TextBlock.prototype._parseArrayLineWordWrap = function (line, width, context) {
+		var _part , _word ,
+			lines = [] ,
+			words = [] ,
+			wordSplittingFunction = this.wordSplittingFunction || TextBlock._defaultWordSplittingFunction ;
+		
+		// Split each part of the line
+		for ( _part of line ) {
+			for ( wordText of wordSplittingFunction( _part.text ) ) {
+				_word = Object.assign( {} , _part ) ;
+				_word.text = wordText ;
+				words.push( _word ) ;
+			}
+		}
+		
+		var lastTestWidth ,
+			testWidth = 0 ,
+			testLine = [] ;
+		
+		for ( _word of words ) {
+			testLine.push( _word ) ;
+			lastTestWidth = testWidth ;
+			testWidth = this._textArrayWidth( testLine , context ) ;
+
+			if ( testWidth > width && testLine.length > 1 ) {
+				testLine.pop() ;
+				lines.push( { parts: testLine , width: lastTestWidth } ) ;
+
+				// Create a new line with the current word as the first word
+				testLine = [ _word ] ;
+				testWidth = this._textArrayWidth( testLine , context ) ;
+			}
+		}
+
+		lines.push( { parts: testLine, width: testWidth } ) ;
+
+		return lines ;
+	};
+	//--CR
 
     TextBlock.prototype._renderLines = function (context) {
         var height = this._currentMeasure.height;
