@@ -12927,31 +12927,34 @@ var TextBlock = /** @class */ (function (_super) {
                 break;
         }
         
-        for ( part of textArray ) {
+        console.warn( "****************** ._drawTextArray()" , textArray , textWidth , y ) ;
+        
+        for ( let part of textArray ) {
 			attr = this._inheritAttributes( part ) ;
 			this._setContextAttributes( context , attr ) ;
 
-			if (attr.outlineWidth) {
-				context.strokeText(text, this._currentMeasure.left + x, y);
-			}
-			context.fillText(text, this._currentMeasure.left + x, y);
-
-			if (attr._underline) {
-				context.beginPath();
-				context.lineWidth = Math.round(this.fontSizeInPixels * 0.05);
-				context.moveTo(this._currentMeasure.left + x, y + 3);
-				context.lineTo(this._currentMeasure.left + x + part.width, y + 3);
-				context.stroke();
-				context.closePath();
+			if ( attr.outlineWidth ) {
+				context.strokeText( part.text , this._currentMeasure.left + x , y ) ;
 			}
 
-			if (attr._lineThrough) {
-				context.beginPath();
-				context.lineWidth = Math.round(this.fontSizeInPixels * 0.05);
-				context.moveTo(this._currentMeasure.left + x, y - this.fontSizeInPixels / 3);
-				context.lineTo(this._currentMeasure.left + x + part.width, y - this.fontSizeInPixels / 3);
-				context.stroke();
-				context.closePath();
+			context.fillText( part.text , this._currentMeasure.left + x , y ) ;
+
+			if ( attr._underline ) {
+				context.beginPath() ;
+				context.lineWidth = Math.round( this.fontSizeInPixels * 0.05 ) ;
+				context.moveTo( this._currentMeasure.left + x , y + 3 ) ;
+				context.lineTo( this._currentMeasure.left + x + part.width , y + 3 ) ;
+				context.stroke() ;
+				context.closePath() ;
+			}
+
+			if ( attr._lineThrough ) {
+				context.beginPath() ;
+				context.lineWidth = Math.round( this.fontSizeInPixels * 0.05 ) ;
+				context.moveTo( this._currentMeasure.left + x, y - this.fontSizeInPixels / 3 ) ;
+				context.lineTo( this._currentMeasure.left + x + part.width , y - this.fontSizeInPixels / 3 ) ;
+				context.stroke() ;
+				context.closePath() ;
 			}
 			
 			x += part.width ;
@@ -12981,18 +12984,18 @@ var TextBlock = /** @class */ (function (_super) {
 	TextBlock.prototype._setContextAttributes = function (context, attr) {
 		context.fillStyle = attr.color ;
 		
-		if (attr.shadowBlur || attr.shadowOffsetX || attr.shadowOffsetY) {
-			context.shadowColor = attr.shadowColor;
-			context.shadowBlur = attr.shadowBlur;
-			context.shadowOffsetX = attr.shadowOffsetX;
-			context.shadowOffsetY = attr.shadowOffsetY;
+		if ( attr.shadowBlur || attr.shadowOffsetX || attr.shadowOffsetY ) {
+			context.shadowColor = attr.shadowColor ;
+			context.shadowBlur = attr.shadowBlur ;
+			context.shadowOffsetX = attr.shadowOffsetX ;
+			context.shadowOffsetY = attr.shadowOffsetY ;
 		}
 
 		if ( attr.outlineWidth ) {
 			context.lineWidth = attr.outlineWidth ;
 			context.strokeStyle = attr.outlineColor ;
-			context.lineJoin = 'miter';
-			context.miterLimit = 2;
+			context.lineJoin = 'miter' ;
+			context.miterLimit = 2 ;
 		}
 	}
     //--CR
@@ -13140,18 +13143,6 @@ var TextBlock = /** @class */ (function (_super) {
     };
 
     //++CR
-    TextBlock.prototype._textArrayWidth = function (textArray, context) {
-		return textArray.reduce( ( width , part ) => {
-			// CR:TODO change context style
-			var textMetrics = context.measureText( part.text ) ;
-			
-			//width += textMetrics.width ;
-			width += Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
-		} , 0 ) ;
-    };
-    //--CR
-
-    //++CR
     TextBlock.prototype._parseArrayLineEllipsis = function (line, width, context) {
 		var characters ,
 			lineWidth = this._textArrayWidth( line , context ) ;
@@ -13200,7 +13191,30 @@ var TextBlock = /** @class */ (function (_super) {
     
     //++CR
 	//TextBlock._defaultWordSplittingFunction = str => str.split( / +/ ) ;
-	TextBlock._defaultWordSplittingFunction = str => str.split( ' ' ) ;
+	//TextBlock._defaultWordSplittingFunction = str => str.split( ' ' ) ;
+
+	// This variant does not exlude the splitter, it keeps it on the right-side of the split.
+	TextBlock._defaultWordSplittingFunction = str => {
+		var match ,
+			lastIndex = 0 ,
+			splitted = [] ;
+
+		//str = str.trim() ;
+		
+		for ( match of str.matchAll( / +/g ) ) {
+			if ( lastIndex < match.index ) {
+				splitted.push( str.slice( lastIndex , match.index ) ) ;
+			}
+
+			lastIndex = match.index ;
+		}
+
+		if ( lastIndex < str.length ) {
+			splitted.push( str.slice( lastIndex ) ) ;
+		}
+		
+		return splitted ;
+	};
 	//--CR
 
     //++CR
@@ -13208,8 +13222,27 @@ var TextBlock = /** @class */ (function (_super) {
 	//--CR
 
     //++CR
+    // Set the width of each parts and return the total width
+	TextBlock.prototype._textArrayWidth = function (textArray, context) {
+		var w = textArray.reduce( ( width , part ) => {
+			if ( part.width === undefined ) {
+				// CR:TODO change context style
+				let textMetrics = context.measureText( part.text ) ;
+				
+				part.width = textMetrics.width ;
+				//part.width = Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
+				console.warn( "******************* ._textArrayWidth() " , part , textMetrics ) ;
+			}
+
+			return width + part.width ;
+		} , 0 ) ;
+		return w ;
+	};
+    //--CR
+
+    //++CR
 	TextBlock.prototype._parseArrayLineWordWrap = function (line, width, context) {
-		var _part , _word ,
+		var _part , _word , wordText ,
 			lines = [] ,
 			words = [] ,
 			wordSplittingFunction = this.wordSplittingFunction || TextBlock._defaultWordSplittingFunction ;
@@ -13236,7 +13269,10 @@ var TextBlock = /** @class */ (function (_super) {
 				testLine.pop() ;
 				lines.push( { parts: testLine , width: lastTestWidth } ) ;
 
-				// Create a new line with the current word as the first word
+				// Create a new line with the current word as the first word.
+				// We have to left-trim it because it mays contain a space.
+				_word.text = _word.text.trimStart() ;
+				delete _word.width ;	// delete .width, so ._textArrayWidth() will re-compute it instead of using the existing one
 				testLine = [ _word ] ;
 				testWidth = this._textArrayWidth( testLine , context ) ;
 			}
@@ -13263,6 +13299,9 @@ var TextBlock = /** @class */ (function (_super) {
                 break;
         }
         rootY += this._currentMeasure.top;
+        
+        console.warn( "*********************  ._renderLines()" , this._lines ) ;
+        
         for (var i = 0; i < this._lines.length; i++) {
             var line = this._lines[i];
             if (i !== 0 && this._lineSpacing.internalValue !== 0) {

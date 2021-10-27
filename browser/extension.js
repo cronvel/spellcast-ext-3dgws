@@ -5349,7 +5349,8 @@ Message.prototype.create = function() {
 
 	textBlock = this.babylon.textBlock = new BABYLON.GUI.TextBlock() ;
 	//textBlock.height = "50px" ;
-	textBlock.text = extension.host.exports.toolkit.stripMarkup( this.text ) ;
+	textBlock.text = this.parseText( this.text ) ;
+	//textBlock.text = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
 	textBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
 	textBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
 	textBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
@@ -5365,6 +5366,37 @@ Message.prototype.create = function() {
 	//textBlock.alpha = this.opacity ;
 	//textBlock.resizeToFit = true ;
 	rectangle.addControl( textBlock ) ;
+} ;
+
+
+
+const MARKUP_COLOR_TO_CSS = {
+	blue: "blue" ,
+	brightBlue: "blue" ,
+	cyan: "cyan" ,
+	brightCyan: "cyan" ,
+	green: "green" ,
+	brightGreen: "green" ,
+	black: "black" ,
+	grey: "grey" ,
+	magenta: "magenta" ,
+	brightMagenta: "magenta" ,
+	red: "red" ,
+	brightRed: "red" ,
+	white: "white" ,
+	brightWhite: "white" ,
+	yellow: "yellow" ,
+	brightYellow: "yellow"
+} ;
+
+
+
+Message.prototype.parseText = function( text ) {
+	return extension.host.exports.toolkit.parseMarkup( text ).map( _part => {
+		var part = { text: _part.text } ;
+		part.color = MARKUP_COLOR_TO_CSS[ _part.color ] ;
+		return part ;
+	} ) ;
 } ;
 
 
