@@ -12929,32 +12929,34 @@ var TextBlock = /** @class */ (function (_super) {
         
         console.warn( "****************** ._drawTextArray()" , textArray , textWidth , y ) ;
         
+		var halfThickness = Math.round( this.fontSizeInPixels * 0.025 ) ,
+			underlineYOffset = 3 ,
+			lineThroughYOffset = - this.fontSizeInPixels / 3 ;
+
         for ( let part of textArray ) {
 			attr = this._inheritAttributes( part ) ;
 			this._setContextAttributes( context , attr ) ;
 
 			if ( attr.outlineWidth ) {
+				if ( attr.underline ) {
+					context.strokeRect( this._currentMeasure.left + x - halfThickness , y + underlineYOffset - halfThickness , part.width , 2 * halfThickness ) ;
+				}
+
 				context.strokeText( part.text , this._currentMeasure.left + x , y ) ;
+
+				if ( attr.lineThrough ) {
+					context.strokeRect( this._currentMeasure.left + x - halfThickness , y + lineThroughYOffset - halfThickness , part.width , 2 * halfThickness ) ;
+				}
+			}
+
+			if ( attr.underline ) {
+				context.fillRect( this._currentMeasure.left + x - halfThickness , y + underlineYOffset - halfThickness , part.width , 2 * halfThickness ) ;
 			}
 
 			context.fillText( part.text , this._currentMeasure.left + x , y ) ;
 
-			if ( attr._underline ) {
-				context.beginPath() ;
-				context.lineWidth = Math.round( this.fontSizeInPixels * 0.05 ) ;
-				context.moveTo( this._currentMeasure.left + x , y + 3 ) ;
-				context.lineTo( this._currentMeasure.left + x + part.width , y + 3 ) ;
-				context.stroke() ;
-				context.closePath() ;
-			}
-
-			if ( attr._lineThrough ) {
-				context.beginPath() ;
-				context.lineWidth = Math.round( this.fontSizeInPixels * 0.05 ) ;
-				context.moveTo( this._currentMeasure.left + x, y - this.fontSizeInPixels / 3 ) ;
-				context.lineTo( this._currentMeasure.left + x + part.width , y - this.fontSizeInPixels / 3 ) ;
-				context.stroke() ;
-				context.closePath() ;
+			if ( attr.lineThrough ) {
+				context.fillRect( this._currentMeasure.left + x - halfThickness , y + lineThroughYOffset - halfThickness , part.width , 2 * halfThickness ) ;
 			}
 			
 			x += part.width ;
@@ -12974,7 +12976,11 @@ var TextBlock = /** @class */ (function (_super) {
 			shadowOffsetX: part.shadowOffsetX ?? this.shadowOffsetX ,
 			shadowOffsetY: part.shadowOffsetY ?? this.shadowOffsetY ,
 			underline: part.underline ?? this._underline ,
-			lineThrough: part.lineThrough ?? this._lineThrough ,
+			lineThrough: part.lineThrough ?? part.strikeThrough ?? this._lineThrough ,
+			
+			// For instance, font size and family is not updatable, the whole TextBlock shares the same size and family (not useful and it introduces complexity)
+			fontStyle: part.fontStyle ?? this._style?.fontStyle ?? this._fontStyle ,
+			fontWeight: part.fontWeight ?? this._style?.fontWeight ?? this._fontWeight ,
 		} ;
 	} ;
     //--CR
@@ -12982,7 +12988,13 @@ var TextBlock = /** @class */ (function (_super) {
     //++CR
     // It's like ._applyStates(), but for each line parts
 	TextBlock.prototype._setContextAttributes = function (context, attr) {
+		// .fillStyle and .strokeStyle can receive a CSS color string, a CanvasGradient or a CanvasPattern,
+		// but here we just care about color string.
 		context.fillStyle = attr.color ;
+
+		// Disallow changing font size and family? If this would be allowed, line-height computing would need to be upgraded...
+		context.font = attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily ;
+		console.warn( "************?????????????????" , attr , attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily ) ;
 		
 		if ( attr.shadowBlur || attr.shadowOffsetX || attr.shadowOffsetY ) {
 			context.shadowColor = attr.shadowColor ;
@@ -12990,12 +13002,18 @@ var TextBlock = /** @class */ (function (_super) {
 			context.shadowOffsetX = attr.shadowOffsetX ;
 			context.shadowOffsetY = attr.shadowOffsetY ;
 		}
+		else {
+			context.shadowBlur = 0 ;
+		}
 
 		if ( attr.outlineWidth ) {
 			context.lineWidth = attr.outlineWidth ;
 			context.strokeStyle = attr.outlineColor ;
 			context.lineJoin = 'miter' ;
 			context.miterLimit = 2 ;
+		}
+		else {
+			context.lineWidth = 0 ;
 		}
 	}
     //--CR
@@ -13224,9 +13242,12 @@ var TextBlock = /** @class */ (function (_super) {
     //++CR
     // Set the width of each parts and return the total width
 	TextBlock.prototype._textArrayWidth = function (textArray, context) {
+		var contextSaved = false ;
+
 		var w = textArray.reduce( ( width , part ) => {
 			if ( part.width === undefined ) {
-				// CR:TODO change context style
+				if ( ! contextSaved ) { context.save() ; }
+
 				let attr = this._inheritAttributes( part ) ;
 				this._setContextAttributes( context , attr ) ;
 
@@ -13239,6 +13260,9 @@ var TextBlock = /** @class */ (function (_super) {
 
 			return width + part.width ;
 		} , 0 ) ;
+
+		if ( contextSaved ) { context.restore() ; }
+
 		return w ;
 	};
     //--CR

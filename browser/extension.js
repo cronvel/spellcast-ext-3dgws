@@ -5397,6 +5397,10 @@ Message.prototype.parseText = function( text ) {
 	return extension.host.exports.toolkit.parseMarkup( text ).map( _part => {
 		var part = { text: _part.text } ;
 		part.color = MARKUP_COLOR_TO_CSS[ _part.color ] ;
+		part.fontStyle = _part.italic ? 'italic' : '' ;
+		part.fontWeight = _part.bold ? 'bold' : '' ;
+		part.underline = !! _part.underline ;
+		part.lineThrough = !! _part.strike ;
 		return part ;
 	} ) ;
 } ;
@@ -5404,7 +5408,7 @@ Message.prototype.parseText = function( text ) {
 
 
 Message.prototype.confirm = function() {
-	return Promise.resolveTimeout( 20000 ) ;
+	return Promise.resolveTimeout( 200000 ) ;
 } ;
 
 
