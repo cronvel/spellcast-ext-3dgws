@@ -13227,6 +13227,9 @@ var TextBlock = /** @class */ (function (_super) {
 		var w = textArray.reduce( ( width , part ) => {
 			if ( part.width === undefined ) {
 				// CR:TODO change context style
+				let attr = this._inheritAttributes( part ) ;
+				this._setContextAttributes( context , attr ) ;
+
 				let textMetrics = context.measureText( part.text ) ;
 				
 				part.width = textMetrics.width ;
