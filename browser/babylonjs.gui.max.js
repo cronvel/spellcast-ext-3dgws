@@ -13236,7 +13236,40 @@ var TextBlock = /** @class */ (function (_super) {
 	//--CR
 
     //++CR
-	TextBlock._joinTextArray = textArray => textArray.reduce( ( text , part ) => text + part.text ) ;
+    // Join consecutive parts sharing the exact same attributes.
+    // It produces better results for underline and line-through, avoiding outline overlaps.
+	TextBlock._joinTextArray = textArray => {
+		if ( textArray.length <= 1 ) { return textArray ; }
+
+		var index , part ,
+			last = textArray[ 0 ] ,
+			lastInserted = last ,
+			output = [ last ] ;
+		
+		for ( let index = 1 ; index < textArray.length ; index ++ ) {
+			part = textArray[ index ] ;
+			if (
+				last.color === part.color
+				&& last.outlineWidth === part.outlineWidth && last.outlineColor === part.outlineColor
+				&& last.shadowColor === part.shadowColor && last.shadowBlur === part.shadowBlur
+				&& last.shadowOffsetX === part.shadowOffsetX && last.shadowOffsetY === part.shadowOffsetY
+				&& last.underline === part.underline
+				&& last.lineThrough === part.lineThrough
+				&& last.fontStyle === part.fontStyle && last.fontWeight === part.fontWeight
+			) {
+				lastInserted.text += part.text ;
+				lastInserted.width += part.width ;
+			}
+			else {
+				output.push( part ) ;
+				lastInserted = part ;
+			}
+
+			last = part ;
+		}
+		
+		return output ;
+	} ;
 	//--CR
 
     //++CR
@@ -13294,7 +13327,8 @@ var TextBlock = /** @class */ (function (_super) {
 
 			if ( testWidth > width && testLine.length > 1 ) {
 				testLine.pop() ;
-				lines.push( { parts: testLine , width: lastTestWidth } ) ;
+				//lines.push( { parts: testLine , width: lastTestWidth } ) ;
+				lines.push( { parts: TextBlock._joinTextArray( testLine ) , width: lastTestWidth } ) ;
 
 				// Create a new line with the current word as the first word.
 				// We have to left-trim it because it mays contain a space.
@@ -13305,7 +13339,8 @@ var TextBlock = /** @class */ (function (_super) {
 			}
 		}
 
-		lines.push( { parts: testLine, width: testWidth } ) ;
+		//lines.push( { parts: testLine , width: testWidth } ) ;
+		lines.push( { parts: TextBlock._joinTextArray( testLine ) , width: testWidth } ) ;
 
 		return lines ;
 	};
