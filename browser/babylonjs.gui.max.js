@@ -12987,7 +12987,7 @@ var TextBlock = /** @class */ (function (_super) {
 
     //++CR
     // It's like ._applyStates(), but for each line parts
-	TextBlock.prototype._setContextAttributes = function (context, attr, forMeasure = false ) {
+	TextBlock.prototype._setContextAttributes = function (context, attr) {
 		// .fillStyle and .strokeStyle can receive a CSS color string, a CanvasGradient or a CanvasPattern,
 		// but here we just care about color string.
 		context.fillStyle = attr.color ;
@@ -13283,7 +13283,7 @@ var TextBlock = /** @class */ (function (_super) {
 	TextBlock.prototype._structuredTextWidth = function (structuredText, context) {
 		var contextSaved = false ;
 
-		var w = structuredText.reduce( ( width , part ) => {
+		var _width = structuredText.reduce( ( width , part ) => {
 			if ( part.width === undefined ) {
 				if ( ! contextSaved ) { context.save() ; }
 
@@ -13304,7 +13304,7 @@ var TextBlock = /** @class */ (function (_super) {
 
 		if ( contextSaved ) { context.restore() ; }
 
-		return w ;
+		return _width ;
 	};
     //--CR
 
