@@ -12910,7 +12910,7 @@ var TextBlock = /** @class */ (function (_super) {
     };
     
     //++CR
-    TextBlock.prototype._drawTextArray = function (textArray, textWidth, y, context) {
+    TextBlock.prototype._drawStructuredText = function (structuredText, textWidth, y, context) {
         var attr ,
         	x = 0 ,
         	width = this._currentMeasure.width ;
@@ -12927,13 +12927,13 @@ var TextBlock = /** @class */ (function (_super) {
                 break;
         }
         
-        console.warn( "****************** ._drawTextArray()" , textArray , textWidth , y ) ;
+        console.warn( "****************** ._drawStructuredText()" , structuredText , textWidth , y ) ;
         
 		var halfThickness = Math.round( this.fontSizeInPixels * 0.025 ) ,
 			underlineYOffset = 3 ,
 			lineThroughYOffset = - this.fontSizeInPixels / 3 ;
 
-        for ( let part of textArray ) {
+        for ( let part of structuredText ) {
 			attr = this._inheritAttributes( part ) ;
 			this._setContextAttributes( context , attr ) ;
 
@@ -12987,7 +12987,7 @@ var TextBlock = /** @class */ (function (_super) {
 
     //++CR
     // It's like ._applyStates(), but for each line parts
-	TextBlock.prototype._setContextAttributes = function (context, attr) {
+	TextBlock.prototype._setContextAttributes = function (context, attr, forMeasure = false ) {
 		// .fillStyle and .strokeStyle can receive a CSS color string, a CanvasGradient or a CanvasPattern,
 		// but here we just care about color string.
 		context.fillStyle = attr.color ;
@@ -13018,6 +13018,13 @@ var TextBlock = /** @class */ (function (_super) {
 	}
     //--CR
     
+    //++CR
+    // Like ._setContextAttributesForMeasure(), but only set up attributes that cares for measuring text
+	TextBlock.prototype._setContextAttributesForMeasure = function (context, attr ) {
+		context.font = attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily ;
+	}
+    //--CR
+
     /** @hidden */
     TextBlock.prototype._draw = function (context, invalidatedRectangle) {
         context.save();
@@ -13038,13 +13045,13 @@ var TextBlock = /** @class */ (function (_super) {
 
     //++CR
     TextBlock.prototype._breakLines = function (refWidth, context) {
-        if ( Array.isArray( this.text ) ) { return this._arrayBreakLines( refWidth , context ) ; }
-        else { return this._stringBreakLines( refWidth , context ) ; }
+        if ( Array.isArray( this.text ) ) { return this._breakStructuredTextLines( refWidth , context ) ; }
+        else { return this._breakStringLines( refWidth , context ) ; }
     };
     //--CR
 
     //CR: this is the original ._breakLines() method
-    TextBlock.prototype._stringBreakLines = function (refWidth, context) {
+    TextBlock.prototype._breakStringLines = function (refWidth, context) {
         var lines = [];
         var _lines = this.text.split("\n");
         if (this._textWrapping === TextWrapping.Ellipsis) {
@@ -13069,7 +13076,7 @@ var TextBlock = /** @class */ (function (_super) {
     };
 
     //++CR
-    TextBlock.prototype._arrayBreakLines = function (refWidth, context) {
+    TextBlock.prototype._breakStructuredTextLines = function (refWidth, context) {
 		var lines = [] ,
 			_newPart ,
 			_currentLine = [] ,
@@ -13095,17 +13102,17 @@ var TextBlock = /** @class */ (function (_super) {
 			
         if (this._textWrapping === TextWrapping.Ellipsis) {
             for ( let _line of _lines) {
-                lines.push(this._parseArrayLineEllipsis(_line, refWidth, context));
+                lines.push(this._parseStructuredTextLineEllipsis(_line, refWidth, context));
             }
         }
         else if (this._textWrapping === TextWrapping.WordWrap) {
             for ( let _line of _lines) {
-                lines.push(...this._parseArrayLineWordWrap(_line, refWidth, context));
+                lines.push(...this._parseStructuredTextLineWordWrap(_line, refWidth, context));
             }
         }
         else {
             for ( let _line of _lines) {
-                lines.push(this._parseArrayLine(_line, context));
+                lines.push(this._parseStructuredTextLine(_line, context));
             }
         }		
 
@@ -13119,7 +13126,7 @@ var TextBlock = /** @class */ (function (_super) {
     };
 
 	//++CR
-	TextBlock.prototype._parseArrayLine = function (line, context) {
+	TextBlock.prototype._parseStructuredTextLine = function (line, context) {
 		var _part , textMetrics ,
 			lineWidth = 0 ;
 
@@ -13161,18 +13168,20 @@ var TextBlock = /** @class */ (function (_super) {
     };
 
     //++CR
-    TextBlock.prototype._parseArrayLineEllipsis = function (line, width, context) {
-		var characters ,
-			lineWidth = this._textArrayWidth( line , context ) ;
+    TextBlock.prototype._parseStructuredTextLineEllipsis = function (line, width, context) {
+		var _part , characters ,
+			lineWidth = this._structuredTextWidth( line , context ) ;
 
 		while ( line.length && lineWidth > width ) {
-			characters = Array.from( line[ line.length - 1 ] ) ;
+			_part = line[ line.length - 1 ] ;
+			characters = Array.from( _part.text ) ;
 
 			while ( characters.length && lineWidth > width ) {
 				characters.pop() ;
 
-				line[ line.length - 1 ] = characters.join('') + "…" ;
-				lineWidth = this._textArrayWidth( line , context ) ;
+				_part.text = characters.join('') + "…" ;
+				delete _part.width ;	// delete .width, so ._structuredTextWidth() will re-compute it instead of using the existing one
+				lineWidth = this._structuredTextWidth( line , context ) ;
 			}
 			
 			if ( lineWidth > width ) {
@@ -13208,10 +13217,7 @@ var TextBlock = /** @class */ (function (_super) {
     };
     
     //++CR
-	//TextBlock._defaultWordSplittingFunction = str => str.split( / +/ ) ;
-	//TextBlock._defaultWordSplittingFunction = str => str.split( ' ' ) ;
-
-	// This variant does not exlude the splitter, it keeps it on the right-side of the split.
+	// This splitting function does not exlude the splitter, it keeps it on the right-side of the split.
 	TextBlock._defaultWordSplittingFunction = str => {
 		var match ,
 			lastIndex = 0 ,
@@ -13238,16 +13244,16 @@ var TextBlock = /** @class */ (function (_super) {
     //++CR
     // Join consecutive parts sharing the exact same attributes.
     // It produces better results for underline and line-through, avoiding outline overlaps.
-	TextBlock._joinTextArray = textArray => {
-		if ( textArray.length <= 1 ) { return textArray ; }
+	TextBlock._fuseStructuredTextParts = structuredText => {
+		if ( structuredText.length <= 1 ) { return structuredText ; }
 
 		var index , part ,
-			last = textArray[ 0 ] ,
+			last = structuredText[ 0 ] ,
 			lastInserted = last ,
 			output = [ last ] ;
 		
-		for ( let index = 1 ; index < textArray.length ; index ++ ) {
-			part = textArray[ index ] ;
+		for ( let index = 1 ; index < structuredText.length ; index ++ ) {
+			part = structuredText[ index ] ;
 			if (
 				last.color === part.color
 				&& last.outlineWidth === part.outlineWidth && last.outlineColor === part.outlineColor
@@ -13274,21 +13280,23 @@ var TextBlock = /** @class */ (function (_super) {
 
     //++CR
     // Set the width of each parts and return the total width
-	TextBlock.prototype._textArrayWidth = function (textArray, context) {
+	TextBlock.prototype._structuredTextWidth = function (structuredText, context) {
 		var contextSaved = false ;
 
-		var w = textArray.reduce( ( width , part ) => {
+		var w = structuredText.reduce( ( width , part ) => {
 			if ( part.width === undefined ) {
 				if ( ! contextSaved ) { context.save() ; }
 
 				let attr = this._inheritAttributes( part ) ;
-				this._setContextAttributes( context , attr ) ;
+				this._setContextAttributesForMeasure( context , attr ) ;
 
 				let textMetrics = context.measureText( part.text ) ;
 				
+				// .actualBoundingBox* does not work: sometime it skips spaces
 				part.width = textMetrics.width ;
 				//part.width = Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
-				console.warn( "******************* ._textArrayWidth() " , part , textMetrics ) ;
+				//part.width = Math.abs( textMetrics.actualBoundingBoxRight - textMetrics.actualBoundingBoxLeft ) ;
+				console.warn( "******************* ._structuredTextWidth() " , part , textMetrics ) ;
 			}
 
 			return width + part.width ;
@@ -13301,7 +13309,7 @@ var TextBlock = /** @class */ (function (_super) {
     //--CR
 
     //++CR
-	TextBlock.prototype._parseArrayLineWordWrap = function (line, width, context) {
+	TextBlock.prototype._parseStructuredTextLineWordWrap = function (line, width, context) {
 		var _part , _word , wordText ,
 			lines = [] ,
 			words = [] ,
@@ -13323,24 +13331,24 @@ var TextBlock = /** @class */ (function (_super) {
 		for ( _word of words ) {
 			testLine.push( _word ) ;
 			lastTestWidth = testWidth ;
-			testWidth = this._textArrayWidth( testLine , context ) ;
+			testWidth = this._structuredTextWidth( testLine , context ) ;
 
 			if ( testWidth > width && testLine.length > 1 ) {
 				testLine.pop() ;
 				//lines.push( { parts: testLine , width: lastTestWidth } ) ;
-				lines.push( { parts: TextBlock._joinTextArray( testLine ) , width: lastTestWidth } ) ;
+				lines.push( { parts: TextBlock._fuseStructuredTextParts( testLine ) , width: lastTestWidth } ) ;
 
 				// Create a new line with the current word as the first word.
 				// We have to left-trim it because it mays contain a space.
 				_word.text = _word.text.trimStart() ;
-				delete _word.width ;	// delete .width, so ._textArrayWidth() will re-compute it instead of using the existing one
+				delete _word.width ;	// delete .width, so ._structuredTextWidth() will re-compute it instead of using the existing one
 				testLine = [ _word ] ;
-				testWidth = this._textArrayWidth( testLine , context ) ;
+				testWidth = this._structuredTextWidth( testLine , context ) ;
 			}
 		}
 
 		//lines.push( { parts: testLine , width: testWidth } ) ;
-		lines.push( { parts: TextBlock._joinTextArray( testLine ) , width: testWidth } ) ;
+		lines.push( { parts: TextBlock._fuseStructuredTextParts( testLine ) , width: testWidth } ) ;
 
 		return lines ;
 	};
@@ -13376,7 +13384,7 @@ var TextBlock = /** @class */ (function (_super) {
             }
             //++CR
             if ( line.parts ) {
-	            this._drawTextArray(line.parts, line.width, rootY, context);
+	            this._drawStructuredText(line.parts, line.width, rootY, context);
             }
             else {
 	            this._drawText(line.text, line.width, rootY, context);
