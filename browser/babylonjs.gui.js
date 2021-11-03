@@ -1,1 +1,1 @@
-babylonjs.gui.max.js
+babylonjs.gui.pr.js

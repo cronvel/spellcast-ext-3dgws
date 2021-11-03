@@ -97,10 +97,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ({
 
 /***/ "../../node_modules/tslib/tslib.es6.js":
-/*!***********************************************************!*\
-  !*** C:/Repos/Babylon.js/node_modules/tslib/tslib.es6.js ***!
-  \***********************************************************/
-/*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __createBinding, __exportStar, __values, __read, __spread, __spreadArrays, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet */
+/*!************************************************************************************!*\
+  !*** /home/cedric/inside/github/_forks/Babylon.js/node_modules/tslib/tslib.es6.js ***!
+  \************************************************************************************/
+/*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __createBinding, __exportStar, __values, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119,6 +119,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spreadArrays", function() { return __spreadArrays; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spreadArray", function() { return __spreadArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
@@ -152,6 +153,8 @@ var extendStatics = function(d, b) {
 };
 
 function __extends(d, b) {
+    if (typeof b !== "function" && b !== null)
+        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
     extendStatics(d, b);
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -274,19 +277,31 @@ function __read(o, n) {
     return ar;
 }
 
+/** @deprecated */
 function __spread() {
     for (var ar = [], i = 0; i < arguments.length; i++)
         ar = ar.concat(__read(arguments[i]));
     return ar;
 }
 
+/** @deprecated */
 function __spreadArrays() {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
             r[k] = a[j];
     return r;
-};
+}
+
+function __spreadArray(to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+}
 
 function __await(v) {
     return this instanceof __await ? (this.v = v, this) : new __await(v);
@@ -341,19 +356,17 @@ function __importDefault(mod) {
     return (mod && mod.__esModule) ? mod : { default: mod };
 }
 
-function __classPrivateFieldGet(receiver, privateMap) {
-    if (!privateMap.has(receiver)) {
-        throw new TypeError("attempted to get private field on non-instance");
-    }
-    return privateMap.get(receiver);
+function __classPrivateFieldGet(receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 }
 
-function __classPrivateFieldSet(receiver, privateMap, value) {
-    if (!privateMap.has(receiver)) {
-        throw new TypeError("attempted to set private field on non-instance");
-    }
-    privateMap.set(receiver, value);
-    return value;
+function __classPrivateFieldSet(receiver, state, value, kind, f) {
+    if (kind === "m") throw new TypeError("Private method is not writable");
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
 }
 
 
@@ -546,8 +559,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/observable */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _controls_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./controls/container */ "./2D/controls/container.ts");
-/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./style */ "./2D/style.ts");
-/* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./measure */ "./2D/measure.ts");
+/* harmony import */ var _controls_control__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./controls/control */ "./2D/controls/control.ts");
+/* harmony import */ var _style__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style */ "./2D/style.ts");
+/* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./measure */ "./2D/measure.ts");
+
+
 
 
 
@@ -586,6 +602,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         if (height === void 0) { height = 0; }
         if (generateMipMaps === void 0) { generateMipMaps = false; }
         if (samplingMode === void 0) { samplingMode = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE; }
+        if (invertY === void 0) { invertY = true; }
         var _this = _super.call(this, name, { width: width, height: height }, scene, generateMipMaps, samplingMode, babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Constants"].TEXTUREFORMAT_RGBA, invertY) || this;
         _this._isDirty = false;
         /** @hidden */
@@ -652,7 +669,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         _this._useInvalidateRectOptimization = true;
         // Invalidated rectangle which is the combination of all invalidated controls after they have been rotated into absolute position
         _this._invalidatedRectangle = null;
-        _this._clearMeasure = new _measure__WEBPACK_IMPORTED_MODULE_4__["Measure"](0, 0, 0, 0);
+        _this._clearMeasure = new _measure__WEBPACK_IMPORTED_MODULE_5__["Measure"](0, 0, 0, 0);
         /** @hidden */
         _this.onClipboardCopy = function (rawEvt) {
             var evt = rawEvt;
@@ -678,6 +695,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         if (!scene || !_this._texture) {
             return _this;
         }
+        _this.applyYInversionOnUpdate = invertY;
         _this._rootElement = scene.getEngine().getInputElement();
         _this._renderObserver = scene.onBeforeCameraRenderObservable.add(function (camera) { return _this._checkUpdate(camera); });
         _this._preKeyboardObserver = scene.onPreKeyboardObservable.add(function (info) {
@@ -889,6 +907,17 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
     AdvancedDynamicTexture.prototype.getDescendants = function (directDescendantsOnly, predicate) {
         return this._rootContainer.getDescendants(directDescendantsOnly, predicate);
     };
+    /**
+    * Will return the first control with the given name
+    * @param name defines the name to search for
+    * @return the first control found or null
+    */
+    AdvancedDynamicTexture.prototype.getControlByName = function (name) {
+        return this._getControlByKey("name", name);
+    };
+    AdvancedDynamicTexture.prototype._getControlByKey = function (key, value) {
+        return this._rootContainer.getDescendants().find(function (control) { return control[key] === value; }) || null;
+    };
     Object.defineProperty(AdvancedDynamicTexture.prototype, "focusedControl", {
         /**
         * Gets or sets the current focused control
@@ -997,7 +1026,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
             return;
         }
         if (!this._invalidatedRectangle) {
-            this._invalidatedRectangle = new _measure__WEBPACK_IMPORTED_MODULE_4__["Measure"](invalidMinX, invalidMinY, invalidMaxX - invalidMinX + 1, invalidMaxY - invalidMinY + 1);
+            this._invalidatedRectangle = new _measure__WEBPACK_IMPORTED_MODULE_5__["Measure"](invalidMinX, invalidMinY, invalidMaxX - invalidMinX + 1, invalidMaxY - invalidMinY + 1);
         }
         else {
             // Compute intersection
@@ -1021,7 +1050,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
     * @see https://doc.babylonjs.com/how_to/gui#styles
     */
     AdvancedDynamicTexture.prototype.createStyle = function () {
-        return new _style__WEBPACK_IMPORTED_MODULE_3__["Style"](this);
+        return new _style__WEBPACK_IMPORTED_MODULE_4__["Style"](this);
     };
     /**
     * Adds a new control to the root container
@@ -1113,9 +1142,9 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         this.invalidateRect(0, 0, textureSize.width - 1, textureSize.height - 1);
     };
     /** @hidden */
-    AdvancedDynamicTexture.prototype._getGlobalViewport = function (scene) {
-        var engine = scene.getEngine();
-        return this._fullscreenViewport.toGlobal(engine.getRenderWidth(), engine.getRenderHeight());
+    AdvancedDynamicTexture.prototype._getGlobalViewport = function () {
+        var size = this.getSize();
+        return this._fullscreenViewport.toGlobal(size.width, size.height);
     };
     /**
     * Get screen coordinates for a vector3
@@ -1124,14 +1153,8 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
     * @returns the projected position
     */
     AdvancedDynamicTexture.prototype.getProjectedPosition = function (position, worldMatrix) {
-        var scene = this.getScene();
-        if (!scene) {
-            return babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"].Zero();
-        }
-        var globalViewport = this._getGlobalViewport(scene);
-        var projectedPosition = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Project(position, worldMatrix, scene.getTransformMatrix(), globalViewport);
-        projectedPosition.scaleInPlace(this.renderScale);
-        return new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"](projectedPosition.x, projectedPosition.y);
+        var result = this.getProjectedPositionWithZ(position, worldMatrix);
+        return new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"](result.x, result.y);
     };
     /**
     * Get screen coordinates for a vector3
@@ -1144,9 +1167,8 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         if (!scene) {
             return babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
         }
-        var globalViewport = this._getGlobalViewport(scene);
+        var globalViewport = this._getGlobalViewport();
         var projectedPosition = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Project(position, worldMatrix, scene.getTransformMatrix(), globalViewport);
-        projectedPosition.scaleInPlace(this.renderScale);
         return new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"](projectedPosition.x, projectedPosition.y, projectedPosition.z);
     };
     AdvancedDynamicTexture.prototype._checkUpdate = function (camera) {
@@ -1160,7 +1182,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
             if (!scene) {
                 return;
             }
-            var globalViewport = this._getGlobalViewport(scene);
+            var globalViewport = this._getGlobalViewport();
             var _loop_1 = function (control) {
                 if (!control.isVisible) {
                     return "continue";
@@ -1179,11 +1201,8 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
                     return "continue";
                 }
                 control.notRenderable = false;
-                // Account for RenderScale.
-                projectedPosition.scaleInPlace(this_1.renderScale);
                 control._moveToProjectedPosition(projectedPosition);
             };
-            var this_1 = this;
             for (var _i = 0, _a = this._linkedControls; _i < _a.length; _i++) {
                 var control = _a[_i];
                 _loop_1(control);
@@ -1205,7 +1224,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         context.strokeStyle = "white";
         // Layout
         this.onBeginLayoutObservable.notifyObservers(this);
-        var measure = new _measure__WEBPACK_IMPORTED_MODULE_4__["Measure"](0, 0, renderWidth, renderHeight);
+        var measure = new _measure__WEBPACK_IMPORTED_MODULE_5__["Measure"](0, 0, renderWidth, renderHeight);
         this._numLayoutCalls = 0;
         this._rootContainer._layout(measure, context);
         this.onEndLayoutObservable.notifyObservers(this);
@@ -1252,6 +1271,9 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         var textureSize = this.getSize();
         if (this._isFullscreen) {
             var camera = scene.cameraToUseForPointers || scene.activeCamera;
+            if (!camera) {
+                return;
+            }
             var viewport = camera.viewport;
             x = x * (textureSize.width / (engine.getRenderWidth() * viewport.width));
             y = y * (textureSize.height / (engine.getRenderHeight() * viewport.height));
@@ -1262,7 +1284,9 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         }
         this._cursorChanged = false;
         if (!this._rootContainer._processPicking(x, y, pi, type, pointerId, buttonIndex, deltaX, deltaY)) {
-            this._changeCursor("");
+            if (!scene.doNotHandleCursors) {
+                this._changeCursor("");
+            }
             if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERMOVE) {
                 if (this._lastControlOver[pointerId]) {
                     this._lastControlOver[pointerId]._onPointerOut(this._lastControlOver[pointerId], pi);
@@ -1270,7 +1294,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
                 }
             }
         }
-        if (!this._cursorChanged) {
+        if (!this._cursorChanged && !scene.doNotHandleCursors) {
             this._changeCursor("");
         }
         this._manageFocus();
@@ -1308,9 +1332,6 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
                 && pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERUP
                 && pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERDOWN
                 && pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERWHEEL) {
-                return;
-            }
-            if (!scene) {
                 return;
             }
             if (pi.type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERMOVE && pi.event.pointerId) {
@@ -1372,15 +1393,19 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         this._pointerObserver = scene.onPointerObservable.add(function (pi, state) {
             if (pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERMOVE
                 && pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERUP
-                && pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERDOWN) {
+                && pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERDOWN
+                && pi.type !== babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERWHEEL) {
                 return;
+            }
+            if (pi.type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERMOVE && pi.event.pointerId) {
+                _this._defaultMousePointerId = pi.event.pointerId; // This is required to make sure we have the correct pointer ID for wheel
             }
             var pointerId = pi.event.pointerId || _this._defaultMousePointerId;
             if (pi.pickInfo && pi.pickInfo.hit && pi.pickInfo.pickedMesh === mesh) {
                 var uv = pi.pickInfo.getTextureCoordinates();
                 if (uv) {
                     var size = _this.getSize();
-                    _this._doPicking(uv.x * size.width, (_this.applyYInversionOnUpdate ? (1.0 - uv.y) : uv.y) * size.height, pi, pi.type, pointerId, pi.event.button);
+                    _this._doPicking(uv.x * size.width, (_this.applyYInversionOnUpdate ? (1.0 - uv.y) : uv.y) * size.height, pi, pi.type, pointerId, pi.event.button, pi.event.deltaX, pi.event.deltaY);
                 }
             }
             else if (pi.type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERUP) {
@@ -1467,7 +1492,98 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
                 var key = _a[0], value = _a[1];
                 value._onCanvasBlur();
             });
+            _this.focusedControl = null;
             _this._lastControlDown = {};
+        });
+    };
+    /**
+     * Serializes the entire GUI system
+     * @returns an object with the JSON serialized data
+     */
+    AdvancedDynamicTexture.prototype.serializeContent = function () {
+        var size = this.getSize();
+        var serializationObject = {
+            root: {},
+            width: size.width,
+            height: size.height,
+        };
+        this._rootContainer.serialize(serializationObject.root);
+        return serializationObject;
+    };
+    /**
+     * Recreate the content of the ADT from a JSON object
+     * @param serializedObject define the JSON serialized object to restore from
+     * @param scaleToSize defines whether to scale to texture to the saved size
+     */
+    AdvancedDynamicTexture.prototype.parseContent = function (serializedObject, scaleToSize) {
+        this._rootContainer = _controls_control__WEBPACK_IMPORTED_MODULE_3__["Control"].Parse(serializedObject.root, this);
+        if (scaleToSize) {
+            var width = serializedObject.width;
+            var height = serializedObject.height;
+            if (typeof (width) === "number" && typeof (height) === "number" && width >= 0 && height >= 0) {
+                this.scaleTo(width, height);
+            }
+        }
+    };
+    /**
+     * Recreate the content of the ADT from a snippet saved by the GUI editor
+     * @param snippetId defines the snippet to load
+     * @param scaleToSize defines whether to scale to texture to the saved size
+     * @returns a promise that will resolve on success
+     */
+    AdvancedDynamicTexture.prototype.parseFromSnippetAsync = function (snippetId, scaleToSize) {
+        var _this = this;
+        if (snippetId === "_BLANK") {
+            return Promise.resolve();
+        }
+        return new Promise(function (resolve, reject) {
+            var request = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["WebRequest"]();
+            request.addEventListener("readystatechange", function () {
+                if (request.readyState == 4) {
+                    if (request.status == 200) {
+                        var snippet = JSON.parse(JSON.parse(request.responseText).jsonPayload);
+                        var serializationObject = JSON.parse(snippet.gui);
+                        _this.parseContent(serializationObject, scaleToSize);
+                        _this.snippetId = snippetId;
+                        resolve();
+                    }
+                    else {
+                        reject("Unable to load the snippet " + snippetId);
+                    }
+                }
+            });
+            request.open("GET", AdvancedDynamicTexture.SnippetUrl + "/" + snippetId.replace(/#/g, "/"));
+            request.send();
+        });
+    };
+    /**
+    * Recreate the content of the ADT from a url json
+    * @param url defines the url to load
+    * @param scaleToSize defines whether to scale to texture to the saved size
+    * @returns a promise that will resolve on success
+    */
+    AdvancedDynamicTexture.prototype.parseFromURLAsync = function (url, scaleToSize) {
+        var _this = this;
+        if (url === "") {
+            return Promise.resolve();
+        }
+        return new Promise(function (resolve, reject) {
+            var request = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["WebRequest"]();
+            request.addEventListener("readystatechange", function () {
+                if (request.readyState == 4) {
+                    if (request.status == 200) {
+                        var gui = request.responseText;
+                        var serializationObject = JSON.parse(gui);
+                        _this.parseContent(serializationObject, scaleToSize);
+                        resolve();
+                    }
+                    else {
+                        reject("Unable to load");
+                    }
+                }
+            });
+            request.open("GET", url);
+            request.send();
         });
     };
     // Statics
@@ -1529,7 +1645,7 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
     * LayerMask is set through advancedTexture.layer.layerMask
     * @param name defines name for the texture
     * @param foreground defines a boolean indicating if the texture must be rendered in foreground (default is true)
-    * @param scene defines the hsoting scene
+    * @param scene defines the hosting scene
     * @param sampling defines the texture sampling mode (Texture.BILINEAR_SAMPLINGMODE by default)
     * @returns a new AdvancedDynamicTexture
     */
@@ -1547,6 +1663,8 @@ var AdvancedDynamicTexture = /** @class */ (function (_super) {
         result.attach();
         return result;
     };
+    /** Define the Uurl to load snippets */
+    AdvancedDynamicTexture.SnippetUrl = "https://snippet.babylonjs.com";
     return AdvancedDynamicTexture;
 }(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["DynamicTexture"]));
 
@@ -1668,7 +1786,7 @@ var Button = /** @class */ (function (_super) {
         if (!_super.prototype._onPointerEnter.call(this, target, pi)) {
             return false;
         }
-        if (this.pointerEnterAnimation) {
+        if (!this.isReadOnly && this.pointerEnterAnimation) {
             this.pointerEnterAnimation();
         }
         return true;
@@ -1676,7 +1794,7 @@ var Button = /** @class */ (function (_super) {
     /** @hidden */
     Button.prototype._onPointerOut = function (target, pi, force) {
         if (force === void 0) { force = false; }
-        if (this.pointerOutAnimation) {
+        if (!this.isReadOnly && this.pointerOutAnimation) {
             this.pointerOutAnimation();
         }
         _super.prototype._onPointerOut.call(this, target, pi, force);
@@ -1686,14 +1804,14 @@ var Button = /** @class */ (function (_super) {
         if (!_super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi)) {
             return false;
         }
-        if (this.pointerDownAnimation) {
+        if (!this.isReadOnly && this.pointerDownAnimation) {
             this.pointerDownAnimation();
         }
         return true;
     };
     /** @hidden */
     Button.prototype._onPointerUp = function (target, coordinates, pointerId, buttonIndex, notifyClick, pi) {
-        if (this.pointerUpAnimation) {
+        if (!this.isReadOnly && this.pointerUpAnimation) {
             this.pointerUpAnimation();
         }
         _super.prototype._onPointerUp.call(this, target, coordinates, pointerId, buttonIndex, notifyClick, pi);
@@ -1707,7 +1825,7 @@ var Button = /** @class */ (function (_super) {
      * @returns a new Button
      */
     Button.CreateImageButton = function (name, text, imageUrl) {
-        var result = new Button(name);
+        var result = new this(name);
         // Adding text
         var textBlock = new _textBlock__WEBPACK_IMPORTED_MODULE_3__["TextBlock"](name + "_button", text);
         textBlock.textWrapping = true;
@@ -1732,7 +1850,7 @@ var Button = /** @class */ (function (_super) {
      * @returns a new Button
      */
     Button.CreateImageOnlyButton = function (name, imageUrl) {
-        var result = new Button(name);
+        var result = new this(name);
         // Adding image
         var iconImage = new _image__WEBPACK_IMPORTED_MODULE_4__["Image"](name + "_icon", imageUrl);
         iconImage.stretch = _image__WEBPACK_IMPORTED_MODULE_4__["Image"].STRETCH_FILL;
@@ -1749,7 +1867,7 @@ var Button = /** @class */ (function (_super) {
      * @returns a new Button
      */
     Button.CreateSimpleButton = function (name, text) {
-        var result = new Button(name);
+        var result = new this(name);
         // Adding text
         var textBlock = new _textBlock__WEBPACK_IMPORTED_MODULE_3__["TextBlock"](name + "_button", text);
         textBlock.textWrapping = true;
@@ -1767,7 +1885,7 @@ var Button = /** @class */ (function (_super) {
      * @returns a new Button
      */
     Button.CreateImageWithCenterTextButton = function (name, text, imageUrl) {
-        var result = new Button(name);
+        var result = new this(name);
         // Adding image
         var iconImage = new _image__WEBPACK_IMPORTED_MODULE_4__["Image"](name + "_icon", imageUrl);
         iconImage.stretch = _image__WEBPACK_IMPORTED_MODULE_4__["Image"].STRETCH_FILL;
@@ -1785,7 +1903,7 @@ var Button = /** @class */ (function (_super) {
     return Button;
 }(_rectangle__WEBPACK_IMPORTED_MODULE_1__["Rectangle"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_5__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Button"] = Button;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_5__["RegisterClass"])("BABYLON.GUI.Button", Button);
 
 
 /***/ }),
@@ -1806,6 +1924,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var _stackPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./stackPanel */ "./2D/controls/stackPanel.ts");
 /* harmony import */ var _textBlock__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./textBlock */ "./2D/controls/textBlock.ts");
+
 
 
 
@@ -1936,7 +2055,9 @@ var Checkbox = /** @class */ (function (_super) {
         if (!_super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi)) {
             return false;
         }
-        this.isChecked = !this.isChecked;
+        if (!this.isReadOnly) {
+            this.isChecked = !this.isChecked;
+        }
         return true;
     };
     /**
@@ -1965,10 +2086,22 @@ var Checkbox = /** @class */ (function (_super) {
         panel.addControl(header);
         return panel;
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Checkbox.prototype, "thickness", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Checkbox.prototype, "checkSizeRatio", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Checkbox.prototype, "background", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Checkbox.prototype, "isChecked", null);
     return Checkbox;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Checkbox"] = Checkbox;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.Checkbox", Checkbox);
 
 
 /***/ }),
@@ -2002,6 +2135,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 /** Class used to create color pickers */
 var ColorPicker = /** @class */ (function (_super) {
     Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ColorPicker, _super);
@@ -2022,7 +2157,7 @@ var ColorPicker = /** @class */ (function (_super) {
         _this._h = 360;
         _this._s = 1;
         _this._v = 1;
-        _this._lastPointerDownID = -1;
+        _this._lastPointerDownId = -1;
         /**
          * Observable raised when the value changes
          */
@@ -2085,6 +2220,10 @@ var ColorPicker = /** @class */ (function (_super) {
                 return;
             }
             if (this._width.fromString(value)) {
+                if (this._width.getValue(this._host) === 0) {
+                    value = '1px';
+                    this._width.fromString(value);
+                }
                 this._height.fromString(value);
                 this._markAsDirty();
             }
@@ -2106,6 +2245,10 @@ var ColorPicker = /** @class */ (function (_super) {
                 return;
             }
             if (this._height.fromString(value)) {
+                if (this._height.getValue(this._host) === 0) {
+                    value = '1px';
+                    this._height.fromString(value);
+                }
                 this._width.fromString(value);
                 this._markAsDirty();
             }
@@ -2171,9 +2314,12 @@ var ColorPicker = /** @class */ (function (_super) {
         context.stroke();
     };
     ColorPicker.prototype._createColorWheelCanvas = function (radius, thickness) {
-        var canvas = document.createElement("canvas");
-        canvas.width = radius * 2;
-        canvas.height = radius * 2;
+        // Shoudl abstract platform instead of using LastCreatedEngine
+        var engine = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Engine"].LastCreatedEngine;
+        if (!engine) {
+            throw new Error("Invalid engine. Unable to create a canvas.");
+        }
+        var canvas = engine.createCanvas(radius * 2, radius * 2);
         var context = canvas.getContext("2d");
         var image = context.getImageData(0, 0, radius * 2, radius * 2);
         var data = image.data;
@@ -2310,6 +2456,9 @@ var ColorPicker = /** @class */ (function (_super) {
         if (!_super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi)) {
             return false;
         }
+        if (this.isReadOnly) {
+            return true;
+        }
         this._pointerIsDown = true;
         this._pointerStartedOnSquare = false;
         this._pointerStartedOnWheel = false;
@@ -2325,20 +2474,22 @@ var ColorPicker = /** @class */ (function (_super) {
         }
         this._updateValueFromPointer(x, y);
         this._host._capturingControl[pointerId] = this;
-        this._lastPointerDownID = pointerId;
+        this._lastPointerDownId = pointerId;
         return true;
     };
     ColorPicker.prototype._onPointerMove = function (target, coordinates, pointerId, pi) {
         // Only listen to pointer move events coming from the last pointer to click on the element (To support dual vr controller interaction)
-        if (pointerId != this._lastPointerDownID) {
+        if (pointerId != this._lastPointerDownId) {
             return;
         }
-        // Invert transform
-        this._invertTransformMatrix.transformCoordinates(coordinates.x, coordinates.y, this._transformedPosition);
-        var x = this._transformedPosition.x;
-        var y = this._transformedPosition.y;
-        if (this._pointerIsDown) {
-            this._updateValueFromPointer(x, y);
+        if (!this.isReadOnly) {
+            // Invert transform
+            this._invertTransformMatrix.transformCoordinates(coordinates.x, coordinates.y, this._transformedPosition);
+            var x = this._transformedPosition.x;
+            var y = this._transformedPosition.y;
+            if (this._pointerIsDown) {
+                this._updateValueFromPointer(x, y);
+            }
         }
         _super.prototype._onPointerMove.call(this, target, coordinates, pointerId, pi);
     };
@@ -3358,10 +3509,22 @@ var ColorPicker = /** @class */ (function (_super) {
         });
     };
     ColorPicker._Epsilon = 0.000001;
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], ColorPicker.prototype, "value", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], ColorPicker.prototype, "width", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], ColorPicker.prototype, "height", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], ColorPicker.prototype, "size", null);
     return ColorPicker;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.ColorPicker"] = ColorPicker;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.ColorPicker", ColorPicker);
 
 
 /***/ }),
@@ -3381,6 +3544,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../measure */ "./2D/measure.ts");
+
+
+
+
 
 
 
@@ -3409,6 +3576,10 @@ var Container = /** @class */ (function (_super) {
         _this._adaptWidthToChildren = false;
         /** @hidden */
         _this._adaptHeightToChildren = false;
+        /** @hidden */
+        _this._renderToIntermediateTexture = false;
+        /** @hidden */
+        _this._intermediateTexture = null;
         /**
          * Gets or sets a boolean indicating that layout cycle errors should be displayed on the console
          */
@@ -3419,6 +3590,21 @@ var Container = /** @class */ (function (_super) {
         _this.maxLayoutCycle = 3;
         return _this;
     }
+    Object.defineProperty(Container.prototype, "renderToIntermediateTexture", {
+        /** Gets or sets boolean indicating if children should be rendered to an intermediate texture rather than directly to host, useful for alpha blending */
+        get: function () {
+            return this._renderToIntermediateTexture;
+        },
+        set: function (value) {
+            if (this._renderToIntermediateTexture === value) {
+                return;
+            }
+            this._renderToIntermediateTexture = value;
+            this._markAsDirty();
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Container.prototype, "adaptHeightToChildren", {
         /** Gets or sets a boolean indicating if the container should try to adapt to its children height */
         get: function () {
@@ -3474,6 +3660,20 @@ var Container = /** @class */ (function (_super) {
         /** Gets the list of children */
         get: function () {
             return this._children;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Container.prototype, "isReadOnly", {
+        get: function () {
+            return this._isReadOnly;
+        },
+        set: function (value) {
+            this._isReadOnly = value;
+            for (var _i = 0, _a = this._children; _i < _a.length; _i++) {
+                var child = _a[_i];
+                child.isReadOnly = value;
+            }
         },
         enumerable: false,
         configurable: true
@@ -3645,10 +3845,24 @@ var Container = /** @class */ (function (_super) {
         if (this._isDirty || !this._cachedParentMeasure.isEqualsTo(parentMeasure)) {
             _super.prototype._processMeasures.call(this, parentMeasure, context);
             this._evaluateClippingState(parentMeasure);
+            if (this._renderToIntermediateTexture) {
+                if (this._intermediateTexture && this._host.getScene() != this._intermediateTexture.getScene()) {
+                    this._intermediateTexture.dispose();
+                    this._intermediateTexture = null;
+                }
+                if (!this._intermediateTexture) {
+                    this._intermediateTexture = new babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["DynamicTexture"]('', { width: this._currentMeasure.width, height: this._currentMeasure.height }, this._host.getScene(), false, babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE, babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["Constants"].TEXTUREFORMAT_RGBA, false);
+                    this._intermediateTexture.hasAlpha = true;
+                }
+                else {
+                    this._intermediateTexture.scaleTo(this._currentMeasure.width, this._currentMeasure.height);
+                }
+            }
         }
     };
     /** @hidden */
     Container.prototype._layout = function (parentMeasure, context) {
+        var _a, _b;
         if (!this.isDirty && (!this.isVisible || this.notRenderable)) {
             return false;
         }
@@ -3666,8 +3880,8 @@ var Container = /** @class */ (function (_super) {
             this._rebuildLayout = false;
             this._processMeasures(parentMeasure, context);
             if (!this._isClipped) {
-                for (var _i = 0, _a = this._children; _i < _a.length; _i++) {
-                    var child = _a[_i];
+                for (var _i = 0, _c = this._children; _i < _c.length; _i++) {
+                    var child = _c[_i];
                     child._tempParentMeasure.copyFrom(this._measureForChildren);
                     if (child._layout(this._measureForChildren, context)) {
                         if (this.adaptWidthToChildren && child._width.isPixel) {
@@ -3681,6 +3895,7 @@ var Container = /** @class */ (function (_super) {
                 if (this.adaptWidthToChildren && computedWidth >= 0) {
                     computedWidth += this.paddingLeftInPixels + this.paddingRightInPixels;
                     if (this.width !== computedWidth + "px") {
+                        (_a = this.parent) === null || _a === void 0 ? void 0 : _a._markAsDirty();
                         this.width = computedWidth + "px";
                         this._rebuildLayout = true;
                     }
@@ -3688,6 +3903,7 @@ var Container = /** @class */ (function (_super) {
                 if (this.adaptHeightToChildren && computedHeight >= 0) {
                     computedHeight += this.paddingTopInPixels + this.paddingBottomInPixels;
                     if (this.height !== computedHeight + "px") {
+                        (_b = this.parent) === null || _b === void 0 ? void 0 : _b._markAsDirty();
                         this.height = computedHeight + "px";
                         this._rebuildLayout = true;
                     }
@@ -3711,9 +3927,22 @@ var Container = /** @class */ (function (_super) {
     };
     /** @hidden */
     Container.prototype._draw = function (context, invalidatedRectangle) {
-        this._localDraw(context);
+        var renderToIntermediateTextureThisDraw = this._renderToIntermediateTexture && this._intermediateTexture;
+        var contextToDrawTo = renderToIntermediateTextureThisDraw ? this._intermediateTexture.getContext() : context;
+        if (renderToIntermediateTextureThisDraw) {
+            contextToDrawTo.save();
+            contextToDrawTo.translate(-this._currentMeasure.left, -this._currentMeasure.top);
+            if (invalidatedRectangle) {
+                contextToDrawTo.clearRect(invalidatedRectangle.left, invalidatedRectangle.top, invalidatedRectangle.width, invalidatedRectangle.height);
+            }
+            else {
+                contextToDrawTo.clearRect(this._currentMeasure.left, this._currentMeasure.top, this._currentMeasure.width, this._currentMeasure.height);
+            }
+        }
+        this._localDraw(contextToDrawTo);
+        context.save();
         if (this.clipChildren) {
-            this._clipForChildren(context);
+            this._clipForChildren(contextToDrawTo);
         }
         for (var _i = 0, _a = this._children; _i < _a.length; _i++) {
             var child = _a[_i];
@@ -3723,8 +3952,16 @@ var Container = /** @class */ (function (_super) {
                     continue;
                 }
             }
-            child._render(context, invalidatedRectangle);
+            child._render(contextToDrawTo, invalidatedRectangle);
         }
+        if (renderToIntermediateTextureThisDraw) {
+            contextToDrawTo.restore();
+            context.save();
+            context.globalAlpha = this.alpha;
+            context.drawImage(contextToDrawTo.canvas, this._currentMeasure.left, this._currentMeasure.top);
+            context.restore();
+        }
+        context.restore();
     };
     Container.prototype.getDescendantsToRef = function (results, directDescendantsOnly, predicate) {
         if (directDescendantsOnly === void 0) { directDescendantsOnly = false; }
@@ -3769,17 +4006,63 @@ var Container = /** @class */ (function (_super) {
         _super.prototype._additionalProcessing.call(this, parentMeasure, context);
         this._measureForChildren.copyFrom(this._currentMeasure);
     };
+    /**
+    * Serializes the current control
+    * @param serializationObject defined the JSON serialized object
+    */
+    Container.prototype.serialize = function (serializationObject) {
+        _super.prototype.serialize.call(this, serializationObject);
+        if (!this.children.length) {
+            return;
+        }
+        serializationObject.children = [];
+        for (var _i = 0, _a = this.children; _i < _a.length; _i++) {
+            var child = _a[_i];
+            var childSerializationObject = {};
+            child.serialize(childSerializationObject);
+            serializationObject.children.push(childSerializationObject);
+        }
+    };
     /** Releases associated resources */
     Container.prototype.dispose = function () {
+        var _a;
         _super.prototype.dispose.call(this);
         for (var index = this.children.length - 1; index >= 0; index--) {
             this.children[index].dispose();
         }
+        (_a = this._intermediateTexture) === null || _a === void 0 ? void 0 : _a.dispose();
     };
+    /** @hidden */
+    Container.prototype._parseFromContent = function (serializedObject, host) {
+        _super.prototype._parseFromContent.call(this, serializedObject, host);
+        this._link(host);
+        if (!serializedObject.children) {
+            return;
+        }
+        for (var _i = 0, _a = serializedObject.children; _i < _a.length; _i++) {
+            var childData = _a[_i];
+            this.addControl(_control__WEBPACK_IMPORTED_MODULE_2__["Control"].Parse(childData, host));
+        }
+    };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Container.prototype, "renderToIntermediateTexture", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Container.prototype, "maxLayoutCycle", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Container.prototype, "adaptHeightToChildren", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Container.prototype, "adaptWidthToChildren", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Container.prototype, "background", null);
     return Container;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Container"] = Container;
+Object(babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.Container", Container);
 
 
 /***/ }),
@@ -3794,11 +4077,15 @@ babylonjs_Misc_logger__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return Control; });
-/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Misc/observable */ "babylonjs/Misc/observable");
-/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../valueAndUnit */ "./2D/valueAndUnit.ts");
-/* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../measure */ "./2D/measure.ts");
-/* harmony import */ var _math2D__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../math2D */ "./2D/math2D.ts");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/observable */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../valueAndUnit */ "./2D/valueAndUnit.ts");
+/* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../measure */ "./2D/measure.ts");
+/* harmony import */ var _math2D__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../math2D */ "./2D/math2D.ts");
+
+
+
 
 
 
@@ -3826,16 +4113,19 @@ var Control = /** @class */ (function () {
         this._alphaSet = false;
         this._zIndex = 0;
         /** @hidden */
-        this._currentMeasure = _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"].Empty();
+        this._currentMeasure = _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"].Empty();
+        //++CR temp: changing access from private to protected
         this._fontFamily = "Arial";
         this._fontStyle = "";
         this._fontWeight = "";
-        this._fontSize = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](18, _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"].UNITMODE_PIXEL, false);
+        this._fontSize = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](18, _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"].UNITMODE_PIXEL, false);
+        //--CR
         /** @hidden */
-        this._width = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](1, _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"].UNITMODE_PERCENTAGE, false);
+        this._width = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](1, _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"].UNITMODE_PERCENTAGE, false);
         /** @hidden */
-        this._height = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](1, _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"].UNITMODE_PERCENTAGE, false);
+        this._height = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](1, _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"].UNITMODE_PERCENTAGE, false);
         this._color = "";
+        //++CR temp: changing access from private to protected
         this._style = null;
         /** @hidden */
         this._horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_CENTER;
@@ -3846,35 +4136,37 @@ var Control = /** @class */ (function () {
         /** @hidden */
         this._wasDirty = false;
         /** @hidden */
-        this._tempParentMeasure = _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"].Empty();
+        this._tempParentMeasure = _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"].Empty();
         /** @hidden */
-        this._prevCurrentMeasureTransformedIntoGlobalSpace = _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"].Empty();
+        this._prevCurrentMeasureTransformedIntoGlobalSpace = _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"].Empty();
         /** @hidden */
-        this._cachedParentMeasure = _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"].Empty();
-        this._paddingLeft = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
-        this._paddingRight = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
-        this._paddingTop = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
-        this._paddingBottom = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
+        this._cachedParentMeasure = _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"].Empty();
+        this._paddingLeft = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
+        this._paddingRight = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
+        this._paddingTop = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
+        this._paddingBottom = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
         /** @hidden */
-        this._left = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
+        this._left = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
         /** @hidden */
-        this._top = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
+        this._top = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
         this._scaleX = 1.0;
         this._scaleY = 1.0;
         this._rotation = 0;
         this._transformCenterX = 0.5;
         this._transformCenterY = 0.5;
         /** @hidden */
-        this._transformMatrix = _math2D__WEBPACK_IMPORTED_MODULE_3__["Matrix2D"].Identity();
+        this._transformMatrix = _math2D__WEBPACK_IMPORTED_MODULE_4__["Matrix2D"].Identity();
         /** @hidden */
-        this._invertTransformMatrix = _math2D__WEBPACK_IMPORTED_MODULE_3__["Matrix2D"].Identity();
+        this._invertTransformMatrix = _math2D__WEBPACK_IMPORTED_MODULE_4__["Matrix2D"].Identity();
         /** @hidden */
-        this._transformedPosition = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector2"].Zero();
+        this._transformedPosition = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"].Zero();
         this._isMatrixDirty = true;
         this._isVisible = true;
         this._isHighlighted = false;
+        this._highlightColor = "#4affff";
+        this._highlightLineWidth = 2;
         this._fontSet = false;
-        this._dummyVector2 = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector2"].Zero();
+        this._dummyVector2 = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"].Zero();
         this._downCount = 0;
         this._enterCount = -1;
         this._doNotRender = false;
@@ -3882,6 +4174,7 @@ var Control = /** @class */ (function () {
         this._isEnabled = true;
         this._disabledColor = "#9a9a9a";
         this._disabledColorItem = "#6a6a6a";
+        this._isReadOnly = false;
         /** @hidden */
         this._rebuildLayout = false;
         /** @hidden */
@@ -3917,57 +4210,58 @@ var Control = /** @class */ (function () {
         this._shadowOffsetX = 0;
         this._shadowOffsetY = 0;
         this._shadowBlur = 0;
+        this._previousShadowBlur = 0;
         this._shadowColor = 'black';
         /** Gets or sets the cursor to use when the control is hovered */
         this.hoverCursor = "";
         /** @hidden */
-        this._linkOffsetX = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
+        this._linkOffsetX = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
         /** @hidden */
-        this._linkOffsetY = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_1__["ValueAndUnit"](0);
+        this._linkOffsetY = new _valueAndUnit__WEBPACK_IMPORTED_MODULE_2__["ValueAndUnit"](0);
         /**
         * An event triggered when pointer wheel is scrolled
         */
-        this.onWheelObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onWheelObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
-        * An event triggered when the pointer move over the control.
+        * An event triggered when the pointer moves over the control.
         */
-        this.onPointerMoveObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onPointerMoveObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
-        * An event triggered when the pointer move out of the control.
+        * An event triggered when the pointer moves out of the control.
         */
-        this.onPointerOutObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onPointerOutObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
         * An event triggered when the pointer taps the control
         */
-        this.onPointerDownObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onPointerDownObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
         * An event triggered when pointer up
         */
-        this.onPointerUpObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onPointerUpObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
         * An event triggered when a control is clicked on
         */
-        this.onPointerClickObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onPointerClickObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
         * An event triggered when pointer enters the control
         */
-        this.onPointerEnterObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onPointerEnterObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
         * An event triggered when the control is marked as dirty
         */
-        this.onDirtyObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onDirtyObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
          * An event triggered before drawing the control
          */
-        this.onBeforeDrawObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onBeforeDrawObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
          * An event triggered after the control was drawn
          */
-        this.onAfterDrawObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onAfterDrawObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
         * An event triggered when the control has been disposed
         */
-        this.onDisposeObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        this.onDisposeObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /**
          * Gets or sets a fixed ratio for this control.
          * When different from 0, the ratio is used to compute the "second" dimension.
@@ -3976,8 +4270,22 @@ var Control = /** @class */ (function () {
          */
         this.fixedRatio = 0;
         this._fixedRatioMasterIsWidth = true;
-        this._tmpMeasureA = new _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"](0, 0, 0, 0);
+        this._tmpMeasureA = new _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"](0, 0, 0, 0);
     }
+    Object.defineProperty(Control.prototype, "isReadOnly", {
+        /**
+         * Gets or sets a boolean indicating if the control is readonly (default: false).
+         * A readonly control will still raise pointer events but will not react to them
+         */
+        get: function () {
+            return this._isReadOnly;
+        },
+        set: function (value) {
+            this._isReadOnly = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Control.prototype, "shadowOffsetX", {
         /** Gets or sets a value indicating the offset to apply on X axis to render the shadow */
         get: function () {
@@ -4017,6 +4325,7 @@ var Control = /** @class */ (function () {
             if (this._shadowBlur === value) {
                 return;
             }
+            this._previousShadowBlur = this._shadowBlur;
             this._shadowBlur = value;
             this._markAsDirty();
         },
@@ -4091,6 +4400,23 @@ var Control = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(Control.prototype, "highlightLineWidth", {
+        /**
+         * Gets or sets a number indicating size of stroke we want to highlight the control with (mostly for debugging purpose)
+         */
+        get: function () {
+            return this._highlightLineWidth;
+        },
+        set: function (value) {
+            if (this._highlightLineWidth === value) {
+                return;
+            }
+            this._highlightLineWidth = value;
+            this._markAsDirty();
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Control.prototype, "isHighlighted", {
         /**
          * Gets or sets a boolean indicating that we want to highlight the control (mostly for debugging purpose)
@@ -4103,6 +4429,23 @@ var Control = /** @class */ (function () {
                 return;
             }
             this._isHighlighted = value;
+            this._markAsDirty();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Control.prototype, "highlightColor", {
+        /**
+         * Gets or sets a string defining the color to use for highlighting this control
+         */
+        get: function () {
+            return this._highlightColor;
+        },
+        set: function (value) {
+            if (this._highlightColor === value) {
+                return;
+            }
+            this._highlightColor = value;
             this._markAsDirty();
         },
         enumerable: false,
@@ -4313,9 +4656,6 @@ var Control = /** @class */ (function () {
     Object.defineProperty(Control.prototype, "fontFamily", {
         /** Gets or set font family */
         get: function () {
-            if (!this._fontSet) {
-                return "";
-            }
             return this._fontFamily;
         },
         set: function (value) {
@@ -4789,7 +5129,7 @@ var Control = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Control.prototype, "isEnabled", {
-        /** Gets or sets if control is Enabled*/
+        /** Gets or sets if control is Enabled */
         get: function () {
             return this._isEnabled;
         },
@@ -4804,7 +5144,7 @@ var Control = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Control.prototype, "disabledColor", {
-        /** Gets or sets background color of control if it's disabled*/
+        /** Gets or sets background color of control if it's disabled */
         get: function () {
             return this._disabledColor;
         },
@@ -4819,7 +5159,7 @@ var Control = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Control.prototype, "disabledColorItem", {
-        /** Gets or sets front color of control if it's disabled*/
+        /** Gets or sets front color of control if it's disabled */
         get: function () {
             return this._disabledColorItem;
         },
@@ -4876,7 +5216,7 @@ var Control = /** @class */ (function () {
      * @returns the new coordinates in local space
      */
     Control.prototype.getLocalCoordinates = function (globalCoordinates) {
-        var result = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector2"].Zero();
+        var result = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"].Zero();
         this.getLocalCoordinatesToRef(globalCoordinates, result);
         return result;
     };
@@ -4897,7 +5237,7 @@ var Control = /** @class */ (function () {
      * @returns the new coordinates in parent local space
      */
     Control.prototype.getParentLocalCoordinates = function (globalCoordinates) {
-        var result = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector2"].Zero();
+        var result = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"].Zero();
         result.x = globalCoordinates.x - this._cachedParentMeasure.left;
         result.y = globalCoordinates.y - this._cachedParentMeasure.top;
         return result;
@@ -4909,13 +5249,13 @@ var Control = /** @class */ (function () {
      */
     Control.prototype.moveToVector3 = function (position, scene) {
         if (!this._host || this.parent !== this._host._rootContainer) {
-            babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Tools"].Error("Cannot move a control to a vector3 if the control is not at root level");
+            babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Tools"].Error("Cannot move a control to a vector3 if the control is not at root level");
             return;
         }
         this.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-        var globalViewport = this._host._getGlobalViewport(scene);
-        var projectedPosition = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector3"].Project(position, babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Matrix"].Identity(), scene.getTransformMatrix(), globalViewport);
+        var globalViewport = this._host._getGlobalViewport();
+        var projectedPosition = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Project(position, babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Matrix"].Identity(), scene.getTransformMatrix(), globalViewport);
         this._moveToProjectedPosition(projectedPosition);
         if (projectedPosition.z < 0 || projectedPosition.z > 1) {
             this.notRenderable = true;
@@ -4952,7 +5292,7 @@ var Control = /** @class */ (function () {
     Control.prototype.linkWithMesh = function (mesh) {
         if (!this._host || this.parent && this.parent !== this._host._rootContainer) {
             if (mesh) {
-                babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Tools"].Error("Cannot link a control to a mesh if the control is not at root level");
+                babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Tools"].Error("Cannot link a control to a mesh if the control is not at root level");
             }
             return;
         }
@@ -4972,10 +5312,53 @@ var Control = /** @class */ (function () {
         this._linkedMesh = mesh;
         this._host._linkedControls.push(this);
     };
+    /**
+    * Shorthand funtion to set the top, right, bottom, and left padding values on the control.
+    * @param { string | number} paddingTop - The value of the top padding.
+    * @param { string | number} paddingRight - The value of the right padding. If omitted, top is used.
+    * @param { string | number} paddingBottom - The value of the bottom padding. If omitted, top is used.
+    * @param { string | number} paddingLeft - The value of the left padding. If omitted, right is used.
+    * @see https://doc.babylonjs.com/how_to/gui#position-and-size
+    */
+    Control.prototype.setPadding = function (paddingTop, paddingRight, paddingBottom, paddingLeft) {
+        var top = paddingTop;
+        var right = paddingRight !== null && paddingRight !== void 0 ? paddingRight : top;
+        var bottom = paddingBottom !== null && paddingBottom !== void 0 ? paddingBottom : top;
+        var left = paddingLeft !== null && paddingLeft !== void 0 ? paddingLeft : right;
+        this.paddingTop = top;
+        this.paddingRight = right;
+        this.paddingBottom = bottom;
+        this.paddingLeft = left;
+    };
+    /**
+     * Shorthand funtion to set the top, right, bottom, and left padding values in pixels on the control.
+     * @param { number} paddingTop - The value in pixels of the top padding.
+     * @param { number} paddingRight - The value in pixels of the right padding. If omitted, top is used.
+     * @param { number} paddingBottom - The value in pixels of the bottom padding. If omitted, top is used.
+     * @param { number} paddingLeft - The value in pixels of the left padding. If omitted, right is used.
+     * @see https://doc.babylonjs.com/how_to/gui#position-and-size
+     */
+    Control.prototype.setPaddingInPixels = function (paddingTop, paddingRight, paddingBottom, paddingLeft) {
+        var top = paddingTop;
+        var right = paddingRight !== null && paddingRight !== void 0 ? paddingRight : top;
+        var bottom = paddingBottom !== null && paddingBottom !== void 0 ? paddingBottom : top;
+        var left = paddingLeft !== null && paddingLeft !== void 0 ? paddingLeft : right;
+        this.paddingTopInPixels = top;
+        this.paddingRightInPixels = right;
+        this.paddingBottomInPixels = bottom;
+        this.paddingLeftInPixels = left;
+    };
     /** @hidden */
     Control.prototype._moveToProjectedPosition = function (projectedPosition) {
+        var _a;
         var oldLeft = this._left.getValue(this._host);
         var oldTop = this._top.getValue(this._host);
+        if (this._currentMeasure.width === 0 && this._currentMeasure.height === 0) {
+            var parentMeasure = (_a = this.parent) === null || _a === void 0 ? void 0 : _a._currentMeasure;
+            if (parentMeasure) {
+                this._processMeasures(parentMeasure, this._host.getContext());
+            }
+        }
         var newLeft = ((projectedPosition.x + this._linkOffsetX.getValue(this._host)) - this._currentMeasure.width / 2);
         var newTop = ((projectedPosition.y + this._linkOffsetY.getValue(this._host)) - this._currentMeasure.height / 2);
         if (this._left.ignoreAdaptiveScaling && this._top.ignoreAdaptiveScaling) {
@@ -5030,6 +5413,14 @@ var Control = /** @class */ (function () {
         return true;
     };
     /** @hidden */
+    Control.prototype._computeAdditionnalOffsetX = function () {
+        return 0;
+    };
+    /** @hidden */
+    Control.prototype._computeAdditionnalOffsetY = function () {
+        return 0;
+    };
+    /** @hidden */
     Control.prototype.invalidateRect = function () {
         this._transform();
         if (this.host && this.host.useInvalidateRectOptimization) {
@@ -5037,21 +5428,18 @@ var Control = /** @class */ (function () {
             this._currentMeasure.transformToRef(this._transformMatrix, this._tmpMeasureA);
             // get the boudning box of the current measure and last frames measure in global space and invalidate it
             // the previous measure is used to properly clear a control that is scaled down
-            _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"].CombineToRef(this._tmpMeasureA, this._prevCurrentMeasureTransformedIntoGlobalSpace, this._tmpMeasureA);
-            if (this.shadowBlur || this.shadowOffsetX || this.shadowOffsetY) {
-                // Expand rect based on shadows
-                var shadowOffsetX = this.shadowOffsetX;
-                var shadowOffsetY = this.shadowOffsetY;
-                var shadowBlur = this.shadowBlur;
-                var leftShadowOffset = Math.min(Math.min(shadowOffsetX, 0) - shadowBlur * 2, 0);
-                var rightShadowOffset = Math.max(Math.max(shadowOffsetX, 0) + shadowBlur * 2, 0);
-                var topShadowOffset = Math.min(Math.min(shadowOffsetY, 0) - shadowBlur * 2, 0);
-                var bottomShadowOffset = Math.max(Math.max(shadowOffsetY, 0) + shadowBlur * 2, 0);
-                this.host.invalidateRect(Math.floor(this._tmpMeasureA.left + leftShadowOffset), Math.floor(this._tmpMeasureA.top + topShadowOffset), Math.ceil(this._tmpMeasureA.left + this._tmpMeasureA.width + rightShadowOffset), Math.ceil(this._tmpMeasureA.top + this._tmpMeasureA.height + bottomShadowOffset));
-            }
-            else {
-                this.host.invalidateRect(Math.floor(this._tmpMeasureA.left), Math.floor(this._tmpMeasureA.top), Math.ceil(this._tmpMeasureA.left + this._tmpMeasureA.width), Math.ceil(this._tmpMeasureA.top + this._tmpMeasureA.height));
-            }
+            _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"].CombineToRef(this._tmpMeasureA, this._prevCurrentMeasureTransformedIntoGlobalSpace, this._tmpMeasureA);
+            // Expand rect based on shadows
+            var shadowOffsetX = this.shadowOffsetX;
+            var shadowOffsetY = this.shadowOffsetY;
+            var shadowBlur = Math.max(this._previousShadowBlur, this.shadowBlur);
+            var leftShadowOffset = Math.min(Math.min(shadowOffsetX, 0) - shadowBlur * 2, 0);
+            var rightShadowOffset = Math.max(Math.max(shadowOffsetX, 0) + shadowBlur * 2, 0);
+            var topShadowOffset = Math.min(Math.min(shadowOffsetY, 0) - shadowBlur * 2, 0);
+            var bottomShadowOffset = Math.max(Math.max(shadowOffsetY, 0) + shadowBlur * 2, 0);
+            var offsetX = this._computeAdditionnalOffsetX();
+            var offsetY = this._computeAdditionnalOffsetY();
+            this.host.invalidateRect(Math.floor(this._tmpMeasureA.left + leftShadowOffset - offsetX), Math.floor(this._tmpMeasureA.top + topShadowOffset - offsetY), Math.ceil(this._tmpMeasureA.left + this._tmpMeasureA.width + rightShadowOffset + offsetX), Math.ceil(this._tmpMeasureA.top + this._tmpMeasureA.height + bottomShadowOffset + offsetY));
         }
     };
     /** @hidden */
@@ -5103,7 +5491,7 @@ var Control = /** @class */ (function () {
             this._cachedOffsetY = offsetY;
             this._isMatrixDirty = false;
             this._flagDescendantsAsMatrixDirty();
-            _math2D__WEBPACK_IMPORTED_MODULE_3__["Matrix2D"].ComposeToRef(-offsetX, -offsetY, this._rotation, this._scaleX, this._scaleY, this.parent ? this.parent._transformMatrix : null, this._transformMatrix);
+            _math2D__WEBPACK_IMPORTED_MODULE_4__["Matrix2D"].ComposeToRef(-offsetX, -offsetY, this._rotation, this._scaleX, this._scaleY, this.parent ? this.parent._transformMatrix : null, this._transformMatrix);
             this._transformMatrix.invertToRef(this._invertTransformMatrix);
         }
     };
@@ -5113,8 +5501,8 @@ var Control = /** @class */ (function () {
             return;
         }
         context.save();
-        context.strokeStyle = "#4affff";
-        context.lineWidth = 2;
+        context.strokeStyle = this._highlightColor;
+        context.lineWidth = this._highlightLineWidth;
         this._renderHighlightSpecific(context);
         context.restore();
     };
@@ -5141,7 +5529,7 @@ var Control = /** @class */ (function () {
             context.globalAlpha *= this._alpha;
         }
         else if (this._alphaSet) {
-            context.globalAlpha = this.parent ? this.parent.alpha * this._alpha : this._alpha;
+            context.globalAlpha = (this.parent && !this.parent.renderToIntermediateTexture) ? this.parent.alpha * this._alpha : this._alpha;
         }
     };
     /** @hidden */
@@ -5161,7 +5549,7 @@ var Control = /** @class */ (function () {
                 rebuildCount++;
             } while (this._rebuildLayout && rebuildCount < 3);
             if (rebuildCount >= 3) {
-                babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Logger"].Error("Layout cycle detected in GUI (Control name=" + this.name + ", uniqueId=" + this.uniqueId + ")");
+                babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Logger"].Error("Layout cycle detected in GUI (Control name=" + this.name + ", uniqueId=" + this.uniqueId + ")");
             }
             context.restore();
             this.invalidateRect();
@@ -5329,7 +5717,7 @@ var Control = /** @class */ (function () {
             // Rotate the invalidated rect into the control's space
             invalidatedRectangle.transformToRef(this._invertTransformMatrix, this._tmpMeasureA);
             // Get the intersection of the rect in context space and the current context
-            var intersection = new _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"](0, 0, 0, 0);
+            var intersection = new _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"](0, 0, 0, 0);
             intersection.left = Math.max(this._tmpMeasureA.left, this._currentMeasure.left);
             intersection.top = Math.max(this._tmpMeasureA.top, this._currentMeasure.top);
             intersection.width = Math.min(this._tmpMeasureA.left + this._tmpMeasureA.width, this._currentMeasure.left + this._currentMeasure.width) - intersection.left;
@@ -5482,7 +5870,7 @@ var Control = /** @class */ (function () {
         }
         this._downCount++;
         this._downPointerIds[pointerId] = true;
-        var canNotify = this.onPointerDownObservable.notifyObservers(new _math2D__WEBPACK_IMPORTED_MODULE_3__["Vector2WithInfo"](coordinates, buttonIndex), -1, target, this, pi);
+        var canNotify = this.onPointerDownObservable.notifyObservers(new _math2D__WEBPACK_IMPORTED_MODULE_4__["Vector2WithInfo"](coordinates, buttonIndex), -1, target, this, pi);
         if (canNotify && this.parent != null) {
             this.parent._onPointerDown(target, coordinates, pointerId, buttonIndex, pi);
         }
@@ -5497,9 +5885,9 @@ var Control = /** @class */ (function () {
         delete this._downPointerIds[pointerId];
         var canNotifyClick = notifyClick;
         if (notifyClick && (this._enterCount > 0 || this._enterCount === -1)) {
-            canNotifyClick = this.onPointerClickObservable.notifyObservers(new _math2D__WEBPACK_IMPORTED_MODULE_3__["Vector2WithInfo"](coordinates, buttonIndex), -1, target, this, pi);
+            canNotifyClick = this.onPointerClickObservable.notifyObservers(new _math2D__WEBPACK_IMPORTED_MODULE_4__["Vector2WithInfo"](coordinates, buttonIndex), -1, target, this, pi);
         }
-        var canNotify = this.onPointerUpObservable.notifyObservers(new _math2D__WEBPACK_IMPORTED_MODULE_3__["Vector2WithInfo"](coordinates, buttonIndex), -1, target, this, pi);
+        var canNotify = this.onPointerUpObservable.notifyObservers(new _math2D__WEBPACK_IMPORTED_MODULE_4__["Vector2WithInfo"](coordinates, buttonIndex), -1, target, this, pi);
         if (canNotify && this.parent != null) {
             this.parent._onPointerUp(target, coordinates, pointerId, buttonIndex, canNotifyClick, pi);
         }
@@ -5508,11 +5896,11 @@ var Control = /** @class */ (function () {
     Control.prototype._forcePointerUp = function (pointerId) {
         if (pointerId === void 0) { pointerId = null; }
         if (pointerId !== null) {
-            this._onPointerUp(this, babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector2"].Zero(), pointerId, 0, true);
+            this._onPointerUp(this, babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"].Zero(), pointerId, 0, true);
         }
         else {
             for (var key in this._downPointerIds) {
-                this._onPointerUp(this, babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector2"].Zero(), +key, 0, true);
+                this._onPointerUp(this, babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"].Zero(), +key, 0, true);
             }
         }
     };
@@ -5521,7 +5909,7 @@ var Control = /** @class */ (function () {
         if (!this._isEnabled) {
             return;
         }
-        var canNotify = this.onWheelObservable.notifyObservers(new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector2"](deltaX, deltaY));
+        var canNotify = this.onWheelObservable.notifyObservers(new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector2"](deltaX, deltaY));
         if (canNotify && this.parent != null) {
             this.parent._onWheelScroll(deltaX, deltaY);
         }
@@ -5534,7 +5922,7 @@ var Control = /** @class */ (function () {
             return false;
         }
         this._dummyVector2.copyFromFloats(x, y);
-        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["PointerEventTypes"].POINTERMOVE) {
+        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERMOVE) {
             this._onPointerMove(this, this._dummyVector2, pointerId, pi);
             var previousControlOver = this._host._lastControlOver[pointerId];
             if (previousControlOver && previousControlOver !== this) {
@@ -5546,20 +5934,20 @@ var Control = /** @class */ (function () {
             this._host._lastControlOver[pointerId] = this;
             return true;
         }
-        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["PointerEventTypes"].POINTERDOWN) {
+        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERDOWN) {
             this._onPointerDown(this, this._dummyVector2, pointerId, buttonIndex, pi);
             this._host._registerLastControlDown(this, pointerId);
             this._host._lastPickedControl = this;
             return true;
         }
-        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["PointerEventTypes"].POINTERUP) {
+        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERUP) {
             if (this._host._lastControlDown[pointerId]) {
                 this._host._lastControlDown[pointerId]._onPointerUp(this, this._dummyVector2, pointerId, buttonIndex, true, pi);
             }
             delete this._host._lastControlDown[pointerId];
             return true;
         }
-        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["PointerEventTypes"].POINTERWHEEL) {
+        if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERWHEEL) {
             if (this._host._lastControlOver[pointerId]) {
                 this._host._lastControlOver[pointerId]._onWheelScroll(deltaX, deltaY);
                 return true;
@@ -5578,6 +5966,36 @@ var Control = /** @class */ (function () {
             this._font = this._fontStyle + " " + this._fontWeight + " " + this.fontSizeInPixels + "px " + this._fontFamily;
         }
         this._fontOffset = Control._GetFontOffset(this._font);
+    };
+    /**
+     * Serializes the current control
+     * @param serializationObject defined the JSON serialized object
+     */
+    Control.prototype.serialize = function (serializationObject) {
+        babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Serialize(this, serializationObject);
+        serializationObject.name = this.name;
+        serializationObject.className = this.getClassName();
+        if (this._font) {
+            serializationObject.fontFamily = this._fontFamily;
+            serializationObject.fontSize = this.fontSize;
+            serializationObject.fontWeight = this.fontWeight;
+            serializationObject.fontStyle = this.fontStyle;
+        }
+    };
+    /** @hidden */
+    Control.prototype._parseFromContent = function (serializedObject, host) {
+        if (serializedObject.fontFamily) {
+            this.fontFamily = serializedObject.fontFamily;
+        }
+        if (serializedObject.fontSize) {
+            this.fontSize = serializedObject.fontSize;
+        }
+        if (serializedObject.fontWeight) {
+            this.fontWeight = serializedObject.fontWeight;
+        }
+        if (serializedObject.fontStyle) {
+            this.fontStyle = serializedObject.fontStyle;
+        }
     };
     /** Releases associated resources */
     Control.prototype.dispose = function () {
@@ -5662,32 +6080,26 @@ var Control = /** @class */ (function () {
         if (Control._FontHeightSizes[font]) {
             return Control._FontHeightSizes[font];
         }
-        var text = document.createElement("span");
-        text.innerHTML = "Hg";
-        text.style.font = font;
-        var block = document.createElement("div");
-        block.style.display = "inline-block";
-        block.style.width = "1px";
-        block.style.height = "0px";
-        block.style.verticalAlign = "bottom";
-        var div = document.createElement("div");
-        div.style.whiteSpace = "nowrap";
-        div.appendChild(text);
-        div.appendChild(block);
-        document.body.appendChild(div);
-        var fontAscent = 0;
-        var fontHeight = 0;
-        try {
-            fontHeight = block.getBoundingClientRect().top - text.getBoundingClientRect().top;
-            block.style.verticalAlign = "baseline";
-            fontAscent = block.getBoundingClientRect().top - text.getBoundingClientRect().top;
+        var engine = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Engine"].LastCreatedEngine;
+        if (!engine) {
+            throw new Error("Invalid engine. Unable to create a canvas.");
         }
-        finally {
-            document.body.removeChild(div);
-        }
-        var result = { ascent: fontAscent, height: fontHeight, descent: fontHeight - fontAscent };
+        var result = engine.getFontOffset(font);
         Control._FontHeightSizes[font] = result;
         return result;
+    };
+    /**
+     * Creates a Control from parsed data
+     * @param serializedObject defines parsed data
+     * @param host defines the hosting AdvancedDynamicTexture
+     * @returns a new Control
+     */
+    Control.Parse = function (serializedObject, host) {
+        var controlType = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Tools"].Instantiate("BABYLON.GUI." + serializedObject.className);
+        var control = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Parse(function () { return new controlType(); }, serializedObject, null);
+        control.name = serializedObject.name;
+        control._parseFromContent(serializedObject, host);
+        return control;
     };
     /** @hidden */
     Control.drawEllipse = function (x, y, width, height, context) {
@@ -5703,7 +6115,7 @@ var Control = /** @class */ (function () {
      * Gets or sets a boolean indicating if alpha must be an inherited value (false by default)
      */
     Control.AllowAlphaInheritance = false;
-    Control._ClipMeasure = new _measure__WEBPACK_IMPORTED_MODULE_2__["Measure"](0, 0, 0, 0);
+    Control._ClipMeasure = new _measure__WEBPACK_IMPORTED_MODULE_3__["Measure"](0, 0, 0, 0);
     // Statics
     Control._HORIZONTAL_ALIGNMENT_LEFT = 0;
     Control._HORIZONTAL_ALIGNMENT_RIGHT = 1;
@@ -5723,10 +6135,130 @@ var Control = /** @class */ (function () {
      * @hidden
      */
     Control.AddHeader = function () { };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "metadata", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "isHitTestVisible", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "isPointerBlocker", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "isFocusInvisible", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "clipChildren", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "clipContent", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "useBitmapCache", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "shadowOffsetX", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "shadowOffsetY", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "shadowBlur", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "shadowColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "hoverCursor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "fontOffset", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "alpha", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "scaleX", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "scaleY", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "rotation", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "transformCenterY", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "transformCenterX", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "horizontalAlignment", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "verticalAlignment", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "fixedRatio", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "width", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "height", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "style", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "color", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "zIndex", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "notRenderable", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "isVisible", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "paddingLeft", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "paddingRight", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "paddingTop", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "paddingBottom", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "left", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "top", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "linkOffsetX", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "linkOffsetY", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "isEnabled", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "disabledColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Control.prototype, "disabledColorItem", null);
     return Control;
 }());
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Control"] = Control;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.Control", Control);
 
 
 /***/ }),
@@ -5745,6 +6277,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -5915,14 +6448,14 @@ var DisplayGrid = /** @class */ (function (_super) {
             if (this._displayMinorLines) {
                 context.strokeStyle = this._minorLineColor;
                 context.lineWidth = this._minorLineTickness;
-                for (var x = -cellCountX / 2; x < cellCountX / 2; x++) {
+                for (var x = -cellCountX / 2 + 1; x < cellCountX / 2; x++) {
                     var cellX = left + x * this.cellWidth;
                     context.beginPath();
                     context.moveTo(cellX, this._currentMeasure.top);
                     context.lineTo(cellX, this._currentMeasure.top + this._currentMeasure.height);
                     context.stroke();
                 }
-                for (var y = -cellCountY / 2; y < cellCountY / 2; y++) {
+                for (var y = -cellCountY / 2 + 1; y < cellCountY / 2; y++) {
                     var cellY = top_1 + y * this.cellHeight;
                     context.beginPath();
                     context.moveTo(this._currentMeasure.left, cellY);
@@ -5955,10 +6488,40 @@ var DisplayGrid = /** @class */ (function (_super) {
     DisplayGrid.prototype._getTypeName = function () {
         return "DisplayGrid";
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "displayMinorLines", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "displayMajorLines", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "background", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "cellWidth", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "cellHeight", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "minorLineTickness", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "minorLineColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "majorLineTickness", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "majorLineColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], DisplayGrid.prototype, "majorLineFrequency", null);
     return DisplayGrid;
 }(_control__WEBPACK_IMPORTED_MODULE_1__["Control"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["_TypeStore"].RegisteredTypes["BABYLON.GUI.DisplayGrid"] = DisplayGrid;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["RegisterClass"])("BABYLON.GUI.DisplayGrid", DisplayGrid);
 
 
 /***/ }),
@@ -5978,6 +6541,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -6051,10 +6615,127 @@ var Ellipse = /** @class */ (function (_super) {
         _control__WEBPACK_IMPORTED_MODULE_2__["Control"].drawEllipse(this._currentMeasure.left + this._currentMeasure.width / 2, this._currentMeasure.top + this._currentMeasure.height / 2, this._currentMeasure.width / 2, this._currentMeasure.height / 2, context);
         context.clip();
     };
+    Ellipse.prototype._renderHighlightSpecific = function (context) {
+        _control__WEBPACK_IMPORTED_MODULE_2__["Control"].drawEllipse(this._currentMeasure.left + this._currentMeasure.width / 2, this._currentMeasure.top + this._currentMeasure.height / 2, this._currentMeasure.width / 2 - this._highlightLineWidth / 2, this._currentMeasure.height / 2 - this._highlightLineWidth / 2, context);
+        context.stroke();
+    };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__["serialize"])()
+    ], Ellipse.prototype, "thickness", null);
     return Ellipse;
 }(_container__WEBPACK_IMPORTED_MODULE_1__["Container"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Ellipse"] = Ellipse;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__["RegisterClass"])("BABYLON.GUI.Ellipse", Ellipse);
+
+
+/***/ }),
+
+/***/ "./2D/controls/focusableButton.ts":
+/*!****************************************!*\
+  !*** ./2D/controls/focusableButton.ts ***!
+  \****************************************/
+/*! exports provided: FocusableButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FocusableButton", function() { return FocusableButton; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./button */ "./2D/controls/button.ts");
+/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+/**
+ * Class used to create a focusable button that can easily handle keyboard events
+ * @since 5.0.0
+ */
+var FocusableButton = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(FocusableButton, _super);
+    function FocusableButton(name) {
+        var _this = _super.call(this, name) || this;
+        _this.name = name;
+        /** Highlight color when button is focused */
+        _this.focusedColor = null;
+        _this._isFocused = false;
+        _this._unfocusedColor = null;
+        /** Observable raised when the control gets the focus */
+        _this.onFocusObservable = new babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["Observable"]();
+        /** Observable raised when the control loses the focus */
+        _this.onBlurObservable = new babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["Observable"]();
+        /** Observable raised when a key event was processed */
+        _this.onKeyboardEventProcessedObservable = new babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["Observable"]();
+        _this._unfocusedColor = _this.color;
+        return _this;
+    }
+    /** @hidden */
+    FocusableButton.prototype.onBlur = function () {
+        if (this._isFocused) {
+            this._isFocused = false;
+            if (this.focusedColor && this._unfocusedColor != null) {
+                // Set color back to saved unfocused color
+                this.color = this._unfocusedColor;
+            }
+            this.onBlurObservable.notifyObservers(this);
+        }
+    };
+    /** @hidden */
+    FocusableButton.prototype.onFocus = function () {
+        this._isFocused = true;
+        if (this.focusedColor) {
+            // Save the unfocused color
+            this._unfocusedColor = this.color;
+            this.color = this.focusedColor;
+        }
+        this.onFocusObservable.notifyObservers(this);
+    };
+    /**
+     * Function called to get the list of controls that should not steal the focus from this control
+     * @returns an array of controls
+     */
+    FocusableButton.prototype.keepsFocusWith = function () {
+        return null;
+    };
+    /**
+     * Function to focus a button programmatically
+     */
+    FocusableButton.prototype.focus = function () {
+        this._host.moveFocusToControl(this);
+    };
+    /**
+     * Function to unfocus a button programmatically
+     */
+    FocusableButton.prototype.blur = function () {
+        this._host.focusedControl = null;
+    };
+    /**
+     * Handles the keyboard event
+     * @param evt Defines the KeyboardEvent
+     */
+    FocusableButton.prototype.processKeyboard = function (evt) {
+        this.onKeyboardEventProcessedObservable.notifyObservers(evt, -1, this);
+    };
+    /** @hidden */
+    FocusableButton.prototype._onPointerDown = function (target, coordinates, pointerId, buttonIndex, pi) {
+        if (!this.isReadOnly) {
+            // Clicking on button should focus
+            this.focus();
+        }
+        return _super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi);
+    };
+    /** @hidden */
+    FocusableButton.prototype.displose = function () {
+        _super.prototype.dispose.call(this);
+        this.onBlurObservable.clear();
+        this.onFocusObservable.clear();
+        this.onKeyboardEventProcessedObservable.clear();
+    };
+    return FocusableButton;
+}(_button__WEBPACK_IMPORTED_MODULE_1__["Button"]));
+
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["RegisterClass"])("BABYLON.GUI.FocusableButton", FocusableButton);
 
 
 /***/ }),
@@ -6512,10 +7193,67 @@ var Grid = /** @class */ (function (_super) {
         }
         this._childControls = [];
     };
+    /**
+ * Serializes the current control
+ * @param serializationObject defined the JSON serialized object
+ */
+    Grid.prototype.serialize = function (serializationObject) {
+        _super.prototype.serialize.call(this, serializationObject);
+        serializationObject.columnCount = this.columnCount;
+        serializationObject.rowCount = this.rowCount;
+        serializationObject.columns = [];
+        serializationObject.rows = [];
+        serializationObject.tags = [];
+        for (var i = 0; i < this.columnCount; ++i) {
+            var cd = this.getColumnDefinition(i);
+            var childSerializationObject = { value: cd === null || cd === void 0 ? void 0 : cd.getValue(this.host), unit: cd === null || cd === void 0 ? void 0 : cd.unit };
+            serializationObject.columns.push(childSerializationObject);
+        }
+        for (var i = 0; i < this.rowCount; ++i) {
+            var rd = this.getRowDefinition(i);
+            var childSerializationObject = { value: rd === null || rd === void 0 ? void 0 : rd.getValue(this.host), unit: rd === null || rd === void 0 ? void 0 : rd.unit };
+            serializationObject.rows.push(childSerializationObject);
+        }
+        this.children.forEach(function (child) {
+            serializationObject.tags.push(child._tag);
+        });
+    };
+    /** @hidden */
+    Grid.prototype._parseFromContent = function (serializedObject, host) {
+        _super.prototype._parseFromContent.call(this, serializedObject, host);
+        var children = [];
+        this.children.forEach(function (child) {
+            children.push(child);
+        });
+        this.removeRowDefinition(0);
+        this.removeColumnDefinition(0);
+        for (var i = 0; i < serializedObject.columnCount; ++i) {
+            var columnValue = serializedObject.columns[i].value;
+            var unit = serializedObject.columns[i].unit;
+            this.addColumnDefinition(columnValue, unit === 1 ? true : false);
+        }
+        for (var i = 0; i < serializedObject.rowCount; ++i) {
+            var rowValue = serializedObject.rows[i].value;
+            var unit = serializedObject.rows[i].unit;
+            this.addRowDefinition(rowValue, unit === 1 ? true : false);
+        }
+        for (var i = 0; i < children.length; ++i) {
+            var cellInfo = serializedObject.tags[i];
+            var rowNumber = parseInt(cellInfo.substring(0, cellInfo.search(":")));
+            if (isNaN(rowNumber)) {
+                rowNumber = 0;
+            }
+            var columnNumber = parseInt(cellInfo.substring(cellInfo.search(":") + 1));
+            if (isNaN(columnNumber)) {
+                columnNumber = 0;
+            }
+            this.addControl(children[i], rowNumber, columnNumber);
+        }
+    };
     return Grid;
 }(_container__WEBPACK_IMPORTED_MODULE_1__["Container"]));
 
-babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_4__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Grid"] = Grid;
+Object(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_4__["RegisterClass"])("BABYLON.GUI.Grid", Grid);
 
 
 /***/ }),
@@ -6534,6 +7272,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/observable */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
+
+
 
 
 
@@ -6585,25 +7325,6 @@ var Image = /** @class */ (function (_super) {
          */
         get: function () {
             return this._loaded;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Image.prototype, "populateNinePatchSlicesFromImage", {
-        /**
-         * Gets or sets a boolean indicating if nine patch slices (left, top, right, bottom) should be read from image data
-         */
-        get: function () {
-            return this._populateNinePatchSlicesFromImage;
-        },
-        set: function (value) {
-            if (this._populateNinePatchSlicesFromImage === value) {
-                return;
-            }
-            this._populateNinePatchSlicesFromImage = value;
-            if (this._populateNinePatchSlicesFromImage && this._loaded) {
-                this._extractNinePatchSliceDataFromImage();
-            }
         },
         enumerable: false,
         configurable: true
@@ -6761,6 +7482,45 @@ var Image = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(Image.prototype, "imageWidth", {
+        /**
+         * Gets the image width
+         */
+        get: function () {
+            return this._imageWidth;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Image.prototype, "imageHeight", {
+        /**
+         * Gets the image height
+         */
+        get: function () {
+            return this._imageHeight;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Image.prototype, "populateNinePatchSlicesFromImage", {
+        /**
+        * Gets or sets a boolean indicating if nine patch slices (left, top, right, bottom) should be read from image data
+        */
+        get: function () {
+            return this._populateNinePatchSlicesFromImage;
+        },
+        set: function (value) {
+            if (this._populateNinePatchSlicesFromImage === value) {
+                return;
+            }
+            this._populateNinePatchSlicesFromImage = value;
+            if (this._populateNinePatchSlicesFromImage && this._loaded) {
+                this._extractNinePatchSliceDataFromImage();
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(Image.prototype, "isSVG", {
         /** Indicates if the format of the image is SVG */
         get: function () {
@@ -6814,15 +7574,19 @@ var Image = /** @class */ (function (_super) {
     });
     /** @hidden */
     Image.prototype._rotate90 = function (n, preserveProperties) {
+        var _a, _b;
         if (preserveProperties === void 0) { preserveProperties = false; }
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
         var width = this._domImage.width;
         var height = this._domImage.height;
-        canvas.width = height;
-        canvas.height = width;
+        // Should abstract platform instead of using LastCreatedEngine
+        var engine = ((_b = (_a = this._host) === null || _a === void 0 ? void 0 : _a.getScene()) === null || _b === void 0 ? void 0 : _b.getEngine()) || babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Engine"].LastCreatedEngine;
+        if (!engine) {
+            throw new Error("Invalid engine. Unable to create a canvas.");
+        }
+        var canvas = engine.createCanvas(height, width);
+        var context = canvas.getContext("2d");
         context.translate(canvas.width / 2, canvas.height / 2);
-        context.rotate(n * Math.PI / 2);
+        context.rotate((n * Math.PI) / 2);
         context.drawImage(this._domImage, 0, 0, width, height, -width / 2, -height / 2, width, height);
         var dataUrl = canvas.toDataURL("image/jpg");
         var rotatedImage = new Image(this.name + "rotated", dataUrl);
@@ -6880,6 +7644,50 @@ var Image = /** @class */ (function (_super) {
         dstImage.sourceWidth = dstWidth;
         dstImage.sourceHeight = dstHeight;
     };
+    Image.prototype._extractNinePatchSliceDataFromImage = function () {
+        var _a, _b;
+        var width = this._domImage.width;
+        var height = this._domImage.height;
+        if (!this._workingCanvas) {
+            var engine = ((_b = (_a = this._host) === null || _a === void 0 ? void 0 : _a.getScene()) === null || _b === void 0 ? void 0 : _b.getEngine()) || babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Engine"].LastCreatedEngine;
+            if (!engine) {
+                throw new Error("Invalid engine. Unable to create a canvas.");
+            }
+            this._workingCanvas = engine.createCanvas(width, height);
+        }
+        var canvas = this._workingCanvas;
+        var context = canvas.getContext("2d");
+        context.drawImage(this._domImage, 0, 0, width, height);
+        var imageData = context.getImageData(0, 0, width, height);
+        // Left and right
+        this._sliceLeft = -1;
+        this._sliceRight = -1;
+        for (var x = 0; x < width; x++) {
+            var alpha = imageData.data[x * 4 + 3];
+            if (alpha > 127 && this._sliceLeft === -1) {
+                this._sliceLeft = x;
+                continue;
+            }
+            if (alpha < 127 && this._sliceLeft > -1) {
+                this._sliceRight = x;
+                break;
+            }
+        }
+        // top and bottom
+        this._sliceTop = -1;
+        this._sliceBottom = -1;
+        for (var y = 0; y < height; y++) {
+            var alpha = imageData.data[y * width * 4 + 3];
+            if (alpha > 127 && this._sliceTop === -1) {
+                this._sliceTop = y;
+                continue;
+            }
+            if (alpha < 127 && this._sliceTop > -1) {
+                this._sliceBottom = y;
+                break;
+            }
+        }
+    };
     Object.defineProperty(Image.prototype, "domImage", {
         get: function () {
             return this._domImage;
@@ -6918,53 +7726,19 @@ var Image = /** @class */ (function (_super) {
         this.onImageLoadedObservable.notifyObservers(this);
         this._markAsDirty();
     };
-    Image.prototype._extractNinePatchSliceDataFromImage = function () {
-        if (!this._workingCanvas) {
-            this._workingCanvas = document.createElement('canvas');
-        }
-        var canvas = this._workingCanvas;
-        var context = canvas.getContext('2d');
-        var width = this._domImage.width;
-        var height = this._domImage.height;
-        canvas.width = width;
-        canvas.height = height;
-        context.drawImage(this._domImage, 0, 0, width, height);
-        var imageData = context.getImageData(0, 0, width, height);
-        // Left and right
-        this._sliceLeft = -1;
-        this._sliceRight = -1;
-        for (var x = 0; x < width; x++) {
-            var alpha = imageData.data[x * 4 + 3];
-            if (alpha > 127 && this._sliceLeft === -1) {
-                this._sliceLeft = x;
-                continue;
-            }
-            if (alpha < 127 && this._sliceLeft > -1) {
-                this._sliceRight = x;
-                break;
-            }
-        }
-        // top and bottom
-        this._sliceTop = -1;
-        this._sliceBottom = -1;
-        for (var y = 0; y < height; y++) {
-            var alpha = imageData.data[y * width * 4 + 3];
-            if (alpha > 127 && this._sliceTop === -1) {
-                this._sliceTop = y;
-                continue;
-            }
-            if (alpha < 127 && this._sliceTop > -1) {
-                this._sliceBottom = y;
-                break;
-            }
-        }
-    };
     Object.defineProperty(Image.prototype, "source", {
+        /**
+         * Gets the image source url
+         */
+        get: function () {
+            return this._source;
+        },
         /**
          * Gets or sets image source url
          */
         set: function (value) {
             var _this = this;
+            var _a, _b;
             if (this._source === value) {
                 return;
             }
@@ -6974,7 +7748,12 @@ var Image = /** @class */ (function (_super) {
             if (value) {
                 value = this._svgCheck(value);
             }
-            this._domImage = document.createElement("img");
+            // Should abstract platform instead of using LastCreatedEngine
+            var engine = ((_b = (_a = this._host) === null || _a === void 0 ? void 0 : _a.getScene()) === null || _b === void 0 ? void 0 : _b.getEngine()) || babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Engine"].LastCreatedEngine;
+            if (!engine) {
+                throw new Error("Invalid engine. Unable to create a canvas.");
+            }
+            this._domImage = engine.createCanvasImage();
             this._domImage.onload = function () {
                 _this._onImageLoaded();
             };
@@ -6991,10 +7770,10 @@ var Image = /** @class */ (function (_super) {
      */
     Image.prototype._svgCheck = function (value) {
         var _this = this;
-        if (window.SVGSVGElement && (value.search(/.svg#/gi) !== -1) && (value.indexOf("#") === value.lastIndexOf("#"))) {
+        if (window.SVGSVGElement && value.search(/.svg#/gi) !== -1 && value.indexOf("#") === value.lastIndexOf("#")) {
             this._isSVG = true;
-            var svgsrc = value.split('#')[0];
-            var elemid = value.split('#')[1];
+            var svgsrc = value.split("#")[0];
+            var elemid = value.split("#")[1];
             // check if object alr exist in document
             var svgExist = document.body.querySelector('object[data="' + svgsrc + '"]');
             if (svgExist) {
@@ -7058,17 +7837,18 @@ var Image = /** @class */ (function (_super) {
                 var elem_matrix_d = 1;
                 var elem_matrix_e = 0;
                 var elem_matrix_f = 0;
+                var mainMatrix = elem.transform.baseVal.consolidate().matrix;
                 if (elem.transform && elem.transform.baseVal.consolidate()) {
-                    elem_matrix_a = elem.transform.baseVal.consolidate().matrix.a;
-                    elem_matrix_d = elem.transform.baseVal.consolidate().matrix.d;
-                    elem_matrix_e = elem.transform.baseVal.consolidate().matrix.e;
-                    elem_matrix_f = elem.transform.baseVal.consolidate().matrix.f;
+                    elem_matrix_a = mainMatrix.a;
+                    elem_matrix_d = mainMatrix.d;
+                    elem_matrix_e = mainMatrix.e;
+                    elem_matrix_f = mainMatrix.f;
                 }
                 // compute source coordinates and dimensions
                 this.sourceLeft = ((elem_matrix_a * elem_bbox.x + elem_matrix_e) * docwidth) / vb_width;
                 this.sourceTop = ((elem_matrix_d * elem_bbox.y + elem_matrix_f) * docheight) / vb_height;
-                this.sourceWidth = (elem_bbox.width * elem_matrix_a) * (docwidth / vb_width);
-                this.sourceHeight = (elem_bbox.height * elem_matrix_d) * (docheight / vb_height);
+                this.sourceWidth = elem_bbox.width * elem_matrix_a * (docwidth / vb_width);
+                this.sourceHeight = elem_bbox.height * elem_matrix_d * (docheight / vb_height);
                 this._svgAttributesComputationCompleted = true;
                 this.onSVGAttributesComputedObservable.notifyObservers(this);
             }
@@ -7182,7 +7962,8 @@ var Image = /** @class */ (function (_super) {
                     if (this._autoScale) {
                         this.synchronizeSizeWithContent();
                     }
-                    if (this.parent && this.parent.parent) { // Will update root size if root is not the top root
+                    if (this.parent && this.parent.parent) {
+                        // Will update root size if root is not the top root
                         this.parent.adaptWidthToChildren = true;
                         this.parent.adaptHeightToChildren = true;
                     }
@@ -7192,18 +7973,21 @@ var Image = /** @class */ (function (_super) {
         _super.prototype._processMeasures.call(this, parentMeasure, context);
     };
     Image.prototype._prepareWorkingCanvasForOpaqueDetection = function () {
+        var _a, _b;
         if (!this._detectPointerOnOpaqueOnly) {
             return;
         }
-        if (!this._workingCanvas) {
-            this._workingCanvas = document.createElement('canvas');
-        }
-        var canvas = this._workingCanvas;
         var width = this._currentMeasure.width;
         var height = this._currentMeasure.height;
+        if (!this._workingCanvas) {
+            var engine = ((_b = (_a = this._host) === null || _a === void 0 ? void 0 : _a.getScene()) === null || _b === void 0 ? void 0 : _b.getEngine()) || babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Engine"].LastCreatedEngine;
+            if (!engine) {
+                throw new Error("Invalid engine. Unable to create a canvas.");
+            }
+            this._workingCanvas = engine.createCanvas(width, height);
+        }
+        var canvas = this._workingCanvas;
         var context = canvas.getContext("2d");
-        canvas.width = width;
-        canvas.height = height;
         context.clearRect(0, 0, width, height);
     };
     Image.prototype._drawImage = function (context, sx, sy, sw, sh, tx, ty, tw, th) {
@@ -7267,41 +8051,37 @@ var Image = /** @class */ (function (_super) {
         }
         context.restore();
     };
-    Image.prototype._renderCornerPatch = function (context, x, y, width, height, targetX, targetY) {
-        this._drawImage(context, x, y, width, height, this._currentMeasure.left + targetX, this._currentMeasure.top + targetY, width, height);
-    };
     Image.prototype._renderNinePatch = function (context) {
-        var height = this._imageHeight;
         var leftWidth = this._sliceLeft;
         var topHeight = this._sliceTop;
         var bottomHeight = this._imageHeight - this._sliceBottom;
         var rightWidth = this._imageWidth - this._sliceRight;
-        var left = 0;
-        var top = 0;
-        if (this._populateNinePatchSlicesFromImage) {
-            left = 1;
-            top = 1;
-            height -= 2;
-            leftWidth -= 1;
-            topHeight -= 1;
-            bottomHeight -= 1;
-            rightWidth -= 1;
-        }
         var centerWidth = this._sliceRight - this._sliceLeft;
-        var targetCenterWidth = this._currentMeasure.width - rightWidth - this.sliceLeft;
-        var targetTopHeight = this._currentMeasure.height - height + this._sliceBottom;
-        // Corners
-        this._renderCornerPatch(context, left, top, leftWidth, topHeight, 0, 0);
-        this._renderCornerPatch(context, left, this._sliceBottom, leftWidth, height - this._sliceBottom, 0, targetTopHeight);
-        this._renderCornerPatch(context, this._sliceRight, top, rightWidth, topHeight, this._currentMeasure.width - rightWidth, 0);
-        this._renderCornerPatch(context, this._sliceRight, this._sliceBottom, rightWidth, height - this._sliceBottom, this._currentMeasure.width - rightWidth, targetTopHeight);
+        var centerHeight = this._sliceBottom - this._sliceTop;
+        var targetCenterWidth = (this._currentMeasure.width - rightWidth - leftWidth) + 2;
+        var targetCenterHeight = (this._currentMeasure.height - bottomHeight - topHeight) + 2;
+        var centerLeftOffset = this._currentMeasure.left + leftWidth - 1;
+        var centerTopOffset = this._currentMeasure.top + topHeight - 1;
+        var rightOffset = this._currentMeasure.left + this._currentMeasure.width - rightWidth;
+        var bottomOffset = this._currentMeasure.top + this._currentMeasure.height - bottomHeight;
+        //Top Left
+        this._drawImage(context, 0, 0, leftWidth, topHeight, this._currentMeasure.left, this._currentMeasure.top, leftWidth, topHeight);
+        //Top
+        this._drawImage(context, this._sliceLeft, 0, centerWidth, topHeight, centerLeftOffset, this._currentMeasure.top, targetCenterWidth, topHeight);
+        //Top Right
+        this._drawImage(context, this.sliceRight, 0, rightWidth, topHeight, rightOffset, this._currentMeasure.top, rightWidth, topHeight);
+        //Left
+        this._drawImage(context, 0, this._sliceTop, leftWidth, centerHeight, this._currentMeasure.left, centerTopOffset, leftWidth, targetCenterHeight);
         // Center
-        this._drawImage(context, this._sliceLeft, this._sliceTop, centerWidth, this._sliceBottom - this._sliceTop, this._currentMeasure.left + leftWidth, this._currentMeasure.top + topHeight, targetCenterWidth, targetTopHeight - topHeight);
-        // Borders
-        this._drawImage(context, left, this._sliceTop, leftWidth, this._sliceBottom - this._sliceTop, this._currentMeasure.left, this._currentMeasure.top + topHeight, leftWidth, targetTopHeight - topHeight);
-        this._drawImage(context, this._sliceRight, this._sliceTop, leftWidth, this._sliceBottom - this._sliceTop, this._currentMeasure.left + this._currentMeasure.width - rightWidth, this._currentMeasure.top + topHeight, leftWidth, targetTopHeight - topHeight);
-        this._drawImage(context, this._sliceLeft, top, centerWidth, topHeight, this._currentMeasure.left + leftWidth, this._currentMeasure.top, targetCenterWidth, topHeight);
-        this._drawImage(context, this._sliceLeft, this._sliceBottom, centerWidth, bottomHeight, this._currentMeasure.left + leftWidth, this._currentMeasure.top + targetTopHeight, targetCenterWidth, bottomHeight);
+        this._drawImage(context, this._sliceLeft, this._sliceTop, centerWidth, centerHeight, centerLeftOffset, centerTopOffset, targetCenterWidth, targetCenterHeight);
+        //Right
+        this._drawImage(context, this._sliceRight, this._sliceTop, rightWidth, centerHeight, rightOffset, centerTopOffset, rightWidth, targetCenterHeight);
+        //Bottom Left
+        this._drawImage(context, 0, this._sliceBottom, leftWidth, bottomHeight, this._currentMeasure.left, bottomOffset, leftWidth, bottomHeight);
+        //Bottom
+        this._drawImage(context, this.sliceLeft, this._sliceBottom, centerWidth, bottomHeight, centerLeftOffset, bottomOffset, targetCenterWidth, bottomHeight);
+        //Bottom Right
+        this._drawImage(context, this._sliceRight, this._sliceBottom, rightWidth, bottomHeight, rightOffset, bottomOffset, rightWidth, bottomHeight);
     };
     Image.prototype.dispose = function () {
         _super.prototype.dispose.call(this);
@@ -7319,10 +8099,58 @@ var Image = /** @class */ (function (_super) {
     Image.STRETCH_EXTEND = 3;
     /** NINE_PATCH */
     Image.STRETCH_NINE_PATCH = 4;
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "detectPointerOnOpaqueOnly", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sliceLeft", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sliceRight", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sliceTop", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sliceBottom", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sourceLeft", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sourceTop", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sourceWidth", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "sourceHeight", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "populateNinePatchSlicesFromImage", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "autoScale", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "stretch", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "source", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "cellWidth", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "cellHeight", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Image.prototype, "cellId", null);
     return Image;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Image"] = Image;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.Image", Image);
 
 
 /***/ }),
@@ -7331,7 +8159,7 @@ babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredT
 /*!******************************!*\
   !*** ./2D/controls/index.ts ***!
   \******************************/
-/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name */
+/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, FocusableButton, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, ToggleButton, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7354,80 +8182,88 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ellipse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ellipse */ "./2D/controls/ellipse.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Ellipse", function() { return _ellipse__WEBPACK_IMPORTED_MODULE_5__["Ellipse"]; });
 
-/* harmony import */ var _grid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./grid */ "./2D/controls/grid.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _grid__WEBPACK_IMPORTED_MODULE_6__["Grid"]; });
+/* harmony import */ var _focusableButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./focusableButton */ "./2D/controls/focusableButton.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FocusableButton", function() { return _focusableButton__WEBPACK_IMPORTED_MODULE_6__["FocusableButton"]; });
 
-/* harmony import */ var _image__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./image */ "./2D/controls/image.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Image", function() { return _image__WEBPACK_IMPORTED_MODULE_7__["Image"]; });
+/* harmony import */ var _grid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./grid */ "./2D/controls/grid.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _grid__WEBPACK_IMPORTED_MODULE_7__["Grid"]; });
 
-/* harmony import */ var _inputText__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./inputText */ "./2D/controls/inputText.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputText", function() { return _inputText__WEBPACK_IMPORTED_MODULE_8__["InputText"]; });
+/* harmony import */ var _image__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./image */ "./2D/controls/image.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Image", function() { return _image__WEBPACK_IMPORTED_MODULE_8__["Image"]; });
 
-/* harmony import */ var _inputPassword__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./inputPassword */ "./2D/controls/inputPassword.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputPassword", function() { return _inputPassword__WEBPACK_IMPORTED_MODULE_9__["InputPassword"]; });
+/* harmony import */ var _inputText__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./inputText */ "./2D/controls/inputText.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputText", function() { return _inputText__WEBPACK_IMPORTED_MODULE_9__["InputText"]; });
 
-/* harmony import */ var _line__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./line */ "./2D/controls/line.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return _line__WEBPACK_IMPORTED_MODULE_10__["Line"]; });
+/* harmony import */ var _inputPassword__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./inputPassword */ "./2D/controls/inputPassword.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputPassword", function() { return _inputPassword__WEBPACK_IMPORTED_MODULE_10__["InputPassword"]; });
 
-/* harmony import */ var _multiLine__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./multiLine */ "./2D/controls/multiLine.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLine", function() { return _multiLine__WEBPACK_IMPORTED_MODULE_11__["MultiLine"]; });
+/* harmony import */ var _line__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./line */ "./2D/controls/line.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return _line__WEBPACK_IMPORTED_MODULE_11__["Line"]; });
 
-/* harmony import */ var _radioButton__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./radioButton */ "./2D/controls/radioButton.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioButton", function() { return _radioButton__WEBPACK_IMPORTED_MODULE_12__["RadioButton"]; });
+/* harmony import */ var _multiLine__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./multiLine */ "./2D/controls/multiLine.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLine", function() { return _multiLine__WEBPACK_IMPORTED_MODULE_12__["MultiLine"]; });
 
-/* harmony import */ var _stackPanel__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./stackPanel */ "./2D/controls/stackPanel.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel", function() { return _stackPanel__WEBPACK_IMPORTED_MODULE_13__["StackPanel"]; });
+/* harmony import */ var _radioButton__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./radioButton */ "./2D/controls/radioButton.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioButton", function() { return _radioButton__WEBPACK_IMPORTED_MODULE_13__["RadioButton"]; });
 
-/* harmony import */ var _selector__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./selector */ "./2D/controls/selector.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectorGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_14__["SelectorGroup"]; });
+/* harmony import */ var _stackPanel__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./stackPanel */ "./2D/controls/stackPanel.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel", function() { return _stackPanel__WEBPACK_IMPORTED_MODULE_14__["StackPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_14__["CheckboxGroup"]; });
+/* harmony import */ var _selector__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./selector */ "./2D/controls/selector.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectorGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_15__["SelectorGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_14__["RadioGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_15__["CheckboxGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SliderGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_14__["SliderGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_15__["RadioGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionPanel", function() { return _selector__WEBPACK_IMPORTED_MODULE_14__["SelectionPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SliderGroup", function() { return _selector__WEBPACK_IMPORTED_MODULE_15__["SliderGroup"]; });
 
-/* harmony import */ var _scrollViewers_scrollViewer__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./scrollViewers/scrollViewer */ "./2D/controls/scrollViewers/scrollViewer.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollViewer", function() { return _scrollViewers_scrollViewer__WEBPACK_IMPORTED_MODULE_15__["ScrollViewer"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionPanel", function() { return _selector__WEBPACK_IMPORTED_MODULE_15__["SelectionPanel"]; });
 
-/* harmony import */ var _textBlock__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./textBlock */ "./2D/controls/textBlock.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapping", function() { return _textBlock__WEBPACK_IMPORTED_MODULE_16__["TextWrapping"]; });
+/* harmony import */ var _scrollViewers_scrollViewer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./scrollViewers/scrollViewer */ "./2D/controls/scrollViewers/scrollViewer.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollViewer", function() { return _scrollViewers_scrollViewer__WEBPACK_IMPORTED_MODULE_16__["ScrollViewer"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextBlock", function() { return _textBlock__WEBPACK_IMPORTED_MODULE_16__["TextBlock"]; });
+/* harmony import */ var _textBlock__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./textBlock */ "./2D/controls/textBlock.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapping", function() { return _textBlock__WEBPACK_IMPORTED_MODULE_17__["TextWrapping"]; });
 
-/* harmony import */ var _textWrapper__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./textWrapper */ "./2D/controls/textWrapper.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapper", function() { return _textWrapper__WEBPACK_IMPORTED_MODULE_17__["TextWrapper"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextBlock", function() { return _textBlock__WEBPACK_IMPORTED_MODULE_17__["TextBlock"]; });
 
-/* harmony import */ var _virtualKeyboard__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./virtualKeyboard */ "./2D/controls/virtualKeyboard.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyPropertySet", function() { return _virtualKeyboard__WEBPACK_IMPORTED_MODULE_18__["KeyPropertySet"]; });
+/* harmony import */ var _textWrapper__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./textWrapper */ "./2D/controls/textWrapper.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapper", function() { return _textWrapper__WEBPACK_IMPORTED_MODULE_18__["TextWrapper"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualKeyboard", function() { return _virtualKeyboard__WEBPACK_IMPORTED_MODULE_18__["VirtualKeyboard"]; });
+/* harmony import */ var _toggleButton__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./toggleButton */ "./2D/controls/toggleButton.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ToggleButton", function() { return _toggleButton__WEBPACK_IMPORTED_MODULE_19__["ToggleButton"]; });
 
-/* harmony import */ var _rectangle__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./rectangle */ "./2D/controls/rectangle.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rectangle", function() { return _rectangle__WEBPACK_IMPORTED_MODULE_19__["Rectangle"]; });
+/* harmony import */ var _virtualKeyboard__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./virtualKeyboard */ "./2D/controls/virtualKeyboard.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyPropertySet", function() { return _virtualKeyboard__WEBPACK_IMPORTED_MODULE_20__["KeyPropertySet"]; });
 
-/* harmony import */ var _displayGrid__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./displayGrid */ "./2D/controls/displayGrid.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DisplayGrid", function() { return _displayGrid__WEBPACK_IMPORTED_MODULE_20__["DisplayGrid"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualKeyboard", function() { return _virtualKeyboard__WEBPACK_IMPORTED_MODULE_20__["VirtualKeyboard"]; });
 
-/* harmony import */ var _sliders_baseSlider__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./sliders/baseSlider */ "./2D/controls/sliders/baseSlider.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseSlider", function() { return _sliders_baseSlider__WEBPACK_IMPORTED_MODULE_21__["BaseSlider"]; });
+/* harmony import */ var _rectangle__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./rectangle */ "./2D/controls/rectangle.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rectangle", function() { return _rectangle__WEBPACK_IMPORTED_MODULE_21__["Rectangle"]; });
 
-/* harmony import */ var _sliders_slider__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./sliders/slider */ "./2D/controls/sliders/slider.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return _sliders_slider__WEBPACK_IMPORTED_MODULE_22__["Slider"]; });
+/* harmony import */ var _displayGrid__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./displayGrid */ "./2D/controls/displayGrid.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DisplayGrid", function() { return _displayGrid__WEBPACK_IMPORTED_MODULE_22__["DisplayGrid"]; });
 
-/* harmony import */ var _sliders_imageBasedSlider__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./sliders/imageBasedSlider */ "./2D/controls/sliders/imageBasedSlider.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageBasedSlider", function() { return _sliders_imageBasedSlider__WEBPACK_IMPORTED_MODULE_23__["ImageBasedSlider"]; });
+/* harmony import */ var _sliders_baseSlider__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./sliders/baseSlider */ "./2D/controls/sliders/baseSlider.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseSlider", function() { return _sliders_baseSlider__WEBPACK_IMPORTED_MODULE_23__["BaseSlider"]; });
 
-/* harmony import */ var _sliders_scrollBar__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./sliders/scrollBar */ "./2D/controls/sliders/scrollBar.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollBar", function() { return _sliders_scrollBar__WEBPACK_IMPORTED_MODULE_24__["ScrollBar"]; });
+/* harmony import */ var _sliders_slider__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./sliders/slider */ "./2D/controls/sliders/slider.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return _sliders_slider__WEBPACK_IMPORTED_MODULE_24__["Slider"]; });
 
-/* harmony import */ var _sliders_imageScrollBar__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./sliders/imageScrollBar */ "./2D/controls/sliders/imageScrollBar.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageScrollBar", function() { return _sliders_imageScrollBar__WEBPACK_IMPORTED_MODULE_25__["ImageScrollBar"]; });
+/* harmony import */ var _sliders_imageBasedSlider__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./sliders/imageBasedSlider */ "./2D/controls/sliders/imageBasedSlider.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageBasedSlider", function() { return _sliders_imageBasedSlider__WEBPACK_IMPORTED_MODULE_25__["ImageBasedSlider"]; });
 
-/* harmony import */ var _statics__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./statics */ "./2D/controls/statics.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "name", function() { return _statics__WEBPACK_IMPORTED_MODULE_26__["name"]; });
+/* harmony import */ var _sliders_scrollBar__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./sliders/scrollBar */ "./2D/controls/sliders/scrollBar.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollBar", function() { return _sliders_scrollBar__WEBPACK_IMPORTED_MODULE_26__["ScrollBar"]; });
+
+/* harmony import */ var _sliders_imageScrollBar__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./sliders/imageScrollBar */ "./2D/controls/sliders/imageScrollBar.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageScrollBar", function() { return _sliders_imageScrollBar__WEBPACK_IMPORTED_MODULE_27__["ImageScrollBar"]; });
+
+/* harmony import */ var _statics__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./statics */ "./2D/controls/statics.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "name", function() { return _statics__WEBPACK_IMPORTED_MODULE_28__["name"]; });
+
+
 
 
 
@@ -7499,7 +8335,7 @@ var InputPassword = /** @class */ (function (_super) {
     return InputPassword;
 }(_inputText__WEBPACK_IMPORTED_MODULE_1__["InputText"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["_TypeStore"].RegisteredTypes["BABYLON.GUI.InputPassword"] = InputPassword;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["RegisterClass"])("BABYLON.GUI.InputPassword", InputPassword);
 
 
 /***/ }),
@@ -7520,6 +8356,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var _valueAndUnit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../valueAndUnit */ "./2D/valueAndUnit.ts");
 /* harmony import */ var _textWrapper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./textWrapper */ "./2D/controls/textWrapper.ts");
+
 
 
 
@@ -7950,6 +8787,18 @@ var InputText = /** @class */ (function (_super) {
             this._selectAllText();
         }
     };
+    /**
+     * Function to focus an inputText programmatically
+     */
+    InputText.prototype.focus = function () {
+        this._host.moveFocusToControl(this);
+    };
+    /**
+     * Function to unfocus an inputText programmatically
+     */
+    InputText.prototype.blur = function () {
+        this._host.focusedControl = null;
+    };
     InputText.prototype._getTypeName = function () {
         return "InputText";
     };
@@ -7965,6 +8814,9 @@ var InputText = /** @class */ (function (_super) {
     };
     /** @hidden */
     InputText.prototype.processKey = function (keyCode, key, evt) {
+        if (this.isReadOnly) {
+            return;
+        }
         //return if clipboard event keys (i.e -ctr/cmd + c,v,x)
         if (evt && (evt.ctrlKey || evt.metaKey) && (keyCode === 67 || keyCode === 86 || keyCode === 88)) {
             return;
@@ -8180,16 +9032,35 @@ var InputText = /** @class */ (function (_super) {
                 return;
             case 222: // Dead
                 if (evt) {
-                    evt.preventDefault();
+                    //add support for single and double quotes
+                    if (evt.code == "Quote") {
+                        if (evt.shiftKey) {
+                            keyCode = 34;
+                            key = '"';
+                        }
+                        else {
+                            keyCode = 39;
+                            key = "'";
+                        }
+                    }
+                    else {
+                        evt.preventDefault();
+                        this._cursorIndex = -1;
+                        this.deadKey = true;
+                    }
                 }
-                this._cursorIndex = -1;
-                this.deadKey = true;
+                else {
+                    this._cursorIndex = -1;
+                    this.deadKey = true;
+                }
                 break;
         }
         // Printable characters
         if (key &&
             ((keyCode === -1) || // Direct access
                 (keyCode === 32) || // Space
+                (keyCode === 34) || // "    add support for single and double quotes
+                (keyCode === 39) || // '
                 (keyCode > 47 && keyCode < 64) || // Numbers
                 (keyCode > 64 && keyCode < 91) || // Letters
                 (keyCode > 159 && keyCode < 193) || // Special characters
@@ -8367,6 +9238,7 @@ var InputText = /** @class */ (function (_super) {
         var marginWidth = this._margin.getValueInPixel(this._host, this._tempParentMeasure.width) * 2;
         if (this._autoStretchWidth) {
             this.width = Math.min(this._maxWidth.getValueInPixel(this._host, this._tempParentMeasure.width), this._textWidth + marginWidth) + "px";
+            this._autoStretchWidth = true; // setting the width will have reset _autoStretchWidth to false!
         }
         var rootY = this._fontOffset.ascent + (this._currentMeasure.height - this._fontOffset.height) / 2;
         var availableWidth = this._width.getValueInPixel(this._host, this._tempParentMeasure.width) - marginWidth;
@@ -8476,6 +9348,9 @@ var InputText = /** @class */ (function (_super) {
         if (!_super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi)) {
             return false;
         }
+        if (this.isReadOnly) {
+            return true;
+        }
         this._clickedCoordinate = coordinates.x;
         this._isTextHighlightOn = false;
         this._highlightedText = "";
@@ -8495,7 +9370,7 @@ var InputText = /** @class */ (function (_super) {
         return true;
     };
     InputText.prototype._onPointerMove = function (target, coordinates, pointerId, pi) {
-        if (this._host.focusedControl === this && this._isPointerDown) {
+        if (this._host.focusedControl === this && this._isPointerDown && !this.isReadOnly) {
             this._clickedCoordinate = coordinates.x;
             this._markAsDirty();
             this._updateValueFromCursorIndex(this._cursorOffset);
@@ -8521,10 +9396,61 @@ var InputText = /** @class */ (function (_super) {
         this.onTextHighlightObservable.clear();
         this.onKeyboardEventProcessedObservable.clear();
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "promptMessage", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "disableMobilePrompt", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "maxWidth", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "highligherOpacity", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "onFocusSelectAll", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "textHighlightColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "margin", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "autoStretchWidth", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "thickness", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "focusedBackground", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "focusedColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "background", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "placeholderColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "placeholderText", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "deadKey", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "text", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], InputText.prototype, "width", null);
     return InputText;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.InputText"] = InputText;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.InputText", InputText);
 
 
 /***/ }),
@@ -8544,6 +9470,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var _valueAndUnit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../valueAndUnit */ "./2D/valueAndUnit.ts");
+
 
 
 
@@ -8761,7 +9688,7 @@ var Line = /** @class */ (function (_super) {
             babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Tools"].Error("Cannot move a control to a vector3 if the control is not at root level");
             return;
         }
-        var globalViewport = this._host._getGlobalViewport(scene);
+        var globalViewport = this._host._getGlobalViewport();
         var projectedPosition = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Project(position, babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Matrix"].Identity(), scene.getTransformMatrix(), globalViewport);
         this._moveToProjectedPosition(projectedPosition, end);
         if (projectedPosition.z < 0 || projectedPosition.z > 1) {
@@ -8792,10 +9719,28 @@ var Line = /** @class */ (function (_super) {
             this._y1.ignoreAdaptiveScaling = true;
         }
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Line.prototype, "dash", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Line.prototype, "x1", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Line.prototype, "y1", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Line.prototype, "x2", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Line.prototype, "y2", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], Line.prototype, "lineWidth", null);
     return Line;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Line"] = Line;
+Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.Line", Line);
 
 
 /***/ }),
@@ -8815,6 +9760,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babylonjs_Meshes_abstractMesh__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Meshes_abstractMesh__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var _multiLinePoint__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../multiLinePoint */ "./2D/multiLinePoint.ts");
+
 
 
 
@@ -9069,10 +10015,13 @@ var MultiLine = /** @class */ (function (_super) {
         this.reset();
         _super.prototype.dispose.call(this);
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Meshes_abstractMesh__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MultiLine.prototype, "dash", null);
     return MultiLine;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Meshes_abstractMesh__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.MultiLine"] = MultiLine;
+Object(babylonjs_Meshes_abstractMesh__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.MultiLine", MultiLine);
 
 
 /***/ }),
@@ -9093,6 +10042,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
 /* harmony import */ var _stackPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./stackPanel */ "./2D/controls/stackPanel.ts");
 /* harmony import */ var _textBlock__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./textBlock */ "./2D/controls/textBlock.ts");
+
 
 
 
@@ -9241,6 +10191,9 @@ var RadioButton = /** @class */ (function (_super) {
         if (!_super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi)) {
             return false;
         }
+        if (this.isReadOnly) {
+            return true;
+        }
         if (!this.isChecked) {
             this.isChecked = true;
         }
@@ -9275,10 +10228,25 @@ var RadioButton = /** @class */ (function (_super) {
         panel.addControl(header);
         return panel;
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], RadioButton.prototype, "thickness", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], RadioButton.prototype, "group", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], RadioButton.prototype, "checkSizeRatio", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], RadioButton.prototype, "background", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], RadioButton.prototype, "isChecked", null);
     return RadioButton;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.RadioButton"] = RadioButton;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.RadioButton", RadioButton);
 
 
 /***/ }),
@@ -9297,6 +10265,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./container */ "./2D/controls/container.ts");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -9350,6 +10319,22 @@ var Rectangle = /** @class */ (function (_super) {
     Rectangle.prototype._getTypeName = function () {
         return "Rectangle";
     };
+    /** @hidden */
+    Rectangle.prototype._computeAdditionnalOffsetX = function () {
+        if (this._cornerRadius) {
+            // Take in account the aliasing
+            return 1;
+        }
+        return 0;
+    };
+    /** @hidden */
+    Rectangle.prototype._computeAdditionnalOffsetY = function () {
+        if (this._cornerRadius) {
+            // Take in account the aliasing
+            return 1;
+        }
+        return 0;
+    };
     Rectangle.prototype._localDraw = function (context) {
         context.save();
         if (this.shadowBlur || this.shadowOffsetX || this.shadowOffsetY) {
@@ -9359,7 +10344,7 @@ var Rectangle = /** @class */ (function (_super) {
             context.shadowOffsetY = this.shadowOffsetY;
         }
         if (this._background) {
-            context.fillStyle = this._background;
+            context.fillStyle = this.typeName === "Button" ? (this.isEnabled ? this._background : this.disabledColor) : this._background;
             if (this._cornerRadius) {
                 this._drawRoundedRect(context, this._thickness / 2);
                 context.fill();
@@ -9420,10 +10405,16 @@ var Rectangle = /** @class */ (function (_super) {
             context.clip();
         }
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], Rectangle.prototype, "thickness", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], Rectangle.prototype, "cornerRadius", null);
     return Rectangle;
 }(_container__WEBPACK_IMPORTED_MODULE_1__["Container"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Rectangle"] = Rectangle;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["RegisterClass"])("BABYLON.GUI.Rectangle", Rectangle);
 
 
 /***/ }),
@@ -10084,7 +11075,7 @@ var ScrollViewer = /** @class */ (function (_super) {
             return;
         }
         this._onWheelObserver = this.onWheelObservable.add(function (pi) {
-            if (!_this._pointerIsOver) {
+            if (!_this._pointerIsOver || _this.isReadOnly) {
                 return;
             }
             if (_this._verticalBar.isVisible == true) {
@@ -10122,7 +11113,7 @@ var ScrollViewer = /** @class */ (function (_super) {
     return ScrollViewer;
 }(_rectangle__WEBPACK_IMPORTED_MODULE_1__["Rectangle"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_7__["_TypeStore"].RegisteredTypes["BABYLON.GUI.ScrollViewer"] = ScrollViewer;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_7__["RegisterClass"])("BABYLON.GUI.ScrollViewer", ScrollViewer);
 
 
 /***/ }),
@@ -11084,6 +12075,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * Class used to create slider controls
  */
@@ -11105,7 +12097,7 @@ var BaseSlider = /** @class */ (function (_super) {
         _this._isThumbClamped = false;
         _this._displayThumb = true;
         _this._step = 0;
-        _this._lastPointerDownID = -1;
+        _this._lastPointerDownId = -1;
         // Shared rendering info
         _this._effectiveBarOffset = 0;
         /** Observable raised when the sldier value changes */
@@ -11358,25 +12350,27 @@ var BaseSlider = /** @class */ (function (_super) {
         else {
             value = this._minimum + ((x - this._currentMeasure.left) / this._currentMeasure.width) * (this._maximum - this._minimum);
         }
-        var mult = (1 / this._step) | 0;
-        this.value = this._step ? ((value * mult) | 0) / mult : value;
+        this.value = this._step ? ((value / this._step) | 0) * this._step : value;
     };
     BaseSlider.prototype._onPointerDown = function (target, coordinates, pointerId, buttonIndex, pi) {
         if (!_super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi)) {
             return false;
         }
+        if (this.isReadOnly) {
+            return true;
+        }
         this._pointerIsDown = true;
         this._updateValueFromPointer(coordinates.x, coordinates.y);
         this._host._capturingControl[pointerId] = this;
-        this._lastPointerDownID = pointerId;
+        this._lastPointerDownId = pointerId;
         return true;
     };
     BaseSlider.prototype._onPointerMove = function (target, coordinates, pointerId, pi) {
         // Only listen to pointer move events coming from the last pointer to click on the element (To support dual vr controller interaction)
-        if (pointerId != this._lastPointerDownID) {
+        if (pointerId != this._lastPointerDownId) {
             return;
         }
-        if (this._pointerIsDown) {
+        if (this._pointerIsDown && !this.isReadOnly) {
             this._updateValueFromPointer(coordinates.x, coordinates.y);
         }
         _super.prototype._onPointerMove.call(this, target, coordinates, pointerId, pi);
@@ -11390,6 +12384,33 @@ var BaseSlider = /** @class */ (function (_super) {
         this._forcePointerUp();
         _super.prototype._onCanvasBlur.call(this);
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "displayThumb", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "step", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "barOffset", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "thumbWidth", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "minimum", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "maximum", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "value", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "isVertical", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], BaseSlider.prototype, "isThumbClamped", null);
     return BaseSlider;
 }(_control__WEBPACK_IMPORTED_MODULE_2__["Control"]));
 
@@ -11410,8 +12431,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _baseSlider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseSlider */ "./2D/controls/sliders/baseSlider.ts");
 /* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../measure */ "./2D/measure.ts");
-/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
-/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _image__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../image */ "./2D/controls/image.ts");
+/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_4__);
+
+
 
 
 
@@ -11568,10 +12592,36 @@ var ImageBasedSlider = /** @class */ (function (_super) {
         }
         context.restore();
     };
+    /**
+    * Serializes the current control
+    * @param serializationObject defined the JSON serialized object
+    */
+    ImageBasedSlider.prototype.serialize = function (serializationObject) {
+        _super.prototype.serialize.call(this, serializationObject);
+        var backgroundImage = {};
+        var thumbImage = {};
+        var valueBarImage = {};
+        this.backgroundImage.serialize(backgroundImage);
+        this.thumbImage.serialize(thumbImage);
+        this.valueBarImage.serialize(valueBarImage);
+        serializationObject.backgroundImage = backgroundImage;
+        serializationObject.thumbImage = thumbImage;
+        serializationObject.valueBarImage = valueBarImage;
+    };
+    /** @hidden */
+    ImageBasedSlider.prototype._parseFromContent = function (serializedObject, host) {
+        _super.prototype._parseFromContent.call(this, serializedObject, host);
+        this.backgroundImage = _image__WEBPACK_IMPORTED_MODULE_3__["Image"].Parse(serializedObject.backgroundImage, host);
+        this.thumbImage = _image__WEBPACK_IMPORTED_MODULE_3__["Image"].Parse(serializedObject.thumbImage, host);
+        this.valueBarImage = _image__WEBPACK_IMPORTED_MODULE_3__["Image"].Parse(serializedObject.valueBarImage, host);
+    };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_4__["serialize"])()
+    ], ImageBasedSlider.prototype, "displayThumb", null);
     return ImageBasedSlider;
 }(_baseSlider__WEBPACK_IMPORTED_MODULE_1__["BaseSlider"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_3__["_TypeStore"].RegisteredTypes["BABYLON.GUI.ImageBasedSlider"] = ImageBasedSlider;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_4__["RegisterClass"])("BABYLON.GUI.ImageBasedSlider", ImageBasedSlider);
 
 
 /***/ }),
@@ -11589,6 +12639,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _baseSlider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseSlider */ "./2D/controls/sliders/baseSlider.ts");
 /* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../measure */ "./2D/measure.ts");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -11838,6 +12891,9 @@ var ImageScrollBar = /** @class */ (function (_super) {
         this._first = true;
         return _super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi);
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3__["serialize"])()
+    ], ImageScrollBar.prototype, "num90RotationInVerticalMode", void 0);
     return ImageScrollBar;
 }(_baseSlider__WEBPACK_IMPORTED_MODULE_1__["BaseSlider"]));
 
@@ -11858,6 +12914,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _baseSlider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseSlider */ "./2D/controls/sliders/baseSlider.ts");
 /* harmony import */ var _measure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../measure */ "./2D/measure.ts");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -11984,6 +13043,12 @@ var ScrollBar = /** @class */ (function (_super) {
         this._first = true;
         return _super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi);
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3__["serialize"])()
+    ], ScrollBar.prototype, "borderColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_3__["serialize"])()
+    ], ScrollBar.prototype, "background", null);
     return ScrollBar;
 }(_baseSlider__WEBPACK_IMPORTED_MODULE_1__["BaseSlider"]));
 
@@ -12005,6 +13070,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _baseSlider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./baseSlider */ "./2D/controls/sliders/baseSlider.ts");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -12256,10 +13322,25 @@ var Slider = /** @class */ (function (_super) {
         }
         context.restore();
     };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], Slider.prototype, "displayValueBar", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], Slider.prototype, "borderColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], Slider.prototype, "background", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], Slider.prototype, "thumbColor", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["serialize"])()
+    ], Slider.prototype, "isThumbCircle", null);
     return Slider;
 }(_baseSlider__WEBPACK_IMPORTED_MODULE_1__["BaseSlider"]));
 
-babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["_TypeStore"].RegisteredTypes["BABYLON.GUI.Slider"] = Slider;
+Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_2__["RegisterClass"])("BABYLON.GUI.Slider", Slider);
 
 
 /***/ }),
@@ -12279,6 +13360,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./container */ "./2D/controls/container.ts");
 /* harmony import */ var _control__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./control */ "./2D/controls/control.ts");
+
 
 
 
@@ -12461,10 +13543,37 @@ var StackPanel = /** @class */ (function (_super) {
         }
         _super.prototype._postMeasure.call(this);
     };
+    /**
+     * Serializes the current control
+     * @param serializationObject defined the JSON serialized object
+     */
+    StackPanel.prototype.serialize = function (serializationObject) {
+        _super.prototype.serialize.call(this, serializationObject);
+        serializationObject.manualWidth = this._manualWidth;
+        serializationObject.manualHeight = this._manualHeight;
+    };
+    /** @hidden */
+    StackPanel.prototype._parseFromContent = function (serializedObject, host) {
+        this._manualWidth = serializedObject.manualWidth;
+        this._manualHeight = serializedObject.manualHeight;
+        _super.prototype._parseFromContent.call(this, serializedObject, host);
+    };
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], StackPanel.prototype, "ignoreLayoutWarnings", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], StackPanel.prototype, "isVertical", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], StackPanel.prototype, "width", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], StackPanel.prototype, "height", null);
     return StackPanel;
 }(_container__WEBPACK_IMPORTED_MODULE_2__["Container"]));
 
-babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.StackPanel"] = StackPanel;
+Object(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.StackPanel", StackPanel);
 
 
 /***/ }),
@@ -12554,6 +13663,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 /**
  * Enum that determines the text-wrapping mode to use.
  */
@@ -12591,6 +13702,7 @@ var TextBlock = /** @class */ (function (_super) {
         var _this = _super.call(this, name) || this;
         _this.name = name;
         _this._text = "";
+        _this._structuredText = []; //++CR
         _this._textWrapping = TextWrapping.Clip;
         _this._textHorizontalAlignment = _control__WEBPACK_IMPORTED_MODULE_3__["Control"].HORIZONTAL_ALIGNMENT_CENTER;
         _this._textVerticalAlignment = _control__WEBPACK_IMPORTED_MODULE_3__["Control"].VERTICAL_ALIGNMENT_CENTER;
@@ -12679,7 +13791,31 @@ var TextBlock = /** @class */ (function (_super) {
             if (this._text === value) {
                 return;
             }
-            this._text = value;
+            this._text = value + ""; // Making sure it is a text
+            this._structuredText = [{ text: this._text }];
+            this._markAsDirty();
+            this.onTextChangedObservable.notifyObservers(this);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TextBlock.prototype, "structuredText", {
+        //++CR
+        /**
+         * Gets or sets structured text to display
+         */
+        get: function () {
+            return this._structuredText;
+        },
+        /**
+         * Gets or sets structured text to display
+         */
+        set: function (value) {
+            if (this._structuredText === value || !Array.isArray(value)) {
+                return;
+            }
+            this._structuredText = value;
+            this._text = this._structuredText.reduce(function (accumulator, part) { return accumulator + part.text; }, '');
             this._markAsDirty();
             this.onTextChangedObservable.notifyObservers(this);
         },
@@ -12687,6 +13823,7 @@ var TextBlock = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(TextBlock.prototype, "textHorizontalAlignment", {
+        //--CR
         /**
          * Gets or sets text horizontal alignment (BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER by default)
          */
@@ -12908,13 +14045,9 @@ var TextBlock = /** @class */ (function (_super) {
             context.closePath();
         }
     };
-    
     //++CR
     TextBlock.prototype._drawStructuredText = function (structuredText, textWidth, y, context) {
-        var attr ,
-        	x = 0 ,
-        	width = this._currentMeasure.width ;
-
+        var attr, x = 0, width = this._currentMeasure.width;
         switch (this._textHorizontalAlignment) {
             case _control__WEBPACK_IMPORTED_MODULE_3__["Control"].HORIZONTAL_ALIGNMENT_LEFT:
                 x = 0;
@@ -12926,105 +14059,94 @@ var TextBlock = /** @class */ (function (_super) {
                 x = (width - textWidth) / 2;
                 break;
         }
-        
-        console.warn( "****************** ._drawStructuredText()" , structuredText , textWidth , y ) ;
-        
-		var halfThickness = Math.round( this.fontSizeInPixels * 0.025 ) ,
-			underlineYOffset = 3 ,
-			lineThroughYOffset = - this.fontSizeInPixels / 3 ;
-
-        for ( let part of structuredText ) {
-			attr = this._inheritAttributes( part ) ;
-			this._setContextAttributes( context , attr ) ;
-
-			if ( attr.outlineWidth ) {
-				if ( attr.underline ) {
-					context.strokeRect( this._currentMeasure.left + x - halfThickness , y + underlineYOffset - halfThickness , part.width , 2 * halfThickness ) ;
-				}
-
-				context.strokeText( part.text , this._currentMeasure.left + x , y ) ;
-
-				if ( attr.lineThrough ) {
-					context.strokeRect( this._currentMeasure.left + x - halfThickness , y + lineThroughYOffset - halfThickness , part.width , 2 * halfThickness ) ;
-				}
-			}
-
-			if ( attr.underline ) {
-				context.fillRect( this._currentMeasure.left + x - halfThickness , y + underlineYOffset - halfThickness , part.width , 2 * halfThickness ) ;
-			}
-
-			context.fillText( part.text , this._currentMeasure.left + x , y ) ;
-
-			if ( attr.lineThrough ) {
-				context.fillRect( this._currentMeasure.left + x - halfThickness , y + lineThroughYOffset - halfThickness , part.width , 2 * halfThickness ) ;
-			}
-			
-			x += part.width ;
+        console.warn("****************** ._drawStructuredText()", structuredText, textWidth, y);
+        var halfThickness = Math.round(this.fontSizeInPixels * 0.025), underlineYOffset = 3, lineThroughYOffset = -this.fontSizeInPixels / 3;
+        for (var _i = 0, structuredText_1 = structuredText; _i < structuredText_1.length; _i++) {
+            var part = structuredText_1[_i];
+            if (!part.width) {
+                continue;
+            }
+            attr = this._inheritAttributes(part);
+            this._setContextAttributes(context, attr);
+            if (attr.outlineWidth) {
+                if (attr.underline) {
+                    context.strokeRect(this._currentMeasure.left + x - halfThickness, y + underlineYOffset - halfThickness, part.width, 2 * halfThickness);
+                }
+                context.strokeText(part.text, this._currentMeasure.left + x, y);
+                if (attr.lineThrough) {
+                    context.strokeRect(this._currentMeasure.left + x - halfThickness, y + lineThroughYOffset - halfThickness, part.width, 2 * halfThickness);
+                }
+            }
+            if (attr.underline) {
+                context.fillRect(this._currentMeasure.left + x - halfThickness, y + underlineYOffset - halfThickness, part.width, 2 * halfThickness);
+            }
+            context.fillText(part.text, this._currentMeasure.left + x, y);
+            if (attr.lineThrough) {
+                context.fillRect(this._currentMeasure.left + x - halfThickness, y + lineThroughYOffset - halfThickness, part.width, 2 * halfThickness);
+            }
+            x += part.width;
+        }
+    };
+    ;
+    //--CR
+    //++CR
+    // Compute an attribute object from a text's part, inheriting from this
+    TextBlock.prototype._inheritAttributes = function (part) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        return {
+            color: (_a = part.color) !== null && _a !== void 0 ? _a : this.color,
+            outlineWidth: (_b = part.outlineWidth) !== null && _b !== void 0 ? _b : this._outlineWidth,
+            outlineColor: (_c = part.outlineColor) !== null && _c !== void 0 ? _c : this._outlineColor,
+            shadowColor: (_d = part.shadowColor) !== null && _d !== void 0 ? _d : this.shadowColor,
+            shadowBlur: (_e = part.shadowBlur) !== null && _e !== void 0 ? _e : this.shadowBlur,
+            shadowOffsetX: (_f = part.shadowOffsetX) !== null && _f !== void 0 ? _f : this.shadowOffsetX,
+            shadowOffsetY: (_g = part.shadowOffsetY) !== null && _g !== void 0 ? _g : this.shadowOffsetY,
+            underline: (_h = part.underline) !== null && _h !== void 0 ? _h : this._underline,
+            lineThrough: (_j = part.lineThrough) !== null && _j !== void 0 ? _j : this._lineThrough,
+            // For instance, font size and family is not updatable, the whole TextBlock shares the same size and family (not useful and it introduces complexity)
+            fontStyle: (_m = (_k = part.fontStyle) !== null && _k !== void 0 ? _k : (_l = this._style) === null || _l === void 0 ? void 0 : _l.fontStyle) !== null && _m !== void 0 ? _m : this._fontStyle,
+            fontWeight: (_q = (_o = part.fontWeight) !== null && _o !== void 0 ? _o : (_p = this._style) === null || _p === void 0 ? void 0 : _p.fontWeight) !== null && _q !== void 0 ? _q : this._fontWeight,
+        };
+    };
+    ;
+    //--CR
+    //++CR
+    // It's like ._applyStates(), but for each line parts
+    TextBlock.prototype._setContextAttributes = function (context, attr) {
+        // .fillStyle and .strokeStyle can receive a CSS color string, a CanvasGradient or a CanvasPattern,
+        // but here we just care about color string.
+        context.fillStyle = attr.color;
+        // Disallow changing font size and family? If this would be allowed, line-height computing would need to be upgraded...
+        context.font = attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily;
+        console.warn("************?????????????????", attr, attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily);
+        if (attr.shadowBlur || attr.shadowOffsetX || attr.shadowOffsetY) {
+            if (attr.shadowColor) {
+                context.shadowColor = attr.shadowColor;
+            }
+            context.shadowBlur = attr.shadowBlur;
+            context.shadowOffsetX = attr.shadowOffsetX;
+            context.shadowOffsetY = attr.shadowOffsetY;
+        }
+        else {
+            context.shadowBlur = 0;
+        }
+        if (attr.outlineWidth) {
+            context.lineWidth = attr.outlineWidth;
+            context.strokeStyle = attr.outlineColor;
+            context.lineJoin = 'miter';
+            context.miterLimit = 2;
+        }
+        else {
+            context.lineWidth = 0;
         }
     };
     //--CR
-    
-    //++CR
-    // Compute an attribute object from a text's part, inheriting from this
-	TextBlock.prototype._inheritAttributes = function (part) {
-		return {
-			color: part.color ?? this.color ,
-			outlineWidth: part.outlineWidth ?? this._outlineWidth ,
-			outlineColor: part.outlineColor ?? this._outlineColor ,
-			shadowColor: part.shadowColor ?? this.shadowColor ,
-			shadowBlur: part.shadowBlur ?? this.shadowBlur ,
-			shadowOffsetX: part.shadowOffsetX ?? this.shadowOffsetX ,
-			shadowOffsetY: part.shadowOffsetY ?? this.shadowOffsetY ,
-			underline: part.underline ?? this._underline ,
-			lineThrough: part.lineThrough ?? part.strikeThrough ?? this._lineThrough ,
-			
-			// For instance, font size and family is not updatable, the whole TextBlock shares the same size and family (not useful and it introduces complexity)
-			fontStyle: part.fontStyle ?? this._style?.fontStyle ?? this._fontStyle ,
-			fontWeight: part.fontWeight ?? this._style?.fontWeight ?? this._fontWeight ,
-		} ;
-	} ;
-    //--CR
-
-    //++CR
-    // It's like ._applyStates(), but for each line parts
-	TextBlock.prototype._setContextAttributes = function (context, attr) {
-		// .fillStyle and .strokeStyle can receive a CSS color string, a CanvasGradient or a CanvasPattern,
-		// but here we just care about color string.
-		context.fillStyle = attr.color ;
-
-		// Disallow changing font size and family? If this would be allowed, line-height computing would need to be upgraded...
-		context.font = attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily ;
-		console.warn( "************?????????????????" , attr , attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily ) ;
-		
-		if ( attr.shadowBlur || attr.shadowOffsetX || attr.shadowOffsetY ) {
-			context.shadowColor = attr.shadowColor ;
-			context.shadowBlur = attr.shadowBlur ;
-			context.shadowOffsetX = attr.shadowOffsetX ;
-			context.shadowOffsetY = attr.shadowOffsetY ;
-		}
-		else {
-			context.shadowBlur = 0 ;
-		}
-
-		if ( attr.outlineWidth ) {
-			context.lineWidth = attr.outlineWidth ;
-			context.strokeStyle = attr.outlineColor ;
-			context.lineJoin = 'miter' ;
-			context.miterLimit = 2 ;
-		}
-		else {
-			context.lineWidth = 0 ;
-		}
-	}
-    //--CR
-    
     //++CR
     // Like ._setContextAttributesForMeasure(), but only set up attributes that cares for measuring text
-	TextBlock.prototype._setContextAttributesForMeasure = function (context, attr ) {
-		context.font = attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily ;
-	}
+    TextBlock.prototype._setContextAttributesForMeasure = function (context, attr) {
+        context.font = attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily;
+    };
     //--CR
-
     /** @hidden */
     TextBlock.prototype._draw = function (context, invalidatedRectangle) {
         context.save();
@@ -13042,16 +14164,12 @@ var TextBlock = /** @class */ (function (_super) {
             context.miterLimit = 2;
         }
     };
-
-    //++CR
     TextBlock.prototype._breakLines = function (refWidth, context) {
-        if ( Array.isArray( this.text ) ) { return this._breakStructuredTextLines( refWidth , context ) ; }
-        else { return this._breakStringLines( refWidth , context ) ; }
-    };
-    //--CR
-
-    //CR: this is the original ._breakLines() method
-    TextBlock.prototype._breakStringLines = function (refWidth, context) {
+        //++CR
+        if (this._structuredText) {
+            return this._breakStructuredTextLines(refWidth, context);
+        }
+        //--CR
         var lines = [];
         var _lines = this.text.split("\n");
         if (this._textWrapping === TextWrapping.Ellipsis) {
@@ -13074,76 +14192,71 @@ var TextBlock = /** @class */ (function (_super) {
         }
         return lines;
     };
-
     //++CR
     TextBlock.prototype._breakStructuredTextLines = function (refWidth, context) {
-		var lines = [] ,
-			_newPart ,
-			_currentLine = [] ,
-			_lines = [ _currentLine ];
-		
-		
-		for ( let _part of this.text ) {
-			if ( _part.text.includes( '\n' ) ) {
-				for ( let _splitted of _part.text.split( '\n' ) ) {
-					_newPart = Object.assign( {} , _part ) ;
-					_newPart.text = _splitted ;
-					_currentLine.push( _newPart ) ;
-
-					// Create a new line
-					_currentLine = [] ;
-					_lines.push( _currentLine ) ;
-				}
-			}
-			else {
-				_currentLine.push( _part ) ;
-			}
-		}
-			
+        var _newPart, lines = [], _currentLine = [], _lines = [_currentLine];
+        for (var _i = 0, _a = this._structuredText; _i < _a.length; _i++) {
+            var _part = _a[_i];
+            if (_part.text.includes('\n')) {
+                for (var _b = 0, _c = _part.text.split('\n'); _b < _c.length; _b++) {
+                    var _splitted = _c[_b];
+                    _newPart = Object.assign({}, _part);
+                    _newPart.text = _splitted;
+                    _currentLine.push(_newPart);
+                    // Create a new line
+                    _currentLine = [];
+                    _lines.push(_currentLine);
+                }
+            }
+            else {
+                _currentLine.push(_part);
+            }
+        }
         if (this._textWrapping === TextWrapping.Ellipsis) {
-            for ( let _line of _lines) {
+            for (var _d = 0, _lines_4 = _lines; _d < _lines_4.length; _d++) {
+                var _line = _lines_4[_d];
                 lines.push(this._parseStructuredTextLineEllipsis(_line, refWidth, context));
             }
         }
         else if (this._textWrapping === TextWrapping.WordWrap) {
-            for ( let _line of _lines) {
-                lines.push(...this._parseStructuredTextLineWordWrap(_line, refWidth, context));
+            for (var _e = 0, _lines_5 = _lines; _e < _lines_5.length; _e++) {
+                var _line = _lines_5[_e];
+                lines.push.apply(lines, this._parseStructuredTextLineWordWrap(_line, refWidth, context));
             }
         }
         else {
-            for ( let _line of _lines) {
+            for (var _f = 0, _lines_6 = _lines; _f < _lines_6.length; _f++) {
+                var _line = _lines_6[_f];
                 lines.push(this._parseStructuredTextLine(_line, context));
             }
-        }		
-
-		return lines;
+        }
+        return lines;
     };
     //--CR
-    
     TextBlock.prototype._parseLine = function (line, context) {
         if (line === void 0) { line = ""; }
-        return { text: line, width: context.measureText(line).width };
+        var textMetrics = context.measureText(line);
+        var lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+        return { text: line, width: lineWidth };
     };
-
-	//++CR
-	TextBlock.prototype._parseStructuredTextLine = function (line, context) {
-		var _part , textMetrics ,
-			lineWidth = 0 ;
-
-		for ( let _part of line ) {
-			// CR:TODO set up the style before measure the size
-			textMetrics = context.measureText( _part.text );
-			_part.width = Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
-			lineWidth += _part.width ;
-		}
-		
-		return { parts: line, width: lineWidth } ;
-	};
-	//--CR
-
+    //++CR
+    TextBlock.prototype._parseStructuredTextLine = function (line, context) {
+        var textMetrics, lineWidth = 0;
+        for (var _i = 0, line_1 = line; _i < line_1.length; _i++) {
+            var _part = line_1[_i];
+            //CR:TODO set up the style before measure the size
+            textMetrics = context.measureText(_part.text);
+            _part.width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
+            lineWidth += _part.width;
+        }
+        return { parts: line, width: lineWidth };
+    };
+    ;
+    //--CR
     TextBlock.prototype._parseLineEllipsis = function (line, width, context) {
         if (line === void 0) { line = ""; }
-        var lineWidth = context.measureText(line).width;
+        var textMetrics = context.measureText(line);
+        var lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
         if (lineWidth > width) {
             line += "…";
         }
@@ -13154,58 +14267,55 @@ var TextBlock = /** @class */ (function (_super) {
             // no array.from, use the old method
             while (line.length > 2 && lineWidth > width) {
                 line = line.slice(0, -2) + "…";
-                lineWidth = context.measureText(line).width;
+                textMetrics = context.measureText(line);
+                lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
             }
         }
         else {
             while (characters.length && lineWidth > width) {
                 characters.pop();
-                line = characters.join("") + "…";	//==CR it was joining with "..." instead of "…"
-                lineWidth = context.measureText(line).width;
+                line = characters.join("") + "...";
+                textMetrics = context.measureText(line);
+                lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
             }
         }
         return { text: line, width: lineWidth };
     };
-
     //++CR
     TextBlock.prototype._parseStructuredTextLineEllipsis = function (line, width, context) {
-		var _part , characters ,
-			lineWidth = this._structuredTextWidth( line , context ) ;
-
-		while ( line.length && lineWidth > width ) {
-			_part = line[ line.length - 1 ] ;
-			characters = Array.from( _part.text ) ;
-
-			while ( characters.length && lineWidth > width ) {
-				characters.pop() ;
-
-				_part.text = characters.join('') + "…" ;
-				delete _part.width ;	// delete .width, so ._structuredTextWidth() will re-compute it instead of using the existing one
-				lineWidth = this._structuredTextWidth( line , context ) ;
-			}
-			
-			if ( lineWidth > width ) {
-				line.pop() ;
-			}
-		}
-
-		return { parts: line, width: lineWidth } ;
-	};
-	//--CR
-
+        var _part, characters, lineWidth = this._structuredTextWidth(line, context);
+        while (line.length && lineWidth > width) {
+            _part = line[line.length - 1];
+            characters = Array.from(_part.text);
+            while (characters.length && lineWidth > width) {
+                characters.pop();
+                _part.text = characters.join('') + "…";
+                delete _part.width; // delete .width, so ._structuredTextWidth() will re-compute it instead of using the existing one
+                lineWidth = this._structuredTextWidth(line, context);
+            }
+            if (lineWidth > width) {
+                line.pop();
+            }
+        }
+        return { parts: line, width: lineWidth };
+    };
+    ;
+    //--CR
     TextBlock.prototype._parseLineWordWrap = function (line, width, context) {
         if (line === void 0) { line = ""; }
         var lines = [];
-        var words = this.wordSplittingFunction ? this.wordSplittingFunction(line) : line.split( ' ' );	//==CR replace line.split(' ')
-        var lineWidth = 0;
+        var words = this.wordSplittingFunction ? this.wordSplittingFunction(line) : line.split(" ");
+        var textMetrics = context.measureText(line);
+        var lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
         for (var n = 0; n < words.length; n++) {
             var testLine = n > 0 ? line + " " + words[n] : words[0];
             var metrics = context.measureText(testLine);
-            var testWidth = metrics.width;
+            var testWidth = Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight);
             if (testWidth > width && n > 0) {
                 lines.push({ text: line, width: lineWidth });
                 line = words[n];
-                lineWidth = context.measureText(line).width;
+                textMetrics = context.measureText(line);
+                lineWidth = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
             }
             else {
                 lineWidth = testWidth;
@@ -13215,145 +14325,119 @@ var TextBlock = /** @class */ (function (_super) {
         lines.push({ text: line, width: lineWidth });
         return lines;
     };
-    
     //++CR
-	// This splitting function does not exlude the splitter, it keeps it on the right-side of the split.
-	TextBlock._defaultWordSplittingFunction = str => {
-		var match ,
-			lastIndex = 0 ,
-			splitted = [] ;
-
-		//str = str.trim() ;
-		
-		for ( match of str.matchAll( / +/g ) ) {
-			if ( lastIndex < match.index ) {
-				splitted.push( str.slice( lastIndex , match.index ) ) ;
-			}
-
-			lastIndex = match.index ;
-		}
-
-		if ( lastIndex < str.length ) {
-			splitted.push( str.slice( lastIndex ) ) ;
-		}
-		
-		return splitted ;
-	};
-	//--CR
-
+    // This splitting function does not exlude the splitter, it keeps it on the right-side of the split.
+    TextBlock._defaultWordSplittingFunction = function (str) {
+        var match, lastIndex = 0, splitted = [], regexp = / +/g;
+        //str = str.trim() ;
+        while (match = regexp.exec(str)) {
+            if (lastIndex < match.index) {
+                splitted.push(str.slice(lastIndex, match.index));
+            }
+            lastIndex = match.index;
+        }
+        if (lastIndex < str.length) {
+            splitted.push(str.slice(lastIndex));
+        }
+        return splitted;
+    };
+    ;
+    //--CR
     //++CR
     // Join consecutive parts sharing the exact same attributes.
     // It produces better results for underline and line-through, avoiding outline overlaps.
-	TextBlock._fuseStructuredTextParts = structuredText => {
-		if ( structuredText.length <= 1 ) { return structuredText ; }
-
-		var index , part ,
-			last = structuredText[ 0 ] ,
-			lastInserted = last ,
-			output = [ last ] ;
-		
-		for ( let index = 1 ; index < structuredText.length ; index ++ ) {
-			part = structuredText[ index ] ;
-			if (
-				last.color === part.color
-				&& last.outlineWidth === part.outlineWidth && last.outlineColor === part.outlineColor
-				&& last.shadowColor === part.shadowColor && last.shadowBlur === part.shadowBlur
-				&& last.shadowOffsetX === part.shadowOffsetX && last.shadowOffsetY === part.shadowOffsetY
-				&& last.underline === part.underline
-				&& last.lineThrough === part.lineThrough
-				&& last.fontStyle === part.fontStyle && last.fontWeight === part.fontWeight
-			) {
-				lastInserted.text += part.text ;
-				lastInserted.width += part.width ;
-			}
-			else {
-				output.push( part ) ;
-				lastInserted = part ;
-			}
-
-			last = part ;
-		}
-		
-		return output ;
-	} ;
-	//--CR
-
+    TextBlock._fuseStructuredTextParts = function (structuredText) {
+        if (structuredText.length <= 1) {
+            return structuredText;
+        }
+        var index, part, last = structuredText[0], lastInserted = last, output = [last];
+        for (index = 1; index < structuredText.length; index++) {
+            part = structuredText[index];
+            if (last.color === part.color
+                && last.outlineWidth === part.outlineWidth && last.outlineColor === part.outlineColor
+                && last.shadowColor === part.shadowColor && last.shadowBlur === part.shadowBlur
+                && last.shadowOffsetX === part.shadowOffsetX && last.shadowOffsetY === part.shadowOffsetY
+                && last.underline === part.underline
+                && last.lineThrough === part.lineThrough
+                && last.fontStyle === part.fontStyle && last.fontWeight === part.fontWeight) {
+                lastInserted.text += part.text;
+                lastInserted.width = (lastInserted.width || 0) + (part.width || 0); // It's never undefined here, but it's needed to please tsc
+            }
+            else {
+                output.push(part);
+                lastInserted = part;
+            }
+            last = part;
+        }
+        return output;
+    };
+    ;
+    //--CR
     //++CR
     // Set the width of each parts and return the total width
-	TextBlock.prototype._structuredTextWidth = function (structuredText, context) {
-		var contextSaved = false ;
-
-		var _width = structuredText.reduce( ( width , part ) => {
-			if ( part.width === undefined ) {
-				if ( ! contextSaved ) { context.save() ; }
-
-				let attr = this._inheritAttributes( part ) ;
-				this._setContextAttributesForMeasure( context , attr ) ;
-
-				let textMetrics = context.measureText( part.text ) ;
-				
-				// .actualBoundingBox* does not work: sometime it skips spaces
-				part.width = textMetrics.width ;
-				//part.width = Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
-				//part.width = Math.abs( textMetrics.actualBoundingBoxRight - textMetrics.actualBoundingBoxLeft ) ;
-				console.warn( "******************* ._structuredTextWidth() " , part , textMetrics ) ;
-			}
-
-			return width + part.width ;
-		} , 0 ) ;
-
-		if ( contextSaved ) { context.restore() ; }
-
-		return _width ;
-	};
+    TextBlock.prototype._structuredTextWidth = function (structuredText, context) {
+        var _this = this;
+        var contextSaved = false;
+        var _width = structuredText.reduce(function (width, part) {
+            if (part.width === undefined) {
+                if (!contextSaved) {
+                    context.save();
+                }
+                var attr = _this._inheritAttributes(part);
+                _this._setContextAttributesForMeasure(context, attr);
+                var textMetrics = context.measureText(part.text);
+                // .actualBoundingBox* does not work: sometime it skips spaces
+                part.width = textMetrics.width;
+                //part.width = Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
+                //part.width = Math.abs( textMetrics.actualBoundingBoxRight - textMetrics.actualBoundingBoxLeft ) ;
+                console.warn("******************* ._structuredTextWidth() ", part, textMetrics);
+            }
+            return width + part.width;
+        }, 0);
+        if (contextSaved) {
+            context.restore();
+        }
+        return _width;
+    };
+    ;
     //--CR
-
     //++CR
-	TextBlock.prototype._parseStructuredTextLineWordWrap = function (line, width, context) {
-		var _part , _word , wordText ,
-			lines = [] ,
-			words = [] ,
-			wordSplittingFunction = this.wordSplittingFunction || TextBlock._defaultWordSplittingFunction ;
-		
-		// Split each part of the line
-		for ( _part of line ) {
-			for ( wordText of wordSplittingFunction( _part.text ) ) {
-				_word = Object.assign( {} , _part ) ;
-				_word.text = wordText ;
-				words.push( _word ) ;
-			}
-		}
-		
-		var lastTestWidth ,
-			testWidth = 0 ,
-			testLine = [] ;
-		
-		for ( _word of words ) {
-			testLine.push( _word ) ;
-			lastTestWidth = testWidth ;
-			testWidth = this._structuredTextWidth( testLine , context ) ;
-
-			if ( testWidth > width && testLine.length > 1 ) {
-				testLine.pop() ;
-				//lines.push( { parts: testLine , width: lastTestWidth } ) ;
-				lines.push( { parts: TextBlock._fuseStructuredTextParts( testLine ) , width: lastTestWidth } ) ;
-
-				// Create a new line with the current word as the first word.
-				// We have to left-trim it because it mays contain a space.
-				_word.text = _word.text.trimStart() ;
-				delete _word.width ;	// delete .width, so ._structuredTextWidth() will re-compute it instead of using the existing one
-				testLine = [ _word ] ;
-				testWidth = this._structuredTextWidth( testLine , context ) ;
-			}
-		}
-
-		//lines.push( { parts: testLine , width: testWidth } ) ;
-		lines.push( { parts: TextBlock._fuseStructuredTextParts( testLine ) , width: testWidth } ) ;
-
-		return lines ;
-	};
-	//--CR
-
+    TextBlock.prototype._parseStructuredTextLineWordWrap = function (line, width, context) {
+        var _part, _word, wordText, lines = [], words = [], wordSplittingFunction = this.wordSplittingFunction || TextBlock._defaultWordSplittingFunction;
+        // Split each part of the line
+        for (var _i = 0, line_2 = line; _i < line_2.length; _i++) {
+            _part = line_2[_i];
+            for (var _a = 0, _b = wordSplittingFunction(_part.text); _a < _b.length; _a++) {
+                wordText = _b[_a];
+                _word = Object.assign({}, _part);
+                _word.text = wordText;
+                words.push(_word);
+            }
+        }
+        var lastTestWidth = 0, testWidth = 0, testLine = [];
+        for (var _c = 0, words_1 = words; _c < words_1.length; _c++) {
+            _word = words_1[_c];
+            testLine.push(_word);
+            lastTestWidth = testWidth;
+            testWidth = this._structuredTextWidth(testLine, context);
+            if (testWidth > width && testLine.length > 1) {
+                testLine.pop();
+                //lines.push( { parts: testLine , width: lastTestWidth } ) ;
+                lines.push({ parts: TextBlock._fuseStructuredTextParts(testLine), width: lastTestWidth });
+                // Create a new line with the current word as the first word.
+                // We have to left-trim it because it mays contain a space.
+                _word.text = _word.text.trimStart();
+                delete _word.width; // delete .width, so ._structuredTextWidth() will re-compute it instead of using the existing one
+                testLine = [_word];
+                testWidth = this._structuredTextWidth(testLine, context);
+            }
+        }
+        //lines.push( { parts: testLine , width: testWidth } ) ;
+        lines.push({ parts: TextBlock._fuseStructuredTextParts(testLine), width: testWidth });
+        return lines;
+    };
+    ;
+    //--CR
     TextBlock.prototype._renderLines = function (context) {
         var height = this._currentMeasure.height;
         var rootY = 0;
@@ -13369,9 +14453,6 @@ var TextBlock = /** @class */ (function (_super) {
                 break;
         }
         rootY += this._currentMeasure.top;
-        
-        console.warn( "*********************  ._renderLines()" , this._lines ) ;
-        
         for (var i = 0; i < this._lines.length; i++) {
             var line = this._lines[i];
             if (i !== 0 && this._lineSpacing.internalValue !== 0) {
@@ -13383,24 +14464,25 @@ var TextBlock = /** @class */ (function (_super) {
                 }
             }
             //++CR
-            if ( line.parts ) {
-	            this._drawStructuredText(line.parts, line.width, rootY, context);
+            if (line.parts) {
+                this._drawStructuredText(line.parts, line.width, rootY, context);
             }
             else {
-	            this._drawText(line.text, line.width, rootY, context);
+                this._drawText(line.text, line.width, rootY, context);
             }
             //--CR
             rootY += this._fontOffset.height;
         }
     };
-
     /**
      * Given a width constraint applied on the text block, find the expected height
      * @returns expected height
      */
     TextBlock.prototype.computeExpectedHeight = function () {
+        var _a;
         if (this.text && this.widthInPixels) {
-            var context_1 = document.createElement("canvas").getContext("2d");
+            // Shoudl abstract platform instead of using LastCreatedEngine
+            var context_1 = (_a = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Engine"].LastCreatedEngine) === null || _a === void 0 ? void 0 : _a.createCanvas(0, 0).getContext("2d");
             if (context_1) {
                 this._applyStates(context_1);
                 if (!this._fontOffset) {
@@ -13423,16 +14505,47 @@ var TextBlock = /** @class */ (function (_super) {
         }
         return 0;
     };
-
     TextBlock.prototype.dispose = function () {
         _super.prototype.dispose.call(this);
         this.onTextChangedObservable.clear();
     };
-
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "resizeToFit", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "textWrapping", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "text", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "structuredText", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "textHorizontalAlignment", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "textVerticalAlignment", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "lineSpacing", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "outlineWidth", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "underline", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "lineThrough", null);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], TextBlock.prototype, "outlineColor", null);
     return TextBlock;
 }(_control__WEBPACK_IMPORTED_MODULE_3__["Control"]));
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.TextBlock"] = TextBlock;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.TextBlock", TextBlock);
 
 
 /***/ }),
@@ -13476,7 +14589,7 @@ var TextWrapper = /** @class */ (function () {
         this._text = this._text.slice(0, idxStart) + (insertTxt ? insertTxt : "") + this._text.slice(idxEnd);
         if (this._characters) {
             var newCharacters = insertTxt ? Array.from(insertTxt) : [];
-            (_a = this._characters).splice.apply(_a, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spreadArrays"])([idxStart, idxEnd - idxStart], newCharacters));
+            (_a = this._characters).splice.apply(_a, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spreadArray"])([idxStart, idxEnd - idxStart], newCharacters, false));
         }
     };
     TextWrapper.prototype.charAt = function (idx) {
@@ -13549,6 +14662,258 @@ var TextWrapper = /** @class */ (function () {
     return TextWrapper;
 }());
 
+
+
+/***/ }),
+
+/***/ "./2D/controls/toggleButton.ts":
+/*!*************************************!*\
+  !*** ./2D/controls/toggleButton.ts ***!
+  \*************************************/
+/*! exports provided: ToggleButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ToggleButton", function() { return ToggleButton; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/observable */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _rectangle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./rectangle */ "./2D/controls/rectangle.ts");
+
+
+
+
+/**
+ * Class used to create toggle buttons
+ * @since 5.0.0
+ */
+var ToggleButton = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ToggleButton, _super);
+    /**
+     * Creates a new ToggleButton
+     * @param name defines the control name
+     * @param group defines the toggle group this toggle belongs to
+     */
+    function ToggleButton(name, group) {
+        var _this = _super.call(this, name) || this;
+        _this.name = name;
+        /** Observable raised when isActive is changed */
+        _this.onIsActiveChangedObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
+        /**
+         * Gets or sets a boolean indicating that the toggle button will let internal controls handle picking instead of doing it directly using its bounding info
+         */
+        _this.delegatePickingToChildren = false;
+        _this._isActive = false;
+        _this.group = group !== null && group !== void 0 ? group : "";
+        _this.thickness = 0;
+        _this.isPointerBlocker = true;
+        var alphaStore = null;
+        _this.toActiveAnimation = function () {
+            _this.thickness = 1;
+        };
+        _this.toInactiveAnimation = function () {
+            _this.thickness = 0;
+        };
+        _this.pointerEnterActiveAnimation = function () {
+            alphaStore = _this.alpha;
+            _this.alpha -= 0.1;
+        };
+        _this.pointerOutActiveAnimation = function () {
+            if (alphaStore !== null) {
+                _this.alpha = alphaStore;
+            }
+        };
+        _this.pointerDownActiveAnimation = function () {
+            _this.scaleX -= 0.05;
+            _this.scaleY -= 0.05;
+        };
+        _this.pointerUpActiveAnimation = function () {
+            _this.scaleX += 0.05;
+            _this.scaleY += 0.05;
+        };
+        _this.pointerEnterInactiveAnimation = function () {
+            alphaStore = _this.alpha;
+            _this.alpha -= 0.1;
+        };
+        _this.pointerOutInactiveAnimation = function () {
+            if (alphaStore !== null) {
+                _this.alpha = alphaStore;
+            }
+        };
+        _this.pointerDownInactiveAnimation = function () {
+            _this.scaleX -= 0.05;
+            _this.scaleY -= 0.05;
+        };
+        _this.pointerUpInactiveAnimation = function () {
+            _this.scaleX += 0.05;
+            _this.scaleY += 0.05;
+        };
+        return _this;
+    }
+    Object.defineProperty(ToggleButton.prototype, "group", {
+        /** Gets or sets group name this toggle button belongs to */
+        get: function () {
+            return this._group;
+        },
+        set: function (value) {
+            if (this._group === value) {
+                return;
+            }
+            this._group = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ToggleButton.prototype, "isActive", {
+        /** Gets or sets a boolean indicating if the toogle button is active or not */
+        get: function () {
+            return this._isActive;
+        },
+        set: function (value) {
+            var _this = this;
+            var _a, _b;
+            // Function modeled after radioButton.ts
+            if (this._isActive === value) {
+                return;
+            }
+            this._isActive = value;
+            // Update the visual state based on the new value
+            if (this._isActive) {
+                (_a = this.toActiveAnimation) === null || _a === void 0 ? void 0 : _a.call(this);
+            }
+            else {
+                (_b = this.toInactiveAnimation) === null || _b === void 0 ? void 0 : _b.call(this);
+            }
+            this._markAsDirty();
+            this.onIsActiveChangedObservable.notifyObservers(value);
+            if (this._isActive && this._host && this._group) {
+                // A toggle button in a group can only have 1 active element at a given time.
+                // If this toggle button has a group, set other toggle buttons in the group to inactive.
+                this._host.executeOnAllControls(function (control) {
+                    // Check for control type ToggleButton
+                    if (control.typeName === "ToggleButton") {
+                        // Don't do anything to this toggle button
+                        if (control === _this) {
+                            return;
+                        }
+                        var childToggle = control;
+                        // If toggle button is in same group, set isActive to false
+                        if (childToggle.group === _this.group) {
+                            childToggle.isActive = false;
+                        }
+                    }
+                });
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    ToggleButton.prototype._getTypeName = function () {
+        return "ToggleButton";
+    };
+    // While being a container, the toggle button behaves like a control.
+    /** @hidden */
+    ToggleButton.prototype._processPicking = function (x, y, pi, type, pointerId, buttonIndex, deltaX, deltaY) {
+        if (!this._isEnabled || !this.isHitTestVisible || !this.isVisible || this.notRenderable) {
+            return false;
+        }
+        if (!_super.prototype.contains.call(this, x, y)) {
+            return false;
+        }
+        if (this.delegatePickingToChildren) {
+            var contains = false;
+            for (var index = this._children.length - 1; index >= 0; index--) {
+                var child = this._children[index];
+                if (child.isEnabled && child.isHitTestVisible && child.isVisible && !child.notRenderable && child.contains(x, y)) {
+                    contains = true;
+                    break;
+                }
+            }
+            if (!contains) {
+                return false;
+            }
+        }
+        this._processObservables(type, x, y, pi, pointerId, buttonIndex, deltaX, deltaY);
+        return true;
+    };
+    /** @hidden */
+    ToggleButton.prototype._onPointerEnter = function (target, pi) {
+        if (!_super.prototype._onPointerEnter.call(this, target, pi)) {
+            return false;
+        }
+        if (this.isReadOnly) {
+            return true;
+        }
+        if (this._isActive) {
+            if (this.pointerEnterActiveAnimation) {
+                this.pointerEnterActiveAnimation();
+            }
+        }
+        else {
+            if (this.pointerEnterInactiveAnimation) {
+                this.pointerEnterInactiveAnimation();
+            }
+        }
+        return true;
+    };
+    /** @hidden */
+    ToggleButton.prototype._onPointerOut = function (target, pi, force) {
+        if (force === void 0) { force = false; }
+        if (!this.isReadOnly) {
+            if (this._isActive) {
+                if (this.pointerOutActiveAnimation) {
+                    this.pointerOutActiveAnimation();
+                }
+            }
+            else {
+                if (this.pointerOutInactiveAnimation) {
+                    this.pointerOutInactiveAnimation();
+                }
+            }
+        }
+        _super.prototype._onPointerOut.call(this, target, pi, force);
+    };
+    /** @hidden */
+    ToggleButton.prototype._onPointerDown = function (target, coordinates, pointerId, buttonIndex, pi) {
+        if (!_super.prototype._onPointerDown.call(this, target, coordinates, pointerId, buttonIndex, pi)) {
+            return false;
+        }
+        if (this.isReadOnly) {
+            return true;
+        }
+        if (this._isActive) {
+            if (this.pointerDownActiveAnimation) {
+                this.pointerDownActiveAnimation();
+            }
+        }
+        else {
+            if (this.pointerDownInactiveAnimation) {
+                this.pointerDownInactiveAnimation();
+            }
+        }
+        return true;
+    };
+    /** @hidden */
+    ToggleButton.prototype._onPointerUp = function (target, coordinates, pointerId, buttonIndex, notifyClick, pi) {
+        if (!this.isReadOnly) {
+            if (this._isActive) {
+                if (this.pointerUpActiveAnimation) {
+                    this.pointerUpActiveAnimation();
+                }
+            }
+            else {
+                if (this.pointerUpInactiveAnimation) {
+                    this.pointerUpInactiveAnimation();
+                }
+            }
+        }
+        _super.prototype._onPointerUp.call(this, target, coordinates, pointerId, buttonIndex, notifyClick, pi);
+    };
+    return ToggleButton;
+}(_rectangle__WEBPACK_IMPORTED_MODULE_2__["Rectangle"]));
+
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.ToggleButton", ToggleButton);
 
 
 /***/ }),
@@ -13824,7 +15189,7 @@ var VirtualKeyboard = /** @class */ (function (_super) {
     return VirtualKeyboard;
 }(_stackPanel__WEBPACK_IMPORTED_MODULE_2__["StackPanel"]));
 
-babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.VirtualKeyboard"] = VirtualKeyboard;
+Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.VirtualKeyboard", VirtualKeyboard);
 
 
 /***/ }),
@@ -13833,77 +15198,81 @@ babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredT
 /*!*********************!*\
   !*** ./2D/index.ts ***!
   \*********************/
-/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name, AdvancedDynamicTexture, AdvancedDynamicTextureInstrumentation, Vector2WithInfo, Matrix2D, Measure, MultiLinePoint, Style, ValueAndUnit, XmlLoader */
+/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, FocusableButton, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, ToggleButton, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name, AdvancedDynamicTexture, AdvancedDynamicTextureInstrumentation, Vector2WithInfo, Matrix2D, Measure, MultiLinePoint, Style, ValueAndUnit, XmlLoader */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controls */ "./2D/controls/index.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Button"]; });
+/* harmony import */ var _controls_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controls/index */ "./2D/controls/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Button"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Checkbox", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Checkbox"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Checkbox", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Checkbox"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ColorPicker", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["ColorPicker"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ColorPicker", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["ColorPicker"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Container"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Container"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Control"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Control"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Ellipse", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Ellipse"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Ellipse", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Ellipse"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Grid"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FocusableButton", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["FocusableButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Image", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Image"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Grid"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputText", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["InputText"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Image", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Image"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputPassword", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["InputPassword"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputText", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["InputText"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Line"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputPassword", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["InputPassword"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLine", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["MultiLine"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Line"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioButton", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["RadioButton"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLine", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["MultiLine"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["StackPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioButton", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["RadioButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectorGroup", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["SelectorGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["StackPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["CheckboxGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectorGroup", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["SelectorGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioGroup", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["RadioGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["CheckboxGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SliderGroup", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["SliderGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioGroup", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["RadioGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionPanel", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["SelectionPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SliderGroup", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["SliderGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollViewer", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["ScrollViewer"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionPanel", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["SelectionPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapping", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["TextWrapping"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollViewer", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["ScrollViewer"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextBlock", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["TextBlock"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapping", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TextWrapping"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapper", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["TextWrapper"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextBlock", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TextBlock"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyPropertySet", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["KeyPropertySet"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapper", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TextWrapper"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualKeyboard", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["VirtualKeyboard"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ToggleButton", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["ToggleButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rectangle", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Rectangle"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyPropertySet", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["KeyPropertySet"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DisplayGrid", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["DisplayGrid"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualKeyboard", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["VirtualKeyboard"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseSlider", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["BaseSlider"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rectangle", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Rectangle"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Slider"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DisplayGrid", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["DisplayGrid"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageBasedSlider", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["ImageBasedSlider"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseSlider", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["BaseSlider"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollBar", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["ScrollBar"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Slider"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageScrollBar", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["ImageScrollBar"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageBasedSlider", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["ImageBasedSlider"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "name", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["name"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollBar", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["ScrollBar"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageScrollBar", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["ImageScrollBar"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "name", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["name"]; });
 
 /* harmony import */ var _advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./advancedDynamicTexture */ "./2D/advancedDynamicTexture.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AdvancedDynamicTexture", function() { return _advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_1__["AdvancedDynamicTexture"]; });
@@ -14796,8 +16165,10 @@ var ValueAndUnit = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "XmlLoader", function() { return XmlLoader; });
-/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
-/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/typeStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_1__);
+
 
 /**
 * Class used to load GUI via XML.
@@ -14841,13 +16212,13 @@ var XmlLoader = /** @class */ (function () {
     };
     XmlLoader.prototype._getClassAttribute = function (attributeName) {
         var attribute = attributeName.split(".");
-        var className = babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_0__["_TypeStore"].GetClass("BABYLON.GUI." + attribute[0]);
+        var className = Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_1__["GetClass"])("BABYLON.GUI." + attribute[0]);
         return className[attribute[1]];
     };
     XmlLoader.prototype._createGuiElement = function (node, parent, linkParent) {
         if (linkParent === void 0) { linkParent = true; }
         try {
-            var className = babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_0__["_TypeStore"].GetClass("BABYLON.GUI." + node.nodeName);
+            var className = Object(babylonjs_Misc_typeStore__WEBPACK_IMPORTED_MODULE_1__["GetClass"])("BABYLON.GUI." + node.nodeName);
             var guiNode = new className();
             if (parent && linkParent) {
                 parent.addControl(guiNode);
@@ -14901,8 +16272,8 @@ var XmlLoader = /** @class */ (function () {
             }
             return guiNode;
         }
-        catch (e) {
-            throw "XmlLoader Exception : Error parsing Control " + node.nodeName + "," + e + ".";
+        catch (exception) {
+            throw "XmlLoader Exception : Error parsing Control " + node.nodeName + "," + exception + ".";
         }
     };
     XmlLoader.prototype._parseGrid = function (node, guiNode, parent) {
@@ -14999,7 +16370,7 @@ var XmlLoader = /** @class */ (function () {
             var isArray = true;
             var splittedSource = dataSource.split(" in ");
             if (splittedSource.length < 2) {
-                throw "XmlLoader Exception : Malformed XML, Data Source must an iterator and a source";
+                throw "XmlLoader Exception : Malformed XML, Data Source must have an iterator and a source";
             }
             var source = splittedSource[1];
             if (source.startsWith("{") && source.endsWith("}")) {
@@ -15041,6 +16412,9 @@ var XmlLoader = /** @class */ (function () {
             node.setAttribute("id", parent.id + (parent._children.length + 1));
         }
         var guiNode = this._createGuiElement(node, parent);
+        if (!this._rootNode) {
+            this._rootNode = guiNode;
+        }
         if (node.nodeName == "Grid") {
             this._parseGrid(node, guiNode, parent);
         }
@@ -15074,30 +16448,202 @@ var XmlLoader = /** @class */ (function () {
         return this._nodes;
     };
     /**
+     * Disposes the loaded layout
+    */
+    XmlLoader.prototype.dispose = function () {
+        if (this._rootNode) {
+            this._rootNode.dispose();
+            this._rootNode = null;
+            this._nodes = {};
+        }
+    };
+    /**
      * Initiates the xml layout loading
      * @param xmlFile defines the xml layout to load
      * @param rootNode defines the node / control to use as a parent for the loaded layout controls.
-     * @param callback defines the callback called on layout load.
+     * @param onSuccess defines the callback called on layout load successfully.
+     * @param onError defines the callback called on layout load failure.
      */
-    XmlLoader.prototype.loadLayout = function (xmlFile, rootNode, callback) {
+    XmlLoader.prototype.loadLayout = function (xmlFile, rootNode, onSuccess, onError) {
+        var _this = this;
+        if (onSuccess === void 0) { onSuccess = null; }
+        if (onError === void 0) { onError = null; }
         var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
+        xhttp.onload = function () {
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
                 if (!xhttp.responseXML) {
                     throw "XmlLoader Exception : XML file is malformed or corrupted.";
                 }
                 var xmlDoc = xhttp.responseXML.documentElement;
-                this._parseXml(xmlDoc.firstChild, rootNode);
-                this._isLoaded = true;
-                if (callback) {
-                    callback();
+                _this._parseXml(xmlDoc.firstChild, rootNode);
+                _this._isLoaded = true;
+                if (onSuccess) {
+                    onSuccess();
                 }
             }
-        }.bind(this);
+        };
+        xhttp.onerror = function () {
+            if (onError) {
+                onError("an error occurred during loading the layout");
+            }
+        };
         xhttp.open("GET", xmlFile, true);
         xhttp.send();
     };
+    /**
+     * Initiates the xml layout loading asynchronously
+     * @param xmlFile defines the xml layout to load
+     * @param rootNode defines the node / control to use as a parent for the loaded layout controls.
+     * @returns Promise
+     */
+    XmlLoader.prototype.loadLayoutAsync = function (xmlFile, rootNode) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function () {
+            var _this = this;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        _this.loadLayout(xmlFile, rootNode, resolve, reject);
+                    })];
+            });
+        });
+    };
     return XmlLoader;
+}());
+
+
+
+/***/ }),
+
+/***/ "./3D/behaviors/defaultBehavior.ts":
+/*!*****************************************!*\
+  !*** ./3D/behaviors/defaultBehavior.ts ***!
+  \*****************************************/
+/*! exports provided: DefaultBehavior */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DefaultBehavior", function() { return DefaultBehavior; });
+/* harmony import */ var babylonjs_Behaviors_Meshes_followBehavior__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Behaviors/Meshes/followBehavior */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Behaviors_Meshes_followBehavior__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Behaviors_Meshes_followBehavior__WEBPACK_IMPORTED_MODULE_0__);
+
+
+
+/**
+ * Default behavior for 3D UI elements.
+ * Handles a FollowBehavior, SixDofBehavior and SurfaceMagnetismBehavior
+ * @since 5.0.0
+ */
+var DefaultBehavior = /** @class */ (function () {
+    /**
+     * Instantiates the default behavior
+     */
+    function DefaultBehavior() {
+        /**
+         * Enables the follow behavior
+         */
+        this.followBehaviorEnabled = false;
+        /**
+         * Enables the six DoF drag behavior
+         */
+        this.sixDofDragBehaviorEnabled = true;
+        /**
+         * Enables the surface magnetism behavior
+         */
+        this.surfaceMagnetismBehaviorEnabled = true;
+        this._followBehavior = new babylonjs_Behaviors_Meshes_followBehavior__WEBPACK_IMPORTED_MODULE_0__["FollowBehavior"]();
+        this._sixDofDragBehavior = new babylonjs_Behaviors_Meshes_followBehavior__WEBPACK_IMPORTED_MODULE_0__["SixDofDragBehavior"]();
+        this._surfaceMagnetismBehavior = new babylonjs_Behaviors_Meshes_followBehavior__WEBPACK_IMPORTED_MODULE_0__["SurfaceMagnetismBehavior"]();
+    }
+    Object.defineProperty(DefaultBehavior.prototype, "name", {
+        /**
+         *  The name of the behavior
+         */
+        get: function () {
+            return "Default";
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(DefaultBehavior.prototype, "followBehavior", {
+        /**
+         *  The follow behavior
+         */
+        get: function () {
+            return this._followBehavior;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(DefaultBehavior.prototype, "sixDofDragBehavior", {
+        /**
+         *  The six DoF drag behavior
+         */
+        get: function () {
+            return this._sixDofDragBehavior;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(DefaultBehavior.prototype, "surfaceMagnetismBehavior", {
+        /**
+         * The surface magnetism behavior
+         */
+        get: function () {
+            return this._surfaceMagnetismBehavior;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    /**
+     *  Initializes the behavior
+     */
+    DefaultBehavior.prototype.init = function () { };
+    /**
+     * Attaches the default behavior
+     * @param ownerMesh The top level mesh
+     * @param draggablesMeshes Descendant meshes that can be used for dragging the owner mesh
+     * @param sceneUnderstandingMeshes Meshes from the scene understanding that will be used for surface magnetism
+     */
+    DefaultBehavior.prototype.attach = function (ownerMesh, draggablesMeshes, sceneUnderstandingMeshes) {
+        this._scene = ownerMesh.getScene();
+        this.attachedNode = ownerMesh;
+        this._addObservables();
+        // Since our observables are bound before the child behaviors', ours are called first
+        this._followBehavior.attach(ownerMesh);
+        this._sixDofDragBehavior.attach(ownerMesh);
+        this._sixDofDragBehavior.draggableMeshes = draggablesMeshes || null;
+        this._sixDofDragBehavior.faceCameraOnDragStart = true;
+        this._surfaceMagnetismBehavior.attach(ownerMesh, this._scene);
+        if (sceneUnderstandingMeshes) {
+            this._surfaceMagnetismBehavior.meshes = sceneUnderstandingMeshes;
+        }
+        // We disable this behavior because we will handle pose changing event manually with sixDofDragBehavior
+        this._surfaceMagnetismBehavior.enabled = false;
+    };
+    /**
+     *  Detaches the behavior from the mesh
+     */
+    DefaultBehavior.prototype.detach = function () {
+        this.attachedNode = null;
+        this._removeObservables();
+        this._followBehavior.detach();
+        this._sixDofDragBehavior.detach();
+        this._surfaceMagnetismBehavior.detach();
+    };
+    DefaultBehavior.prototype._addObservables = function () {
+        var _this = this;
+        this._onBeforeRenderObserver = this._scene.onBeforeRenderObservable.add(function () {
+            _this._followBehavior._enabled = !_this._sixDofDragBehavior.isMoving && _this.followBehaviorEnabled;
+        });
+        this._onDragObserver = this._sixDofDragBehavior.onDragObservable.add(function (event) {
+            _this._sixDofDragBehavior.disableMovement = _this._surfaceMagnetismBehavior.findAndUpdateTarget(event.pickInfo);
+        });
+    };
+    DefaultBehavior.prototype._removeObservables = function () {
+        this._scene.onBeforeRenderObservable.remove(this._onBeforeRenderObserver);
+        this._sixDofDragBehavior.onDragObservable.remove(this._onDragObserver);
+    };
+    return DefaultBehavior;
 }());
 
 
@@ -15117,7 +16663,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var babylonjs_Meshes_transformNode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Meshes/transformNode */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Meshes_transformNode__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Meshes_transformNode__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _control3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control3D */ "./3D/controls/control3D.ts");
+/* harmony import */ var _contentDisplay3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./contentDisplay3D */ "./3D/controls/contentDisplay3D.ts");
 
 
 
@@ -15141,7 +16687,7 @@ var AbstractButton3D = /** @class */ (function (_super) {
         return new babylonjs_Meshes_transformNode__WEBPACK_IMPORTED_MODULE_1__["TransformNode"]("button" + this.name);
     };
     return AbstractButton3D;
-}(_control3D__WEBPACK_IMPORTED_MODULE_2__["Control3D"]));
+}(_contentDisplay3D__WEBPACK_IMPORTED_MODULE_2__["ContentDisplay3D"]));
 
 
 
@@ -15161,9 +16707,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Maths/math.vector */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _abstractButton3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./abstractButton3D */ "./3D/controls/abstractButton3D.ts");
-/* harmony import */ var _2D_advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../2D/advancedDynamicTexture */ "./2D/advancedDynamicTexture.ts");
-
-
 
 
 
@@ -15181,8 +16724,6 @@ var Button3D = /** @class */ (function (_super) {
      */
     function Button3D(name) {
         var _this = _super.call(this, name) || this;
-        _this._contentResolution = 512;
-        _this._contentScaleRatio = 2;
         // Default animations
         _this.pointerEnterAnimation = function () {
             if (!_this.mesh) {
@@ -15207,80 +16748,8 @@ var Button3D = /** @class */ (function (_super) {
         };
         return _this;
     }
-    Object.defineProperty(Button3D.prototype, "contentResolution", {
-        /**
-         * Gets or sets the texture resolution used to render content (512 by default)
-         */
-        get: function () {
-            return this._contentResolution;
-        },
-        set: function (value) {
-            if (this._contentResolution === value) {
-                return;
-            }
-            this._contentResolution = value;
-            this._resetContent();
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Button3D.prototype, "contentScaleRatio", {
-        /**
-         * Gets or sets the texture scale ratio used to render content (2 by default)
-         */
-        get: function () {
-            return this._contentScaleRatio;
-        },
-        set: function (value) {
-            if (this._contentScaleRatio === value) {
-                return;
-            }
-            this._contentScaleRatio = value;
-            this._resetContent();
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Button3D.prototype._disposeFacadeTexture = function () {
-        if (this._facadeTexture) {
-            this._facadeTexture.dispose();
-            this._facadeTexture = null;
-        }
-    };
-    Button3D.prototype._resetContent = function () {
-        this._disposeFacadeTexture();
-        this.content = this._content;
-    };
-    Object.defineProperty(Button3D.prototype, "content", {
-        /**
-         * Gets or sets the GUI 2D content used to display the button's facade
-         */
-        get: function () {
-            return this._content;
-        },
-        set: function (value) {
-            this._content = value;
-            if (!this._host || !this._host.utilityLayer) {
-                return;
-            }
-            if (!this._facadeTexture) {
-                this._facadeTexture = new _2D_advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_3__["AdvancedDynamicTexture"]("Facade", this._contentResolution, this._contentResolution, this._host.utilityLayer.utilityLayerScene, true, babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Texture"].TRILINEAR_SAMPLINGMODE);
-                this._facadeTexture.rootContainer.scaleX = this._contentScaleRatio;
-                this._facadeTexture.rootContainer.scaleY = this._contentScaleRatio;
-                this._facadeTexture.premulAlpha = true;
-            }
-            else {
-                this._facadeTexture.rootContainer.clearControls();
-            }
-            this._facadeTexture.addControl(value);
-            this._applyFacade(this._facadeTexture);
-        },
-        enumerable: false,
-        configurable: true
-    });
     /**
      * Apply the facade texture (created from the content property).
-     * This function can be overloaded by child classes
      * @param facadeTexture defines the AdvancedDynamicTexture to use
      */
     Button3D.prototype._applyFacade = function (facadeTexture) {
@@ -15296,11 +16765,11 @@ var Button3D = /** @class */ (function (_super) {
             faceUV[i] = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0, 0, 0, 0);
         }
         faceUV[1] = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0, 0, 1, 1);
-        var mesh = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["BoxBuilder"].CreateBox(this.name + "_rootMesh", {
+        var mesh = Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])(this.name + "_rootMesh", {
             width: 1.0,
             height: 1.0,
             depth: 0.08,
-            faceUV: faceUV
+            faceUV: faceUV,
         }, scene);
         return mesh;
     };
@@ -15486,6 +16955,103 @@ var Container3D = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "./3D/controls/contentDisplay3D.ts":
+/*!*****************************************!*\
+  !*** ./3D/controls/contentDisplay3D.ts ***!
+  \*****************************************/
+/*! exports provided: ContentDisplay3D */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ContentDisplay3D", function() { return ContentDisplay3D; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _2D_advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../2D/advancedDynamicTexture */ "./2D/advancedDynamicTexture.ts");
+/* harmony import */ var _control3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control3D */ "./3D/controls/control3D.ts");
+/* harmony import */ var babylonjs_Materials_Textures_texture__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babylonjs/Materials/Textures/texture */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Materials_Textures_texture__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Materials_Textures_texture__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+/**
+ * The base class for controls that display content
+ */
+var ContentDisplay3D = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ContentDisplay3D, _super);
+    function ContentDisplay3D() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._contentResolution = 512;
+        _this._contentScaleRatio = 2;
+        return _this;
+    }
+    Object.defineProperty(ContentDisplay3D.prototype, "content", {
+        /**
+         * Gets or sets the GUI 2D content used to display the button's facade
+         */
+        get: function () {
+            return this._content;
+        },
+        set: function (value) {
+            this._content = value;
+            if (!this._host || !this._host.utilityLayer) {
+                return;
+            }
+            if (!this._facadeTexture) {
+                this._facadeTexture = new _2D_advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_1__["AdvancedDynamicTexture"]("Facade", this._contentResolution, this._contentResolution, this._host.utilityLayer.utilityLayerScene, true, babylonjs_Materials_Textures_texture__WEBPACK_IMPORTED_MODULE_3__["Texture"].TRILINEAR_SAMPLINGMODE);
+                this._facadeTexture.rootContainer.scaleX = this._contentScaleRatio;
+                this._facadeTexture.rootContainer.scaleY = this._contentScaleRatio;
+                this._facadeTexture.premulAlpha = true;
+            }
+            else {
+                this._facadeTexture.rootContainer.clearControls();
+            }
+            this._facadeTexture.addControl(value);
+            this._applyFacade(this._facadeTexture);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(ContentDisplay3D.prototype, "contentResolution", {
+        /**
+         * Gets or sets the texture resolution used to render content (512 by default)
+         */
+        get: function () {
+            return this._contentResolution;
+        },
+        set: function (value) {
+            if (this._contentResolution === value) {
+                return;
+            }
+            this._contentResolution = value;
+            this._resetContent();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    ContentDisplay3D.prototype._disposeFacadeTexture = function () {
+        if (this._facadeTexture) {
+            this._facadeTexture.dispose();
+            this._facadeTexture = null;
+        }
+    };
+    ContentDisplay3D.prototype._resetContent = function () {
+        this._disposeFacadeTexture();
+        this.content = this._content;
+    };
+    /**
+     * Apply the facade texture (created from the content property).
+     * This function can be overloaded by child classes
+     * @param facadeTexture defines the AdvancedDynamicTexture to use
+     */
+    ContentDisplay3D.prototype._applyFacade = function (facadeTexture) { };
+    return ContentDisplay3D;
+}(_control3D__WEBPACK_IMPORTED_MODULE_2__["Control3D"]));
+
+
+
+/***/ }),
+
 /***/ "./3D/controls/control3D.ts":
 /*!**********************************!*\
   !*** ./3D/controls/control3D.ts ***!
@@ -15518,14 +17084,14 @@ var Control3D = /** @class */ (function () {
         this.name = name;
         this._downCount = 0;
         this._enterCount = -1;
-        this._downPointerIds = {};
+        this._downPointerIds = {}; // Store number of pointer downs per ID, from near and far interactions
         this._isVisible = true;
         /**
-        * An event triggered when the pointer move over the control
-        */
+         * An event triggered when the pointer moves over the control
+         */
         this.onPointerMoveObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
         /**
-         * An event triggered when the pointer move out of the control
+         * An event triggered when the pointer moves out of the control
          */
         this.onPointerOutObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
         /**
@@ -15548,7 +17114,7 @@ var Control3D = /** @class */ (function () {
         this._behaviors = new Array();
     }
     Object.defineProperty(Control3D.prototype, "position", {
-        /** Gets or sets the control position  in world space */
+        /** Gets or sets the control position in world space */
         get: function () {
             if (!this._node) {
                 return babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector3"].Zero();
@@ -15565,7 +17131,7 @@ var Control3D = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Control3D.prototype, "scaling", {
-        /** Gets or sets the control scaling  in world space */
+        /** Gets or sets the control scaling in world space */
         get: function () {
             if (!this._node) {
                 return new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Vector3"](1, 1, 1);
@@ -15727,15 +17293,19 @@ var Control3D = /** @class */ (function () {
             if (!this.node) {
                 return;
             }
-            this._node.metadata = this; // Store the control on the metadata field in order to get it when picking
-            this._node.position = this.position;
-            this._node.scaling = this.scaling;
+            this._injectGUI3DReservedDataStore(this.node).control = this; // Store the control on the reservedDataStore field in order to get it when picking
             var mesh = this.mesh;
             if (mesh) {
                 mesh.isPickable = true;
                 this._affectMaterial(mesh);
             }
         }
+    };
+    Control3D.prototype._injectGUI3DReservedDataStore = function (node) {
+        var _a, _b;
+        node.reservedDataStore = (_a = node.reservedDataStore) !== null && _a !== void 0 ? _a : {};
+        node.reservedDataStore.GUI3D = (_b = node.reservedDataStore.GUI3D) !== null && _b !== void 0 ? _b : {};
+        return node.reservedDataStore.GUI3D;
     };
     /**
      * Node creation.
@@ -15754,6 +17324,9 @@ var Control3D = /** @class */ (function () {
     Control3D.prototype._affectMaterial = function (mesh) {
         mesh.material = null;
     };
+    Control3D.prototype._IsTouchButton3D = function (control) {
+        return control._generatePointerEventType !== undefined;
+    };
     // Pointers
     /** @hidden */
     Control3D.prototype._onPointerMove = function (target, coordinates) {
@@ -15761,13 +17334,14 @@ var Control3D = /** @class */ (function () {
     };
     /** @hidden */
     Control3D.prototype._onPointerEnter = function (target) {
-        if (this._enterCount > 0) {
-            return false;
-        }
-        if (this._enterCount === -1) { // -1 is for touch input, we are now sure we are with a mouse or pencil
+        if (this._enterCount === -1) {
+            // -1 is for touch input, we are now sure we are with a mouse or pencil
             this._enterCount = 0;
         }
         this._enterCount++;
+        if (this._enterCount > 1) {
+            return false;
+        }
         this.onPointerEnterObservable.notifyObservers(this, -1, target, this);
         if (this.pointerEnterAnimation) {
             this.pointerEnterAnimation();
@@ -15776,6 +17350,10 @@ var Control3D = /** @class */ (function () {
     };
     /** @hidden */
     Control3D.prototype._onPointerOut = function (target) {
+        this._enterCount--;
+        if (this._enterCount > 0) {
+            return;
+        }
         this._enterCount = 0;
         this.onPointerOutObservable.notifyObservers(this, -1, target, this);
         if (this.pointerOutAnimation) {
@@ -15784,12 +17362,11 @@ var Control3D = /** @class */ (function () {
     };
     /** @hidden */
     Control3D.prototype._onPointerDown = function (target, coordinates, pointerId, buttonIndex) {
-        if (this._downCount !== 0) {
-            this._downCount++;
+        this._downCount++;
+        this._downPointerIds[pointerId] = this._downPointerIds[pointerId] + 1 || 1;
+        if (this._downCount !== 1) {
             return false;
         }
-        this._downCount++;
-        this._downPointerIds[pointerId] = true;
         this.onPointerDownObservable.notifyObservers(new _vector3WithInfo__WEBPACK_IMPORTED_MODULE_1__["Vector3WithInfo"](coordinates, buttonIndex), -1, target, this);
         if (this.pointerDownAnimation) {
             this.pointerDownAnimation();
@@ -15799,7 +17376,10 @@ var Control3D = /** @class */ (function () {
     /** @hidden */
     Control3D.prototype._onPointerUp = function (target, coordinates, pointerId, buttonIndex, notifyClick) {
         this._downCount--;
-        delete this._downPointerIds[pointerId];
+        this._downPointerIds[pointerId]--;
+        if (this._downPointerIds[pointerId] <= 0) {
+            delete this._downPointerIds[pointerId];
+        }
         if (this._downCount < 0) {
             // Handle if forcePointerUp was called prior to this
             this._downCount = 0;
@@ -15832,7 +17412,10 @@ var Control3D = /** @class */ (function () {
         }
     };
     /** @hidden */
-    Control3D.prototype._processObservables = function (type, pickedPoint, pointerId, buttonIndex) {
+    Control3D.prototype._processObservables = function (type, pickedPoint, originMeshPosition, pointerId, buttonIndex) {
+        if (this._IsTouchButton3D(this) && originMeshPosition) {
+            type = this._generatePointerEventType(type, originMeshPosition, this._downCount);
+        }
         if (type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["PointerEventTypes"].POINTERMOVE) {
             this._onPointerMove(this, pickedPoint);
             var previousControlOver = this._host._lastControlOver[pointerId];
@@ -15976,6 +17559,210 @@ var CylinderPanel = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "./3D/controls/handMenu.ts":
+/*!*********************************!*\
+  !*** ./3D/controls/handMenu.ts ***!
+  \*********************************/
+/*! exports provided: HandMenu */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandMenu", function() { return HandMenu; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _touchHolographicMenu__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./touchHolographicMenu */ "./3D/controls/touchHolographicMenu.ts");
+/* harmony import */ var babylonjs_Behaviors_Meshes_handConstraintBehavior__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babylonjs/Behaviors/Meshes/handConstraintBehavior */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Behaviors_Meshes_handConstraintBehavior__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Behaviors_Meshes_handConstraintBehavior__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+/**
+ * Hand menu that displays buttons and floats around the hand.
+ * @since 5.0.0
+ */
+var HandMenu = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(HandMenu, _super);
+    /**
+     * Creates a hand menu GUI 3D control
+     * @param xr the WebXRExperienceHelper used to link this control to the enabled WebXRHandTracking feature
+     * @param name name of the hand menu
+     */
+    function HandMenu(xr, name) {
+        var _this = _super.call(this, name) || this;
+        _this._handConstraintBehavior = new babylonjs_Behaviors_Meshes_handConstraintBehavior__WEBPACK_IMPORTED_MODULE_2__["HandConstraintBehavior"]();
+        _this._handConstraintBehavior.linkToXRExperience(xr);
+        _this.backPlateMargin = 0.15;
+        _this.rows = 3;
+        return _this;
+    }
+    Object.defineProperty(HandMenu.prototype, "handConstraintBehavior", {
+        /**
+         * The hand constraint behavior setting the transformation of this node
+         */
+        get: function () {
+            return this._handConstraintBehavior;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    HandMenu.prototype._createNode = function (scene) {
+        var node = _super.prototype._createNode.call(this, scene);
+        this._handConstraintBehavior.attach(node);
+        return node;
+    };
+    /**
+     * Disposes the hand menu
+     */
+    HandMenu.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._handConstraintBehavior.detach();
+    };
+    return HandMenu;
+}(_touchHolographicMenu__WEBPACK_IMPORTED_MODULE_1__["TouchHolographicMenu"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/controls/holographicBackplate.ts":
+/*!*********************************************!*\
+  !*** ./3D/controls/holographicBackplate.ts ***!
+  \*********************************************/
+/*! exports provided: HolographicBackplate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HolographicBackplate", function() { return HolographicBackplate; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Meshes/Builders/boxBuilder */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _materials_fluentBackplate_fluentBackplateMaterial__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../materials/fluentBackplate/fluentBackplateMaterial */ "./3D/materials/fluentBackplate/fluentBackplateMaterial.ts");
+/* harmony import */ var _control3D__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./control3D */ "./3D/controls/control3D.ts");
+
+
+
+
+
+/**
+ * Class used to create a holographic backplate in 3D
+ * @since 5.0.0
+ */
+var HolographicBackplate = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(HolographicBackplate, _super);
+    /**
+     * Creates a new holographic backplate
+     * @param name defines the control name
+     */
+    function HolographicBackplate(name, _shareMaterials) {
+        if (_shareMaterials === void 0) { _shareMaterials = true; }
+        var _this = _super.call(this, name) || this;
+        _this._shareMaterials = _shareMaterials;
+        return _this;
+    }
+    Object.defineProperty(HolographicBackplate.prototype, "renderingGroupId", {
+        get: function () {
+            return this._model.renderingGroupId;
+        },
+        /**
+         * Rendering ground id of the backplate mesh.
+         */
+        set: function (id) {
+            this._model.renderingGroupId = id;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(HolographicBackplate.prototype, "material", {
+        /**
+         * Gets the material used by the backplate
+         */
+        get: function () {
+            return this._material;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(HolographicBackplate.prototype, "shareMaterials", {
+        /**
+         * Gets a boolean indicating if this backplate shares its material with other HolographicBackplates
+         */
+        get: function () {
+            return this._shareMaterials;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    HolographicBackplate.prototype._getTypeName = function () {
+        return "HolographicBackplate";
+    };
+    // Mesh association
+    HolographicBackplate.prototype._createNode = function (scene) {
+        var _this = this;
+        var _a;
+        var collisionMesh = Object(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])(((_a = this.name) !== null && _a !== void 0 ? _a : "HolographicBackplate") + "_CollisionMesh", {
+            width: 1.0,
+            height: 1.0,
+            depth: 1.0,
+        }, scene);
+        collisionMesh.isPickable = true;
+        collisionMesh.visibility = 0;
+        babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["SceneLoader"].ImportMeshAsync(undefined, HolographicBackplate.MODEL_BASE_URL, HolographicBackplate.MODEL_FILENAME, scene)
+            .then(function (result) {
+            var importedModel = result.meshes[1];
+            importedModel.name = _this.name + "_frontPlate";
+            importedModel.isPickable = false;
+            importedModel.parent = collisionMesh;
+            if (!!_this._material) {
+                importedModel.material = _this._material;
+            }
+            _this._model = importedModel;
+        });
+        return collisionMesh;
+    };
+    HolographicBackplate.prototype._createMaterial = function (mesh) {
+        this._material = new _materials_fluentBackplate_fluentBackplateMaterial__WEBPACK_IMPORTED_MODULE_2__["FluentBackplateMaterial"](this.name + " Material", mesh.getScene());
+    };
+    HolographicBackplate.prototype._affectMaterial = function (mesh) {
+        // Back
+        if (this._shareMaterials) {
+            if (!this._host._touchSharedMaterials["fluentBackplateMaterial"]) {
+                this._createMaterial(mesh);
+                this._host._touchSharedMaterials["fluentBackplateMaterial"] = this._material;
+            }
+            else {
+                this._material = this._host._touchSharedMaterials["fluentBackplateMaterial"];
+            }
+        }
+        else {
+            this._createMaterial(mesh);
+        }
+    };
+    /**
+     * Releases all associated resources
+     */
+    HolographicBackplate.prototype.dispose = function () {
+        _super.prototype.dispose.call(this); // will dispose main mesh ie. back plate
+        if (!this.shareMaterials) {
+            this._material.dispose();
+        }
+        this._model.dispose();
+    };
+    /**
+     * Base Url for the button model.
+     */
+    HolographicBackplate.MODEL_BASE_URL = "https://assets.babylonjs.com/meshes/MRTK/";
+    /**
+     * File name for the button model.
+     */
+    HolographicBackplate.MODEL_FILENAME = 'mrtk-fluent-backplate.glb';
+    return HolographicBackplate;
+}(_control3D__WEBPACK_IMPORTED_MODULE_3__["Control3D"]));
+
+
+
+/***/ }),
+
 /***/ "./3D/controls/holographicButton.ts":
 /*!******************************************!*\
   !*** ./3D/controls/holographicButton.ts ***!
@@ -15990,11 +17777,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _button3D__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./button3D */ "./3D/controls/button3D.ts");
 /* harmony import */ var babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babylonjs/Materials/standardMaterial */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _materials_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../materials/fluentMaterial */ "./3D/materials/fluentMaterial.ts");
+/* harmony import */ var _materials_fluent_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../materials/fluent/fluentMaterial */ "./3D/materials/fluent/fluentMaterial.ts");
 /* harmony import */ var _2D_controls_stackPanel__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../2D/controls/stackPanel */ "./2D/controls/stackPanel.ts");
 /* harmony import */ var _2D_controls_image__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../2D/controls/image */ "./2D/controls/image.ts");
 /* harmony import */ var _2D_controls_textBlock__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../2D/controls/textBlock */ "./2D/controls/textBlock.ts");
 /* harmony import */ var _2D_advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../2D/advancedDynamicTexture */ "./2D/advancedDynamicTexture.ts");
+
 
 
 
@@ -16087,8 +17875,8 @@ var HolographicButton = /** @class */ (function (_super) {
             }
             if (!this._tooltipFade) {
                 // Create tooltip with mesh and text
-                this._tooltipMesh = babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["PlaneBuilder"].CreatePlane("", { size: 1 }, this._backPlate._scene);
-                var tooltipBackground = babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["PlaneBuilder"].CreatePlane("", { size: 1, sideOrientation: babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["Mesh"].DOUBLESIDE }, this._backPlate._scene);
+                this._tooltipMesh = Object(babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["CreatePlane"])("", { size: 1 }, this._backPlate._scene);
+                var tooltipBackground = Object(babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["CreatePlane"])("", { size: 1, sideOrientation: babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["Mesh"].DOUBLESIDE }, this._backPlate._scene);
                 var mat = new babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["StandardMaterial"]("", this._backPlate._scene);
                 mat.diffuseColor = babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["Color3"].FromHexString("#212121");
                 tooltipBackground.material = mat;
@@ -16210,14 +17998,16 @@ var HolographicButton = /** @class */ (function (_super) {
         this._disposeFacadeTexture();
         var panel = new _2D_controls_stackPanel__WEBPACK_IMPORTED_MODULE_4__["StackPanel"]();
         panel.isVertical = true;
-        if (this._imageUrl) {
-            var image = new _2D_controls_image__WEBPACK_IMPORTED_MODULE_5__["Image"]();
-            image.source = this._imageUrl;
-            image.paddingTop = "40px";
-            image.height = "180px";
-            image.width = "100px";
-            image.paddingBottom = "40px";
-            panel.addControl(image);
+        if (babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["DomManagement"].IsDocumentAvailable() && !!document.createElement) {
+            if (this._imageUrl) {
+                var image = new _2D_controls_image__WEBPACK_IMPORTED_MODULE_5__["Image"]();
+                image.source = this._imageUrl;
+                image.paddingTop = "40px";
+                image.height = "180px";
+                image.width = "100px";
+                image.paddingBottom = "40px";
+                panel.addControl(image);
+            }
         }
         if (this._text) {
             var text = new _2D_controls_textBlock__WEBPACK_IMPORTED_MODULE_6__["TextBlock"]();
@@ -16233,12 +18023,12 @@ var HolographicButton = /** @class */ (function (_super) {
     };
     // Mesh association
     HolographicButton.prototype._createNode = function (scene) {
-        this._backPlate = babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["BoxBuilder"].CreateBox(this.name + "BackMesh", {
+        this._backPlate = Object(babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["CreateBox"])(this.name + "BackMesh", {
             width: 1.0,
             height: 1.0,
             depth: 0.08
         }, scene);
-        this._frontPlate = babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["BoxBuilder"].CreateBox(this.name + "FrontMesh", {
+        this._frontPlate = Object(babylonjs_Materials_standardMaterial__WEBPACK_IMPORTED_MODULE_2__["CreateBox"])(this.name + "FrontMesh", {
             width: 1.0,
             height: 1.0,
             depth: 0.08
@@ -16259,7 +18049,7 @@ var HolographicButton = /** @class */ (function (_super) {
     };
     HolographicButton.prototype._createBackMaterial = function (mesh) {
         var _this = this;
-        this._backMaterial = new _materials_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__["FluentMaterial"](this.name + "Back Material", mesh.getScene());
+        this._backMaterial = new _materials_fluent_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__["FluentMaterial"](this.name + "Back Material", mesh.getScene());
         this._backMaterial.renderHoverLight = true;
         this._pickedPointObserver = this._host.onPickedPointChangedObservable.add(function (pickedPoint) {
             if (pickedPoint) {
@@ -16272,7 +18062,7 @@ var HolographicButton = /** @class */ (function (_super) {
         });
     };
     HolographicButton.prototype._createFrontMaterial = function (mesh) {
-        this._frontMaterial = new _materials_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__["FluentMaterial"](this.name + "Front Material", mesh.getScene());
+        this._frontMaterial = new _materials_fluent_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__["FluentMaterial"](this.name + "Front Material", mesh.getScene());
         this._frontMaterial.innerGlowColorIntensity = 0; // No inner glow
         this._frontMaterial.alpha = 0.5; // Additive
         this._frontMaterial.renderBorders = true;
@@ -16333,11 +18123,394 @@ var HolographicButton = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "./3D/controls/holographicSlate.ts":
+/*!*****************************************!*\
+  !*** ./3D/controls/holographicSlate.ts ***!
+  \*****************************************/
+/*! exports provided: HolographicSlate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HolographicSlate", function() { return HolographicSlate; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Meshes/Builders/boxBuilder */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _materials_fluent_fluentMaterial__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../materials/fluent/fluentMaterial */ "./3D/materials/fluent/fluentMaterial.ts");
+/* harmony import */ var _touchHolographicButton__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./touchHolographicButton */ "./3D/controls/touchHolographicButton.ts");
+/* harmony import */ var _contentDisplay3D__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./contentDisplay3D */ "./3D/controls/contentDisplay3D.ts");
+/* harmony import */ var _2D_controls_image__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../2D/controls/image */ "./2D/controls/image.ts");
+/* harmony import */ var _gizmos_slateGizmo__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../gizmos/slateGizmo */ "./3D/gizmos/slateGizmo.ts");
+/* harmony import */ var _behaviors_defaultBehavior__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../behaviors/defaultBehavior */ "./3D/behaviors/defaultBehavior.ts");
+/* harmony import */ var _materials_fluentBackplate_fluentBackplateMaterial__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../materials/fluentBackplate/fluentBackplateMaterial */ "./3D/materials/fluentBackplate/fluentBackplateMaterial.ts");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Class used to create a holographic slate
+ * @since 5.0.0
+ */
+var HolographicSlate = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(HolographicSlate, _super);
+    /**
+     * Creates a new slate
+     * @param name defines the control name
+     */
+    function HolographicSlate(name) {
+        var _this = _super.call(this, name) || this;
+        /**
+         * Dimensions of the slate
+         */
+        _this.dimensions = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0.7, 0.4, 0.001);
+        /**
+         * Minimum dimensions of the slate
+         */
+        _this.minDimensions = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0.5, 0.2, 0.001);
+        /**
+         * Default dimensions of the slate
+         */
+        _this.defaultDimensions = _this.dimensions.clone();
+        /**
+         * Dimensions of the backplate
+         */
+        _this.backplateDimensions = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0.7, 0.02, 0.001);
+        /**
+         * Margin between backplate and contentplate
+         */
+        _this.backPlateMargin = 0.005;
+        /**
+         * Origin in local coordinates (top left corner)
+         */
+        _this.origin = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        _this._contentScaleRatio = 1;
+        _this._followButton = new _touchHolographicButton__WEBPACK_IMPORTED_MODULE_3__["TouchHolographicButton"]("followButton" + _this.name);
+        _this._closeButton = new _touchHolographicButton__WEBPACK_IMPORTED_MODULE_3__["TouchHolographicButton"]("closeButton" + _this.name);
+        _this._contentViewport = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Viewport"](0, 0, 1, 1);
+        _this._contentDragBehavior = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["PointerDragBehavior"]({
+            dragPlaneNormal: new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, -1),
+        });
+        return _this;
+    }
+    Object.defineProperty(HolographicSlate.prototype, "defaultBehavior", {
+        /**
+         * Regroups all mesh behaviors for the slate
+         */
+        get: function () {
+            return this._defaultBehavior;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(HolographicSlate.prototype, "renderingGroupId", {
+        get: function () {
+            return this._backPlate.renderingGroupId;
+        },
+        /**
+         * Rendering ground id of all the mesh in the button
+         */
+        set: function (id) {
+            this._backPlate.renderingGroupId = id;
+            this._contentPlate.renderingGroupId = id;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(HolographicSlate.prototype, "imageUrl", {
+        /**
+         * Gets or sets the image url for the button
+         */
+        get: function () {
+            return this._imageUrl;
+        },
+        set: function (value) {
+            if (this._imageUrl === value) {
+                return;
+            }
+            this._imageUrl = value;
+            this._rebuildContent();
+            this._resetContentPositionAndZoom();
+            this._applyContentViewport();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    /**
+     * Apply the facade texture (created from the content property).
+     * This function can be overloaded by child classes
+     * @param facadeTexture defines the AdvancedDynamicTexture to use
+     */
+    HolographicSlate.prototype._applyFacade = function (facadeTexture) {
+        this._contentMaterial.albedoTexture = facadeTexture;
+    };
+    HolographicSlate.prototype._rebuildContent = function () {
+        this._disposeFacadeTexture();
+        if (babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["DomManagement"].IsDocumentAvailable() && !!document.createElement) {
+            if (this._imageUrl) {
+                var image = new _2D_controls_image__WEBPACK_IMPORTED_MODULE_5__["Image"]();
+                image.source = this._imageUrl;
+                if (this._contentPlate) {
+                    this.content = image;
+                }
+            }
+        }
+    };
+    HolographicSlate.prototype._addControl = function (control) {
+        control._host = this._host;
+        if (this._host.utilityLayer) {
+            control._prepareNode(this._host.utilityLayer.utilityLayerScene);
+        }
+    };
+    HolographicSlate.prototype._getTypeName = function () {
+        return "HolographicSlate";
+    };
+    /**
+     * @hidden
+     */
+    HolographicSlate.prototype._positionElements = function () {
+        var followButtonMesh = this._followButton.mesh;
+        var closeButtonMesh = this._closeButton.mesh;
+        var backPlate = this._backPlate;
+        var contentPlate = this._contentPlate;
+        if (followButtonMesh && closeButtonMesh && backPlate) {
+            // World size of a button with 1 scaling
+            var buttonBaseSize = 1;
+            // Buttons take full backPlate on Y axis
+            var backPlateYScale = this.backplateDimensions.y / buttonBaseSize;
+            closeButtonMesh.scaling.setAll(backPlateYScale);
+            followButtonMesh.scaling.setAll(backPlateYScale);
+            closeButtonMesh.position
+                .copyFromFloats(this.backplateDimensions.x - backPlateYScale / 2, -this.backplateDimensions.y / 2, (-this.backplateDimensions.z / 2) * (this._host.scene.useRightHandedSystem ? -1 : 1))
+                .addInPlace(this.origin);
+            followButtonMesh.position
+                .copyFromFloats(this.backplateDimensions.x - (3 * backPlateYScale) / 2, -this.backplateDimensions.y / 2, (-this.backplateDimensions.z / 2) * (this._host.scene.useRightHandedSystem ? -1 : 1))
+                .addInPlace(this.origin);
+            var contentPlateHeight = this.dimensions.y - this.backplateDimensions.y - this.backPlateMargin;
+            backPlate.scaling.copyFrom(this.backplateDimensions);
+            contentPlate.scaling.copyFromFloats(this.dimensions.x, contentPlateHeight, this.dimensions.z);
+            backPlate.position.copyFromFloats(this.backplateDimensions.x / 2, -(this.backplateDimensions.y / 2), 0).addInPlace(this.origin);
+            contentPlate.position.copyFromFloats(this.dimensions.x / 2, -(this.backplateDimensions.y + this.backPlateMargin + contentPlateHeight / 2), 0).addInPlace(this.origin);
+            var aspectRatio = this.dimensions.x / contentPlateHeight;
+            this._contentViewport.width = this._contentScaleRatio;
+            this._contentViewport.height = this._contentScaleRatio / aspectRatio;
+            this._applyContentViewport();
+        }
+    };
+    HolographicSlate.prototype._applyContentViewport = function () {
+        if (this._contentPlate.material && this._contentPlate.material.albedoTexture) {
+            var tex = this._contentPlate.material.albedoTexture;
+            tex.uScale = this._contentScaleRatio;
+            tex.vScale = (this._contentScaleRatio / this._contentViewport.width) * this._contentViewport.height;
+            tex.uOffset = this._contentViewport.x;
+            tex.vOffset = this._contentViewport.y;
+        }
+    };
+    HolographicSlate.prototype._resetContentPositionAndZoom = function () {
+        this._contentViewport.x = 0;
+        this._contentViewport.y = 1 - this._contentViewport.height / this._contentViewport.width;
+        this._contentScaleRatio = 1;
+    };
+    /**
+     * @hidden
+     */
+    HolographicSlate.prototype._updatePivot = function () {
+        if (!this.mesh) {
+            return;
+        }
+        // Update pivot point so it is at the center of geometry
+        var center = this.dimensions.scale(0.5);
+        // As origin is topleft corner in 2D, dimensions are calculated towards bottom right corner, thus y axis is downwards
+        center.y *= -1;
+        center.addInPlace(this.origin);
+        center.z = 0;
+        var origin = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformCoordinatesToRef(origin, this.mesh.computeWorldMatrix(true), origin);
+        this.mesh.setPivotPoint(center);
+        var origin2 = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformCoordinatesToRef(origin2, this.mesh.computeWorldMatrix(true), origin2);
+        this.mesh.position.addInPlace(origin).subtractInPlace(origin2);
+    };
+    // Mesh association
+    HolographicSlate.prototype._createNode = function (scene) {
+        var _this = this;
+        var node = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Mesh"]("slate" + this.name, scene);
+        this._backPlate = Object(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])("backPlate" + this.name, { size: 1 }, scene);
+        this._contentPlate = Object(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])("contentPlate" + this.name, { size: 1 }, scene);
+        this._backPlate.parent = node;
+        this._backPlate.isNearGrabbable = true;
+        this._contentPlate.parent = node;
+        this._attachContentPlateBehavior();
+        this._addControl(this._followButton);
+        this._addControl(this._closeButton);
+        var followButtonMesh = this._followButton.mesh;
+        var closeButtonMesh = this._closeButton.mesh;
+        followButtonMesh.parent = node;
+        closeButtonMesh.parent = node;
+        this._positionElements();
+        this._followButton.imageUrl = HolographicSlate.ASSETS_BASE_URL + HolographicSlate.FOLLOW_ICON_FILENAME;
+        this._closeButton.imageUrl = HolographicSlate.ASSETS_BASE_URL + HolographicSlate.CLOSE_ICON_FILENAME;
+        this._followButton.backMaterial.alpha = 0;
+        this._closeButton.backMaterial.alpha = 0;
+        this._followButton.onPointerClickObservable.add(function () {
+            _this._defaultBehavior.followBehaviorEnabled = !_this._defaultBehavior.followBehaviorEnabled;
+            if (_this._defaultBehavior.followBehaviorEnabled) {
+                _this._defaultBehavior.followBehavior.recenter();
+            }
+        });
+        this._closeButton.onPointerClickObservable.add(function () {
+            _this.dispose();
+        });
+        node.rotationQuaternion = babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Quaternion"].Identity();
+        node.isVisible = false;
+        return node;
+    };
+    HolographicSlate.prototype._attachContentPlateBehavior = function () {
+        var _this = this;
+        this._contentDragBehavior.attach(this._contentPlate);
+        this._contentDragBehavior.moveAttached = false;
+        this._contentDragBehavior.useObjectOrientationForDragging = true;
+        this._contentDragBehavior.updateDragPlane = false;
+        var origin = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var worldDimensions = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var upWorld = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var rightWorld = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var projectedOffset = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector2"]();
+        var startViewport;
+        var worldMatrix;
+        this._contentDragBehavior.onDragStartObservable.add(function (event) {
+            if (!_this.node) {
+                return;
+            }
+            startViewport = _this._contentViewport.clone();
+            worldMatrix = _this.node.computeWorldMatrix(true);
+            origin.copyFrom(event.dragPlanePoint);
+            worldDimensions.copyFrom(_this.dimensions);
+            worldDimensions.y -= _this.backplateDimensions.y + _this.backPlateMargin;
+            babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(worldDimensions, worldMatrix, worldDimensions);
+            upWorld.copyFromFloats(0, 1, 0);
+            babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(upWorld, worldMatrix, upWorld);
+            rightWorld.copyFromFloats(1, 0, 0);
+            babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(rightWorld, worldMatrix, rightWorld);
+            upWorld.normalize();
+            upWorld.scaleInPlace(1 / babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(upWorld, worldDimensions));
+            rightWorld.normalize();
+            rightWorld.scaleInPlace(1 / babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(rightWorld, worldDimensions));
+        });
+        var offset = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        this._contentDragBehavior.onDragObservable.add(function (event) {
+            offset.copyFrom(event.dragPlanePoint);
+            offset.subtractInPlace(origin);
+            projectedOffset.copyFromFloats(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(offset, rightWorld), babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(offset, upWorld));
+            // By default, content takes full width available and height is cropped to keep aspect ratio
+            _this._contentViewport.x = babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Scalar"].Clamp(startViewport.x - offset.x, 0, 1 - _this._contentViewport.width * _this._contentScaleRatio);
+            _this._contentViewport.y = babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Scalar"].Clamp(startViewport.y - offset.y, 0, 1 - _this._contentViewport.height * _this._contentScaleRatio);
+            _this._applyContentViewport();
+        });
+    };
+    HolographicSlate.prototype._affectMaterial = function (mesh) {
+        // TODO share materials
+        this._backPlateMaterial = new _materials_fluentBackplate_fluentBackplateMaterial__WEBPACK_IMPORTED_MODULE_8__["FluentBackplateMaterial"](this.name + " plateMaterial", mesh.getScene());
+        this._pickedPointObserver = this._host.onPickedPointChangedObservable.add(function (pickedPoint) {
+            // if (pickedPoint) {
+            //     this._backPlateMaterial. = pickedPoint;
+            //     this._backPlateMaterial.hoverColor.a = 1.0;
+            // } else {
+            //     this._backPlateMaterial.hoverColor.a = 0;
+            // }
+        });
+        this._contentMaterial = new _materials_fluent_fluentMaterial__WEBPACK_IMPORTED_MODULE_2__["FluentMaterial"](this.name + "contentMaterial", mesh.getScene());
+        this._contentMaterial.renderBorders = true;
+        this._backPlate.material = this._backPlateMaterial;
+        this._contentPlate.material = this._contentMaterial;
+        this._rebuildContent();
+        this._applyContentViewport();
+    };
+    /** @hidden **/
+    HolographicSlate.prototype._prepareNode = function (scene) {
+        var _this = this;
+        _super.prototype._prepareNode.call(this, scene);
+        this._gizmo = new _gizmos_slateGizmo__WEBPACK_IMPORTED_MODULE_6__["SlateGizmo"](this._host.utilityLayer);
+        this._gizmo.attachedSlate = this;
+        this._defaultBehavior = new _behaviors_defaultBehavior__WEBPACK_IMPORTED_MODULE_7__["DefaultBehavior"]();
+        this._defaultBehavior.attach(this.node, [this._backPlate]);
+        this._positionChangedObserver = this._defaultBehavior.sixDofDragBehavior.onPositionChangedObservable.add(function () {
+            _this._gizmo.updateBoundingBox();
+        });
+        this._updatePivot();
+        this.resetDefaultAspectAndPose();
+    };
+    /**
+     * Resets the aspect and pose of the slate so it is right in front of the active camera, facing towards it.
+     */
+    HolographicSlate.prototype.resetDefaultAspectAndPose = function () {
+        if (!this._host || !this._host.utilityLayer || !this.node) {
+            return;
+        }
+        var scene = this._host.utilityLayer.utilityLayerScene;
+        var camera = scene.activeCamera;
+        if (camera) {
+            var worldMatrix = camera.getWorldMatrix();
+            var backward = babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormal(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Backward(scene.useRightHandedSystem), worldMatrix);
+            this.dimensions.copyFrom(this.defaultDimensions);
+            this.origin.setAll(0);
+            this._gizmo.updateBoundingBox();
+            var pivot = this.node.getAbsolutePivotPoint();
+            this.node.position.copyFrom(camera.position).subtractInPlace(backward).subtractInPlace(pivot);
+            this.node.rotationQuaternion = babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Quaternion"].FromLookDirectionLH(backward, new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 1, 0));
+        }
+    };
+    /**
+     * Releases all associated resources
+     */
+    HolographicSlate.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._backPlateMaterial.dispose();
+        this._contentMaterial.dispose();
+        this._backPlate.dispose();
+        this._contentPlate.dispose();
+        this._followButton.dispose();
+        this._closeButton.dispose();
+        this._host.onPickedPointChangedObservable.remove(this._pickedPointObserver);
+        this._defaultBehavior.sixDofDragBehavior.onPositionChangedObservable.remove(this._positionChangedObserver);
+        this._defaultBehavior.detach();
+        this._gizmo.dispose();
+        this._contentDragBehavior.detach();
+    };
+    /**
+     * Base Url for the assets.
+     */
+    HolographicSlate.ASSETS_BASE_URL = "https://assets.babylonjs.com/meshes/MRTK/";
+    /**
+     * File name for the close icon.
+     */
+    HolographicSlate.CLOSE_ICON_FILENAME = "IconClose.png";
+    /**
+     * File name for the close icon.
+     */
+    HolographicSlate.FOLLOW_ICON_FILENAME = "IconFollowMe.png";
+    return HolographicSlate;
+}(_contentDisplay3D__WEBPACK_IMPORTED_MODULE_4__["ContentDisplay3D"]));
+
+
+
+/***/ }),
+
 /***/ "./3D/controls/index.ts":
 /*!******************************!*\
   !*** ./3D/controls/index.ts ***!
   \******************************/
-/*! exports provided: AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, MeshButton3D, PlanePanel, ScatterPanel, SpherePanel, StackPanel3D, VolumeBasedPanel */
+/*! exports provided: AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, HolographicSlate, HandMenu, MeshButton3D, NearMenu, PlanePanel, ScatterPanel, Slider3D, SpherePanel, StackPanel3D, TouchButton3D, TouchMeshButton3D, TouchHolographicButton, TouchHolographicMenu, TouchToggleButton3D, VolumeBasedPanel, HolographicBackplate */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16360,23 +18533,63 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _holographicButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./holographicButton */ "./3D/controls/holographicButton.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicButton", function() { return _holographicButton__WEBPACK_IMPORTED_MODULE_5__["HolographicButton"]; });
 
-/* harmony import */ var _meshButton3D__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./meshButton3D */ "./3D/controls/meshButton3D.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MeshButton3D", function() { return _meshButton3D__WEBPACK_IMPORTED_MODULE_6__["MeshButton3D"]; });
+/* harmony import */ var _holographicSlate__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./holographicSlate */ "./3D/controls/holographicSlate.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicSlate", function() { return _holographicSlate__WEBPACK_IMPORTED_MODULE_6__["HolographicSlate"]; });
 
-/* harmony import */ var _planePanel__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./planePanel */ "./3D/controls/planePanel.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PlanePanel", function() { return _planePanel__WEBPACK_IMPORTED_MODULE_7__["PlanePanel"]; });
+/* harmony import */ var _handMenu__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./handMenu */ "./3D/controls/handMenu.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandMenu", function() { return _handMenu__WEBPACK_IMPORTED_MODULE_7__["HandMenu"]; });
 
-/* harmony import */ var _scatterPanel__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./scatterPanel */ "./3D/controls/scatterPanel.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScatterPanel", function() { return _scatterPanel__WEBPACK_IMPORTED_MODULE_8__["ScatterPanel"]; });
+/* harmony import */ var _meshButton3D__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./meshButton3D */ "./3D/controls/meshButton3D.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MeshButton3D", function() { return _meshButton3D__WEBPACK_IMPORTED_MODULE_8__["MeshButton3D"]; });
 
-/* harmony import */ var _spherePanel__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./spherePanel */ "./3D/controls/spherePanel.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SpherePanel", function() { return _spherePanel__WEBPACK_IMPORTED_MODULE_9__["SpherePanel"]; });
+/* harmony import */ var _nearMenu__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./nearMenu */ "./3D/controls/nearMenu.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NearMenu", function() { return _nearMenu__WEBPACK_IMPORTED_MODULE_9__["NearMenu"]; });
 
-/* harmony import */ var _stackPanel3D__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./stackPanel3D */ "./3D/controls/stackPanel3D.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel3D", function() { return _stackPanel3D__WEBPACK_IMPORTED_MODULE_10__["StackPanel3D"]; });
+/* harmony import */ var _planePanel__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./planePanel */ "./3D/controls/planePanel.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PlanePanel", function() { return _planePanel__WEBPACK_IMPORTED_MODULE_10__["PlanePanel"]; });
 
-/* harmony import */ var _volumeBasedPanel__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./volumeBasedPanel */ "./3D/controls/volumeBasedPanel.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VolumeBasedPanel", function() { return _volumeBasedPanel__WEBPACK_IMPORTED_MODULE_11__["VolumeBasedPanel"]; });
+/* harmony import */ var _scatterPanel__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./scatterPanel */ "./3D/controls/scatterPanel.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScatterPanel", function() { return _scatterPanel__WEBPACK_IMPORTED_MODULE_11__["ScatterPanel"]; });
+
+/* harmony import */ var _slider3D__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./slider3D */ "./3D/controls/slider3D.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider3D", function() { return _slider3D__WEBPACK_IMPORTED_MODULE_12__["Slider3D"]; });
+
+/* harmony import */ var _spherePanel__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./spherePanel */ "./3D/controls/spherePanel.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SpherePanel", function() { return _spherePanel__WEBPACK_IMPORTED_MODULE_13__["SpherePanel"]; });
+
+/* harmony import */ var _stackPanel3D__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./stackPanel3D */ "./3D/controls/stackPanel3D.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel3D", function() { return _stackPanel3D__WEBPACK_IMPORTED_MODULE_14__["StackPanel3D"]; });
+
+/* harmony import */ var _touchButton3D__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./touchButton3D */ "./3D/controls/touchButton3D.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchButton3D", function() { return _touchButton3D__WEBPACK_IMPORTED_MODULE_15__["TouchButton3D"]; });
+
+/* harmony import */ var _touchMeshButton3D__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./touchMeshButton3D */ "./3D/controls/touchMeshButton3D.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchMeshButton3D", function() { return _touchMeshButton3D__WEBPACK_IMPORTED_MODULE_16__["TouchMeshButton3D"]; });
+
+/* harmony import */ var _touchHolographicButton__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./touchHolographicButton */ "./3D/controls/touchHolographicButton.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicButton", function() { return _touchHolographicButton__WEBPACK_IMPORTED_MODULE_17__["TouchHolographicButton"]; });
+
+/* harmony import */ var _touchHolographicMenu__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./touchHolographicMenu */ "./3D/controls/touchHolographicMenu.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicMenu", function() { return _touchHolographicMenu__WEBPACK_IMPORTED_MODULE_18__["TouchHolographicMenu"]; });
+
+/* harmony import */ var _touchToggleButton3D__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./touchToggleButton3D */ "./3D/controls/touchToggleButton3D.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchToggleButton3D", function() { return _touchToggleButton3D__WEBPACK_IMPORTED_MODULE_19__["TouchToggleButton3D"]; });
+
+/* harmony import */ var _volumeBasedPanel__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./volumeBasedPanel */ "./3D/controls/volumeBasedPanel.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VolumeBasedPanel", function() { return _volumeBasedPanel__WEBPACK_IMPORTED_MODULE_20__["VolumeBasedPanel"]; });
+
+/* harmony import */ var _holographicBackplate__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./holographicBackplate */ "./3D/controls/holographicBackplate.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicBackplate", function() { return _holographicBackplate__WEBPACK_IMPORTED_MODULE_21__["HolographicBackplate"]; });
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -16458,7 +18671,7 @@ var MeshButton3D = /** @class */ (function (_super) {
     MeshButton3D.prototype._createNode = function (scene) {
         var _this = this;
         this._currentMesh.getChildMeshes().forEach(function (mesh) {
-            mesh.metadata = _this;
+            _this._injectGUI3DReservedDataStore(mesh).control = _this;
         });
         return this._currentMesh;
     };
@@ -16466,6 +18679,134 @@ var MeshButton3D = /** @class */ (function (_super) {
     };
     return MeshButton3D;
 }(_button3D__WEBPACK_IMPORTED_MODULE_1__["Button3D"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/controls/nearMenu.ts":
+/*!*********************************!*\
+  !*** ./3D/controls/nearMenu.ts ***!
+  \*********************************/
+/*! exports provided: NearMenu */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NearMenu", function() { return NearMenu; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _touchHolographicButton__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./touchHolographicButton */ "./3D/controls/touchHolographicButton.ts");
+/* harmony import */ var _behaviors_defaultBehavior__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../behaviors/defaultBehavior */ "./3D/behaviors/defaultBehavior.ts");
+/* harmony import */ var _touchHolographicMenu__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./touchHolographicMenu */ "./3D/controls/touchHolographicMenu.ts");
+
+
+
+
+/**
+ * NearMenu that displays buttons and follows the camera
+ * @since 5.0.0
+ */
+var NearMenu = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(NearMenu, _super);
+    /**
+     * Creates a near menu GUI 3D control
+     * @param name name of the near menu
+     */
+    function NearMenu(name) {
+        var _this = _super.call(this, name) || this;
+        _this._isPinned = false;
+        _this._defaultBehavior = new _behaviors_defaultBehavior__WEBPACK_IMPORTED_MODULE_2__["DefaultBehavior"]();
+        _this._dragObserver = _this._defaultBehavior.sixDofDragBehavior.onDragObservable.add(function () {
+            _this.isPinned = true;
+        });
+        _this.backPlateMargin = 1;
+        return _this;
+    }
+    Object.defineProperty(NearMenu.prototype, "defaultBehavior", {
+        /**
+         * Regroups all mesh behaviors for the near menu
+         */
+        get: function () {
+            return this._defaultBehavior;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(NearMenu.prototype, "isPinned", {
+        /**
+         * Indicates if the near menu is world-pinned
+         */
+        get: function () {
+            return this._isPinned;
+        },
+        set: function (value) {
+            this._isPinned = value;
+            if (this._isPinned) {
+                this._pinMaterial.emissiveColor.copyFromFloats(0.25, 0.4, 0.95);
+                this._defaultBehavior.followBehaviorEnabled = false;
+            }
+            else {
+                this._pinMaterial.emissiveColor.copyFromFloats(0.08, 0.15, 0.55);
+                this._defaultBehavior.followBehaviorEnabled = true;
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    NearMenu.prototype._createPinButton = function (parent) {
+        var _this = this;
+        var control = new _touchHolographicButton__WEBPACK_IMPORTED_MODULE_1__["TouchHolographicButton"]("pin" + this.name, false);
+        control.imageUrl = NearMenu.ASSETS_BASE_URL + NearMenu.PIN_ICON_FILENAME;
+        control.parent = this;
+        control._host = this._host;
+        control.onPointerClickObservable.add(function () { return (_this.isPinned = !_this.isPinned); });
+        if (this._host.utilityLayer) {
+            control._prepareNode(this._host.utilityLayer.utilityLayerScene);
+            control.scaling.scaleInPlace(_touchHolographicMenu__WEBPACK_IMPORTED_MODULE_3__["TouchHolographicMenu"].MENU_BUTTON_SCALE);
+            this._pinMaterial = control.backMaterial;
+            this._pinMaterial.diffuseColor.copyFromFloats(0, 0, 0);
+            if (control.node) {
+                control.node.parent = parent;
+            }
+        }
+        return control;
+    };
+    NearMenu.prototype._createNode = function (scene) {
+        var node = _super.prototype._createNode.call(this, scene);
+        this._pinButton = this._createPinButton(node);
+        this.isPinned = false;
+        this._defaultBehavior.attach(node, [this._backPlate]);
+        this._defaultBehavior.followBehavior.ignoreCameraPitchAndRoll = true;
+        this._defaultBehavior.followBehavior.pitchOffset = -15;
+        this._defaultBehavior.followBehavior.minimumDistance = 0.3;
+        this._defaultBehavior.followBehavior.defaultDistance = 0.4;
+        this._defaultBehavior.followBehavior.maximumDistance = 0.6;
+        this._backPlate.isNearGrabbable = true;
+        node.isVisible = false;
+        return node;
+    };
+    NearMenu.prototype._finalProcessing = function () {
+        _super.prototype._finalProcessing.call(this);
+        this._pinButton.position.copyFromFloats(this._backPlate.scaling.x / 2 + 0.2, this._backPlate.scaling.y / 2, 0);
+    };
+    /**
+     * Disposes the near menu
+     */
+    NearMenu.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._defaultBehavior.sixDofDragBehavior.onDragObservable.remove(this._dragObserver);
+        this._defaultBehavior.detach();
+    };
+    /**
+     * Base Url for the assets.
+     */
+    NearMenu.ASSETS_BASE_URL = "https://assets.babylonjs.com/meshes/MRTK/";
+    /**
+     * File name for the close icon.
+     */
+    NearMenu.PIN_ICON_FILENAME = "IconPin.png";
+    return NearMenu;
+}(_touchHolographicMenu__WEBPACK_IMPORTED_MODULE_3__["TouchHolographicMenu"]));
 
 
 
@@ -16648,6 +18989,294 @@ var ScatterPanel = /** @class */ (function (_super) {
     };
     return ScatterPanel;
 }(_volumeBasedPanel__WEBPACK_IMPORTED_MODULE_2__["VolumeBasedPanel"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/controls/slider3D.ts":
+/*!*********************************!*\
+  !*** ./3D/controls/slider3D.ts ***!
+  \*********************************/
+/*! exports provided: Slider3D */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Slider3D", function() { return Slider3D; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/observable */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _control3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./control3D */ "./3D/controls/control3D.ts");
+/* harmony import */ var _materials_mrdl_mrdlSliderBarMaterial__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../materials/mrdl/mrdlSliderBarMaterial */ "./3D/materials/mrdl/mrdlSliderBarMaterial.ts");
+/* harmony import */ var _materials_mrdl_mrdlSliderThumbMaterial__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../materials/mrdl/mrdlSliderThumbMaterial */ "./3D/materials/mrdl/mrdlSliderThumbMaterial.ts");
+/* harmony import */ var _materials_mrdl_mrdlBackplateMaterial__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../materials/mrdl/mrdlBackplateMaterial */ "./3D/materials/mrdl/mrdlBackplateMaterial.ts");
+
+
+
+
+
+
+
+
+
+
+var SLIDER_MIN = 0;
+var SLIDER_MAX = 100;
+var SLIDER_VAL = 50;
+var SLIDER_STEP = 0;
+var SLIDER_SCALING = 1.0;
+var SLIDER_MARGIN = 0.2;
+/**
+ * Class used to create a slider in 3D
+ */
+var Slider3D = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(Slider3D, _super);
+    /**
+     * Creates a new slider
+     * @param name defines the control name
+     * @param sliderBackplateVisible defines if the control has a backplate, default is false
+     */
+    function Slider3D(name, sliderBackplateVisible) {
+        var _this = _super.call(this, name) || this;
+        /** Observable raised when the sldier value changes */
+        _this.onValueChangedObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
+        _this._sliderBackplateVisible = sliderBackplateVisible || false;
+        _this._minimum = SLIDER_MIN;
+        _this._maximum = SLIDER_MAX;
+        _this._step = SLIDER_STEP;
+        _this._value = SLIDER_VAL;
+        return _this;
+    }
+    Object.defineProperty(Slider3D.prototype, "mesh", {
+        /**
+         * Gets the mesh used to render this control
+         */
+        get: function () {
+            if (this.node) {
+                return this._sliderThumb;
+            }
+            return null;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "minimum", {
+        /** Gets or sets minimum value */
+        get: function () {
+            return this._minimum;
+        },
+        set: function (value) {
+            if (this._minimum === value) {
+                return;
+            }
+            this._minimum = Math.max(value, SLIDER_MIN);
+            this._value = Math.max(Math.min(this._value, this._maximum), this._minimum);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "maximum", {
+        /** Gets or sets maximum value */
+        get: function () {
+            return this._maximum;
+        },
+        set: function (value) {
+            if (this._maximum === value) {
+                return;
+            }
+            this._maximum = Math.max(value, this._minimum);
+            this._value = Math.max(Math.min(this._value, this._maximum), this._minimum);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "step", {
+        /** Gets or sets step value */
+        get: function () {
+            return this._step;
+        },
+        set: function (value) {
+            if (this._step === value) {
+                return;
+            }
+            this._step = Math.max(Math.min(value, this._maximum - this._minimum), SLIDER_STEP);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "value", {
+        /** Gets or sets current value */
+        get: function () {
+            return this._value;
+        },
+        set: function (value) {
+            if (this._value === value) {
+                return;
+            }
+            this._value = Math.max(Math.min(value, this._maximum), this._minimum);
+            this.onValueChangedObservable.notifyObservers(this._value);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "start", {
+        get: function () {
+            if (!this.node) {
+                return -SLIDER_SCALING / 2;
+            }
+            return this._sliderBar.position.x - this._sliderBar.scaling.x / 2;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "end", {
+        get: function () {
+            if (!this.node) {
+                return SLIDER_SCALING / 2;
+            }
+            return this._sliderBar.position.x + this._sliderBar.scaling.x / 2;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "sliderBarMaterial", {
+        /**
+         * Gets the slider bar material used by this control
+         */
+        get: function () {
+            return this._sliderBarMaterial;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "sliderThumbMaterial", {
+        /**
+         * Gets the slider thumb material used by this control
+         */
+        get: function () {
+            return this._sliderThumbMaterial;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Slider3D.prototype, "sliderBackplateMaterial", {
+        /**
+         * Gets the slider backplate material used by this control
+         */
+        get: function () {
+            return this._sliderBackplateMaterial;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    // Mesh association
+    Slider3D.prototype._createNode = function (scene) {
+        var _this = this;
+        var sliderBackplate = Object(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])(this.name + "_sliderbackplate", {
+            width: 1.0,
+            height: 1.0,
+            depth: 1.0,
+        }, scene);
+        sliderBackplate.isPickable = false;
+        sliderBackplate.visibility = 0;
+        sliderBackplate.scaling = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"](1, 0.5, 0.8);
+        babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["SceneLoader"].ImportMeshAsync(undefined, Slider3D.MODEL_BASE_URL, Slider3D.MODEL_FILENAME, scene)
+            .then(function (result) {
+            var sliderBackplateModel = result.meshes[1];
+            var sliderBarModel = result.meshes[1].clone(_this.name + "_sliderbar", sliderBackplate);
+            var sliderThumbModel = result.meshes[1].clone(_this.name + "_sliderthumb", sliderBackplate);
+            sliderBackplateModel.visibility = 0;
+            if (_this._sliderBackplateVisible) {
+                sliderBackplateModel.visibility = 1;
+                sliderBackplateModel.name = _this.name + "_sliderbackplate";
+                sliderBackplateModel.isPickable = false;
+                sliderBackplateModel.scaling.x = 1;
+                sliderBackplateModel.scaling.z = 0.2;
+                sliderBackplateModel.parent = sliderBackplate;
+                if (!!_this._sliderBackplateMaterial) {
+                    sliderBackplateModel.material = _this._sliderBackplateMaterial;
+                }
+                _this._sliderBackplate = sliderBackplateModel;
+            }
+            if (!!sliderBarModel) {
+                sliderBarModel.parent = sliderBackplate;
+                sliderBarModel.position.z = -0.1;
+                sliderBarModel.scaling = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"](SLIDER_SCALING - SLIDER_MARGIN, 0.04, 0.3);
+                sliderBarModel.isPickable = false;
+                if (!!_this._sliderBarMaterial) {
+                    sliderBarModel.material = _this._sliderBarMaterial;
+                }
+                _this._sliderBar = sliderBarModel;
+            }
+            if (!!sliderThumbModel) {
+                sliderThumbModel.parent = sliderBackplate;
+                sliderThumbModel.isPickable = true;
+                sliderThumbModel.position.z = -0.115;
+                sliderThumbModel.scaling = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0.025, 0.3, 0.6);
+                sliderThumbModel.position.x = _this._convertToPosition(_this.value);
+                sliderThumbModel.addBehavior(_this._createBehavior());
+                if (!!_this._sliderThumbMaterial) {
+                    sliderThumbModel.material = _this._sliderThumbMaterial;
+                }
+                _this._sliderThumb = sliderThumbModel;
+            }
+        });
+        this._affectMaterial(sliderBackplate);
+        return sliderBackplate;
+    };
+    Slider3D.prototype._affectMaterial = function (mesh) {
+        var _a, _b, _c;
+        this._sliderBackplateMaterial = (_a = this._sliderBackplateMaterial) !== null && _a !== void 0 ? _a : new _materials_mrdl_mrdlBackplateMaterial__WEBPACK_IMPORTED_MODULE_5__["MRDLBackplateMaterial"](this.name + "_sliderbackplate_material", mesh.getScene());
+        this._sliderBarMaterial = (_b = this._sliderBarMaterial) !== null && _b !== void 0 ? _b : new _materials_mrdl_mrdlSliderBarMaterial__WEBPACK_IMPORTED_MODULE_3__["MRDLSliderBarMaterial"](this.name + "_sliderbar_material", mesh.getScene());
+        this._sliderThumbMaterial = (_c = this._sliderThumbMaterial) !== null && _c !== void 0 ? _c : new _materials_mrdl_mrdlSliderThumbMaterial__WEBPACK_IMPORTED_MODULE_4__["MRDLSliderThumbMaterial"](this.name + "_sliderthumb_material", mesh.getScene());
+    };
+    Slider3D.prototype._createBehavior = function () {
+        var _this = this;
+        var pointerDragBehavior = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["PointerDragBehavior"]({ dragAxis: babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Right() });
+        pointerDragBehavior.moveAttached = false;
+        pointerDragBehavior.onDragObservable.add(function (event) {
+            var newPosition = _this._sliderThumb.position.x + event.dragDistance / _this.scaling.x;
+            _this._sliderThumb.position.x = Math.max(Math.min(newPosition, _this.end), _this.start);
+            _this.value = _this._convertToValue(_this._sliderThumb.position.x);
+        });
+        pointerDragBehavior.onDragEndObservable.add(function (event) {
+            _this._sliderThumb.position.x = _this._convertToPosition(_this.value);
+        });
+        return pointerDragBehavior;
+    };
+    Slider3D.prototype._convertToPosition = function (value) {
+        var position = ((value - this.minimum) / (this.maximum - this.minimum)) * (this.end - this.start) + this.start;
+        return Math.min(Math.max(position, this.start), this.end);
+    };
+    Slider3D.prototype._convertToValue = function (position) {
+        var value = ((position - this.start) / (this.end - this.start)) * (this.maximum - this.minimum);
+        value = this.step ? Math.round(value / this.step) * this.step : value;
+        return Math.max(Math.min(this.minimum + value, this._maximum), this._minimum);
+    };
+    /**
+     * Releases all associated resources
+     */
+    Slider3D.prototype.dispose = function () {
+        var _a, _b, _c, _d, _e, _f;
+        _super.prototype.dispose.call(this);
+        (_a = this._sliderBar) === null || _a === void 0 ? void 0 : _a.dispose();
+        (_b = this._sliderThumb) === null || _b === void 0 ? void 0 : _b.dispose();
+        (_c = this._sliderBarMaterial) === null || _c === void 0 ? void 0 : _c.dispose();
+        (_d = this._sliderThumbMaterial) === null || _d === void 0 ? void 0 : _d.dispose();
+        (_e = this._sliderBackplate) === null || _e === void 0 ? void 0 : _e.dispose();
+        (_f = this._sliderBackplateMaterial) === null || _f === void 0 ? void 0 : _f.dispose();
+    };
+    /**
+     * Base Url for the models.
+     */
+    Slider3D.MODEL_BASE_URL = "https://assets.babylonjs.com/meshes/MRTK/";
+    /**
+     * File name for the 8x4 model.
+     */
+    Slider3D.MODEL_FILENAME = 'mrtk-fluent-backplate.glb';
+    return Slider3D;
+}(_control3D__WEBPACK_IMPORTED_MODULE_2__["Control3D"]));
 
 
 
@@ -16864,6 +19493,906 @@ var StackPanel3D = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "./3D/controls/touchButton3D.ts":
+/*!**************************************!*\
+  !*** ./3D/controls/touchButton3D.ts ***!
+  \**************************************/
+/*! exports provided: TouchButton3D */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TouchButton3D", function() { return TouchButton3D; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Maths/math.vector */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _button3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./button3D */ "./3D/controls/button3D.ts");
+// Assumptions: absolute position of button mesh is inside the mesh
+
+
+
+
+
+/**
+ * Class used to create a touchable button in 3D
+ */
+var TouchButton3D = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(TouchButton3D, _super);
+    /**
+     * Creates a new touchable button
+     * @param name defines the control name
+     * @param collisionMesh mesh to track collisions with
+     */
+    function TouchButton3D(name, collisionMesh) {
+        var _this = _super.call(this, name) || this;
+        _this._isNearPressed = false;
+        _this.collidableFrontDirection = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
+        if (collisionMesh) {
+            _this.collisionMesh = collisionMesh;
+        }
+        return _this;
+    }
+    Object.defineProperty(TouchButton3D.prototype, "collidableFrontDirection", {
+        /**
+         * Returns the front-facing direction of the button, or Vector3.Zero if there is no 'front'
+         */
+        get: function () {
+            if (this._collisionMesh) {
+                // Update the front direction to reflect any rotations of the collision mesh
+                var transformedDirection = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0];
+                babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(this._collidableFrontDirection, this._collisionMesh.getWorldMatrix(), transformedDirection);
+                return transformedDirection.normalize();
+            }
+            return this._collidableFrontDirection;
+        },
+        /**
+         * Sets the front-facing direction of the button. Pass in Vector3.Zero to allow interactions from any direction
+         * @param frontDir the forward direction of the button
+         */
+        set: function (frontWorldDir) {
+            this._collidableFrontDirection = frontWorldDir.normalize();
+            if (this._collisionMesh) {
+                var invert = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Matrix[0];
+                invert.copyFrom(this._collisionMesh.getWorldMatrix());
+                invert.invert();
+                babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(this._collidableFrontDirection, invert, this._collidableFrontDirection);
+                this._collidableFrontDirection.normalize();
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchButton3D.prototype, "collisionMesh", {
+        /**
+         * Sets the mesh used for testing input collision
+         * @param collisionMesh the new collision mesh for the button
+         */
+        set: function (collisionMesh) {
+            if (this._collisionMesh) {
+                this._collisionMesh.dispose();
+            }
+            // parent the mesh to sync transforms
+            if (!collisionMesh.parent && this.mesh) {
+                collisionMesh.setParent(this.mesh);
+            }
+            this._collisionMesh = collisionMesh;
+            this._injectGUI3DReservedDataStore(this._collisionMesh).control = this;
+            this._collisionMesh.isNearPickable = true;
+            this.collidableFrontDirection = collisionMesh.forward;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    // Returns true if the collidable is in front of the button, or if the button has no front direction
+    TouchButton3D.prototype._isInteractionInFrontOfButton = function (collidablePos) {
+        return this._getInteractionHeight(collidablePos, this._collisionMesh.getAbsolutePosition()) > 0;
+    };
+    // Returns true if the collidable is in front of the button, or if the button has no front direction
+    TouchButton3D.prototype._getInteractionHeight = function (interactionPos, basePos) {
+        var frontDir = this.collidableFrontDirection;
+        if (frontDir.length() === 0) {
+            // The button has no front, just return the distance to the base
+            return babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Distance(interactionPos, basePos);
+        }
+        var d = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(basePos, frontDir);
+        var abc = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(interactionPos, frontDir);
+        return abc - d;
+    };
+    /** @hidden */
+    TouchButton3D.prototype._generatePointerEventType = function (providedType, nearMeshPosition, activeInteractionCount) {
+        if (providedType === babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERDOWN) {
+            if (!this._isInteractionInFrontOfButton(nearMeshPosition)) {
+                // Near interaction mesh is behind the button, don't send a pointer down
+                return babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERMOVE;
+            }
+            else {
+                this._isNearPressed = true;
+            }
+        }
+        if (providedType === babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERUP) {
+            if (activeInteractionCount == 0) {
+                // We get the release for the down we swallowed earlier, swallow as well
+                return babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["PointerEventTypes"].POINTERMOVE;
+            }
+            else {
+                this._isNearPressed = false;
+            }
+        }
+        return providedType;
+    };
+    TouchButton3D.prototype._getTypeName = function () {
+        return "TouchButton3D";
+    };
+    // Mesh association
+    TouchButton3D.prototype._createNode = function (scene) {
+        return _super.prototype._createNode.call(this, scene);
+    };
+    /**
+     * Releases all associated resources
+     */
+    TouchButton3D.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        if (this._collisionMesh) {
+            this._collisionMesh.dispose();
+        }
+    };
+    return TouchButton3D;
+}(_button3D__WEBPACK_IMPORTED_MODULE_2__["Button3D"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/controls/touchHolographicButton.ts":
+/*!***********************************************!*\
+  !*** ./3D/controls/touchHolographicButton.ts ***!
+  \***********************************************/
+/*! exports provided: TouchHolographicButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicButton", function() { return TouchHolographicButton; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Maths/math.vector */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _materials_fluentButton_fluentButtonMaterial__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../materials/fluentButton/fluentButtonMaterial */ "./3D/materials/fluentButton/fluentButtonMaterial.ts");
+/* harmony import */ var _2D_controls_stackPanel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../2D/controls/stackPanel */ "./2D/controls/stackPanel.ts");
+/* harmony import */ var _2D_controls_image__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../2D/controls/image */ "./2D/controls/image.ts");
+/* harmony import */ var _2D_controls_textBlock__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../2D/controls/textBlock */ "./2D/controls/textBlock.ts");
+/* harmony import */ var _2D_advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../2D/advancedDynamicTexture */ "./2D/advancedDynamicTexture.ts");
+/* harmony import */ var _touchButton3D__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./touchButton3D */ "./3D/controls/touchButton3D.ts");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Class used to create a holographic button in 3D
+ * @since 5.0.0
+ */
+var TouchHolographicButton = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(TouchHolographicButton, _super);
+    /**
+     * Creates a new button
+     * @param name defines the control name
+     */
+    function TouchHolographicButton(name, shareMaterials) {
+        if (shareMaterials === void 0) { shareMaterials = true; }
+        var _this = _super.call(this, name) || this;
+        _this._shareMaterials = true;
+        _this._isBackplateVisible = true;
+        _this._frontPlateDepth = 0.5;
+        _this._backPlateDepth = 0.04;
+        _this._shareMaterials = shareMaterials;
+        _this.pointerEnterAnimation = function () {
+            _this._frontMaterial.leftBlobEnable = true;
+            _this._frontMaterial.rightBlobEnable = true;
+        };
+        _this.pointerOutAnimation = function () {
+            _this._frontMaterial.leftBlobEnable = false;
+            _this._frontMaterial.rightBlobEnable = false;
+        };
+        _this.pointerDownAnimation = function () {
+            if (_this._frontPlate && !_this._isNearPressed) {
+                _this._frontPlate.scaling.z = _this._frontPlateDepth * 0.2;
+                _this._frontPlate.position.z = (_this._frontPlateDepth - (0.2 * _this._frontPlateDepth)) / 2;
+                _this._textPlate.position.z = -(_this._backPlateDepth + (0.2 * _this._frontPlateDepth)) / 2;
+            }
+        };
+        _this.pointerUpAnimation = function () {
+            if (_this._frontPlate) {
+                _this._frontPlate.scaling.z = _this._frontPlateDepth;
+                _this._frontPlate.position.z = (_this._frontPlateDepth - _this._frontPlateDepth) / 2;
+                _this._textPlate.position.z = -(_this._backPlateDepth + _this._frontPlateDepth) / 2;
+            }
+        };
+        _this.onPointerMoveObservable.add(function (position) {
+            if (_this._frontPlate && _this._isNearPressed) {
+                var scale = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
+                if (_this._backPlate.getWorldMatrix().decompose(scale, undefined, undefined)) {
+                    var interactionHeight = _this._getInteractionHeight(position, _this._backPlate.position) / scale.z;
+                    interactionHeight = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Scalar"].Clamp(interactionHeight - (_this._backPlateDepth / 2), 0.2 * _this._frontPlateDepth, _this._frontPlateDepth);
+                    _this._frontPlate.scaling.z = interactionHeight;
+                    _this._frontPlate.position.z = (_this._frontPlateDepth - interactionHeight) / 2;
+                    _this._textPlate.position.z = -(_this._backPlateDepth + interactionHeight) / 2;
+                }
+            }
+        });
+        _this._pointerHoverObserver = _this.onPointerMoveObservable.add(function (hoverPosition) {
+            _this._frontMaterial.globalLeftIndexTipPosition = hoverPosition;
+        });
+        return _this;
+    }
+    TouchHolographicButton.prototype._disposeTooltip = function () {
+        this._tooltipFade = null;
+        if (this._tooltipTextBlock) {
+            this._tooltipTextBlock.dispose();
+        }
+        if (this._tooltipTexture) {
+            this._tooltipTexture.dispose();
+        }
+        if (this._tooltipMesh) {
+            this._tooltipMesh.dispose();
+        }
+        this.onPointerEnterObservable.remove(this._tooltipHoverObserver);
+        this.onPointerOutObservable.remove(this._tooltipOutObserver);
+    };
+    Object.defineProperty(TouchHolographicButton.prototype, "renderingGroupId", {
+        get: function () {
+            return this._backPlate.renderingGroupId;
+        },
+        /**
+         * Rendering ground id of all the mesh in the button
+         */
+        set: function (id) {
+            this._backPlate.renderingGroupId = id;
+            this._textPlate.renderingGroupId = id;
+            this._frontPlate.renderingGroupId = id;
+            if (this._tooltipMesh) {
+                this._tooltipMesh.renderingGroupId = id;
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "tooltipText", {
+        get: function () {
+            if (this._tooltipTextBlock) {
+                return this._tooltipTextBlock.text;
+            }
+            return null;
+        },
+        /**
+         * Text to be displayed on the tooltip shown when hovering on the button. When set to null tooltip is disabled. (Default: null)
+         */
+        set: function (text) {
+            var _this = this;
+            if (!text) {
+                this._disposeTooltip();
+                return;
+            }
+            if (!this._tooltipFade) {
+                // Create tooltip with mesh and text
+                this._tooltipMesh = Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["CreatePlane"])("", { size: 1 }, this._backPlate._scene);
+                var tooltipBackground = Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["CreatePlane"])("", { size: 1, sideOrientation: babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Mesh"].DOUBLESIDE }, this._backPlate._scene);
+                var mat = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["StandardMaterial"]("", this._backPlate._scene);
+                mat.diffuseColor = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Color3"].FromHexString("#212121");
+                tooltipBackground.material = mat;
+                tooltipBackground.isPickable = false;
+                this._tooltipMesh.addChild(tooltipBackground);
+                tooltipBackground.position.z = 0.05;
+                this._tooltipMesh.scaling.y = 1 / 3;
+                this._tooltipMesh.position.y = 0.7;
+                this._tooltipMesh.position.z = -0.15;
+                this._tooltipMesh.isPickable = false;
+                this._tooltipMesh.parent = this._backPlate;
+                // Create text texture for the tooltip
+                this._tooltipTexture = _2D_advancedDynamicTexture__WEBPACK_IMPORTED_MODULE_6__["AdvancedDynamicTexture"].CreateForMesh(this._tooltipMesh);
+                this._tooltipTextBlock = new _2D_controls_textBlock__WEBPACK_IMPORTED_MODULE_5__["TextBlock"]();
+                this._tooltipTextBlock.scaleY = 3;
+                this._tooltipTextBlock.color = "white";
+                this._tooltipTextBlock.fontSize = 130;
+                this._tooltipTexture.addControl(this._tooltipTextBlock);
+                // Add hover action to tooltip
+                this._tooltipFade = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["FadeInOutBehavior"]();
+                this._tooltipFade.delay = 500;
+                this._tooltipMesh.addBehavior(this._tooltipFade);
+                this._tooltipHoverObserver = this.onPointerEnterObservable.add(function () {
+                    if (_this._tooltipFade) {
+                        _this._tooltipFade.fadeIn(true);
+                    }
+                });
+                this._tooltipOutObserver = this.onPointerOutObservable.add(function () {
+                    if (_this._tooltipFade) {
+                        _this._tooltipFade.fadeIn(false);
+                    }
+                });
+            }
+            if (this._tooltipTextBlock) {
+                this._tooltipTextBlock.text = text;
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "text", {
+        /**
+         * Gets or sets text for the button
+         */
+        get: function () {
+            return this._text;
+        },
+        set: function (value) {
+            if (this._text === value) {
+                return;
+            }
+            this._text = value;
+            this._rebuildContent();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "imageUrl", {
+        /**
+         * Gets or sets the image url for the button
+         */
+        get: function () {
+            return this._imageUrl;
+        },
+        set: function (value) {
+            if (this._imageUrl === value) {
+                return;
+            }
+            this._imageUrl = value;
+            this._rebuildContent();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "backMaterial", {
+        /**
+         * Gets the back material used by this button
+         */
+        get: function () {
+            return this._backMaterial;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "frontMaterial", {
+        /**
+         * Gets the front material used by this button
+         */
+        get: function () {
+            return this._frontMaterial;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "plateMaterial", {
+        /**
+         * Gets the plate material used by this button
+         */
+        get: function () {
+            return this._plateMaterial;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "shareMaterials", {
+        /**
+         * Gets a boolean indicating if this button shares its material with other HolographicButtons
+         */
+        get: function () {
+            return this._shareMaterials;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(TouchHolographicButton.prototype, "isBackplateVisible", {
+        /**
+         * Sets whether the backplate is visible or hidden. Hiding the backplate is not recommended without some sort of replacement
+         */
+        set: function (isVisible) {
+            if (this.mesh && !!this._backMaterial) {
+                if (isVisible && !this._isBackplateVisible) {
+                    this._backPlate.visibility = 1;
+                }
+                else if (!isVisible && this._isBackplateVisible) {
+                    this._backPlate.visibility = 0;
+                }
+            }
+            this._isBackplateVisible = isVisible;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    TouchHolographicButton.prototype._getTypeName = function () {
+        return "TouchHolographicButton";
+    };
+    TouchHolographicButton.prototype._rebuildContent = function () {
+        this._disposeFacadeTexture();
+        var panel = new _2D_controls_stackPanel__WEBPACK_IMPORTED_MODULE_3__["StackPanel"]();
+        panel.isVertical = true;
+        if (babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["DomManagement"].IsDocumentAvailable() && !!document.createElement) {
+            if (this._imageUrl) {
+                var image = new _2D_controls_image__WEBPACK_IMPORTED_MODULE_4__["Image"]();
+                image.source = this._imageUrl;
+                image.paddingTop = "40px";
+                image.height = "180px";
+                image.width = "100px";
+                image.paddingBottom = "40px";
+                panel.addControl(image);
+            }
+        }
+        if (this._text) {
+            var text = new _2D_controls_textBlock__WEBPACK_IMPORTED_MODULE_5__["TextBlock"]();
+            text.text = this._text;
+            text.color = "white";
+            text.height = "30px";
+            text.fontSize = 24;
+            panel.addControl(text);
+        }
+        this.content = panel;
+    };
+    // Mesh association
+    TouchHolographicButton.prototype._createNode = function (scene) {
+        var _this = this;
+        var _a;
+        this.name = (_a = this.name) !== null && _a !== void 0 ? _a : "TouchHolographicButton";
+        var collisionMesh = Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])(this.name + "_collisionMesh", {
+            width: 1.0,
+            height: 1.0,
+            depth: this._frontPlateDepth,
+        }, scene);
+        collisionMesh.isPickable = true;
+        collisionMesh.isNearPickable = true;
+        collisionMesh.visibility = 0;
+        collisionMesh.position.z = -this._frontPlateDepth / 2;
+        babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["SceneLoader"].ImportMeshAsync(undefined, TouchHolographicButton.MODEL_BASE_URL, TouchHolographicButton.MODEL_FILENAME, scene)
+            .then(function (result) {
+            var importedFrontPlate = result.meshes[1];
+            importedFrontPlate.name = _this.name + "_frontPlate";
+            importedFrontPlate.isPickable = false;
+            importedFrontPlate.scaling.z = _this._frontPlateDepth;
+            importedFrontPlate.parent = collisionMesh;
+            if (!!_this._frontMaterial) {
+                importedFrontPlate.material = _this._frontMaterial;
+            }
+            _this._frontPlate = importedFrontPlate;
+        });
+        this._backPlate = Object(babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])(this.name + "_backPlate", {
+            width: 1.0,
+            height: 1.0,
+            depth: this._backPlateDepth,
+        }, scene);
+        this._backPlate.position.z = this._backPlateDepth / 2;
+        this._backPlate.isPickable = false;
+        this._textPlate = _super.prototype._createNode.call(this, scene);
+        this._textPlate.name = this.name + "_textPlate";
+        this._textPlate.isPickable = false;
+        this._textPlate.position.z = -this._frontPlateDepth / 2;
+        this._backPlate.addChild(collisionMesh);
+        this._backPlate.addChild(this._textPlate);
+        this.collisionMesh = collisionMesh;
+        this.collidableFrontDirection = this._backPlate.forward.negate(); // Mesh is facing the wrong way
+        return this._backPlate;
+    };
+    TouchHolographicButton.prototype._applyFacade = function (facadeTexture) {
+        this._plateMaterial.emissiveTexture = facadeTexture;
+        this._plateMaterial.opacityTexture = facadeTexture;
+        this._plateMaterial.diffuseColor = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Color3"](0.4, 0.4, 0.4);
+    };
+    TouchHolographicButton.prototype._createBackMaterial = function (mesh) {
+        this._backMaterial = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["StandardMaterial"](this.name + "Back Material", mesh.getScene());
+        this._backMaterial.diffuseColor = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Color3"](0.5, 0.5, 0.5);
+    };
+    TouchHolographicButton.prototype._createFrontMaterial = function (mesh) {
+        this._frontMaterial = new _materials_fluentButton_fluentButtonMaterial__WEBPACK_IMPORTED_MODULE_2__["FluentButtonMaterial"](this.name + "Front Material", mesh.getScene());
+    };
+    TouchHolographicButton.prototype._createPlateMaterial = function (mesh) {
+        this._plateMaterial = new babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["StandardMaterial"](this.name + "Plate Material", mesh.getScene());
+        this._plateMaterial.specularColor = babylonjs_Maths_math_vector__WEBPACK_IMPORTED_MODULE_1__["Color3"].Black();
+    };
+    TouchHolographicButton.prototype._affectMaterial = function (mesh) {
+        if (this._shareMaterials) {
+            // Back
+            if (!this._host._touchSharedMaterials["backFluentMaterial"]) {
+                this._createBackMaterial(mesh);
+                this._host._touchSharedMaterials["backFluentMaterial"] = this._backMaterial;
+            }
+            else {
+                this._backMaterial = this._host._touchSharedMaterials["backFluentMaterial"];
+            }
+            // Front
+            if (!this._host._touchSharedMaterials["frontFluentMaterial"]) {
+                this._createFrontMaterial(mesh);
+                this._host._touchSharedMaterials["frontFluentMaterial"] = this._frontMaterial;
+            }
+            else {
+                this._frontMaterial = this._host._touchSharedMaterials["frontFluentMaterial"];
+            }
+        }
+        else {
+            this._createBackMaterial(mesh);
+            this._createFrontMaterial(mesh);
+        }
+        this._createPlateMaterial(mesh);
+        this._backPlate.material = this._backMaterial;
+        this._textPlate.material = this._plateMaterial;
+        if (!this._isBackplateVisible) {
+            this._backPlate.visibility = 0;
+        }
+        if (!!this._frontPlate) {
+            this._frontPlate.material = this._frontMaterial;
+        }
+        this._rebuildContent();
+    };
+    /**
+     * Releases all associated resources
+     */
+    TouchHolographicButton.prototype.dispose = function () {
+        _super.prototype.dispose.call(this); // will dispose main mesh ie. back plate
+        this._disposeTooltip();
+        this.onPointerMoveObservable.remove(this._pointerHoverObserver);
+        if (!this.shareMaterials) {
+            this._backMaterial.dispose();
+            this._frontMaterial.dispose();
+            this._plateMaterial.dispose();
+            if (this._pickedPointObserver) {
+                this._host.onPickedPointChangedObservable.remove(this._pickedPointObserver);
+                this._pickedPointObserver = null;
+            }
+        }
+    };
+    /**
+     * Base Url for the button model.
+     */
+    TouchHolographicButton.MODEL_BASE_URL = "https://assets.babylonjs.com/meshes/MRTK/";
+    /**
+     * File name for the button model.
+     */
+    TouchHolographicButton.MODEL_FILENAME = "mrtk-fluent-button.glb";
+    return TouchHolographicButton;
+}(_touchButton3D__WEBPACK_IMPORTED_MODULE_7__["TouchButton3D"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/controls/touchHolographicMenu.ts":
+/*!*********************************************!*\
+  !*** ./3D/controls/touchHolographicMenu.ts ***!
+  \*********************************************/
+/*! exports provided: TouchHolographicMenu */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicMenu", function() { return TouchHolographicMenu; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _volumeBasedPanel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./volumeBasedPanel */ "./3D/controls/volumeBasedPanel.ts");
+/* harmony import */ var babylonjs_Meshes_mesh__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babylonjs/Meshes/mesh */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Meshes_mesh__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Meshes_mesh__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _materials_fluent_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../materials/fluent/fluentMaterial */ "./3D/materials/fluent/fluentMaterial.ts");
+
+
+
+
+
+
+
+/**
+ * Simple menu that can contain holographic buttons
+ */
+var TouchHolographicMenu = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(TouchHolographicMenu, _super);
+    /**
+     * Creates a holographic menu GUI 3D control
+     * @param name name of the menu
+     */
+    function TouchHolographicMenu(name) {
+        var _this = _super.call(this, name) || this;
+        _this._backPlateMargin = 1.25;
+        return _this;
+    }
+    Object.defineProperty(TouchHolographicMenu.prototype, "backPlateMargin", {
+        /**
+         * Gets or sets the margin size of the backplate in button size units.
+         * Setting this to 1, will make the backPlate margin the size of 1 button
+         */
+        get: function () {
+            return this._backPlateMargin;
+        },
+        set: function (value) {
+            var _this = this;
+            this._backPlateMargin = value;
+            if (this._children.length >= 1) {
+                this.children.forEach(function (control) {
+                    _this._updateCurrentMinMax(control.position);
+                });
+                this._updateMargins();
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    TouchHolographicMenu.prototype._createNode = function (scene) {
+        var node = new babylonjs_Meshes_mesh__WEBPACK_IMPORTED_MODULE_2__["Mesh"]("menu_" + this.name, scene);
+        this._backPlate = Object(babylonjs_Meshes_mesh__WEBPACK_IMPORTED_MODULE_2__["CreateBox"])("backPlate" + this.name, { size: 1 }, scene);
+        this._backPlate.parent = node;
+        return node;
+    };
+    TouchHolographicMenu.prototype._affectMaterial = function (mesh) {
+        var _this = this;
+        this._backPlateMaterial = new _materials_fluent_fluentMaterial__WEBPACK_IMPORTED_MODULE_3__["FluentMaterial"](this.name + "backPlateMaterial", mesh.getScene());
+        this._backPlateMaterial.albedoColor = new babylonjs_Meshes_mesh__WEBPACK_IMPORTED_MODULE_2__["Color3"](0.08, 0.15, 0.55);
+        this._backPlateMaterial.renderBorders = true;
+        this._backPlateMaterial.renderHoverLight = true;
+        this._pickedPointObserver = this._host.onPickedPointChangedObservable.add(function (pickedPoint) {
+            if (pickedPoint) {
+                _this._backPlateMaterial.hoverPosition = pickedPoint;
+                _this._backPlateMaterial.hoverColor.a = 1.0;
+            }
+            else {
+                _this._backPlateMaterial.hoverColor.a = 0;
+            }
+        });
+        this._backPlate.material = this._backPlateMaterial;
+    };
+    TouchHolographicMenu.prototype._mapGridNode = function (control, nodePosition) {
+        // Simple plane mapping for the menu
+        var mesh = control.mesh;
+        if (!mesh) {
+            return;
+        }
+        control.position = nodePosition.clone();
+        this._updateCurrentMinMax(nodePosition);
+    };
+    TouchHolographicMenu.prototype._finalProcessing = function () {
+        this._updateMargins();
+    };
+    TouchHolographicMenu.prototype._updateCurrentMinMax = function (nodePosition) {
+        if (!this._currentMin) {
+            this._currentMin = nodePosition.clone();
+            this._currentMax = nodePosition.clone();
+        }
+        this._currentMin.minimizeInPlace(nodePosition);
+        this._currentMax.maximizeInPlace(nodePosition);
+    };
+    TouchHolographicMenu.prototype._updateMargins = function () {
+        this._currentMin.addInPlaceFromFloats(-this._cellWidth / 2, -this._cellHeight / 2, 0);
+        this._currentMax.addInPlaceFromFloats(this._cellWidth / 2, this._cellHeight / 2, 0);
+        var extendSize = this._currentMax.subtract(this._currentMin);
+        // Also add a % margin
+        this._backPlate.scaling.x = extendSize.x + this._cellWidth * this.backPlateMargin;
+        this._backPlate.scaling.y = extendSize.y + this._cellHeight * this.backPlateMargin;
+        this._backPlate.scaling.z = 0.001;
+        for (var i = 0; i < this._children.length; i++) {
+            this._children[i].position.subtractInPlace(this._currentMin).subtractInPlace(extendSize.scale(0.5));
+            this._children[i].position.z -= 0.01;
+        }
+        this._currentMin = null;
+        this._currentMax = null;
+    };
+    /**
+     * Adds a button to the menu.
+     * Please note that the back material of the button will be set to transparent as it is attached to the menu.
+     *
+     * @param button Button to add
+     * @returns This menu
+     */
+    TouchHolographicMenu.prototype.addButton = function (button) {
+        // Block updating the layout until the button is resized (which has to happen after node creation)
+        var wasLayoutBlocked = this.blockLayout;
+        if (!wasLayoutBlocked) {
+            this.blockLayout = true;
+        }
+        _super.prototype.addControl.call(this, button);
+        button.isBackplateVisible = false;
+        button.scaling.scaleInPlace(TouchHolographicMenu.MENU_BUTTON_SCALE);
+        // Unblocking the layout triggers the pending layout update that uses the size of the buttons to determine the size of the backing mesh
+        if (!wasLayoutBlocked) {
+            this.blockLayout = false;
+        }
+        return this;
+    };
+    /**
+     * This method should not be used directly. It is inherited from `Container3D`.
+     * Please use `addButton` instead.
+     * @param _control
+     * @returns
+     */
+    TouchHolographicMenu.prototype.addControl = function (_control) {
+        babylonjs_Meshes_mesh__WEBPACK_IMPORTED_MODULE_2__["Logger"].Warn("TouchHolographicMenu can only contain buttons. Please use the method `addButton` instead.");
+        return this;
+    };
+    /**
+     * Disposes the menu
+     */
+    TouchHolographicMenu.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this._host.onPickedPointChangedObservable.remove(this._pickedPointObserver);
+    };
+    /**
+     * Scale for the buttons added to the menu
+     */
+    TouchHolographicMenu.MENU_BUTTON_SCALE = 0.32;
+    return TouchHolographicMenu;
+}(_volumeBasedPanel__WEBPACK_IMPORTED_MODULE_1__["VolumeBasedPanel"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/controls/touchMeshButton3D.ts":
+/*!******************************************!*\
+  !*** ./3D/controls/touchMeshButton3D.ts ***!
+  \******************************************/
+/*! exports provided: TouchMeshButton3D */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TouchMeshButton3D", function() { return TouchMeshButton3D; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _touchButton3D__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./touchButton3D */ "./3D/controls/touchButton3D.ts");
+
+
+/**
+ * Class used to create an interactable object. It's a touchable 3D button using a mesh coming from the current scene
+ * @since 5.0.0
+ */
+var TouchMeshButton3D = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(TouchMeshButton3D, _super);
+    /**
+     * Creates a new 3D button based on a mesh
+     * @param mesh mesh to become a 3D button. By default this is also the mesh for near interaction collision checking
+     * @param name defines the control name
+     */
+    function TouchMeshButton3D(mesh, name) {
+        var _this = _super.call(this, name, mesh) || this;
+        _this._currentMesh = mesh;
+        /**
+         * Provides a default behavior on hover/out & up/down
+         * Override those function to create your own desired behavior specific to your mesh
+         */
+        _this.pointerEnterAnimation = function () {
+            if (!_this.mesh) {
+                return;
+            }
+            _this.mesh.scaling.scaleInPlace(1.1);
+        };
+        _this.pointerOutAnimation = function () {
+            if (!_this.mesh) {
+                return;
+            }
+            _this.mesh.scaling.scaleInPlace(1.0 / 1.1);
+        };
+        _this.pointerDownAnimation = function () {
+            if (!_this.mesh) {
+                return;
+            }
+            _this.mesh.scaling.scaleInPlace(0.95);
+        };
+        _this.pointerUpAnimation = function () {
+            if (!_this.mesh) {
+                return;
+            }
+            _this.mesh.scaling.scaleInPlace(1.0 / 0.95);
+        };
+        return _this;
+    }
+    TouchMeshButton3D.prototype._getTypeName = function () {
+        return "TouchMeshButton3D";
+    };
+    // Mesh association
+    TouchMeshButton3D.prototype._createNode = function (scene) {
+        var _this = this;
+        this._currentMesh.getChildMeshes().forEach(function (mesh) {
+            _this._injectGUI3DReservedDataStore(mesh).control = _this;
+        });
+        return this._currentMesh;
+    };
+    TouchMeshButton3D.prototype._affectMaterial = function (mesh) {
+    };
+    return TouchMeshButton3D;
+}(_touchButton3D__WEBPACK_IMPORTED_MODULE_1__["TouchButton3D"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/controls/touchToggleButton3D.ts":
+/*!********************************************!*\
+  !*** ./3D/controls/touchToggleButton3D.ts ***!
+  \********************************************/
+/*! exports provided: TouchToggleButton3D */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TouchToggleButton3D", function() { return TouchToggleButton3D; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/observable */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _touchButton3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./touchButton3D */ "./3D/controls/touchButton3D.ts");
+
+
+
+/**
+ * Class used as base class for touch-enabled toggleable buttons
+ */
+var TouchToggleButton3D = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(TouchToggleButton3D, _super);
+    /**
+     * Creates a new button
+     * @param name defines the control name
+     * @param collisionMesh defines the mesh to track near interactions with
+     */
+    function TouchToggleButton3D(name, collisionMesh) {
+        var _this = _super.call(this, name, collisionMesh) || this;
+        _this._isPressed = false;
+        /**
+         * An event triggered when the button is toggled on
+         */
+        _this.onToggleOnObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
+        /**
+         * An event triggered when the button is toggled off
+         */
+        _this.onToggleOffObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
+        _this.onPointerUpObservable.add(function (posVecWithInfo) {
+            _this._onToggle(posVecWithInfo);
+        });
+        return _this;
+    }
+    TouchToggleButton3D.prototype._onToggle = function (position) {
+        this._isPressed = !this._isPressed;
+        if (this._isPressed) {
+            this.onToggleOnObservable.notifyObservers(position);
+        }
+        else {
+            this.onToggleOffObservable.notifyObservers(position);
+        }
+    };
+    TouchToggleButton3D.prototype._getTypeName = function () {
+        return "TouchToggleButton3D";
+    };
+    // Mesh association
+    TouchToggleButton3D.prototype._createNode = function (scene) {
+        return _super.prototype._createNode.call(this, scene);
+    };
+    TouchToggleButton3D.prototype._affectMaterial = function (mesh) {
+        _super.prototype._affectMaterial.call(this, mesh);
+    };
+    /**
+     * Releases all associated resources
+     */
+    TouchToggleButton3D.prototype.dispose = function () {
+        this.onToggleOnObservable.clear();
+        this.onToggleOffObservable.clear();
+        _super.prototype.dispose.call(this);
+    };
+    return TouchToggleButton3D;
+}(_touchButton3D__WEBPACK_IMPORTED_MODULE_2__["TouchButton3D"]));
+
+
+
+/***/ }),
+
 /***/ "./3D/controls/volumeBasedPanel.ts":
 /*!*****************************************!*\
   !*** ./3D/controls/volumeBasedPanel.ts ***!
@@ -16890,8 +20419,8 @@ var VolumeBasedPanel = /** @class */ (function (_super) {
     /**
      * Creates new VolumeBasedPanel
      */
-    function VolumeBasedPanel() {
-        var _this = _super.call(this) || this;
+    function VolumeBasedPanel(name) {
+        var _this = _super.call(this, name) || this;
         _this._columns = 10;
         _this._rows = 0;
         _this._rowThenColum = true;
@@ -17056,6 +20585,644 @@ var VolumeBasedPanel = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "./3D/gizmos/gizmoHandle.ts":
+/*!**********************************!*\
+  !*** ./3D/gizmos/gizmoHandle.ts ***!
+  \**********************************/
+/*! exports provided: HandleState, GizmoHandle, SideHandle, CornerHandle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleState", function() { return HandleState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GizmoHandle", function() { return GizmoHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SideHandle", function() { return SideHandle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CornerHandle", function() { return CornerHandle; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Meshes/Builders/boxBuilder */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _materials_handle_handleMaterial__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../materials/handle/handleMaterial */ "./3D/materials/handle/handleMaterial.ts");
+
+
+
+
+
+
+/**
+ * State of the handle regarding user interaction
+ */
+var HandleState;
+(function (HandleState) {
+    /**
+     * Handle is idle
+     */
+    HandleState[HandleState["IDLE"] = 0] = "IDLE";
+    /**
+     * Handle is hovered
+     */
+    HandleState[HandleState["HOVER"] = 1] = "HOVER";
+    /**
+     * Handle is dragged
+     */
+    HandleState[HandleState["DRAG"] = 2] = "DRAG";
+})(HandleState || (HandleState = {}));
+/**
+ * Base class for SlateGizmo handles
+ */
+var GizmoHandle = /** @class */ (function () {
+    /**
+     * Creates a handle for a SlateGizmo
+     * @param gizmo associated SlateGizmo
+     * @param scene scene
+     */
+    function GizmoHandle(gizmo, scene) {
+        this._state = HandleState.IDLE;
+        this._materials = [];
+        this._scene = scene;
+        this._gizmo = gizmo;
+        this.node = this.createNode();
+        this.node.reservedDataStore = {
+            handle: this,
+        };
+    }
+    Object.defineProperty(GizmoHandle.prototype, "state", {
+        /**
+         * The current state of the handle
+         */
+        get: function () {
+            return this._state;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(GizmoHandle.prototype, "gizmo", {
+        /**
+         * Returns the gizmo carrying this handle
+         */
+        get: function () {
+            return this._gizmo;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(GizmoHandle.prototype, "hover", {
+        /**
+         * Sets hover state
+         */
+        set: function (value) {
+            if (value) {
+                this._state |= HandleState.HOVER;
+            }
+            else {
+                this._state &= ~HandleState.HOVER;
+            }
+            this._updateMaterial();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(GizmoHandle.prototype, "drag", {
+        /**
+         * Sets drag state
+         */
+        set: function (value) {
+            if (value) {
+                this._state |= HandleState.DRAG;
+            }
+            else {
+                this._state &= ~HandleState.DRAG;
+            }
+            this._updateMaterial();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    GizmoHandle.prototype._createMaterial = function (positionOffset) {
+        var mat = new _materials_handle_handleMaterial__WEBPACK_IMPORTED_MODULE_2__["HandleMaterial"]("handle", this._scene);
+        if (positionOffset) {
+            mat._positionOffset = positionOffset;
+        }
+        return mat;
+    };
+    GizmoHandle.prototype._updateMaterial = function () {
+        var state = this._state;
+        for (var _i = 0, _a = this._materials; _i < _a.length; _i++) {
+            var mat = _a[_i];
+            mat.hover = false;
+            mat.drag = false;
+        }
+        if (state & HandleState.DRAG) {
+            for (var _b = 0, _c = this._materials; _b < _c.length; _b++) {
+                var mat = _c[_b];
+                mat.drag = true;
+            }
+        }
+        else if (state & HandleState.HOVER) {
+            for (var _d = 0, _e = this._materials; _d < _e.length; _d++) {
+                var mat = _e[_d];
+                mat.hover = true;
+            }
+        }
+    };
+    /**
+     * Binds callbacks from dragging interaction
+     * @param dragStartFn Function to call on drag start
+     * @param dragFn Function to call on drag
+     * @param dragEndFn Function to call on drag end
+     */
+    GizmoHandle.prototype.setDragBehavior = function (dragStartFn, dragFn, dragEndFn) {
+        var dragBehavior = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["BaseSixDofDragBehavior"]();
+        this._dragBehavior = dragBehavior;
+        this._dragStartObserver = dragBehavior.onDragStartObservable.add(dragStartFn);
+        this._draggingObserver = dragBehavior.onDragObservable.add(dragFn);
+        this._dragEndObserver = dragBehavior.onDragEndObservable.add(dragEndFn);
+        this._dragBehavior.attach(this.node);
+    };
+    /**
+     * Disposes the handle
+     */
+    GizmoHandle.prototype.dispose = function () {
+        this._dragBehavior.onDragStartObservable.remove(this._dragStartObserver);
+        this._dragBehavior.onDragObservable.remove(this._draggingObserver);
+        this._dragBehavior.onDragEndObservable.remove(this._dragEndObserver);
+        this._dragBehavior.detach();
+        for (var _i = 0, _a = this._materials; _i < _a.length; _i++) {
+            var material = _a[_i];
+            material.dispose();
+        }
+        this.node.dispose();
+    };
+    return GizmoHandle;
+}());
+
+/**
+ * Side handle class that rotates the slate
+ */
+var SideHandle = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(SideHandle, _super);
+    function SideHandle() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * Creates the meshes and parent node of the handle
+     * @returns created node
+     */
+    SideHandle.prototype.createNode = function () {
+        // Create a simple vertical rectangle
+        var verticalBox = Object(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])("sideVert", { width: 1, height: 10, depth: 0.1 }, this._scene);
+        var sideNode = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["TransformNode"]("side", this._scene);
+        verticalBox.parent = sideNode;
+        var mat = this._createMaterial();
+        verticalBox.material = mat;
+        verticalBox.isNearGrabbable = true;
+        this._materials.push(mat);
+        return sideNode;
+    };
+    return SideHandle;
+}(GizmoHandle));
+
+/**
+ * Corner handle that resizes the slate
+ */
+var CornerHandle = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(CornerHandle, _super);
+    function CornerHandle() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * Creates the meshes and parent node of the handle
+     * @returns created node
+     */
+    CornerHandle.prototype.createNode = function () {
+        // Create 2 boxes making a bottom left corner
+        var horizontalBox = Object(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])("angleHor", { width: 3, height: 1, depth: 0.1 }, this._scene);
+        var verticalBox = Object(babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["CreateBox"])("angleVert", { width: 1, height: 3, depth: 0.1 }, this._scene);
+        var angleNode = new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["TransformNode"]("angle", this._scene);
+        horizontalBox.parent = angleNode;
+        verticalBox.parent = angleNode;
+        horizontalBox.material = this._createMaterial(new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](1, 0, 0));
+        verticalBox.material = this._createMaterial(new babylonjs_Meshes_Builders_boxBuilder__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 1, 0));
+        verticalBox.isNearGrabbable = true;
+        horizontalBox.isNearGrabbable = true;
+        this._materials.push(horizontalBox.material);
+        this._materials.push(verticalBox.material);
+        return angleNode;
+    };
+    return CornerHandle;
+}(GizmoHandle));
+
+
+
+/***/ }),
+
+/***/ "./3D/gizmos/index.ts":
+/*!****************************!*\
+  !*** ./3D/gizmos/index.ts ***!
+  \****************************/
+/*! exports provided: SlateGizmo, HandleState, GizmoHandle, SideHandle, CornerHandle */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _slateGizmo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slateGizmo */ "./3D/gizmos/slateGizmo.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SlateGizmo", function() { return _slateGizmo__WEBPACK_IMPORTED_MODULE_0__["SlateGizmo"]; });
+
+/* harmony import */ var _gizmoHandle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gizmoHandle */ "./3D/gizmos/gizmoHandle.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleState", function() { return _gizmoHandle__WEBPACK_IMPORTED_MODULE_1__["HandleState"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GizmoHandle", function() { return _gizmoHandle__WEBPACK_IMPORTED_MODULE_1__["GizmoHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SideHandle", function() { return _gizmoHandle__WEBPACK_IMPORTED_MODULE_1__["SideHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CornerHandle", function() { return _gizmoHandle__WEBPACK_IMPORTED_MODULE_1__["CornerHandle"]; });
+
+
+
+
+
+/***/ }),
+
+/***/ "./3D/gizmos/slateGizmo.ts":
+/*!*********************************!*\
+  !*** ./3D/gizmos/slateGizmo.ts ***!
+  \*********************************/
+/*! exports provided: SlateGizmo */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlateGizmo", function() { return SlateGizmo; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Gizmos/gizmo */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _gizmoHandle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gizmoHandle */ "./3D/gizmos/gizmoHandle.ts");
+
+
+
+
+
+
+/**
+ * Gizmo to resize 2D slates
+ */
+var SlateGizmo = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(SlateGizmo, _super);
+    function SlateGizmo(utilityLayer) {
+        var _this = _super.call(this, utilityLayer) || this;
+        _this._boundingDimensions = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        _this._renderObserver = null;
+        _this._tmpQuaternion = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Quaternion"]();
+        _this._tmpVector = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        // Ordered bl, br, tr, tl
+        _this._corners = [];
+        // Ordered left, bottom, right, top
+        _this._sides = [];
+        _this._boundingBoxGizmo = {
+            min: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](),
+            max: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](),
+        };
+        /**
+         * Value we use to offset handles from mesh
+         */
+        _this._margin = 0.35;
+        _this._attachedSlate = null;
+        _this._existingSlateScale = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        /**
+         * If set, the handles will increase in size based on the distance away from the camera to have a consistent screen size (Default: true)
+         */
+        _this.fixedScreenSize = false;
+        /**
+         * The distance away from the object which the draggable meshes should appear world sized when fixedScreenSize is set to true (default: 10)
+         */
+        _this.fixedScreenSizeDistanceFactor = 10;
+        /**
+         * Size of the handles (meters in XR)
+         */
+        _this.handleSize = 0.01;
+        _this._createNode();
+        _this.updateScale = false;
+        _this._renderObserver = _this.gizmoLayer.originalScene.onBeforeRenderObservable.add(function () {
+            // Only update the bounding box if scaling has changed
+            if (_this.attachedMesh && !_this._existingSlateScale.equals(_this.attachedMesh.scaling)) {
+                _this.updateBoundingBox();
+            }
+        });
+        return _this;
+    }
+    Object.defineProperty(SlateGizmo.prototype, "attachedSlate", {
+        get: function () {
+            return this._attachedSlate;
+        },
+        /**
+         * The slate attached to this gizmo
+         */
+        set: function (control) {
+            var _this = this;
+            if (control) {
+                this.attachedMesh = control.mesh;
+                this.updateBoundingBox();
+                this._pickedPointObserver = control._host.onPickingObservable.add(function (pickedMesh) {
+                    if (_this._handleHovered && (!pickedMesh || pickedMesh.parent !== _this._handleHovered.node)) {
+                        _this._handleHovered.hover = false;
+                        _this._handleHovered = null;
+                    }
+                    if (pickedMesh && pickedMesh.parent && pickedMesh.parent.reservedDataStore && pickedMesh.parent.reservedDataStore.handle) {
+                        var handle = pickedMesh.parent.reservedDataStore.handle;
+                        if (handle.gizmo === _this) {
+                            _this._handleHovered = handle;
+                            _this._handleHovered.hover = true;
+                        }
+                    }
+                });
+            }
+            else if (this._attachedSlate) {
+                this._attachedSlate._host.onPickingObservable.remove(this._pickedPointObserver);
+            }
+            this._attachedSlate = control;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    SlateGizmo.prototype._createNode = function () {
+        var _this = this;
+        this._handlesParent = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TransformNode"]("handlesParent", this.gizmoLayer.utilityLayerScene);
+        this._handlesParent.rotationQuaternion = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Quaternion"].Identity();
+        var masksCorners = [
+            {
+                dimensions: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](-1, -1, 0),
+                origin: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](1, 0, 0),
+            },
+            {
+                dimensions: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](1, -1, 0),
+                origin: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0),
+            },
+            {
+                dimensions: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](1, 1, 0),
+                origin: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 1, 0),
+            },
+            {
+                dimensions: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](-1, 1, 0),
+                origin: new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](1, 1, 0),
+            },
+        ];
+        for (var i = 0; i < 4; i++) {
+            var corner = new _gizmoHandle__WEBPACK_IMPORTED_MODULE_2__["CornerHandle"](this, this.gizmoLayer.utilityLayerScene);
+            this._corners.push(corner);
+            corner.node.rotation.z = (Math.PI / 2) * i;
+            corner.node.scaling.setAll(this.handleSize);
+            corner.node.parent = this._handlesParent;
+            this._assignDragBehaviorCorners(corner, function (originStart, dimensionsStart, offset, masks) { return _this._moveHandle(originStart, dimensionsStart, offset, masks, true); }, masksCorners[i]);
+        }
+        for (var i = 0; i < 4; i++) {
+            var side = new _gizmoHandle__WEBPACK_IMPORTED_MODULE_2__["SideHandle"](this, this.gizmoLayer.utilityLayerScene);
+            this._sides.push(side);
+            side.node.rotation.z = (Math.PI / 2) * i;
+            side.node.scaling.copyFromFloats(this.handleSize, this.handleSize, this.handleSize);
+            side.node.parent = this._handlesParent;
+            this._assignDragBehaviorSides(side, i % 2 === 0 ? new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 1, 0) : new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"](1, 0, 0));
+        }
+        this._handlesParent.parent = this._rootMesh;
+    };
+    SlateGizmo.prototype._keepAspectRatio = function (vector, aspectRatio, invertDiagonal) {
+        if (invertDiagonal === void 0) { invertDiagonal = false; }
+        var axis = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0];
+        axis.copyFromFloats(aspectRatio, 1, 0).normalize();
+        if (invertDiagonal) {
+            axis.y *= -1;
+        }
+        var dot = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(vector, axis);
+        vector.copyFrom(axis).scaleInPlace(dot);
+    };
+    SlateGizmo.prototype._clampDimensions = function (vector, dimensions, mask, keepAspectRatio) {
+        if (keepAspectRatio === void 0) { keepAspectRatio = false; }
+        var impact = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0];
+        impact.copyFrom(vector).multiplyInPlace(mask);
+        var clampedDimensions = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[1];
+        clampedDimensions.copyFromFloats(Math.max(this._attachedSlate.minDimensions.x, impact.x + dimensions.x), Math.max(this._attachedSlate.minDimensions.y, impact.y + dimensions.y), 0);
+        if (keepAspectRatio) {
+            // Extra logic to ensure the ratio is maintained when the vector has been clamped
+            var ratio = dimensions.x / dimensions.y;
+            clampedDimensions.x = Math.max(clampedDimensions.x, clampedDimensions.y * ratio);
+            clampedDimensions.y = Math.max(clampedDimensions.y, clampedDimensions.x / ratio);
+        }
+        // Calculating the real impact of vector on clamped dimensions
+        impact.copyFrom(clampedDimensions).subtractInPlace(dimensions);
+        vector.x = Math.sign(vector.x) * Math.abs(impact.x);
+        vector.y = Math.sign(vector.y) * Math.abs(impact.y);
+    };
+    SlateGizmo.prototype._moveHandle = function (originStart, dimensionsStart, offset, masks, isCorner) {
+        if (!this._attachedSlate) {
+            return;
+        }
+        if (isCorner) {
+            var aspectRatio = dimensionsStart.x / dimensionsStart.y;
+            this._keepAspectRatio(offset, aspectRatio, masks.dimensions.x * masks.dimensions.y < 0);
+        }
+        this._clampDimensions(offset, dimensionsStart, masks.dimensions, isCorner);
+        var offsetOriginMasked = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0];
+        var offsetDimensionsMasked = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[1];
+        offsetOriginMasked.copyFrom(offset).multiplyInPlace(masks.origin);
+        offsetDimensionsMasked.copyFrom(offset).multiplyInPlace(masks.dimensions);
+        this._attachedSlate.origin.copyFrom(originStart).addInPlace(offsetOriginMasked);
+        this._attachedSlate.dimensions.copyFrom(dimensionsStart).addInPlace(offsetDimensionsMasked);
+        this._attachedSlate.backplateDimensions.x = this._attachedSlate.dimensions.x;
+    };
+    SlateGizmo.prototype._assignDragBehaviorCorners = function (handle, moveFn, masks) {
+        var _this = this;
+        var dimensionsStart = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var originStart = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var dragOrigin = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var toObjectFrame = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Matrix"]();
+        var dragPlaneNormal = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var previousFollowState = false;
+        var projectToRef = function (position, normal, origin, ref) {
+            // Projects on the plane with its normal and origin
+            position.subtractToRef(origin, babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0]);
+            var dot = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Dot(babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0], normal);
+            babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[1].copyFrom(normal).scaleInPlace(dot);
+            babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0].subtractInPlace(babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[1]);
+            babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0].addToRef(origin, ref);
+        };
+        var dragStart = function (event) {
+            if (_this.attachedSlate && _this.attachedMesh) {
+                dimensionsStart.copyFrom(_this.attachedSlate.dimensions);
+                originStart.copyFrom(_this.attachedSlate.origin);
+                dragOrigin.copyFrom(event.position);
+                toObjectFrame.copyFrom(_this.attachedMesh.computeWorldMatrix(true));
+                toObjectFrame.invert();
+                previousFollowState = _this.attachedSlate.defaultBehavior.followBehaviorEnabled;
+                _this.attachedSlate.defaultBehavior.followBehaviorEnabled = false;
+                babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Forward(), _this.attachedMesh.getWorldMatrix(), dragPlaneNormal);
+                dragPlaneNormal.normalize();
+                if (_this._handleHovered) {
+                    _this._handleDragged = _this._handleHovered;
+                    _this._handleDragged.drag = true;
+                }
+            }
+        };
+        var dragging = function (event) {
+            if (_this.attachedSlate && _this.attachedMesh) {
+                projectToRef(event.position, dragPlaneNormal, dragOrigin, _this._tmpVector);
+                _this._tmpVector.subtractInPlace(dragOrigin);
+                babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(_this._tmpVector, toObjectFrame, _this._tmpVector);
+                moveFn(originStart, dimensionsStart, _this._tmpVector, masks);
+                _this.attachedSlate._positionElements();
+                _this.updateBoundingBox();
+            }
+        };
+        var dragEnd = function () {
+            if (_this.attachedSlate && _this.attachedNode) {
+                _this.attachedSlate._updatePivot();
+                _this.attachedSlate.defaultBehavior.followBehaviorEnabled = previousFollowState;
+                if (_this._handleDragged) {
+                    _this._handleDragged.drag = false;
+                    _this._handleDragged = null;
+                }
+            }
+        };
+        handle.setDragBehavior(dragStart, dragging, dragEnd);
+    };
+    SlateGizmo.prototype._assignDragBehaviorSides = function (handle, dragPlaneNormal) {
+        var _this = this;
+        var quaternionOrigin = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Quaternion"]();
+        var dragOrigin = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var directionOrigin = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var worldPivot = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var previousFollowState;
+        var worldPlaneNormal = new babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"]();
+        var dragStart = function (event) {
+            if (_this.attachedSlate && _this.attachedMesh) {
+                quaternionOrigin.copyFrom(_this.attachedMesh.rotationQuaternion);
+                dragOrigin.copyFrom(event.position);
+                previousFollowState = _this.attachedSlate.defaultBehavior.followBehaviorEnabled;
+                _this.attachedSlate.defaultBehavior.followBehaviorEnabled = false;
+                worldPivot.copyFrom(_this.attachedMesh.getAbsolutePivotPoint());
+                directionOrigin.copyFrom(dragOrigin).subtractInPlace(worldPivot).normalize();
+                babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(dragPlaneNormal, _this.attachedMesh.getWorldMatrix(), worldPlaneNormal);
+                worldPlaneNormal.normalize();
+                if (_this._handleHovered) {
+                    _this._handleDragged = _this._handleHovered;
+                    _this._handleDragged.drag = true;
+                }
+            }
+        };
+        var dragging = function (event) {
+            if (_this.attachedSlate && _this.attachedMesh) {
+                _this._tmpVector.copyFrom(event.position);
+                _this._tmpVector.subtractInPlace(worldPivot);
+                _this._tmpVector.normalize();
+                var angle = -babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Vector3"].GetAngleBetweenVectorsOnPlane(_this._tmpVector, directionOrigin, worldPlaneNormal);
+                babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Quaternion"].RotationAxisToRef(dragPlaneNormal, angle, _this._tmpQuaternion);
+                quaternionOrigin.multiplyToRef(_this._tmpQuaternion, _this.attachedMesh.rotationQuaternion);
+            }
+        };
+        var dragEnd = function () {
+            if (_this.attachedSlate && _this.attachedNode) {
+                _this.attachedSlate._updatePivot();
+                _this.attachedSlate.defaultBehavior.followBehaviorEnabled = previousFollowState;
+                if (_this._handleDragged) {
+                    _this._handleDragged.drag = false;
+                    _this._handleDragged = null;
+                }
+            }
+        };
+        handle.setDragBehavior(dragStart, dragging, dragEnd);
+    };
+    SlateGizmo.prototype._attachedNodeChanged = function (value) {
+        if (value) {
+            this.updateBoundingBox();
+        }
+    };
+    /**
+     * Updates the bounding box information for the gizmo
+     */
+    SlateGizmo.prototype.updateBoundingBox = function () {
+        if (this.attachedMesh) {
+            babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["PivotTools"]._RemoveAndStorePivotPoint(this.attachedMesh);
+            // Store original parent
+            var originalParent = this.attachedMesh.parent;
+            this.attachedMesh.setParent(null);
+            this._update();
+            // Rotate based on axis
+            if (!this.attachedMesh.rotationQuaternion) {
+                this.attachedMesh.rotationQuaternion = babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Quaternion"].RotationYawPitchRoll(this.attachedMesh.rotation.y, this.attachedMesh.rotation.x, this.attachedMesh.rotation.z);
+            }
+            // Store original position and reset mesh to origin before computing the bounding box
+            this._tmpQuaternion.copyFrom(this.attachedMesh.rotationQuaternion);
+            this._tmpVector.copyFrom(this.attachedMesh.position);
+            this.attachedMesh.rotationQuaternion.set(0, 0, 0, 1);
+            this.attachedMesh.position.set(0, 0, 0);
+            // Update bounding dimensions/positions
+            var boundingMinMax = this.attachedMesh.getHierarchyBoundingVectors();
+            boundingMinMax.max.subtractToRef(boundingMinMax.min, this._boundingDimensions);
+            this._boundingBoxGizmo.min = boundingMinMax.min;
+            this._boundingBoxGizmo.max = boundingMinMax.max;
+            // Update handles of the gizmo
+            this._updateHandlesPosition();
+            // Restore position/rotation values
+            this.attachedMesh.rotationQuaternion.copyFrom(this._tmpQuaternion);
+            this.attachedMesh.position.copyFrom(this._tmpVector);
+            babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["PivotTools"]._RestorePivotPoint(this.attachedMesh);
+            // Restore original parent
+            this.attachedMesh.setParent(originalParent);
+            this.attachedMesh.computeWorldMatrix(true);
+            this._existingSlateScale.copyFrom(this.attachedMesh.scaling);
+        }
+    };
+    SlateGizmo.prototype._updateHandlesPosition = function () {
+        var min = this._boundingBoxGizmo.min.clone();
+        var max = this._boundingBoxGizmo.max.clone();
+        var handleScaling = this._corners[0].node.scaling.length();
+        min.x -= this._margin * handleScaling;
+        min.y -= this._margin * handleScaling;
+        max.x += this._margin * handleScaling;
+        max.y += this._margin * handleScaling;
+        var center = min.add(max).scaleInPlace(0.5);
+        this._corners[0].node.position.copyFromFloats(min.x, min.y, 0);
+        this._corners[1].node.position.copyFromFloats(max.x, min.y, 0);
+        this._corners[2].node.position.copyFromFloats(max.x, max.y, 0);
+        this._corners[3].node.position.copyFromFloats(min.x, max.y, 0);
+        this._sides[0].node.position.copyFromFloats(min.x, center.y, 0);
+        this._sides[1].node.position.copyFromFloats(center.x, min.y, 0);
+        this._sides[2].node.position.copyFromFloats(max.x, center.y, 0);
+        this._sides[3].node.position.copyFromFloats(center.x, max.y, 0);
+    };
+    SlateGizmo.prototype._update = function () {
+        _super.prototype._update.call(this);
+        if (!this.gizmoLayer.utilityLayerScene.activeCamera) {
+            return;
+        }
+        if (this._attachedSlate && this._attachedSlate.mesh) {
+            if (this.fixedScreenSize) {
+                this._attachedSlate.mesh.absolutePosition.subtractToRef(this.gizmoLayer.utilityLayerScene.activeCamera.position, this._tmpVector);
+                var distanceFromCamera = (this.handleSize * this._tmpVector.length()) / this.fixedScreenSizeDistanceFactor;
+                for (var i = 0; i < this._corners.length; i++) {
+                    this._corners[i].node.scaling.set(distanceFromCamera, distanceFromCamera, distanceFromCamera);
+                }
+            }
+            this._updateHandlesPosition();
+        }
+    };
+    SlateGizmo.prototype.dispose = function () {
+        this.gizmoLayer.originalScene.onBeforeRenderObservable.remove(this._renderObserver);
+        // Will dispose rootMesh and all descendants
+        _super.prototype.dispose.call(this);
+        for (var _i = 0, _a = this._corners; _i < _a.length; _i++) {
+            var corner = _a[_i];
+            corner.dispose();
+        }
+        for (var _b = 0, _c = this._sides; _b < _c.length; _b++) {
+            var side = _c[_b];
+            side.dispose();
+        }
+    };
+    return SlateGizmo;
+}(babylonjs_Gizmos_gizmo__WEBPACK_IMPORTED_MODULE_1__["Gizmo"]));
+
+
+
+/***/ }),
+
 /***/ "./3D/gui3DManager.ts":
 /*!****************************!*\
   !*** ./3D/gui3DManager.ts ***!
@@ -17095,20 +21262,27 @@ var GUI3DManager = /** @class */ (function () {
          * Observable raised when the point picked by the pointer events changed
          */
         this.onPickedPointChangedObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
+        /**
+         * Observable raised when a picking happens
+         */
+        this.onPickingObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]();
         // Shared resources
         /** @hidden */
         this._sharedMaterials = {};
+        /** @hidden */
+        this._touchSharedMaterials = {};
         this._scene = scene || babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["EngineStore"].LastCreatedScene;
         this._sceneDisposeObserver = this._scene.onDisposeObservable.add(function () {
             _this._sceneDisposeObserver = null;
             _this._utilityLayer = null;
             _this.dispose();
         });
-        this._utilityLayer = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["UtilityLayerRenderer"](this._scene);
+        this._utilityLayer = babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["UtilityLayerRenderer"]._CreateDefaultUtilityLayerFromScene(this._scene);
         this._utilityLayer.onlyCheckPointerDownEvents = false;
         this._utilityLayer.pickUtilitySceneFirst = false;
         this._utilityLayer.mainSceneTrackerPredicate = function (mesh) {
-            return mesh && mesh.metadata && mesh.metadata._node;
+            var _a, _b, _c;
+            return mesh && ((_c = (_b = (_a = mesh.reservedDataStore) === null || _a === void 0 ? void 0 : _a.GUI3D) === null || _b === void 0 ? void 0 : _b.control) === null || _c === void 0 ? void 0 : _c._node);
         };
         // Root
         this._rootContainer = new _controls_container3D__WEBPACK_IMPORTED_MODULE_1__["Container3D"]("RootContainer");
@@ -17157,22 +21331,26 @@ var GUI3DManager = /** @class */ (function () {
         this.onPickedPointChangedObservable.notifyObservers(null);
     };
     GUI3DManager.prototype._doPicking = function (pi) {
+        var _a, _b, _c;
         if (!this._utilityLayer || !this._utilityLayer.shouldRender || !this._utilityLayer.utilityLayerScene.activeCamera) {
             return false;
         }
-        var pointerEvent = (pi.event);
+        var pointerEvent = pi.event;
         var pointerId = pointerEvent.pointerId || 0;
         var buttonIndex = pointerEvent.button;
         var pickingInfo = pi.pickInfo;
+        if (pickingInfo) {
+            this.onPickingObservable.notifyObservers(pickingInfo.pickedMesh);
+        }
         if (!pickingInfo || !pickingInfo.hit) {
             this._handlePointerOut(pointerId, pi.type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["PointerEventTypes"].POINTERUP);
             return false;
         }
-        var control = (pickingInfo.pickedMesh.metadata);
         if (pickingInfo.pickedPoint) {
             this.onPickedPointChangedObservable.notifyObservers(pickingInfo.pickedPoint);
         }
-        if (!control._processObservables(pi.type, pickingInfo.pickedPoint, pointerId, buttonIndex)) {
+        var control = (_b = (_a = pickingInfo.pickedMesh.reservedDataStore) === null || _a === void 0 ? void 0 : _a.GUI3D) === null || _b === void 0 ? void 0 : _b.control;
+        if (!!control && !control._processObservables(pi.type, pickingInfo.pickedPoint, ((_c = pickingInfo.originMesh) === null || _c === void 0 ? void 0 : _c.position) || null, pointerId, buttonIndex)) {
             if (pi.type === babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_0__["PointerEventTypes"].POINTERMOVE) {
                 if (this._lastControlOver[pointerId]) {
                     this._lastControlOver[pointerId]._onPointerOut(this._lastControlOver[pointerId]);
@@ -17239,11 +21417,19 @@ var GUI3DManager = /** @class */ (function () {
             this._sharedMaterials[materialName].dispose();
         }
         this._sharedMaterials = {};
+        for (var materialName in this._touchSharedMaterials) {
+            if (!this._touchSharedMaterials.hasOwnProperty(materialName)) {
+                continue;
+            }
+            this._touchSharedMaterials[materialName].dispose();
+        }
+        this._touchSharedMaterials = {};
         if (this._pointerOutObserver && this._utilityLayer) {
             this._utilityLayer.onPointerOutObservable.remove(this._pointerOutObserver);
             this._pointerOutObserver = null;
         }
         this.onPickedPointChangedObservable.clear();
+        this.onPickingObservable.clear();
         var utilityLayerScene = this._utilityLayer ? this._utilityLayer.utilityLayerScene : null;
         if (utilityLayerScene) {
             if (this._pointerObserver) {
@@ -17272,46 +21458,90 @@ var GUI3DManager = /** @class */ (function () {
 /*!*********************!*\
   !*** ./3D/index.ts ***!
   \*********************/
-/*! exports provided: AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, MeshButton3D, PlanePanel, ScatterPanel, SpherePanel, StackPanel3D, VolumeBasedPanel, FluentMaterialDefines, FluentMaterial, GUI3DManager, Vector3WithInfo */
+/*! exports provided: AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, HolographicSlate, HandMenu, MeshButton3D, NearMenu, PlanePanel, ScatterPanel, Slider3D, SpherePanel, StackPanel3D, TouchButton3D, TouchMeshButton3D, TouchHolographicButton, TouchHolographicMenu, TouchToggleButton3D, VolumeBasedPanel, HolographicBackplate, FluentMaterialDefines, FluentMaterial, FluentButtonMaterial, FluentBackplateMaterial, HandleMaterial, MRDLSliderBarMaterial, MRDLSliderThumbMaterial, MRDLBackplateMaterial, SlateGizmo, HandleState, GizmoHandle, SideHandle, CornerHandle, GUI3DManager, Vector3WithInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _controls__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controls */ "./3D/controls/index.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AbstractButton3D", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["AbstractButton3D"]; });
+/* harmony import */ var _controls_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controls/index */ "./3D/controls/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AbstractButton3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["AbstractButton3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button3D", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Button3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Button3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container3D", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Container3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Container3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control3D", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["Control3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Control3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CylinderPanel", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["CylinderPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CylinderPanel", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["CylinderPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicButton", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["HolographicButton"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicButton", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["HolographicButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MeshButton3D", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["MeshButton3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicSlate", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["HolographicSlate"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PlanePanel", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["PlanePanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandMenu", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["HandMenu"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScatterPanel", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["ScatterPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MeshButton3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["MeshButton3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SpherePanel", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["SpherePanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NearMenu", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["NearMenu"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel3D", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["StackPanel3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PlanePanel", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["PlanePanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VolumeBasedPanel", function() { return _controls__WEBPACK_IMPORTED_MODULE_0__["VolumeBasedPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScatterPanel", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["ScatterPanel"]; });
 
-/* harmony import */ var _materials__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./materials */ "./3D/materials/index.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterialDefines", function() { return _materials__WEBPACK_IMPORTED_MODULE_1__["FluentMaterialDefines"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["Slider3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterial", function() { return _materials__WEBPACK_IMPORTED_MODULE_1__["FluentMaterial"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SpherePanel", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["SpherePanel"]; });
 
-/* harmony import */ var _gui3DManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gui3DManager */ "./3D/gui3DManager.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GUI3DManager", function() { return _gui3DManager__WEBPACK_IMPORTED_MODULE_2__["GUI3DManager"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["StackPanel3D"]; });
 
-/* harmony import */ var _vector3WithInfo__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./vector3WithInfo */ "./3D/vector3WithInfo.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Vector3WithInfo", function() { return _vector3WithInfo__WEBPACK_IMPORTED_MODULE_3__["Vector3WithInfo"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchButton3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TouchButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchMeshButton3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TouchMeshButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicButton", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TouchHolographicButton"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicMenu", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TouchHolographicMenu"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchToggleButton3D", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["TouchToggleButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VolumeBasedPanel", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["VolumeBasedPanel"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicBackplate", function() { return _controls_index__WEBPACK_IMPORTED_MODULE_0__["HolographicBackplate"]; });
+
+/* harmony import */ var _materials_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./materials/index */ "./3D/materials/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterialDefines", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["FluentMaterialDefines"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterial", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["FluentMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentButtonMaterial", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["FluentButtonMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentBackplateMaterial", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["FluentBackplateMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleMaterial", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["HandleMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderBarMaterial", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["MRDLSliderBarMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderThumbMaterial", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["MRDLSliderThumbMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLBackplateMaterial", function() { return _materials_index__WEBPACK_IMPORTED_MODULE_1__["MRDLBackplateMaterial"]; });
+
+/* harmony import */ var _gizmos_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gizmos/index */ "./3D/gizmos/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SlateGizmo", function() { return _gizmos_index__WEBPACK_IMPORTED_MODULE_2__["SlateGizmo"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleState", function() { return _gizmos_index__WEBPACK_IMPORTED_MODULE_2__["HandleState"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GizmoHandle", function() { return _gizmos_index__WEBPACK_IMPORTED_MODULE_2__["GizmoHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SideHandle", function() { return _gizmos_index__WEBPACK_IMPORTED_MODULE_2__["SideHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CornerHandle", function() { return _gizmos_index__WEBPACK_IMPORTED_MODULE_2__["CornerHandle"]; });
+
+/* harmony import */ var _gui3DManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./gui3DManager */ "./3D/gui3DManager.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GUI3DManager", function() { return _gui3DManager__WEBPACK_IMPORTED_MODULE_3__["GUI3DManager"]; });
+
+/* harmony import */ var _vector3WithInfo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./vector3WithInfo */ "./3D/vector3WithInfo.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Vector3WithInfo", function() { return _vector3WithInfo__WEBPACK_IMPORTED_MODULE_4__["Vector3WithInfo"]; });
+
 
 
 
@@ -17321,10 +21551,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./3D/materials/fluentMaterial.ts":
-/*!****************************************!*\
-  !*** ./3D/materials/fluentMaterial.ts ***!
-  \****************************************/
+/***/ "./3D/materials/fluent/fluentMaterial.ts":
+/*!***********************************************!*\
+  !*** ./3D/materials/fluent/fluentMaterial.ts ***!
+  \***********************************************/
 /*! exports provided: FluentMaterialDefines, FluentMaterial */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -17335,8 +21565,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
 /* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _shaders_fluent_vertex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/fluent.vertex */ "./3D/materials/shaders/fluent.vertex.ts");
-/* harmony import */ var _shaders_fluent_fragment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/fluent.fragment */ "./3D/materials/shaders/fluent.fragment.ts");
+/* harmony import */ var _shaders_fluent_vertex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/fluent.vertex */ "./3D/materials/fluent/shaders/fluent.vertex.ts");
+/* harmony import */ var _shaders_fluent_fragment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/fluent.fragment */ "./3D/materials/fluent/shaders/fluent.fragment.ts");
 
 
 
@@ -17437,7 +21667,7 @@ var FluentMaterial = /** @class */ (function (_super) {
             }
         }
         if (!subMesh._materialDefines) {
-            subMesh._materialDefines = new FluentMaterialDefines();
+            subMesh.materialDefines = new FluentMaterialDefines();
         }
         var scene = this.getScene();
         var defines = subMesh._materialDefines;
@@ -17473,7 +21703,7 @@ var FluentMaterial = /** @class */ (function (_super) {
             attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UVKind);
             var shaderName = "fluent";
             var uniforms = ["world", "viewProjection", "innerGlowColor", "albedoColor", "borderWidth", "edgeSmoothingValue", "scaleFactor", "borderMinValue",
-                "hoverColor", "hoverPosition", "hoverRadius"
+                "hoverColor", "hoverPosition", "hoverRadius", "textureMatrix"
             ];
             var samplers = ["albedoSampler"];
             var uniformBuffers = new Array();
@@ -17495,7 +21725,7 @@ var FluentMaterial = /** @class */ (function (_super) {
                 onCompiled: this.onCompiled,
                 onError: this.onError,
                 indexParameters: { maxSimultaneousLights: 4 }
-            }, engine));
+            }, engine), defines, this._materialContext);
         }
         if (!subMesh.effect || !subMesh.effect.isReady()) {
             return false;
@@ -17535,8 +21765,10 @@ var FluentMaterial = /** @class */ (function (_super) {
                 this._activeEffect.setFloat("hoverRadius", this.hoverRadius);
                 this._activeEffect.setVector3("hoverPosition", this.hoverPosition);
             }
-            if (defines.TEXTURE) {
+            if (defines.TEXTURE && this._albedoTexture) {
                 this._activeEffect.setTexture("albedoSampler", this._albedoTexture);
+                var matrix = this._albedoTexture.getTextureMatrix();
+                this._activeEffect.setMatrix("textureMatrix", matrix);
             }
         }
         this._afterBind(mesh, this._activeEffect);
@@ -17615,21 +21847,21 @@ var FluentMaterial = /** @class */ (function (_super) {
     return FluentMaterial;
 }(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["PushMaterial"]));
 
-babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["_TypeStore"].RegisteredTypes["BABYLON.GUI.FluentMaterial"] = FluentMaterial;
+Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.FluentMaterial", FluentMaterial);
 
 
 /***/ }),
 
-/***/ "./3D/materials/index.ts":
-/*!*******************************!*\
-  !*** ./3D/materials/index.ts ***!
-  \*******************************/
+/***/ "./3D/materials/fluent/index.ts":
+/*!**************************************!*\
+  !*** ./3D/materials/fluent/index.ts ***!
+  \**************************************/
 /*! exports provided: FluentMaterialDefines, FluentMaterial */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _fluentMaterial__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fluentMaterial */ "./3D/materials/fluentMaterial.ts");
+/* harmony import */ var _fluentMaterial__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fluentMaterial */ "./3D/materials/fluent/fluentMaterial.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterialDefines", function() { return _fluentMaterial__WEBPACK_IMPORTED_MODULE_0__["FluentMaterialDefines"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterial", function() { return _fluentMaterial__WEBPACK_IMPORTED_MODULE_0__["FluentMaterial"]; });
@@ -17639,46 +21871,3617 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./3D/materials/shaders/fluent.fragment.ts":
-/*!*************************************************!*\
-  !*** ./3D/materials/shaders/fluent.fragment.ts ***!
-  \*************************************************/
+/***/ "./3D/materials/fluent/shaders/fluent.fragment.ts":
+/*!********************************************************!*\
+  !*** ./3D/materials/fluent/shaders/fluent.fragment.ts ***!
+  \********************************************************/
 /*! exports provided: fluentPixelShader */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fluentPixelShader", function() { return fluentPixelShader; });
-/* harmony import */ var babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Materials/effect */ "babylonjs/Misc/observable");
-/* harmony import */ var babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
 
 var name = 'fluentPixelShader';
-var shader = "precision highp float;\nvarying vec2 vUV;\nuniform vec4 albedoColor;\n#ifdef INNERGLOW\nuniform vec4 innerGlowColor;\n#endif\n#ifdef BORDER\nvarying vec2 scaleInfo;\nuniform float edgeSmoothingValue;\nuniform float borderMinValue;\n#endif\n#ifdef HOVERLIGHT\nvarying vec3 worldPosition;\nuniform vec3 hoverPosition;\nuniform vec4 hoverColor;\nuniform float hoverRadius;\n#endif\n#ifdef TEXTURE\nuniform sampler2D albedoSampler;\n#endif\nvoid main(void) {\nvec3 albedo=albedoColor.rgb;\nfloat alpha=albedoColor.a;\n#ifdef TEXTURE\nalbedo=texture2D(albedoSampler,vUV).rgb;\n#endif\n#ifdef HOVERLIGHT\nfloat pointToHover=(1.0-clamp(length(hoverPosition-worldPosition)/hoverRadius,0.,1.))*hoverColor.a;\nalbedo=clamp(albedo+hoverColor.rgb*pointToHover,0.,1.);\n#else\nfloat pointToHover=1.0;\n#endif\n#ifdef BORDER\nfloat borderPower=10.0;\nfloat inverseBorderPower=1.0/borderPower;\nvec3 borderColor=albedo*borderPower;\nvec2 distanceToEdge;\ndistanceToEdge.x=abs(vUV.x-0.5)*2.0;\ndistanceToEdge.y=abs(vUV.y-0.5)*2.0;\nfloat borderValue=max(smoothstep(scaleInfo.x-edgeSmoothingValue,scaleInfo.x+edgeSmoothingValue,distanceToEdge.x),\nsmoothstep(scaleInfo.y-edgeSmoothingValue,scaleInfo.y+edgeSmoothingValue,distanceToEdge.y));\nborderColor=borderColor*borderValue*max(borderMinValue*inverseBorderPower,pointToHover);\nalbedo+=borderColor;\nalpha=max(alpha,borderValue);\n#endif\n#ifdef INNERGLOW\n\nvec2 uvGlow=(vUV-vec2(0.5,0.5))*(innerGlowColor.a*2.0);\nuvGlow=uvGlow*uvGlow;\nuvGlow=uvGlow*uvGlow;\nalbedo+=mix(vec3(0.0,0.0,0.0),innerGlowColor.rgb,uvGlow.x+uvGlow.y);\n#endif\ngl_FragColor=vec4(albedo,alpha);\n}";
-babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0__["Effect"].ShadersStore[name] = shader;
+var shader = "precision highp float;\nvarying vec2 vUV;\nuniform vec4 albedoColor;\n#ifdef INNERGLOW\nuniform vec4 innerGlowColor;\n#endif\n#ifdef BORDER\nvarying vec2 scaleInfo;\nuniform float edgeSmoothingValue;\nuniform float borderMinValue;\n#endif\n#ifdef HOVERLIGHT\nvarying vec3 worldPosition;\nuniform vec3 hoverPosition;\nuniform vec4 hoverColor;\nuniform float hoverRadius;\n#endif\n#ifdef TEXTURE\nuniform sampler2D albedoSampler;\nuniform mat4 textureMatrix;\nvec2 finalUV;\n#endif\nvoid main(void) {\nvec3 albedo=albedoColor.rgb;\nfloat alpha=albedoColor.a;\n#ifdef TEXTURE\nfinalUV=vec2(textureMatrix*vec4(vUV,1.0,0.0));\nalbedo=texture2D(albedoSampler,finalUV).rgb;\n#endif\n#ifdef HOVERLIGHT\nfloat pointToHover=(1.0-clamp(length(hoverPosition-worldPosition)/hoverRadius,0.,1.))*hoverColor.a;\nalbedo=clamp(albedo+hoverColor.rgb*pointToHover,0.,1.);\n#else\nfloat pointToHover=1.0;\n#endif\n#ifdef BORDER\nfloat borderPower=10.0;\nfloat inverseBorderPower=1.0/borderPower;\nvec3 borderColor=albedo*borderPower;\nvec2 distanceToEdge;\ndistanceToEdge.x=abs(vUV.x-0.5)*2.0;\ndistanceToEdge.y=abs(vUV.y-0.5)*2.0;\nfloat borderValue=max(smoothstep(scaleInfo.x-edgeSmoothingValue,scaleInfo.x+edgeSmoothingValue,distanceToEdge.x),\nsmoothstep(scaleInfo.y-edgeSmoothingValue,scaleInfo.y+edgeSmoothingValue,distanceToEdge.y));\nborderColor=borderColor*borderValue*max(borderMinValue*inverseBorderPower,pointToHover);\nalbedo+=borderColor;\nalpha=max(alpha,borderValue);\n#endif\n#ifdef INNERGLOW\n\nvec2 uvGlow=(vUV-vec2(0.5,0.5))*(innerGlowColor.a*2.0);\nuvGlow=uvGlow*uvGlow;\nuvGlow=uvGlow*uvGlow;\nalbedo+=mix(vec3(0.0,0.0,0.0),innerGlowColor.rgb,uvGlow.x+uvGlow.y);\n#endif\ngl_FragColor=vec4(albedo,alpha);\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
 /** @hidden */
 var fluentPixelShader = { name: name, shader: shader };
 
 
 /***/ }),
 
-/***/ "./3D/materials/shaders/fluent.vertex.ts":
-/*!***********************************************!*\
-  !*** ./3D/materials/shaders/fluent.vertex.ts ***!
-  \***********************************************/
+/***/ "./3D/materials/fluent/shaders/fluent.vertex.ts":
+/*!******************************************************!*\
+  !*** ./3D/materials/fluent/shaders/fluent.vertex.ts ***!
+  \******************************************************/
 /*! exports provided: fluentVertexShader */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fluentVertexShader", function() { return fluentVertexShader; });
-/* harmony import */ var babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Materials/effect */ "babylonjs/Misc/observable");
-/* harmony import */ var babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
 
 var name = 'fluentVertexShader';
 var shader = "precision highp float;\n\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 uv;\n\nuniform mat4 world;\nuniform mat4 viewProjection;\nvarying vec2 vUV;\n#ifdef BORDER\nvarying vec2 scaleInfo;\nuniform float borderWidth;\nuniform vec3 scaleFactor;\n#endif\n#ifdef HOVERLIGHT\nvarying vec3 worldPosition;\n#endif\nvoid main(void) {\nvUV=uv;\n#ifdef BORDER\nvec3 scale=scaleFactor;\nfloat minScale=min(min(scale.x,scale.y),scale.z);\nfloat maxScale=max(max(scale.x,scale.y),scale.z);\nfloat minOverMiddleScale=minScale/(scale.x+scale.y+scale.z-minScale-maxScale);\nfloat areaYZ=scale.y*scale.z;\nfloat areaXZ=scale.x*scale.z;\nfloat areaXY=scale.x*scale.y;\nfloat scaledBorderWidth=borderWidth;\nif (abs(normal.x) == 1.0)\n{\nscale.x=scale.y;\nscale.y=scale.z;\nif (areaYZ>areaXZ && areaYZ>areaXY)\n{\nscaledBorderWidth*=minOverMiddleScale;\n}\n}\nelse if (abs(normal.y) == 1.0)\n{\nscale.x=scale.z;\nif (areaXZ>areaXY && areaXZ>areaYZ)\n{\nscaledBorderWidth*=minOverMiddleScale;\n}\n}\nelse\n{\nif (areaXY>areaYZ && areaXY>areaXZ)\n{\nscaledBorderWidth*=minOverMiddleScale;\n}\n}\nfloat scaleRatio=min(scale.x,scale.y)/max(scale.x,scale.y);\nif (scale.x>scale.y)\n{\nscaleInfo.x=1.0-(scaledBorderWidth*scaleRatio);\nscaleInfo.y=1.0-scaledBorderWidth;\n}\nelse\n{\nscaleInfo.x=1.0-scaledBorderWidth;\nscaleInfo.y=1.0-(scaledBorderWidth*scaleRatio);\n}\n#endif\nvec4 worldPos=world*vec4(position,1.0);\n#ifdef HOVERLIGHT\nworldPosition=worldPos.xyz;\n#endif\ngl_Position=viewProjection*worldPos;\n}\n";
-babylonjs_Materials_effect__WEBPACK_IMPORTED_MODULE_0__["Effect"].ShadersStore[name] = shader;
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
 /** @hidden */
 var fluentVertexShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentBackplate/fluentBackplateMaterial.ts":
+/*!*****************************************************************!*\
+  !*** ./3D/materials/fluentBackplate/fluentBackplateMaterial.ts ***!
+  \*****************************************************************/
+/*! exports provided: FluentBackplateMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FluentBackplateMaterial", function() { return FluentBackplateMaterial; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shaders_fluentBackplate_fragment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/fluentBackplate.fragment */ "./3D/materials/fluentBackplate/shaders/fluentBackplate.fragment.ts");
+/* harmony import */ var _shaders_fluentBackplate_vertex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/fluentBackplate.vertex */ "./3D/materials/fluentBackplate/shaders/fluentBackplate.vertex.ts");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** @hidden */
+var FluentBackplateMaterialDefines = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(FluentBackplateMaterialDefines, _super);
+    function FluentBackplateMaterialDefines() {
+        var _this = _super.call(this) || this;
+        _this.BLOB_ENABLE = true;
+        _this.BLOB_ENABLE_2 = true;
+        _this.SMOOTH_EDGES = true;
+        _this.IRIDESCENT_MAP_ENABLE = true;
+        _this._needNormals = true;
+        _this.rebuild();
+        return _this;
+    }
+    return FluentBackplateMaterialDefines;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialDefines"]));
+/**
+ * Class used to render square buttons with fluent desgin
+ */
+var FluentBackplateMaterial = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(FluentBackplateMaterial, _super);
+    function FluentBackplateMaterial(name, scene) {
+        var _this = _super.call(this, name, scene) || this;
+        /**
+         * Gets or sets the corner radius on the backplate. Best to keep this value between 0.01 and 0.5. Default is 0.03.
+         */
+        _this.radius = 0.03;
+        /**
+         * Gets or sets the line width of the backplate.
+         */
+        _this.lineWidth = 0.01;
+        /**
+         * Gets or sets whether to use absolute sizes when calculating effects on the backplate.
+         * Since desktop and VR/AR have different relative sizes, it's usually best to keep this false.
+         */
+        _this.absoluteSizes = false;
+        /** @hidden */
+        _this._filterWidth = 1;
+        /**
+         * Gets or sets the base color of the backplate.
+         */
+        _this.baseColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0392157, 0.0666667, 0.207843, 1);
+        /**
+         * Gets or sets the line color of the backplate.
+         */
+        _this.lineColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.14902, 0.133333, 0.384314, 1);
+        /**
+         * Gets or sets the intensity of the fluent hover glow effect.
+         */
+        _this.blobIntensity = 0.98;
+        /**
+         * Gets or sets the far size of the fluent hover glow effect.
+         */
+        _this.blobFarSize = 0.04;
+        /**
+         * Gets or sets the distance considered "near" to the backplate, which controls the size of the fluent hover glow effect (see blobNearSize).
+         */
+        _this.blobNearDistance = 0;
+        /**
+         * Gets or sets the distance considered "far" from the backplate, which controls the size of the fluent hover glow effect (see blobFarSize).
+         */
+        _this.blobFarDistance = 0.08;
+        /**
+         * Gets or sets the length of the fluent hover glow effect fade.
+         */
+        _this.blobFadeLength = 0.08;
+        /**
+         * Gets or sets the size of the fluent hover glow effect when the left pointer is considered "near" to the backplate (see blobNearDistance).
+         */
+        _this.blobNearSize = 0.22;
+        /**
+         * Gets or sets the progress of the fluent hover glow effect selection animation corresponding to the left pointer (0.0 - 1.0).
+         */
+        _this.blobPulse = 0;
+        /**
+         * Gets or sets the opacity of the fluent hover glow effect corresponding to the left pointer (0.0 - 1.0). Default is 0.
+         */
+        _this.blobFade = 0;
+        /**
+         * Gets or sets the size of the fluent hover glow effect when the right pointer is considered "near" to the backplate (see blobNearDistance).
+         */
+        _this.blobNearSize2 = 0.22;
+        /**
+         * Gets or sets the progress of the fluent hover glow effect selection animation corresponding to the right pointer (0.0 - 1.0).
+         */
+        _this.blobPulse2 = 0;
+        /**
+         * Gets or sets the opacity of the fluent hover glow effect corresponding to the right pointer (0.0 - 1.0). Default is 0.
+         */
+        _this.blobFade2 = 0;
+        /** @hidden */
+        _this._rate = 0.135;
+        /**
+         * Gets or sets the color of the highlights on the backplate line.
+         */
+        _this.highlightColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.98, 0.98, 0.98, 1);
+        /**
+         * Gets or sets the width of the highlights on the backplate line.
+         */
+        _this.highlightWidth = 0.25;
+        /** @hidden */
+        _this._highlightTransform = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](1, 1, 0, 0);
+        /** @hidden */
+        _this._highlight = 1;
+        /**
+         * Gets or sets the intensity of the iridescence effect.
+         */
+        _this.iridescenceIntensity = 0;
+        /**
+         * Gets or sets the intensity of the iridescence effect on the backplate edges.
+         */
+        _this.iridescenceEdgeIntensity = 1;
+        /** @hidden */
+        _this._angle = -45;
+        /**
+         * Gets or sets the opacity of the backplate (0.0 - 1.0).
+         */
+        _this.fadeOut = 1;
+        /** @hidden */
+        _this._reflected = true;
+        /** @hidden */
+        _this._frequency = 1;
+        /** @hidden */
+        _this._verticalOffset = 0;
+        /**
+         * Gets or sets the world-space position of the tip of the left index finger.
+         */
+        _this.globalLeftIndexTipPosition = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
+        _this._globalLeftIndexTipPosition4 = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"].Zero();
+        /**
+         * Gets or sets the world-space position of the tip of the right index finger.
+         */
+        _this.globalRightIndexTipPosition = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
+        _this._globalRightIndexTipPosition4 = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"].Zero();
+        _this.alphaMode = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Constants"].ALPHA_DISABLE;
+        _this.backFaceCulling = false;
+        _this._blobTexture = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"](FluentBackplateMaterial.BLOB_TEXTURE_URL, scene, true, false, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE);
+        _this._iridescentMap = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"](FluentBackplateMaterial.IM_TEXTURE_URL, scene, true, false, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE);
+        return _this;
+    }
+    FluentBackplateMaterial.prototype.needAlphaBlending = function () {
+        return false;
+    };
+    FluentBackplateMaterial.prototype.needAlphaTesting = function () {
+        return false;
+    };
+    FluentBackplateMaterial.prototype.getAlphaTestTexture = function () {
+        return null;
+    };
+    FluentBackplateMaterial.prototype.isReadyForSubMesh = function (mesh, subMesh, useInstances) {
+        if (this.isFrozen) {
+            if (subMesh.effect && subMesh.effect._wasPreviouslyReady) {
+                return true;
+            }
+        }
+        if (!subMesh._materialDefines) {
+            subMesh.materialDefines = new FluentBackplateMaterialDefines();
+        }
+        var defines = subMesh._materialDefines;
+        var scene = this.getScene();
+        if (this._isReadyForSubMesh(subMesh)) {
+            return true;
+        }
+        var engine = scene.getEngine();
+        // Attribs
+        babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareDefinesForAttributes(mesh, defines, false, false);
+        // Get correct effect
+        if (defines.isDirty) {
+            defines.markAsProcessed();
+            scene.resetCachedMaterial();
+            // Fallbacks
+            var fallbacks = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["EffectFallbacks"]();
+            if (defines.FOG) {
+                fallbacks.addFallback(1, "FOG");
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].HandleFallbacksForShadows(defines, fallbacks);
+            defines.IMAGEPROCESSINGPOSTPROCESS = scene.imageProcessingConfiguration.applyByPostProcess;
+            //Attributes
+            var attribs = [babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].PositionKind];
+            if (defines.NORMAL) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].NormalKind);
+            }
+            if (defines.UV1) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UVKind);
+            }
+            if (defines.UV2) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UV2Kind);
+            }
+            if (defines.VERTEXCOLOR) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].ColorKind);
+            }
+            if (defines.TANGENT) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].TangentKind);
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareAttributesForInstances(attribs, defines);
+            // Legacy browser patch
+            var shaderName = "fluentBackplate";
+            var join = defines.toString();
+            var uniforms = [
+                "world", "viewProjection", "cameraPosition",
+                "_Radius_", "_Line_Width_", "_Absolute_Sizes_", "_Filter_Width_", "_Base_Color_", "_Line_Color_",
+                "_Radius_Top_Left_", "_Radius_Top_Right_", "_Radius_Bottom_Left_", "_Radius_Bottom_Right_",
+                "_Blob_Position_", "_Blob_Intensity_", "_Blob_Near_Size_", "_Blob_Far_Size_", "_Blob_Near_Distance_",
+                "_Blob_Far_Distance_", "_Blob_Fade_Length_", "_Blob_Pulse_", "_Blob_Fade_", "_Blob_Texture_",
+                "_Blob_Position_2_", "_Blob_Near_Size_2_", "_Blob_Pulse_2_", "_Blob_Fade_2_", "_Rate_", "_Highlight_Color_",
+                "_Highlight_Width_", "_Highlight_Transform_", "_Highlight_", "_Iridescence_Intensity_", "_Iridescence_Edge_Intensity_",
+                "_Angle_", "_Fade_Out_", "_Reflected_", "_Frequency_", "_Vertical_Offset_", "_Iridescent_Map_",
+                "_Use_Global_Left_Index_", "_Use_Global_Right_Index_", "Global_Left_Index_Tip_Position", "Global_Right_Index_Tip_Position"
+            ];
+            var samplers = ["_Blob_Texture_", "_Iridescent_Map_"];
+            var uniformBuffers = new Array();
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareUniformsAndSamplersList({
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: defines,
+                maxSimultaneousLights: 4
+            });
+            subMesh.setEffect(scene.getEngine().createEffect(shaderName, {
+                attributes: attribs,
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: join,
+                fallbacks: fallbacks,
+                onCompiled: this.onCompiled,
+                onError: this.onError,
+                indexParameters: { maxSimultaneousLights: 4 }
+            }, engine), defines, this._materialContext);
+        }
+        if (!subMesh.effect || !subMesh.effect.isReady()) {
+            return false;
+        }
+        defines._renderId = scene.getRenderId();
+        subMesh.effect._wasPreviouslyReady = true;
+        return true;
+    };
+    FluentBackplateMaterial.prototype.bindForSubMesh = function (world, mesh, subMesh) {
+        var _a, _b;
+        var defines = subMesh._materialDefines;
+        if (!defines) {
+            return;
+        }
+        var effect = subMesh.effect;
+        if (!effect) {
+            return;
+        }
+        this._activeEffect = effect;
+        // Matrices
+        this.bindOnlyWorldMatrix(world);
+        this._activeEffect.setMatrix("viewProjection", this.getScene().getTransformMatrix());
+        this._activeEffect.setVector3("cameraPosition", (_b = (_a = this.getScene().activeCamera) === null || _a === void 0 ? void 0 : _a.position) !== null && _b !== void 0 ? _b : babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"].ZeroReadOnly);
+        // "Round Rect"
+        this._activeEffect.setFloat("_Radius_", this.radius);
+        this._activeEffect.setFloat("_Line_Width_", this.lineWidth);
+        this._activeEffect.setFloat("_Absolute_Sizes_", this.absoluteSizes ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Filter_Width_", this._filterWidth);
+        this._activeEffect.setDirectColor4("_Base_Color_", this.baseColor);
+        this._activeEffect.setDirectColor4("_Line_Color_", this.lineColor);
+        // "Radii Multipliers"
+        this._activeEffect.setFloat("_Radius_Top_Left_", 1);
+        this._activeEffect.setFloat("_Radius_Top_Right_", 1.0);
+        this._activeEffect.setFloat("_Radius_Bottom_Left_", 1.0);
+        this._activeEffect.setFloat("_Radius_Bottom_Right_", 1.0);
+        // "Blob"
+        //define BLOB_ENABLE true;
+        this._activeEffect.setFloat("_Blob_Intensity_", this.blobIntensity);
+        this._activeEffect.setFloat("_Blob_Near_Size_", this.blobNearSize);
+        this._activeEffect.setFloat("_Blob_Far_Size_", this.blobFarSize);
+        this._activeEffect.setFloat("_Blob_Near_Distance_", this.blobNearDistance);
+        this._activeEffect.setFloat("_Blob_Far_Distance_", this.blobFarDistance);
+        this._activeEffect.setFloat("_Blob_Fade_Length_", this.blobFadeLength);
+        this._activeEffect.setFloat("_Blob_Pulse_", this.blobPulse);
+        this._activeEffect.setFloat("_Blob_Fade_", this.blobFade);
+        // "Blob Texture"
+        this._activeEffect.setTexture("_Blob_Texture_", this._blobTexture);
+        // "Blob 2"
+        //define BLOB_ENABLE_2 true;
+        this._activeEffect.setFloat("_Blob_Near_Size_2_", this.blobNearSize2);
+        this._activeEffect.setFloat("_Blob_Pulse_2_", this.blobPulse2);
+        this._activeEffect.setFloat("_Blob_Fade_2_", this.blobFade2);
+        // "Line Highlight"
+        this._activeEffect.setFloat("_Rate_", this._rate);
+        this._activeEffect.setDirectColor4("_Highlight_Color_", this.highlightColor);
+        this._activeEffect.setFloat("_Highlight_Width_", this.highlightWidth);
+        this._activeEffect.setVector4("_Highlight_Transform_", this._highlightTransform);
+        this._activeEffect.setFloat("_Highlight_", this._highlight);
+        // "Iridescence"
+        this._activeEffect.setFloat("_Iridescence_Intensity_", this.iridescenceIntensity);
+        this._activeEffect.setFloat("_Iridescence_Edge_Intensity_", this.iridescenceEdgeIntensity);
+        this._activeEffect.setFloat("_Angle_", this._angle);
+        // "Fade"
+        this._activeEffect.setFloat("_Fade_Out_", this.fadeOut);
+        // "Antialiasing"
+        //define SMOOTH_EDGES true;
+        // "ChooseAngle"
+        this._activeEffect.setFloat("_Reflected_", this._reflected ? 1.0 : 0.0);
+        // "Multiply"
+        this._activeEffect.setFloat("_Frequency_", this._frequency);
+        this._activeEffect.setFloat("_Vertical_Offset_", this._verticalOffset);
+        // "Color Texture"
+        //define IRIDESCENT_MAP_ENABLE true;
+        this._activeEffect.setTexture("_Iridescent_Map_", this._iridescentMap);
+        // "Global"
+        this._activeEffect.setFloat("_Use_Global_Left_Index_", 1.0);
+        this._activeEffect.setFloat("_Use_Global_Right_Index_", 1.0);
+        this._globalLeftIndexTipPosition4.set(this.globalLeftIndexTipPosition.x, this.globalLeftIndexTipPosition.y, this.globalLeftIndexTipPosition.z, 1.0);
+        this._activeEffect.setVector4("Global_Left_Index_Tip_Position", this._globalLeftIndexTipPosition4);
+        this._globalRightIndexTipPosition4.set(this.globalRightIndexTipPosition.x, this.globalRightIndexTipPosition.y, this.globalRightIndexTipPosition.z, 1.0);
+        this._activeEffect.setVector4("Global_Right_Index_Tip_Position", this._globalRightIndexTipPosition4);
+        this._afterBind(mesh, this._activeEffect);
+    };
+    /**
+     * Get the list of animatables in the material.
+     * @returns the list of animatables object used in the material
+     */
+    FluentBackplateMaterial.prototype.getAnimatables = function () {
+        return [];
+    };
+    FluentBackplateMaterial.prototype.dispose = function (forceDisposeEffect) {
+        _super.prototype.dispose.call(this, forceDisposeEffect);
+        this._blobTexture.dispose();
+        this._iridescentMap.dispose();
+    };
+    FluentBackplateMaterial.prototype.clone = function (name) {
+        var _this = this;
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Clone(function () { return new FluentBackplateMaterial(name, _this.getScene()); }, this);
+    };
+    FluentBackplateMaterial.prototype.serialize = function () {
+        var serializationObject = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Serialize(this);
+        serializationObject.customType = "BABYLON.FluentBackplateMaterial";
+        return serializationObject;
+    };
+    FluentBackplateMaterial.prototype.getClassName = function () {
+        return "FluentBackplateMaterial";
+    };
+    // Statics
+    FluentBackplateMaterial.Parse = function (source, scene, rootUrl) {
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Parse(function () { return new FluentBackplateMaterial(source.name, scene); }, source, scene, rootUrl);
+    };
+    /**
+     * URL pointing to the texture used to define the coloring for the fluent blob effect.
+     */
+    FluentBackplateMaterial.BLOB_TEXTURE_URL = "https://assets.babylonjs.com/meshes/MRTK/mrtk-fluent-backplate-blob.png";
+    /**
+     * URL pointing to the texture used to define iridescent map.
+     */
+    FluentBackplateMaterial.IM_TEXTURE_URL = "https://assets.babylonjs.com/meshes/MRTK/mrtk-fluent-backplate-iridescence.png";
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "radius", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "lineWidth", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "absoluteSizes", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "baseColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "lineColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobFarSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobNearDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobFarDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobFadeLength", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobNearSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobPulse", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobNearSize2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobPulse2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "blobFade2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "highlightColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "highlightWidth", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "iridescenceIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "iridescenceEdgeIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentBackplateMaterial.prototype, "fadeOut", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serializeAsVector3"])()
+    ], FluentBackplateMaterial.prototype, "globalLeftIndexTipPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serializeAsVector3"])()
+    ], FluentBackplateMaterial.prototype, "globalRightIndexTipPosition", void 0);
+    return FluentBackplateMaterial;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["PushMaterial"]));
+
+Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.FluentBackplateMaterial", FluentBackplateMaterial);
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentBackplate/index.ts":
+/*!***********************************************!*\
+  !*** ./3D/materials/fluentBackplate/index.ts ***!
+  \***********************************************/
+/*! exports provided: FluentBackplateMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _fluentBackplateMaterial__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fluentBackplateMaterial */ "./3D/materials/fluentBackplate/fluentBackplateMaterial.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentBackplateMaterial", function() { return _fluentBackplateMaterial__WEBPACK_IMPORTED_MODULE_0__["FluentBackplateMaterial"]; });
+
+
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentBackplate/shaders/fluentBackplate.fragment.ts":
+/*!**************************************************************************!*\
+  !*** ./3D/materials/fluentBackplate/shaders/fluentBackplate.fragment.ts ***!
+  \**************************************************************************/
+/*! exports provided: fluentBackplatePixelShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fluentBackplatePixelShader", function() { return fluentBackplatePixelShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'fluentBackplatePixelShader';
+var shader = "uniform vec3 cameraPosition;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\nvarying vec4 vExtra3;\nuniform float _Radius_;\nuniform float _Line_Width_;\nuniform bool _Absolute_Sizes_;\nuniform float _Filter_Width_;\nuniform vec4 _Base_Color_;\nuniform vec4 _Line_Color_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\n\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\n\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform float _Rate_;\nuniform vec4 _Highlight_Color_;\nuniform float _Highlight_Width_;\nuniform vec4 _Highlight_Transform_;\nuniform float _Highlight_;\nuniform float _Iridescence_Intensity_;\nuniform float _Iridescence_Edge_Intensity_;\nuniform float _Angle_;\nuniform float _Fade_Out_;\n\nuniform bool _Reflected_;\nuniform float _Frequency_;\nuniform float _Vertical_Offset_;\n\nuniform sampler2D _Iridescent_Map_;\nuniform bool _Use_Global_Left_Index_;\nuniform bool _Use_Global_Right_Index_;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\n\nvoid Round_Rect_Fragment_B31(\nfloat Radius,\nfloat Line_Width,\nvec4 Line_Color,\nfloat Filter_Width,\nvec2 UV,\nfloat Line_Visibility,\nvec4 Rect_Parms,\nvec4 Fill_Color,\nout vec4 Color)\n{\nfloat d=length(max(abs(UV)-Rect_Parms.xy,0.0));\nfloat dx=max(fwidth(d)*Filter_Width,0.00001);\n\nfloat g=min(Rect_Parms.z,Rect_Parms.w);\nfloat dgrad=max(fwidth(g)*Filter_Width,0.00001);\nfloat Inside_Rect=clamp(g/dgrad,0.0,1.0);\n\n\nfloat inner=clamp((d+dx*0.5-max(Radius-Line_Width,d-dx*0.5))/dx,0.0,1.0);\nColor=clamp(mix(Fill_Color,Line_Color,inner),0.0,1.0)*Inside_Rect;\n\n\n\n}\n\n\nvoid Blob_Fragment_B71(\nsampler2D Blob_Texture,\nvec4 Blob_Info1,\nvec4 Blob_Info2,\nout vec4 Blob_Color)\n{\nfloat k1=dot(Blob_Info1.xy,Blob_Info1.xy);\nfloat k2=dot(Blob_Info2.xy,Blob_Info2.xy);\nvec3 closer=k1<k2 ? vec3(k1,Blob_Info1.z,Blob_Info1.w) : vec3(k2,Blob_Info2.z,Blob_Info2.w);\nBlob_Color=closer.z*texture(Blob_Texture,vec2(vec2(sqrt(closer.x),closer.y).x,1.0-vec2(sqrt(closer.x),closer.y).y))*clamp(1.0-closer.x,0.0,1.0);\n}\n\n\nvoid Line_Fragment_B48(\nvec4 Base_Color,\nvec4 Highlight_Color,\nfloat Highlight_Width,\nvec3 Line_Vertex,\nfloat Highlight,\nout vec4 Line_Color)\n{\nfloat k2=1.0-clamp(abs(Line_Vertex.y/Highlight_Width),0.0,1.0);\nLine_Color=mix(Base_Color,Highlight_Color,Highlight*k2);\n}\n\n\nvoid Scale_RGB_B54(\nvec4 Color,\nfloat Scalar,\nout vec4 Result)\n{\nResult=vec4(Scalar,Scalar,Scalar,1)*Color;\n}\n\n\nvoid Conditional_Float_B38(\nbool Which,\nfloat If_True,\nfloat If_False,\nout float Result)\n{\nResult=Which ? If_True : If_False;\n}\n\nvoid main()\n{\n\nfloat R_Q72;\nfloat G_Q72;\nfloat B_Q72;\nfloat A_Q72;\nR_Q72=vColor.r; G_Q72=vColor.g; B_Q72=vColor.b; A_Q72=vColor.a;\nvec4 Blob_Color_Q71;\n#if BLOB_ENABLE\n\nfloat k1=dot(vExtra2.xy,vExtra2.xy);\nfloat k2=dot(vExtra3.xy,vExtra3.xy);\nvec3 closer=k1<k2 ? vec3(k1,vExtra2.z,vExtra2.w) : vec3(k2,vExtra3.z,vExtra3.w);\nBlob_Color_Q71=closer.z*texture(_Blob_Texture_,vec2(vec2(sqrt(closer.x),closer.y).x,1.0-vec2(sqrt(closer.x),closer.y).y))*clamp(1.0-closer.x,0.0,1.0);\n#else\nBlob_Color_Q71=vec4(0,0,0,0);\n#endif\nvec4 Line_Color_Q48;\nLine_Fragment_B48(_Line_Color_,_Highlight_Color_,_Highlight_Width_,vTangent,_Highlight_,Line_Color_Q48);\n\nfloat X_Q67;\nfloat Y_Q67;\nX_Q67=vUV.x;\nY_Q67=vUV.y;\n\nvec3 Incident_Q66=normalize(vPosition-cameraPosition);\n\nvec3 Reflected_Q60=reflect(Incident_Q66,vBinormal);\n\nfloat Product_Q63=Y_Q67*_Vertical_Offset_;\n\nfloat Dot_Q68=dot(Incident_Q66,Reflected_Q60);\n\nfloat Dot_Q57=dot(vNormal,Incident_Q66);\nfloat Result_Q38;\nConditional_Float_B38(_Reflected_,Dot_Q68,Dot_Q57,Result_Q38);\n\nfloat Product_Q64=Result_Q38*_Frequency_;\n\nfloat Sum_Q69=Product_Q64+1.0;\n\nfloat Product_Q70=Sum_Q69*0.5;\n\nfloat Sum_Q62=Product_Q63+Product_Q70;\n\nfloat FractF_Q59=fract(Sum_Q62);\n\nvec2 Vec2_Q65=vec2(FractF_Q59,0.5);\n\nvec4 Color_Q58;\n#if IRIDESCENT_MAP_ENABLE\nColor_Q58=texture(_Iridescent_Map_,Vec2_Q65);\n#else\nColor_Q58=vec4(0,0,0,0);\n#endif\nvec4 Result_Q54;\nScale_RGB_B54(Color_Q58,_Iridescence_Edge_Intensity_,Result_Q54);\nvec4 Result_Q55;\nScale_RGB_B54(Color_Q58,_Iridescence_Intensity_,Result_Q55);\n\nvec4 Base_And_Iridescent_Q53;\nBase_And_Iridescent_Q53=Line_Color_Q48+vec4(Result_Q54.rgb,0.0);\n\nvec4 Base_And_Iridescent_Q56;\nBase_And_Iridescent_Q56=_Base_Color_+vec4(Result_Q55.rgb,0.0);\n\nvec4 Result_Q52=Base_And_Iridescent_Q53; Result_Q52.a=1.0;\n\nvec4 Result_Q35=Blob_Color_Q71+(1.0-Blob_Color_Q71.a)*Base_And_Iridescent_Q56;\nvec4 Color_Q31;\nRound_Rect_Fragment_B31(R_Q72,G_Q72,Result_Q52,_Filter_Width_,vUV,1.0,vExtra1,Result_Q35,Color_Q31);\n\nvec4 Result_Q47=_Fade_Out_*Color_Q31;\nvec4 Out_Color=Result_Q47;\nfloat Clip_Threshold=0.001;\nbool To_sRGB=false;\ngl_FragColor=Out_Color;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var fluentBackplatePixelShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentBackplate/shaders/fluentBackplate.vertex.ts":
+/*!************************************************************************!*\
+  !*** ./3D/materials/fluentBackplate/shaders/fluentBackplate.vertex.ts ***!
+  \************************************************************************/
+/*! exports provided: fluentBackplateVertexShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fluentBackplateVertexShader", function() { return fluentBackplateVertexShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'fluentBackplateVertexShader';
+var shader = "uniform mat4 world;\nuniform mat4 viewProjection;\nuniform vec3 cameraPosition;\nattribute vec3 position;\nattribute vec3 normal;\n#ifdef TANGENT\nattribute vec3 tangent;\n#else\nconst vec3 tangent=vec3(0.);\n#endif\nuniform float _Radius_;\nuniform float _Line_Width_;\nuniform bool _Absolute_Sizes_;\nuniform float _Filter_Width_;\nuniform vec4 _Base_Color_;\nuniform vec4 _Line_Color_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\n\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\n\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform float _Rate_;\nuniform vec4 _Highlight_Color_;\nuniform float _Highlight_Width_;\nuniform vec4 _Highlight_Transform_;\nuniform float _Highlight_;\nuniform float _Iridescence_Intensity_;\nuniform float _Iridescence_Edge_Intensity_;\nuniform float _Angle_;\nuniform float _Fade_Out_;\n\nuniform bool _Reflected_;\nuniform float _Frequency_;\nuniform float _Vertical_Offset_;\n\nuniform sampler2D _Iridescent_Map_;\nuniform bool _Use_Global_Left_Index_;\nuniform bool _Use_Global_Right_Index_;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\nvarying vec4 vExtra3;\n\nvoid Object_To_World_Pos_B115(\nvec3 Pos_Object,\nout vec3 Pos_World)\n{\nPos_World=(world*vec4(Pos_Object,1.0)).xyz;\n}\n\n\nvoid PickDir_B140(\nfloat Degrees,\nvec3 DirX,\nvec3 DirY,\nout vec3 Dir)\n{\n\nfloat a=Degrees*3.14159/180.0;\nDir=cos(a)*DirX+sin(a)*DirY;\n}\n\n\nvoid Round_Rect_Vertex_B139(\nvec2 UV,\nfloat Radius,\nfloat Margin,\nfloat Anisotropy,\nfloat Gradient1,\nfloat Gradient2,\nout vec2 Rect_UV,\nout vec4 Rect_Parms,\nout vec2 Scale_XY,\nout vec2 Line_UV)\n{\nScale_XY=vec2(Anisotropy,1.0);\nLine_UV=(UV-vec2(0.5,0.5));\nRect_UV=Line_UV*Scale_XY;\nRect_Parms.xy=Scale_XY*0.5-vec2(Radius,Radius)-vec2(Margin,Margin);\nRect_Parms.z=Gradient1;\nRect_Parms.w=Gradient2;\n}\n\n\nvoid Line_Vertex_B135(\nvec2 Scale_XY,\nvec2 UV,\nfloat Time,\nfloat Rate,\nvec4 Highlight_Transform,\nout vec3 Line_Vertex)\n{\nfloat angle2=(Rate*Time)*2.0*3.1416;\nfloat sinAngle2=sin(angle2);\nfloat cosAngle2=cos(angle2);\nvec2 xformUV=UV*Highlight_Transform.xy+Highlight_Transform.zw;\nLine_Vertex.x=0.0;\nLine_Vertex.y=cosAngle2*xformUV.x-sinAngle2*xformUV.y;\nLine_Vertex.z=0.0;\n}\n\n\nvoid Blob_Vertex_B180(\nvec3 Position,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nvec3 Blob_Position,\nfloat Intensity,\nfloat Blob_Near_Size,\nfloat Blob_Far_Size,\nfloat Blob_Near_Distance,\nfloat Blob_Far_Distance,\nfloat Blob_Fade_Length,\nfloat Blob_Pulse,\nfloat Blob_Fade,\nout vec4 Blob_Info)\n{\nvec3 blob=Blob_Position;\nvec3 delta=blob-Position;\nfloat dist=dot(Normal,delta);\nfloat lerpValue=clamp((abs(dist)-Blob_Near_Distance)/(Blob_Far_Distance-Blob_Near_Distance),0.0,1.0);\nfloat fadeValue=1.0-clamp((abs(dist)-Blob_Far_Distance)/Blob_Fade_Length,0.0,1.0);\nfloat size=Blob_Near_Size+(Blob_Far_Size-Blob_Near_Size)*lerpValue;\nvec2 blobXY=vec2(dot(delta,Tangent),dot(delta,Bitangent))/(0.0001+size);\nfloat Fade=fadeValue*Intensity*Blob_Fade;\nfloat Distance=(lerpValue*0.5+0.5)*(1.0-Blob_Pulse);\nBlob_Info=vec4(blobXY.x,blobXY.y,Distance,Fade);\n}\n\n\nvoid Move_Verts_B129(\nfloat Anisotropy,\nvec3 P,\nfloat Radius,\nout vec3 New_P,\nout vec2 New_UV,\nout float Radial_Gradient,\nout vec3 Radial_Dir)\n{\nvec2 UV=P.xy*2.0+0.5;\nvec2 center=clamp(UV,0.0,1.0);\nvec2 delta=UV-center;\nvec2 r2=2.0*vec2(Radius/Anisotropy,Radius);\nNew_UV=center+r2*(UV-2.0*center+0.5);\nNew_P=vec3(New_UV-0.5,P.z);\nRadial_Gradient=1.0-length(delta)*2.0;\nRadial_Dir=vec3(delta*r2,0.0);\n}\n\n\nvoid Object_To_World_Dir_B132(\nvec3 Dir_Object,\nout vec3 Binormal_World,\nout vec3 Binormal_World_N,\nout float Binormal_Length)\n{\nBinormal_World=(world*vec4(Dir_Object,0.0)).xyz;\nBinormal_Length=length(Binormal_World);\nBinormal_World_N=Binormal_World/Binormal_Length;\n}\n\n\nvoid RelativeOrAbsoluteDetail_B147(\nfloat Nominal_Radius,\nfloat Nominal_LineWidth,\nbool Absolute_Measurements,\nfloat Height,\nout float Radius,\nout float Line_Width)\n{\nfloat scale=Absolute_Measurements ? 1.0/Height : 1.0;\nRadius=Nominal_Radius*scale;\nLine_Width=Nominal_LineWidth*scale;\n}\n\n\nvoid Edge_AA_Vertex_B130(\nvec3 Position_World,\nvec3 Position_Object,\nvec3 Normal_Object,\nvec3 Eye,\nfloat Radial_Gradient,\nvec3 Radial_Dir,\nvec3 Tangent,\nout float Gradient1,\nout float Gradient2)\n{\n\nvec3 I=(Eye-Position_World);\nvec3 T=(world* vec4(Tangent,0.0)).xyz;\nfloat g=(dot(T,I)<0.0) ? 0.0 : 1.0;\nif (Normal_Object.z==0.0) {\n\nGradient1=Position_Object.z>0.0 ? g : 1.0;\nGradient2=Position_Object.z>0.0 ? 1.0 : g;\n} else {\n\n\n\n\nGradient1=g+(1.0-g)*(Radial_Gradient);\nGradient2=1.0;\n}\n}\n\n\nvoid Pick_Radius_B144(\nfloat Radius,\nfloat Radius_Top_Left,\nfloat Radius_Top_Right,\nfloat Radius_Bottom_Left,\nfloat Radius_Bottom_Right,\nvec3 Position,\nout float Result)\n{\nbool whichY=Position.y>0.0;\nResult=Position.x<0.0 ? (whichY ? Radius_Top_Left : Radius_Bottom_Left) : (whichY ? Radius_Top_Right : Radius_Bottom_Right);\nResult*=Radius;\n}\n\nvoid main()\n{\n\nvec3 Nrm_World_Q128;\nNrm_World_Q128=normalize((world*vec4(normal,0.0)).xyz);\n\nvec3 Tangent_World_Q131;\nvec3 Tangent_World_N_Q131;\nfloat Tangent_Length_Q131;\nTangent_World_Q131=(world*vec4(vec3(1,0,0),0.0)).xyz;\nTangent_Length_Q131=length(Tangent_World_Q131);\nTangent_World_N_Q131=Tangent_World_Q131/Tangent_Length_Q131;\nvec3 Binormal_World_Q132;\nvec3 Binormal_World_N_Q132;\nfloat Binormal_Length_Q132;\nObject_To_World_Dir_B132(vec3(0,1,0),Binormal_World_Q132,Binormal_World_N_Q132,Binormal_Length_Q132);\n\nfloat Anisotropy_Q133=Tangent_Length_Q131/Binormal_Length_Q132;\n\nvec3 Result_Q177;\nResult_Q177=mix(_Blob_Position_,Global_Left_Index_Tip_Position.xyz,float(_Use_Global_Left_Index_));\n\nvec3 Result_Q178;\nResult_Q178=mix(_Blob_Position_2_,Global_Right_Index_Tip_Position.xyz,float(_Use_Global_Right_Index_));\nfloat Result_Q144;\nPick_Radius_B144(_Radius_,_Radius_Top_Left_,_Radius_Top_Right_,_Radius_Bottom_Left_,_Radius_Bottom_Right_,position,Result_Q144);\nvec3 Dir_Q140;\nPickDir_B140(_Angle_,Tangent_World_N_Q131,Binormal_World_N_Q132,Dir_Q140);\nfloat Radius_Q147;\nfloat Line_Width_Q147;\nRelativeOrAbsoluteDetail_B147(Result_Q144,_Line_Width_,_Absolute_Sizes_,Binormal_Length_Q132,Radius_Q147,Line_Width_Q147);\n\nvec4 Out_Color_Q145=vec4(Radius_Q147,Line_Width_Q147,0,1);\nvec3 New_P_Q129;\nvec2 New_UV_Q129;\nfloat Radial_Gradient_Q129;\nvec3 Radial_Dir_Q129;\nMove_Verts_B129(Anisotropy_Q133,position,Radius_Q147,New_P_Q129,New_UV_Q129,Radial_Gradient_Q129,Radial_Dir_Q129);\nvec3 Pos_World_Q115;\nObject_To_World_Pos_B115(New_P_Q129,Pos_World_Q115);\nvec4 Blob_Info_Q180;\n#if BLOB_ENABLE\nBlob_Vertex_B180(Pos_World_Q115,Nrm_World_Q128,Tangent_World_N_Q131,Binormal_World_N_Q132,Result_Q177,_Blob_Intensity_,_Blob_Near_Size_,_Blob_Far_Size_,_Blob_Near_Distance_,_Blob_Far_Distance_,_Blob_Fade_Length_,_Blob_Pulse_,_Blob_Fade_,Blob_Info_Q180);\n#else\nBlob_Info_Q180=vec4(0,0,0,0);\n#endif\nvec4 Blob_Info_Q181;\n#if BLOB_ENABLE_2\nBlob_Vertex_B180(Pos_World_Q115,Nrm_World_Q128,Tangent_World_N_Q131,Binormal_World_N_Q132,Result_Q178,_Blob_Intensity_,_Blob_Near_Size_2_,_Blob_Far_Size_,_Blob_Near_Distance_,_Blob_Far_Distance_,_Blob_Fade_Length_,_Blob_Pulse_2_,_Blob_Fade_2_,Blob_Info_Q181);\n#else\nBlob_Info_Q181=vec4(0,0,0,0);\n#endif\nfloat Gradient1_Q130;\nfloat Gradient2_Q130;\n#if SMOOTH_EDGES\nEdge_AA_Vertex_B130(Pos_World_Q115,position,normal,cameraPosition,Radial_Gradient_Q129,Radial_Dir_Q129,tangent,Gradient1_Q130,Gradient2_Q130);\n#else\nGradient1_Q130=1.0;\nGradient2_Q130=1.0;\n#endif\nvec2 Rect_UV_Q139;\nvec4 Rect_Parms_Q139;\nvec2 Scale_XY_Q139;\nvec2 Line_UV_Q139;\nRound_Rect_Vertex_B139(New_UV_Q129,Radius_Q147,0.0,Anisotropy_Q133,Gradient1_Q130,Gradient2_Q130,Rect_UV_Q139,Rect_Parms_Q139,Scale_XY_Q139,Line_UV_Q139);\nvec3 Line_Vertex_Q135;\nLine_Vertex_B135(Scale_XY_Q139,Line_UV_Q139,0.0,_Rate_,_Highlight_Transform_,Line_Vertex_Q135);\nvec3 Position=Pos_World_Q115;\nvec3 Normal=Dir_Q140;\nvec2 UV=Rect_UV_Q139;\nvec3 Tangent=Line_Vertex_Q135;\nvec3 Binormal=Nrm_World_Q128;\nvec4 Color=Out_Color_Q145;\nvec4 Extra1=Rect_Parms_Q139;\nvec4 Extra2=Blob_Info_Q180;\nvec4 Extra3=Blob_Info_Q181;\ngl_Position=viewProjection*vec4(Position,1);\nvPosition=Position;\nvNormal=Normal;\nvUV=UV;\nvTangent=Tangent;\nvBinormal=Binormal;\nvColor=Color;\nvExtra1=Extra1;\nvExtra2=Extra2;\nvExtra3=Extra3;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var fluentBackplateVertexShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentButton/fluentButtonMaterial.ts":
+/*!***********************************************************!*\
+  !*** ./3D/materials/fluentButton/fluentButtonMaterial.ts ***!
+  \***********************************************************/
+/*! exports provided: FluentButtonMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FluentButtonMaterial", function() { return FluentButtonMaterial; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shaders_fluentButton_fragment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/fluentButton.fragment */ "./3D/materials/fluentButton/shaders/fluentButton.fragment.ts");
+/* harmony import */ var _shaders_fluentButton_vertex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/fluentButton.vertex */ "./3D/materials/fluentButton/shaders/fluentButton.vertex.ts");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** @hidden */
+var FluentButtonMaterialDefines = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(FluentButtonMaterialDefines, _super);
+    function FluentButtonMaterialDefines() {
+        var _this = _super.call(this) || this;
+        _this.RELATIVE_WIDTH = true;
+        _this.ENABLE_FADE = true;
+        _this._needNormals = true;
+        _this._needUVs = true;
+        _this.rebuild();
+        return _this;
+    }
+    return FluentButtonMaterialDefines;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialDefines"]));
+/**
+ * Class used to render square buttons with fluent desgin
+ * @since 5.0.0
+ */
+var FluentButtonMaterial = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(FluentButtonMaterial, _super);
+    function FluentButtonMaterial(name, scene) {
+        var _this = _super.call(this, name, scene) || this;
+        /**
+         * Gets or sets the width of the glowing edge, relative to the scale of the button.
+         * (Default is 4% of the height).
+         */
+        _this.edgeWidth = 0.04;
+        /**
+         * Gets or sets the color of the glowing edge.
+         */
+        _this.edgeColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.592157, 0.592157, 0.592157, 1.0);
+        /**
+         * Gets or sets the maximum intensity of the proximity light.
+         */
+        _this.proximityMaxIntensity = 0.45;
+        /**
+         * Gets or sets the maximum distance for the proximity light (Default is 16mm).
+         */
+        _this.proximityFarDistance = 0.16;
+        /**
+         * Gets or sets the radius of the proximity light when near to the surface.
+         */
+        _this.proximityNearRadius = 1.5;
+        /**
+         * Gets or sets the anisotropy of the proximity light.
+         */
+        _this.proximityAnisotropy = 1;
+        /**
+         * Gets or sets the amount of fuzzing in the selection focus.
+         */
+        _this.selectionFuzz = 0.5;
+        /**
+         * Gets or sets an override value to display the button as selected.
+         */
+        _this.selected = 0;
+        /**
+         * Gets or sets a value to manually fade the blob size.
+         */
+        _this.selectionFade = 0;
+        /**
+         * Gets or sets a value to manually shrink the blob size as it fades (see selectionFade).
+         */
+        _this.selectionFadeSize = 0.3;
+        /**
+         * Gets or sets the distance from the button the cursor should be for the button
+         * to appear selected (Default is 8cm).
+         */
+        _this.selectedDistance = 0.08;
+        /**
+         * Gets or sets the fall-off distance for the selection fade (Default is 8cm).
+         */
+        _this.selectedFadeLength = 0.08;
+        /**
+         * Gets or sets the intensity of the luminous blob (Ranges 0-1, default is 0.5).
+         */
+        _this.blobIntensity = 0.5;
+        /**
+         * The size of the blob when the pointer is at the blobFarDistance (Default is 5cm).
+         */
+        _this.blobFarSize = 0.05;
+        /**
+         * The distance at which the pointer is considered near. See [left|right]BlobNearSize. (Default is 0cm).
+         */
+        _this.blobNearDistance = 0;
+        /**
+         * The distance at which the pointer is considered far. See [left|right]BlobFarSize. (Default is 8cm).
+         */
+        _this.blobFarDistance = 0.08;
+        /**
+         * The distance over which the blob intensity fades from full to none (Default is 8cm).
+         */
+        _this.blobFadeLength = 0.08;
+        /**
+         * Gets or sets whether the blob corresponding to the left index finger is enabled.
+         */
+        _this.leftBlobEnable = true;
+        /**
+         * Gets or sets the size of the left blob when the left pointer is considered near. See blobNearDistance. (Default is 2.5cm).
+         */
+        _this.leftBlobNearSize = 0.025;
+        /**
+         * Gets or sets the progress of the pulse animation on the left blob (Ranges 0-1).
+         */
+        _this.leftBlobPulse = 0;
+        /**
+         * Gets or sets the fade factor on the left blob.
+         */
+        _this.leftBlobFade = 1;
+        /**
+         * Gets or sets the inner fade on the left blob;
+         */
+        _this.leftBlobInnerFade = 0.01;
+        /**
+         * Gets or sets whether the blob corresponding to the right index finger is enabled.
+         */
+        _this.rightBlobEnable = true;
+        /**
+         * Gets or sets the size of the right blob when the right pointer is considered near. See blobNearDistance. (Default is 2.5cm).
+         */
+        _this.rightBlobNearSize = 0.025;
+        /**
+         * Gets or sets the progress of the pulse animation on the right blob (Ranges 0-1).
+         */
+        _this.rightBlobPulse = 0;
+        /**
+         * Gets or sets the fade factor on the right blob.
+         */
+        _this.rightBlobFade = 1;
+        /**
+         * Gets or sets the inner fade on the right blob;
+         */
+        _this.rightBlobInnerFade = 0.01;
+        /**
+         * Gets or sets the direction of the active face before the world transform is applied.
+         * This should almost always be set to -z.
+         */
+        _this.activeFaceDir = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, -1);
+        /**
+         * Gets or sets the button's up direction before the world transform is applied.
+         * This should almost always be set to +y.
+         */
+        _this.activeFaceUp = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 1, 0);
+        /**
+         * Gets or sets whether the edge fade effect is enabled.
+         */
+        _this.enableFade = true;
+        /**
+         * Gets or sets a value corresponding to the width of the edge fade effect (Default 1.5).
+         */
+        _this.fadeWidth = 1.5;
+        /**
+         * Gets or sets whether the active face is smoothly interpolated.
+         */
+        _this.smoothActiveFace = true;
+        /**
+         * Gets or sets whether the frame of the fluent button model is visible.
+         * This is usually only enabled for debugging purposes.
+         */
+        _this.showFrame = false;
+        /**
+         * Gets or sets whether the blob color texture is used for the proximity
+         * light effect. This is usually only disabled for debugging purposes.
+         */
+        _this.useBlobTexture = true;
+        /**
+         * Gets or sets the world-space position of the tip of the left index finger.
+         */
+        _this.globalLeftIndexTipPosition = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
+        /**
+         * Gets or sets the world-space position of the tip of the right index finger.
+         */
+        _this.globalRightIndexTipPosition = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
+        _this.alphaMode = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Constants"].ALPHA_ADD;
+        _this.disableDepthWrite = true;
+        _this.backFaceCulling = false;
+        _this._blobTexture = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"](FluentButtonMaterial.BLOB_TEXTURE_URL, scene, true, false, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE);
+        return _this;
+    }
+    FluentButtonMaterial.prototype.needAlphaBlending = function () {
+        return true;
+    };
+    FluentButtonMaterial.prototype.needAlphaTesting = function () {
+        return true;
+    };
+    FluentButtonMaterial.prototype.getAlphaTestTexture = function () {
+        return null;
+    };
+    // Methods
+    FluentButtonMaterial.prototype.isReadyForSubMesh = function (mesh, subMesh, useInstances) {
+        if (this.isFrozen) {
+            if (subMesh.effect && subMesh.effect._wasPreviouslyReady) {
+                return true;
+            }
+        }
+        if (!subMesh._materialDefines) {
+            subMesh.materialDefines = new FluentButtonMaterialDefines();
+        }
+        var defines = subMesh._materialDefines;
+        var scene = this.getScene();
+        if (this._isReadyForSubMesh(subMesh)) {
+            return true;
+        }
+        var engine = scene.getEngine();
+        // Attribs
+        babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareDefinesForAttributes(mesh, defines, true, false);
+        // Get correct effect
+        if (defines.isDirty) {
+            defines.markAsProcessed();
+            scene.resetCachedMaterial();
+            // Fallbacks
+            var fallbacks = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["EffectFallbacks"]();
+            if (defines.FOG) {
+                fallbacks.addFallback(1, "FOG");
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].HandleFallbacksForShadows(defines, fallbacks);
+            defines.IMAGEPROCESSINGPOSTPROCESS = scene.imageProcessingConfiguration.applyByPostProcess;
+            //Attributes
+            var attribs = [babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].PositionKind];
+            if (defines.NORMAL) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].NormalKind);
+            }
+            if (defines.UV1) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UVKind);
+            }
+            if (defines.UV2) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UV2Kind);
+            }
+            if (defines.VERTEXCOLOR) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].ColorKind);
+            }
+            if (defines.TANGENT) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].TangentKind);
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareAttributesForInstances(attribs, defines);
+            // Legacy browser patch
+            var shaderName = "fluentButton";
+            var join = defines.toString();
+            var uniforms = [
+                "world", "viewProjection", "cameraPosition",
+                "_Edge_Width_",
+                "_Edge_Color_",
+                "_Relative_Width_",
+                "_Proximity_Max_Intensity_",
+                "_Proximity_Far_Distance_",
+                "_Proximity_Near_Radius_",
+                "_Proximity_Anisotropy_",
+                "_Selection_Fuzz_",
+                "_Selected_",
+                "_Selection_Fade_",
+                "_Selection_Fade_Size_",
+                "_Selected_Distance_",
+                "_Selected_Fade_Length_",
+                "_Blob_Enable_",
+                "_Blob_Position_",
+                "_Blob_Intensity_",
+                "_Blob_Near_Size_",
+                "_Blob_Far_Size_",
+                "_Blob_Near_Distance_",
+                "_Blob_Far_Distance_",
+                "_Blob_Fade_Length_",
+                "_Blob_Inner_Fade_",
+                "_Blob_Pulse_",
+                "_Blob_Fade_",
+                "_Blob_Texture_",
+                "_Blob_Enable_2_",
+                "_Blob_Position_2_",
+                "_Blob_Near_Size_2_",
+                "_Blob_Inner_Fade_2_",
+                "_Blob_Pulse_2_",
+                "_Blob_Fade_2_",
+                "_Active_Face_Dir_",
+                "_Active_Face_Up_",
+                "_Enable_Fade_",
+                "_Fade_Width_",
+                "_Smooth_Active_Face_",
+                "_Show_Frame_",
+                "_Use_Blob_Texture_",
+                "Use_Global_Left_Index",
+                "Use_Global_Right_Index",
+                "Global_Left_Index_Tip_Position",
+                "Global_Right_Index_Tip_Position",
+                "Global_Left_Thumb_Tip_Position",
+                "Global_Right_Thumb_Tip_Position",
+                "Global_Left_Index_Tip_Proximity",
+                "Global_Right_Index_Tip_Proximity"
+            ];
+            var samplers = ["_Blob_Texture_"];
+            var uniformBuffers = new Array();
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareUniformsAndSamplersList({
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: defines,
+                maxSimultaneousLights: 4
+            });
+            subMesh.setEffect(scene.getEngine().createEffect(shaderName, {
+                attributes: attribs,
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: join,
+                fallbacks: fallbacks,
+                onCompiled: this.onCompiled,
+                onError: this.onError,
+                indexParameters: { maxSimultaneousLights: 4 }
+            }, engine), defines, this._materialContext);
+        }
+        if (!subMesh.effect || !subMesh.effect.isReady()) {
+            return false;
+        }
+        defines._renderId = scene.getRenderId();
+        subMesh.effect._wasPreviouslyReady = true;
+        return true;
+    };
+    FluentButtonMaterial.prototype.bindForSubMesh = function (world, mesh, subMesh) {
+        var scene = this.getScene();
+        var defines = subMesh._materialDefines;
+        if (!defines) {
+            return;
+        }
+        var effect = subMesh.effect;
+        if (!effect) {
+            return;
+        }
+        this._activeEffect = effect;
+        // Matrices
+        this.bindOnlyWorldMatrix(world);
+        this._activeEffect.setMatrix("viewProjection", scene.getTransformMatrix());
+        this._activeEffect.setVector3("cameraPosition", scene.activeCamera.position);
+        // "Blob Texture"
+        this._activeEffect.setTexture("_Blob_Texture_", this._blobTexture);
+        // "Wireframe"
+        this._activeEffect.setFloat("_Edge_Width_", this.edgeWidth);
+        this._activeEffect.setColor4("_Edge_Color_", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color3"](this.edgeColor.r, this.edgeColor.g, this.edgeColor.b), this.edgeColor.a);
+        //define _Relative_Width_ true;
+        // "Proximity"
+        this._activeEffect.setFloat("_Proximity_Max_Intensity_", this.proximityMaxIntensity);
+        this._activeEffect.setFloat("_Proximity_Far_Distance_", this.proximityFarDistance);
+        this._activeEffect.setFloat("_Proximity_Near_Radius_", this.proximityNearRadius);
+        this._activeEffect.setFloat("_Proximity_Anisotropy_", this.proximityAnisotropy);
+        // "Selection"
+        this._activeEffect.setFloat("_Selection_Fuzz_", this.selectionFuzz);
+        this._activeEffect.setFloat("_Selected_", this.selected);
+        this._activeEffect.setFloat("_Selection_Fade_", this.selectionFade);
+        this._activeEffect.setFloat("_Selection_Fade_Size_", this.selectionFadeSize);
+        this._activeEffect.setFloat("_Selected_Distance_", this.selectedDistance);
+        this._activeEffect.setFloat("_Selected_Fade_Length_", this.selectedFadeLength);
+        // "Blob"
+        this._activeEffect.setFloat("_Blob_Enable_", this.leftBlobEnable ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Blob_Intensity_", this.blobIntensity);
+        this._activeEffect.setFloat("_Blob_Near_Size_", this.leftBlobNearSize);
+        this._activeEffect.setFloat("_Blob_Far_Size_", this.blobFarSize);
+        this._activeEffect.setFloat("_Blob_Near_Distance_", this.blobNearDistance);
+        this._activeEffect.setFloat("_Blob_Far_Distance_", this.blobFarDistance);
+        this._activeEffect.setFloat("_Blob_Fade_Length_", this.blobFadeLength);
+        this._activeEffect.setFloat("_Blob_Inner_Fade_", this.leftBlobInnerFade);
+        this._activeEffect.setFloat("_Blob_Pulse_", this.leftBlobPulse);
+        this._activeEffect.setFloat("_Blob_Fade_", this.leftBlobFade);
+        // "Blob 2"
+        this._activeEffect.setFloat("_Blob_Enable_2_", this.rightBlobEnable ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Blob_Near_Size_2_", this.rightBlobNearSize);
+        this._activeEffect.setFloat("_Blob_Inner_Fade_2_", this.rightBlobInnerFade);
+        this._activeEffect.setFloat("_Blob_Pulse_2_", this.rightBlobPulse);
+        this._activeEffect.setFloat("_Blob_Fade_2_", this.rightBlobFade);
+        // "Active Face"
+        this._activeEffect.setVector3("_Active_Face_Dir_", this.activeFaceDir);
+        this._activeEffect.setVector3("_Active_Face_Up_", this.activeFaceUp);
+        // "Hololens Edge Fade"
+        //define _Enable_Fade_ true;
+        this._activeEffect.setFloat("_Fade_Width_", this.fadeWidth);
+        this._activeEffect.setFloat("_Smooth_Active_Face_", this.smoothActiveFace ? 1.0 : 0.0);
+        // "Debug"
+        this._activeEffect.setFloat("_Show_Frame_", this.showFrame ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Use_Blob_Texture_", this.useBlobTexture ? 1.0 : 0.0);
+        // Global inputs
+        this._activeEffect.setFloat("Use_Global_Left_Index", 1.0);
+        this._activeEffect.setFloat("Use_Global_Right_Index", 1.0);
+        this._activeEffect.setVector4("Global_Left_Index_Tip_Position", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](this.globalLeftIndexTipPosition.x, this.globalLeftIndexTipPosition.y, this.globalLeftIndexTipPosition.z, 1.0));
+        this._activeEffect.setVector4("Global_Right_Index_Tip_Position", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](this.globalRightIndexTipPosition.x, this.globalRightIndexTipPosition.y, this.globalRightIndexTipPosition.z, 1.0));
+        this._afterBind(mesh, this._activeEffect);
+    };
+    /**
+     * Get the list of animatables in the material.
+     * @returns the list of animatables object used in the material
+     */
+    FluentButtonMaterial.prototype.getAnimatables = function () {
+        return [];
+    };
+    FluentButtonMaterial.prototype.dispose = function (forceDisposeEffect) {
+        _super.prototype.dispose.call(this, forceDisposeEffect);
+    };
+    FluentButtonMaterial.prototype.clone = function (name) {
+        var _this = this;
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Clone(function () { return new FluentButtonMaterial(name, _this.getScene()); }, this);
+    };
+    FluentButtonMaterial.prototype.serialize = function () {
+        var serializationObject = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Serialize(this);
+        serializationObject.customType = "BABYLON.FluentButtonMaterial";
+        return serializationObject;
+    };
+    FluentButtonMaterial.prototype.getClassName = function () {
+        return "FluentButtonMaterial";
+    };
+    // Statics
+    FluentButtonMaterial.Parse = function (source, scene, rootUrl) {
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Parse(function () { return new FluentButtonMaterial(source.name, scene); }, source, scene, rootUrl);
+    };
+    /**
+     * URL pointing to the texture used to define the coloring for the fluent blob effect.
+     */
+    FluentButtonMaterial.BLOB_TEXTURE_URL = "https://assets.babylonjs.com/meshes/MRTK/mrtk-fluent-button-blob.png";
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "edgeWidth", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serializeAsColor4"])()
+    ], FluentButtonMaterial.prototype, "edgeColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "proximityMaxIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "proximityFarDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "proximityNearRadius", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "proximityAnisotropy", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "selectionFuzz", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "selected", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "selectionFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "selectionFadeSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "selectedDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "selectedFadeLength", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "blobIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "blobFarSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "blobNearDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "blobFarDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "blobFadeLength", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "leftBlobEnable", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "leftBlobNearSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "leftBlobPulse", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "leftBlobFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "leftBlobInnerFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "rightBlobEnable", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "rightBlobNearSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "rightBlobPulse", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "rightBlobFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "rightBlobInnerFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serializeAsVector3"])()
+    ], FluentButtonMaterial.prototype, "activeFaceDir", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serializeAsVector3"])()
+    ], FluentButtonMaterial.prototype, "activeFaceUp", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "enableFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "fadeWidth", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "smoothActiveFace", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "showFrame", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], FluentButtonMaterial.prototype, "useBlobTexture", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serializeAsVector3"])()
+    ], FluentButtonMaterial.prototype, "globalLeftIndexTipPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serializeAsVector3"])()
+    ], FluentButtonMaterial.prototype, "globalRightIndexTipPosition", void 0);
+    return FluentButtonMaterial;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["PushMaterial"]));
+
+Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.FluentButtonMaterial", FluentButtonMaterial);
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentButton/index.ts":
+/*!********************************************!*\
+  !*** ./3D/materials/fluentButton/index.ts ***!
+  \********************************************/
+/*! exports provided: FluentButtonMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _fluentButtonMaterial__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fluentButtonMaterial */ "./3D/materials/fluentButton/fluentButtonMaterial.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentButtonMaterial", function() { return _fluentButtonMaterial__WEBPACK_IMPORTED_MODULE_0__["FluentButtonMaterial"]; });
+
+
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentButton/shaders/fluentButton.fragment.ts":
+/*!********************************************************************!*\
+  !*** ./3D/materials/fluentButton/shaders/fluentButton.fragment.ts ***!
+  \********************************************************************/
+/*! exports provided: fluentButtonPixelShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fluentButtonPixelShader", function() { return fluentButtonPixelShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'fluentButtonPixelShader';
+var shader = "uniform vec3 cameraPosition;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\nuniform float _Edge_Width_;\nuniform vec4 _Edge_Color_;\nuniform bool _Relative_Width_;\nuniform float _Proximity_Max_Intensity_;\nuniform float _Proximity_Far_Distance_;\nuniform float _Proximity_Near_Radius_;\nuniform float _Proximity_Anisotropy_;\nuniform float _Selection_Fuzz_;\nuniform float _Selected_;\nuniform float _Selection_Fade_;\nuniform float _Selection_Fade_Size_;\nuniform float _Selected_Distance_;\nuniform float _Selected_Fade_Length_;\nuniform bool _Blob_Enable_;\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Inner_Fade_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\nuniform bool _Blob_Enable_2_;\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Inner_Fade_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform vec3 _Active_Face_Dir_;\nuniform vec3 _Active_Face_Up_;\nuniform bool Enable_Fade;\nuniform float _Fade_Width_;\nuniform bool _Smooth_Active_Face_;\nuniform bool _Show_Frame_;\nuniform bool _Use_Blob_Texture_;\nuniform bool Use_Global_Left_Index;\nuniform bool Use_Global_Right_Index;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\nuniform vec4 Global_Left_Thumb_Tip_Position;\nuniform vec4 Global_Right_Thumb_Tip_Position;\nuniform float Global_Left_Index_Tip_Proximity;\nuniform float Global_Right_Index_Tip_Proximity;\n\nvoid Holo_Edge_Fragment_B35(\nvec4 Edges,\nfloat Edge_Width,\nout float NotEdge)\n{\nvec2 c=vec2(min(Edges.r,Edges.g),min(Edges.b,Edges.a));\nvec2 df=fwidth(c)*Edge_Width;\nvec2 g=clamp(c/df,0.0,1.0);\nNotEdge=g.x*g.y;\n}\n\n\nvoid Blob_Fragment_B39(\nvec2 UV,\nvec3 Blob_Info,\nsampler2D Blob_Texture,\nout vec4 Blob_Color)\n{\nfloat k=dot(UV,UV);\nBlob_Color=Blob_Info.y*texture(Blob_Texture,vec2(vec2(sqrt(k),Blob_Info.x).x,1.0-vec2(sqrt(k),Blob_Info.x).y))*(1.0-clamp(k,0.0,1.0));\n}\n\n\nvec2 FilterStep(vec2 Edge,vec2 X)\n{\n\nvec2 dX=max(fwidth(X),vec2(0.00001,0.00001));\nreturn clamp( (X+dX-max(Edge,X-dX))/(dX*2.0),0.0,1.0);\n}\nvoid Wireframe_Fragment_B59(\nvec3 Widths,\nvec2 UV,\nfloat Proximity,\nvec4 Edge_Color,\nout vec4 Wireframe)\n{\nvec2 c=min(UV,vec2(1.0,1.0)-UV);\nvec2 g=FilterStep(Widths.xy*0.5,c);\nWireframe=(1.0-min(g.x,g.y))*Proximity*Edge_Color;\n}\n\n\nvoid Proximity_B53(\nvec3 Proximity_Center,\nvec3 Proximity_Center_2,\nfloat Proximity_Max_Intensity,\nfloat Proximity_Near_Radius,\nvec3 Position,\nvec3 Show_Selection,\nvec4 Extra1,\nfloat Dist_To_Face,\nfloat Intensity,\nout float Proximity)\n{\nvec2 delta1=Extra1.xy;\nvec2 delta2=Extra1.zw;\nfloat d2=sqrt(min(dot(delta1,delta1),dot(delta2,delta2))+Dist_To_Face*Dist_To_Face);\n\nProximity=Intensity*Proximity_Max_Intensity*(1.0-clamp(d2/Proximity_Near_Radius,0.0,1.0))*(1.0-Show_Selection.x)+Show_Selection.x;\n}\n\n\nvoid To_XYZ_B46(\nvec3 Vec3,\nout float X,\nout float Y,\nout float Z)\n{\nX=Vec3.x;\nY=Vec3.y;\nZ=Vec3.z;\n}\n\nvoid main()\n{\nfloat NotEdge_Q35;\n#if ENABLE_FADE\nHolo_Edge_Fragment_B35(vColor,_Fade_Width_,NotEdge_Q35);\n#else\nNotEdge_Q35=1.0;\n#endif\n\n\nvec4 Blob_Color_Q39;\nfloat k=dot(vUV,vUV);\nvec2 blobTextureCoord=vec2(vec2(sqrt(k),vTangent.x).x,1.0-vec2(sqrt(k),vTangent.x).y);\nvec4 blobColor=mix(vec4(1.0,1.0,1.0,1.0)*step(1.0-vTangent.x,clamp(sqrt(k)+0.1,0.0,1.0)),texture(_Blob_Texture_,blobTextureCoord),float(_Use_Blob_Texture_));\nBlob_Color_Q39=vTangent.y*blobColor*(1.0-clamp(k,0.0,1.0));\n\nfloat Is_Quad_Q24;\nIs_Quad_Q24=vNormal.z;\n\nvec3 Blob_Position_Q41=mix(_Blob_Position_,Global_Left_Index_Tip_Position.xyz,float(Use_Global_Left_Index));\n\nvec3 Blob_Position_Q42=mix(_Blob_Position_2_,Global_Right_Index_Tip_Position.xyz,float(Use_Global_Right_Index));\nfloat X_Q46;\nfloat Y_Q46;\nfloat Z_Q46;\nTo_XYZ_B46(vBinormal,X_Q46,Y_Q46,Z_Q46);\nfloat Proximity_Q53;\nProximity_B53(Blob_Position_Q41,Blob_Position_Q42,_Proximity_Max_Intensity_,_Proximity_Near_Radius_,vPosition,vBinormal,vExtra1,Y_Q46,Z_Q46,Proximity_Q53);\nvec4 Wireframe_Q59;\nWireframe_Fragment_B59(vNormal,vUV,Proximity_Q53,_Edge_Color_,Wireframe_Q59);\n\nvec4 Wire_Or_Blob_Q23=mix(Wireframe_Q59,Blob_Color_Q39,Is_Quad_Q24);\n\nvec4 Result_Q22;\nResult_Q22=mix(Wire_Or_Blob_Q23,vec4(0.3,0.3,0.3,0.3),float(_Show_Frame_));\n\nvec4 Final_Color_Q37=NotEdge_Q35*Result_Q22;\nvec4 Out_Color=Final_Color_Q37;\nfloat Clip_Threshold=0.0;\nbool To_sRGB=false;\ngl_FragColor=Out_Color;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var fluentButtonPixelShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/fluentButton/shaders/fluentButton.vertex.ts":
+/*!******************************************************************!*\
+  !*** ./3D/materials/fluentButton/shaders/fluentButton.vertex.ts ***!
+  \******************************************************************/
+/*! exports provided: fluentButtonVertexShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fluentButtonVertexShader", function() { return fluentButtonVertexShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'fluentButtonVertexShader';
+var shader = "uniform mat4 world;\nuniform mat4 viewProjection;\nuniform vec3 cameraPosition;\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 uv;\nattribute vec3 tangent;\nattribute vec4 color;\nuniform float _Edge_Width_;\nuniform vec4 _Edge_Color_;\nuniform float _Proximity_Max_Intensity_;\nuniform float _Proximity_Far_Distance_;\nuniform float _Proximity_Near_Radius_;\nuniform float _Proximity_Anisotropy_;\nuniform float _Selection_Fuzz_;\nuniform float _Selected_;\nuniform float _Selection_Fade_;\nuniform float _Selection_Fade_Size_;\nuniform float _Selected_Distance_;\nuniform float _Selected_Fade_Length_;\nuniform bool _Blob_Enable_;\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Inner_Fade_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\nuniform bool _Blob_Enable_2_;\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Inner_Fade_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform vec3 _Active_Face_Dir_;\nuniform vec3 _Active_Face_Up_;\nuniform bool _Enable_Fade_;\nuniform float _Fade_Width_;\nuniform bool _Smooth_Active_Face_;\nuniform bool _Show_Frame_;\nuniform bool Use_Global_Left_Index;\nuniform bool Use_Global_Right_Index;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\nuniform vec4 Global_Left_Thumb_Tip_Position;\nuniform vec4 Global_Right_Thumb_Tip_Position;\nuniform float Global_Left_Index_Tip_Proximity;\nuniform float Global_Right_Index_Tip_Proximity;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\n\nvoid Blob_Vertex_B47(\nvec3 Position,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nvec3 Blob_Position,\nfloat Intensity,\nfloat Blob_Near_Size,\nfloat Blob_Far_Size,\nfloat Blob_Near_Distance,\nfloat Blob_Far_Distance,\nvec4 Vx_Color,\nvec2 UV,\nvec3 Face_Center,\nvec2 Face_Size,\nvec2 In_UV,\nfloat Blob_Fade_Length,\nfloat Selection_Fade,\nfloat Selection_Fade_Size,\nfloat Inner_Fade,\nvec3 Active_Face_Center,\nfloat Blob_Pulse,\nfloat Blob_Fade,\nfloat Blob_Enabled,\nout vec3 Out_Position,\nout vec2 Out_UV,\nout vec3 Blob_Info)\n{\nfloat blobSize,fadeIn;\nvec3 Hit_Position;\nBlob_Info=vec3(0.0,0.0,0.0);\nfloat Hit_Distance=dot(Blob_Position-Face_Center,Normal);\nHit_Position=Blob_Position-Hit_Distance*Normal;\nfloat absD=abs(Hit_Distance);\nfloat lerpVal=clamp((absD-Blob_Near_Distance)/(Blob_Far_Distance-Blob_Near_Distance),0.0,1.0);\nfadeIn=1.0-clamp((absD-Blob_Far_Distance)/Blob_Fade_Length,0.0,1.0);\nfloat innerFade=1.0-clamp(-Hit_Distance/Inner_Fade,0.0,1.0);\n\nfloat farClip=clamp(1.0-step(Blob_Far_Distance+Blob_Fade_Length,absD),0.0,1.0);\nfloat size=mix(Blob_Near_Size,Blob_Far_Size,lerpVal)*farClip;\nblobSize=mix(size,Selection_Fade_Size,Selection_Fade)*innerFade*Blob_Enabled;\nBlob_Info.x=lerpVal*0.5+0.5;\nBlob_Info.y=fadeIn*Intensity*(1.0-Selection_Fade)*Blob_Fade;\nBlob_Info.x*=(1.0-Blob_Pulse);\n\nvec3 delta=Hit_Position-Face_Center;\nvec2 blobCenterXY=vec2(dot(delta,Tangent),dot(delta,Bitangent));\nvec2 quadUVin=2.0*UV-1.0;\nvec2 blobXY=blobCenterXY+quadUVin*blobSize;\n\nvec2 blobClipped=clamp(blobXY,-Face_Size*0.5,Face_Size*0.5);\nvec2 blobUV=(blobClipped-blobCenterXY)/max(blobSize,0.0001)*2.0;\nvec3 blobCorner=Face_Center+blobClipped.x*Tangent+blobClipped.y*Bitangent;\n\nOut_Position=mix(Position,blobCorner,Vx_Color.rrr);\nOut_UV=mix(In_UV,blobUV,Vx_Color.rr);\n}\n\n\nvec2 ProjectProximity(\nvec3 blobPosition,\nvec3 position,\nvec3 center,\nvec3 dir,\nvec3 xdir,\nvec3 ydir,\nout float vdistance\n)\n{\nvec3 delta=blobPosition-position;\nvec2 xy=vec2(dot(delta,xdir),dot(delta,ydir));\nvdistance=abs(dot(delta,dir));\nreturn xy;\n}\nvoid Proximity_Vertex_B66(\nvec3 Blob_Position,\nvec3 Blob_Position_2,\nvec3 Active_Face_Center,\nvec3 Active_Face_Dir,\nvec3 Position,\nfloat Proximity_Far_Distance,\nfloat Relative_Scale,\nfloat Proximity_Anisotropy,\nvec3 Up,\nout vec4 Extra1,\nout float Distance_To_Face,\nout float Intensity)\n{\nvec3 Active_Face_Dir_X=normalize(cross(Active_Face_Dir,Up));\n\nvec3 Active_Face_Dir_Y=cross(Active_Face_Dir,Active_Face_Dir_X);\nfloat distz1,distz2;\nExtra1.xy=ProjectProximity(Blob_Position,Position,Active_Face_Center,Active_Face_Dir,Active_Face_Dir_X*Proximity_Anisotropy,Active_Face_Dir_Y,distz1)/Relative_Scale;\nExtra1.zw=ProjectProximity(Blob_Position_2,Position,Active_Face_Center,Active_Face_Dir,Active_Face_Dir_X*Proximity_Anisotropy,Active_Face_Dir_Y,distz2)/Relative_Scale;\nDistance_To_Face=dot(Active_Face_Dir,Position-Active_Face_Center);\nIntensity=1.0-clamp(min(distz1,distz2)/Proximity_Far_Distance,0.0,1.0);\n}\n\n\nvoid Holo_Edge_Vertex_B44(\nvec3 Incident,\nvec3 Normal,\nvec2 UV,\nvec3 Tangent,\nvec3 Bitangent,\nbool Smooth_Active_Face,\nfloat Active,\nout vec4 Holo_Edges)\n{\nfloat NdotI=dot(Incident,Normal);\nvec2 flip=(UV-vec2(0.5,0.5));\nfloat udot=dot(Incident,Tangent)*flip.x*NdotI;\nfloat uval=1.0-float(udot>0.0);\nfloat vdot=-dot(Incident,Bitangent)*flip.y*NdotI;\nfloat vval=1.0-float(vdot>0.0);\nfloat Smooth_And_Active=step(1.0,float(Smooth_Active_Face && Active>0.0));\nuval=mix(uval,max(1.0,uval),Smooth_And_Active);\nvval=mix(vval,max(1.0,vval),Smooth_And_Active);\nHolo_Edges=vec4(1.0,1.0,1.0,1.0)-vec4(uval*UV.x,uval*(1.0-UV.x),vval*UV.y,vval*(1.0-UV.y));\n}\n\n\nvoid Object_To_World_Pos_B13(\nvec3 Pos_Object,\nout vec3 Pos_World)\n{\nPos_World=(world*vec4(Pos_Object,1.0)).xyz;\n}\n\n\nvoid Choose_Blob_B38(\nvec4 Vx_Color,\nvec3 Position1,\nvec3 Position2,\nbool Blob_Enable_1,\nbool Blob_Enable_2,\nfloat Near_Size_1,\nfloat Near_Size_2,\nfloat Blob_Inner_Fade_1,\nfloat Blob_Inner_Fade_2,\nfloat Blob_Pulse_1,\nfloat Blob_Pulse_2,\nfloat Blob_Fade_1,\nfloat Blob_Fade_2,\nout vec3 Position,\nout float Near_Size,\nout float Inner_Fade,\nout float Blob_Enable,\nout float Fade,\nout float Pulse)\n{\nPosition=Position1*(1.0-Vx_Color.g)+Vx_Color.g*Position2;\nfloat b1=float(Blob_Enable_1);\nfloat b2=float(Blob_Enable_2);\nBlob_Enable=b1+(b2-b1)*Vx_Color.g;\nPulse=Blob_Pulse_1*(1.0-Vx_Color.g)+Vx_Color.g*Blob_Pulse_2;\nFade=Blob_Fade_1*(1.0-Vx_Color.g)+Vx_Color.g*Blob_Fade_2;\nNear_Size=Near_Size_1*(1.0-Vx_Color.g)+Vx_Color.g*Near_Size_2;\nInner_Fade=Blob_Inner_Fade_1*(1.0-Vx_Color.g)+Vx_Color.g*Blob_Inner_Fade_2;\n}\n\n\nvoid Wireframe_Vertex_B51(\nvec3 Position,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nfloat Edge_Width,\nvec2 Face_Size,\nout vec3 Wire_Vx_Pos,\nout vec2 UV,\nout vec2 Widths)\n{\nWidths.xy=Edge_Width/Face_Size;\nfloat x=dot(Position,Tangent);\nfloat y=dot(Position,Bitangent);\nfloat dx=0.5-abs(x);\nfloat newx=(0.5-dx*Widths.x*2.0)*sign(x);\nfloat dy=0.5-abs(y);\nfloat newy=(0.5-dy*Widths.y*2.0)*sign(y);\nWire_Vx_Pos=Normal*0.5+newx*Tangent+newy*Bitangent;\nUV.x=dot(Wire_Vx_Pos,Tangent)+0.5;\nUV.y=dot(Wire_Vx_Pos,Bitangent)+0.5;\n}\n\n\nvec2 ramp2(vec2 start,vec2 end,vec2 x)\n{\nreturn clamp((x-start)/(end-start),vec2(0.0,0.0),vec2(1.0,1.0));\n}\nfloat computeSelection(\nvec3 blobPosition,\nvec3 normal,\nvec3 tangent,\nvec3 bitangent,\nvec3 faceCenter,\nvec2 faceSize,\nfloat selectionFuzz,\nfloat farDistance,\nfloat fadeLength\n)\n{\nvec3 delta=blobPosition-faceCenter;\nfloat absD=abs(dot(delta,normal));\nfloat fadeIn=1.0-clamp((absD-farDistance)/fadeLength,0.0,1.0);\nvec2 blobCenterXY=vec2(dot(delta,tangent),dot(delta,bitangent));\nvec2 innerFace=faceSize*(1.0-selectionFuzz)*0.5;\nvec2 selectPulse=ramp2(-faceSize*0.5,-innerFace,blobCenterXY)-ramp2(innerFace,faceSize*0.5,blobCenterXY);\nreturn selectPulse.x*selectPulse.y*fadeIn;\n}\nvoid Selection_Vertex_B48(\nvec3 Blob_Position,\nvec3 Blob_Position_2,\nvec3 Face_Center,\nvec2 Face_Size,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nfloat Selection_Fuzz,\nfloat Selected,\nfloat Far_Distance,\nfloat Fade_Length,\nvec3 Active_Face_Dir,\nout float Show_Selection)\n{\nfloat select1=computeSelection(Blob_Position,Normal,Tangent,Bitangent,Face_Center,Face_Size,Selection_Fuzz,Far_Distance,Fade_Length);\nfloat select2=computeSelection(Blob_Position_2,Normal,Tangent,Bitangent,Face_Center,Face_Size,Selection_Fuzz,Far_Distance,Fade_Length);\nfloat Active=max(0.0,dot(Active_Face_Dir,Normal));\nShow_Selection=mix(max(select1,select2),1.0,Selected)*Active;\n}\n\n\nvoid Proximity_Visibility_B54(\nfloat Selection,\nvec3 Proximity_Center,\nvec3 Proximity_Center_2,\nfloat Input_Width,\nfloat Proximity_Far_Distance,\nfloat Proximity_Radius,\nvec3 Active_Face_Center,\nvec3 Active_Face_Dir,\nout float Width)\n{\n\nvec3 boxEdges=(world*vec4(vec3(0.5,0.5,0.5),0.0)).xyz;\nfloat boxMaxSize=length(boxEdges);\nfloat d1=dot(Proximity_Center-Active_Face_Center,Active_Face_Dir);\nvec3 blob1=Proximity_Center-d1*Active_Face_Dir;\nfloat d2=dot(Proximity_Center_2-Active_Face_Center,Active_Face_Dir);\nvec3 blob2=Proximity_Center_2-d2*Active_Face_Dir;\n\nvec3 delta1=blob1-Active_Face_Center;\nvec3 delta2=blob2-Active_Face_Center;\nfloat dist1=dot(delta1,delta1);\nfloat dist2=dot(delta2,delta2);\nfloat nearestProxDist=sqrt(min(dist1,dist2));\n\nWidth=Input_Width*(1.0-step(boxMaxSize+Proximity_Radius,nearestProxDist))*(1.0-step(Proximity_Far_Distance,min(d1,d2))*(1.0-step(0.0001,Selection)));\n}\n\n\nvoid Object_To_World_Dir_B67(\nvec3 Dir_Object,\nout vec3 Dir_World)\n{\nDir_World=(world*vec4(Dir_Object,0.0)).xyz;\n}\n\nvoid main()\n{\n\nvec3 Active_Face_Center_Q49;\nActive_Face_Center_Q49=(world*vec4(_Active_Face_Dir_*0.5,1.0)).xyz;\n\nvec3 Blob_Position_Q41=mix(_Blob_Position_,Global_Left_Index_Tip_Position.xyz,float(Use_Global_Left_Index));\n\nvec3 Blob_Position_Q42=mix(_Blob_Position_2_,Global_Right_Index_Tip_Position.xyz,float(Use_Global_Right_Index));\n\nvec3 Active_Face_Dir_Q64=normalize((world*vec4(_Active_Face_Dir_,0.0)).xyz);\n\nfloat Relative_Scale_Q57;\n#if RELATIVE_WIDTH\nRelative_Scale_Q57=length((world*vec4(vec3(0,1,0),0.0)).xyz);\n#else\nRelative_Scale_Q57=1.0;\n#endif\n\nvec3 Tangent_World_Q30;\nTangent_World_Q30=(world*vec4(tangent,0.0)).xyz;\n\nvec3 Binormal_World_Q31;\nBinormal_World_Q31=(world*vec4((cross(normal,tangent)),0.0)).xyz;\n\nvec3 Normal_World_Q60;\nNormal_World_Q60=(world*vec4(normal,0.0)).xyz;\n\nvec3 Result_Q18=0.5*normal;\nvec3 Dir_World_Q67;\nObject_To_World_Dir_B67(_Active_Face_Up_,Dir_World_Q67);\n\nfloat Product_Q56=_Edge_Width_*Relative_Scale_Q57;\n\nvec3 Normal_World_N_Q29=normalize(Normal_World_Q60);\n\nvec3 Tangent_World_N_Q28=normalize(Tangent_World_Q30);\n\nvec3 Binormal_World_N_Q32=normalize(Binormal_World_Q31);\nvec3 Position_Q38;\nfloat Near_Size_Q38;\nfloat Inner_Fade_Q38;\nfloat Blob_Enable_Q38;\nfloat Fade_Q38;\nfloat Pulse_Q38;\nChoose_Blob_B38(color,Blob_Position_Q41,Blob_Position_Q42,_Blob_Enable_,_Blob_Enable_2_,_Blob_Near_Size_,_Blob_Near_Size_2_,_Blob_Inner_Fade_,_Blob_Inner_Fade_2_,_Blob_Pulse_,_Blob_Pulse_2_,_Blob_Fade_,_Blob_Fade_2_,Position_Q38,Near_Size_Q38,Inner_Fade_Q38,Blob_Enable_Q38,Fade_Q38,Pulse_Q38);\n\nvec3 Face_Center_Q33;\nFace_Center_Q33=(world*vec4(Result_Q18,1.0)).xyz;\n\nvec2 Face_Size_Q50=vec2(length(Tangent_World_Q30),length(Binormal_World_Q31));\nfloat Show_Selection_Q48;\nSelection_Vertex_B48(Blob_Position_Q41,Blob_Position_Q42,Face_Center_Q33,Face_Size_Q50,Normal_World_N_Q29,Tangent_World_N_Q28,Binormal_World_N_Q32,_Selection_Fuzz_,_Selected_,_Selected_Distance_,_Selected_Fade_Length_,Active_Face_Dir_Q64,Show_Selection_Q48);\n\nvec3 Normalized_Q72=normalize(Dir_World_Q67);\n\nfloat Active_Q34=max(0.0,dot(Active_Face_Dir_Q64,Normal_World_N_Q29));\nfloat Width_Q54;\nProximity_Visibility_B54(Show_Selection_Q48,Blob_Position_Q41,Blob_Position_Q42,Product_Q56,_Proximity_Far_Distance_,_Proximity_Near_Radius_,Active_Face_Center_Q49,Active_Face_Dir_Q64,Width_Q54);\nvec3 Wire_Vx_Pos_Q51;\nvec2 UV_Q51;\nvec2 Widths_Q51;\nWireframe_Vertex_B51(position,normal,tangent,(cross(normal,tangent)),Width_Q54,Face_Size_Q50,Wire_Vx_Pos_Q51,UV_Q51,Widths_Q51);\n\nvec3 Vec3_Q27=vec3(Widths_Q51.x,Widths_Q51.y,color.r);\nvec3 Pos_World_Q13;\nObject_To_World_Pos_B13(Wire_Vx_Pos_Q51,Pos_World_Q13);\n\nvec3 Incident_Q36=normalize(Pos_World_Q13-cameraPosition);\nvec3 Out_Position_Q47;\nvec2 Out_UV_Q47;\nvec3 Blob_Info_Q47;\nBlob_Vertex_B47(Pos_World_Q13,Normal_World_N_Q29,Tangent_World_N_Q28,Binormal_World_N_Q32,Position_Q38,_Blob_Intensity_,Near_Size_Q38,_Blob_Far_Size_,_Blob_Near_Distance_,_Blob_Far_Distance_,color,uv,Face_Center_Q33,Face_Size_Q50,UV_Q51,_Blob_Fade_Length_,_Selection_Fade_,_Selection_Fade_Size_,Inner_Fade_Q38,Active_Face_Center_Q49,Pulse_Q38,Fade_Q38,Blob_Enable_Q38,Out_Position_Q47,Out_UV_Q47,Blob_Info_Q47);\nvec4 Extra1_Q66;\nfloat Distance_To_Face_Q66;\nfloat Intensity_Q66;\nProximity_Vertex_B66(Blob_Position_Q41,Blob_Position_Q42,Active_Face_Center_Q49,Active_Face_Dir_Q64,Pos_World_Q13,_Proximity_Far_Distance_,Relative_Scale_Q57,_Proximity_Anisotropy_,Normalized_Q72,Extra1_Q66,Distance_To_Face_Q66,Intensity_Q66);\nvec4 Holo_Edges_Q44;\nHolo_Edge_Vertex_B44(Incident_Q36,Normal_World_N_Q29,uv,Tangent_World_Q30,Binormal_World_Q31,_Smooth_Active_Face_,Active_Q34,Holo_Edges_Q44);\n\nvec3 Vec3_Q19=vec3(Show_Selection_Q48,Distance_To_Face_Q66,Intensity_Q66);\nvec3 Position=Out_Position_Q47;\nvec2 UV=Out_UV_Q47;\nvec3 Tangent=Blob_Info_Q47;\nvec3 Binormal=Vec3_Q19;\nvec3 Normal=Vec3_Q27;\nvec4 Extra1=Extra1_Q66;\nvec4 Color=Holo_Edges_Q44;\ngl_Position=viewProjection*vec4(Position,1);\nvPosition=Position;\nvNormal=Normal;\nvUV=UV;\nvTangent=Tangent;\nvBinormal=Binormal;\nvColor=Color;\nvExtra1=Extra1;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var fluentButtonVertexShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/handle/handleMaterial.ts":
+/*!***********************************************!*\
+  !*** ./3D/materials/handle/handleMaterial.ts ***!
+  \***********************************************/
+/*! exports provided: HandleMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleMaterial", function() { return HandleMaterial; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Materials/shaderMaterial */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shaders_handle_vertex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/handle.vertex */ "./3D/materials/handle/shaders/handle.vertex.ts");
+/* harmony import */ var _shaders_handle_fragment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/handle.fragment */ "./3D/materials/handle/shaders/handle.fragment.ts");
+
+
+
+
+
+
+/**
+ * Class used to render gizmo handles with fluent design
+ */
+var HandleMaterial = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(HandleMaterial, _super);
+    /**
+     * Creates a handle material
+     * @param name Name of the material
+     * @param scene Scene
+     */
+    function HandleMaterial(name, scene) {
+        var _this = _super.call(this, name, scene, "handle", {
+            attributes: ["position"],
+            uniforms: ["worldViewProjection", "color", "scale", "positionOffset"],
+            needAlphaBlending: false,
+            needAlphaTesting: false,
+        }) || this;
+        _this._hover = false;
+        _this._drag = false;
+        _this._color = new babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__["Color3"]();
+        _this._scale = 1;
+        _this._lastTick = -1;
+        /**
+         * Length of animation
+         */
+        _this.animationLength = 100;
+        /**
+         * Color of the handle when hovered
+         */
+        _this.hoverColor = new babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__["Color3"](0, 0.467, 0.84);
+        /**
+         * Color of the handle when idle
+         */
+        _this.baseColor = new babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__["Color3"](1, 1, 1);
+        /**
+         * Scale of the handle when hovered
+         */
+        _this.hoverScale = 0.75;
+        /**
+         * Scale of the handle when idle
+         */
+        _this.baseScale = 0.35;
+        /**
+         * Scale of the handle when dragged
+         */
+        _this.dragScale = 0.55;
+        /**
+         * @hidden
+         */
+        _this._positionOffset = babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__["Vector3"].Zero();
+        _this._updateInterpolationTarget();
+        // Register callback for scene after render
+        _this._lastTick = Date.now();
+        _this._onBeforeRender = _this.getScene().onBeforeRenderObservable.add(function () {
+            var tick = Date.now();
+            var delta = tick - _this._lastTick;
+            var scaleDiff = _this._targetScale - _this._scale;
+            var colorDiff = babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__["TmpColors"].Color3[0].copyFrom(_this._targetColor).subtractToRef(_this._color, babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__["TmpColors"].Color3[0]);
+            _this._scale = _this._scale + (scaleDiff * delta) / _this.animationLength;
+            colorDiff.scaleToRef(delta / _this.animationLength, colorDiff);
+            _this._color.addToRef(colorDiff, _this._color);
+            _this.setColor3("color", _this._color);
+            _this.setFloat("scale", _this._scale);
+            _this.setVector3("positionOffset", _this._positionOffset);
+            _this._lastTick = tick;
+        });
+        return _this;
+    }
+    Object.defineProperty(HandleMaterial.prototype, "hover", {
+        /**
+         * Is the material indicating hovering state
+         */
+        get: function () {
+            return this._hover;
+        },
+        set: function (b) {
+            this._hover = b;
+            this._updateInterpolationTarget();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(HandleMaterial.prototype, "drag", {
+        /**
+         * Is the material indicating drag state
+         */
+        get: function () {
+            return this._drag;
+        },
+        set: function (b) {
+            this._drag = b;
+            this._updateInterpolationTarget();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    HandleMaterial.prototype._updateInterpolationTarget = function () {
+        if (this.drag) {
+            this._targetColor = this.hoverColor;
+            this._targetScale = this.dragScale;
+        }
+        else if (this.hover) {
+            this._targetColor = this.hoverColor;
+            this._targetScale = this.hoverScale;
+        }
+        else {
+            this._targetColor = this.baseColor;
+            this._targetScale = this.baseScale;
+        }
+    };
+    /**
+     * Disposes the handle material
+     */
+    HandleMaterial.prototype.dispose = function () {
+        _super.prototype.dispose.call(this);
+        this.getScene().onBeforeRenderObservable.remove(this._onBeforeRender);
+    };
+    return HandleMaterial;
+}(babylonjs_Materials_shaderMaterial__WEBPACK_IMPORTED_MODULE_1__["ShaderMaterial"]));
+
+
+
+/***/ }),
+
+/***/ "./3D/materials/handle/index.ts":
+/*!**************************************!*\
+  !*** ./3D/materials/handle/index.ts ***!
+  \**************************************/
+/*! exports provided: HandleMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _handleMaterial__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./handleMaterial */ "./3D/materials/handle/handleMaterial.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleMaterial", function() { return _handleMaterial__WEBPACK_IMPORTED_MODULE_0__["HandleMaterial"]; });
+
+
+
+
+/***/ }),
+
+/***/ "./3D/materials/handle/shaders/handle.fragment.ts":
+/*!********************************************************!*\
+  !*** ./3D/materials/handle/shaders/handle.fragment.ts ***!
+  \********************************************************/
+/*! exports provided: handlePixelShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handlePixelShader", function() { return handlePixelShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'handlePixelShader';
+var shader = "uniform vec3 color;\nvoid main(void) {\ngl_FragColor=vec4(color,1.0);\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var handlePixelShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/handle/shaders/handle.vertex.ts":
+/*!******************************************************!*\
+  !*** ./3D/materials/handle/shaders/handle.vertex.ts ***!
+  \******************************************************/
+/*! exports provided: handleVertexShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleVertexShader", function() { return handleVertexShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'handleVertexShader';
+var shader = "precision highp float;\n\nattribute vec3 position;\n\nuniform vec3 positionOffset;\nuniform mat4 worldViewProjection;\nuniform float scale;\nvoid main(void) {\nvec4 vPos=vec4((vec3(position)+positionOffset)*scale,1.0);\ngl_Position=worldViewProjection*vPos;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var handleVertexShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/index.ts":
+/*!*******************************!*\
+  !*** ./3D/materials/index.ts ***!
+  \*******************************/
+/*! exports provided: FluentMaterialDefines, FluentMaterial, FluentButtonMaterial, FluentBackplateMaterial, HandleMaterial, MRDLSliderBarMaterial, MRDLSliderThumbMaterial, MRDLBackplateMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _fluent_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fluent/index */ "./3D/materials/fluent/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterialDefines", function() { return _fluent_index__WEBPACK_IMPORTED_MODULE_0__["FluentMaterialDefines"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterial", function() { return _fluent_index__WEBPACK_IMPORTED_MODULE_0__["FluentMaterial"]; });
+
+/* harmony import */ var _fluentButton_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fluentButton/index */ "./3D/materials/fluentButton/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentButtonMaterial", function() { return _fluentButton_index__WEBPACK_IMPORTED_MODULE_1__["FluentButtonMaterial"]; });
+
+/* harmony import */ var _fluentBackplate_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fluentBackplate/index */ "./3D/materials/fluentBackplate/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentBackplateMaterial", function() { return _fluentBackplate_index__WEBPACK_IMPORTED_MODULE_2__["FluentBackplateMaterial"]; });
+
+/* harmony import */ var _handle_index__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./handle/index */ "./3D/materials/handle/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleMaterial", function() { return _handle_index__WEBPACK_IMPORTED_MODULE_3__["HandleMaterial"]; });
+
+/* harmony import */ var _mrdl_index__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./mrdl/index */ "./3D/materials/mrdl/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderBarMaterial", function() { return _mrdl_index__WEBPACK_IMPORTED_MODULE_4__["MRDLSliderBarMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderThumbMaterial", function() { return _mrdl_index__WEBPACK_IMPORTED_MODULE_4__["MRDLSliderThumbMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLBackplateMaterial", function() { return _mrdl_index__WEBPACK_IMPORTED_MODULE_4__["MRDLBackplateMaterial"]; });
+
+
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/index.ts":
+/*!************************************!*\
+  !*** ./3D/materials/mrdl/index.ts ***!
+  \************************************/
+/*! exports provided: MRDLSliderBarMaterial, MRDLSliderThumbMaterial, MRDLBackplateMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mrdlSliderBarMaterial__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mrdlSliderBarMaterial */ "./3D/materials/mrdl/mrdlSliderBarMaterial.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderBarMaterial", function() { return _mrdlSliderBarMaterial__WEBPACK_IMPORTED_MODULE_0__["MRDLSliderBarMaterial"]; });
+
+/* harmony import */ var _mrdlSliderThumbMaterial__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mrdlSliderThumbMaterial */ "./3D/materials/mrdl/mrdlSliderThumbMaterial.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderThumbMaterial", function() { return _mrdlSliderThumbMaterial__WEBPACK_IMPORTED_MODULE_1__["MRDLSliderThumbMaterial"]; });
+
+/* harmony import */ var _mrdlBackplateMaterial__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./mrdlBackplateMaterial */ "./3D/materials/mrdl/mrdlBackplateMaterial.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLBackplateMaterial", function() { return _mrdlBackplateMaterial__WEBPACK_IMPORTED_MODULE_2__["MRDLBackplateMaterial"]; });
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/mrdlBackplateMaterial.ts":
+/*!****************************************************!*\
+  !*** ./3D/materials/mrdl/mrdlBackplateMaterial.ts ***!
+  \****************************************************/
+/*! exports provided: MRDLBackplateMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MRDLBackplateMaterial", function() { return MRDLBackplateMaterial; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shaders_mrdlBackplate_fragment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/mrdlBackplate.fragment */ "./3D/materials/mrdl/shaders/mrdlBackplate.fragment.ts");
+/* harmony import */ var _shaders_mrdlBackplate_vertex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/mrdlBackplate.vertex */ "./3D/materials/mrdl/shaders/mrdlBackplate.vertex.ts");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** @hidden */
+var MRDLBackplateMaterialDefines = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(MRDLBackplateMaterialDefines, _super);
+    function MRDLBackplateMaterialDefines() {
+        var _this = _super.call(this) || this;
+        /*
+            "IRIDESCENCE_ENABLE", "SMOOTH_EDGES"
+        */
+        _this.IRIDESCENCE_ENABLED = true;
+        _this.SMOOTH_EDGES = true;
+        _this._needNormals = true;
+        _this.rebuild();
+        return _this;
+    }
+    return MRDLBackplateMaterialDefines;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialDefines"]));
+/**
+ * Class used to render backplate material with MRDL
+ */
+var MRDLBackplateMaterial = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(MRDLBackplateMaterial, _super);
+    function MRDLBackplateMaterial(name, scene) {
+        var _this = _super.call(this, name, scene) || this;
+        /**
+        * Gets or sets the corner radius on the backplate. If this value is changed, update the lineWidth to match.
+        */
+        _this.radius = 0.3;
+        /**
+         * Gets or sets the line width of the backplate.
+         */
+        _this.lineWidth = 0.003;
+        /**
+         * Gets or sets whether to use absolute sizes when calculating effects on the backplate.
+         * Since desktop and VR/AR have different relative sizes, it's usually best to keep this false.
+         */
+        _this.absoluteSizes = false;
+        /** @hidden */
+        _this._filterWidth = 1;
+        /**
+         * Gets or sets the base color of the backplate.
+         */
+        _this.baseColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0, 0, 0, 1);
+        /**
+         * Gets or sets the line color of the backplate.
+         */
+        _this.lineColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.2, 0.262745, 0.4, 1);
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusTopLeft = 1.0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusTopRight = 1.0;
+        /**
+        * Gets or sets the top left Radii Multiplier.
+        */
+        _this.radiusBottomLeft = 1.0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusBottomRight = 1.0;
+        /** @hidden */
+        _this._rate = 0;
+        /**
+         * Gets or sets the color of the highlights on the backplate line.
+         */
+        _this.highlightColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.239216, 0.435294, 0.827451, 1);
+        /**
+         * Gets or sets the width of the highlights on the backplate line.
+         */
+        _this.highlightWidth = 0;
+        /** @hidden */
+        _this._highlightTransform = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](1, 1, 0, 0);
+        /** @hidden */
+        _this._highlight = 1;
+        /**
+         * Gets or sets the intensity of the iridescence effect.
+         */
+        _this.iridescenceIntensity = 0.45;
+        /**
+         * Gets or sets the intensity of the iridescence effect on the backplate edges.
+         */
+        _this.iridescenceEdgeIntensity = 1;
+        /**
+         * Gets or sets the Tint of the iridescence effect on the backplate.
+         */
+        _this.iridescenceTint = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](1, 1, 1, 1);
+        /** @hidden */
+        _this._angle = -45;
+        /**
+         * Gets or sets the opacity of the backplate (0.0 - 1.0).
+         */
+        _this.fadeOut = 1;
+        /** @hidden */
+        _this._reflected = true;
+        /** @hidden */
+        _this._frequency = 1;
+        /** @hidden */
+        _this._verticalOffset = 0;
+        /**
+         * Gets or sets the gradient color effect on the backplate.
+         */
+        _this.gradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.74902, 0.74902, 0.74902, 1);
+        /**
+         * Gets or sets the top left gradient color effect on the backplate.
+         */
+        _this.topLeftGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.00784314, 0.294118, 0.580392, 1);
+        /**
+         * Gets or sets the top right gradient color effect on the backplate.
+         */
+        _this.topRightGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.305882, 0, 1, 1);
+        /**
+         * Gets or sets the bottom left gradient color effect on the backplate.
+         */
+        _this.bottomLeftGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.133333, 0.258824, 0.992157, 1);
+        /**
+         * Gets or sets the bottom right gradient color effect on the backplate.
+         */
+        _this.bottomRightGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.176471, 0.176471, 0.619608, 1);
+        /**
+         * Gets or sets the edge width of the backplate.
+         */
+        _this.edgeWidth = 0.5;
+        /**
+         * Gets or sets the edge width of the backplate.
+         */
+        _this.edgePower = 1;
+        /**
+         * Gets or sets the edge width of the backplate.
+         */
+        _this.edgeLineGradientBlend = 0.5;
+        _this.alphaMode = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Constants"].ALPHA_DISABLE;
+        _this.backFaceCulling = false;
+        _this._iridescentMapTexture = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"](MRDLBackplateMaterial.IRIDESCENT_MAP_TEXTURE_URL, scene, true, false, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE);
+        return _this;
+    }
+    MRDLBackplateMaterial.prototype.needAlphaBlending = function () {
+        return false;
+    };
+    MRDLBackplateMaterial.prototype.needAlphaTesting = function () {
+        return false;
+    };
+    MRDLBackplateMaterial.prototype.getAlphaTestTexture = function () {
+        return null;
+    };
+    // Methods
+    MRDLBackplateMaterial.prototype.isReadyForSubMesh = function (mesh, subMesh, useInstances) {
+        if (this.isFrozen) {
+            if (subMesh.effect && subMesh.effect._wasPreviouslyReady) {
+                return true;
+            }
+        }
+        if (!subMesh._materialDefines) {
+            subMesh.materialDefines = new MRDLBackplateMaterialDefines();
+        }
+        var defines = subMesh._materialDefines;
+        var scene = this.getScene();
+        if (this._isReadyForSubMesh(subMesh)) {
+            return true;
+        }
+        var engine = scene.getEngine();
+        // Attribs
+        babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareDefinesForAttributes(mesh, defines, false, false);
+        // Get correct effect
+        if (defines.isDirty) {
+            defines.markAsProcessed();
+            scene.resetCachedMaterial();
+            // Fallbacks
+            var fallbacks = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["EffectFallbacks"]();
+            if (defines.FOG) {
+                fallbacks.addFallback(1, "FOG");
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].HandleFallbacksForShadows(defines, fallbacks);
+            defines.IMAGEPROCESSINGPOSTPROCESS = scene.imageProcessingConfiguration.applyByPostProcess;
+            //Attributes
+            var attribs = [babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].PositionKind];
+            if (defines.NORMAL) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].NormalKind);
+            }
+            if (defines.UV1) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UVKind);
+            }
+            if (defines.UV2) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UV2Kind);
+            }
+            if (defines.VERTEXCOLOR) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].ColorKind);
+            }
+            if (defines.TANGENT) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].TangentKind);
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareAttributesForInstances(attribs, defines);
+            // Legacy browser patch
+            var shaderName = "mrdlBackplate";
+            var join = defines.toString();
+            var uniforms = [
+                "world", "viewProjection", "cameraPosition",
+                "_Radius_", "_Line_Width_", "_Absolute_Sizes_", "_Filter_Width_", "_Base_Color_", "_Line_Color_",
+                "_Radius_Top_Left_", "_Radius_Top_Right_", "_Radius_Bottom_Left_", "_Radius_Bottom_Right_",
+                "_Rate_", "_Highlight_Color_", "_Highlight_Width_", "_Highlight_Transform_", "_Highlight_",
+                "_Iridescence_Intensity_", "_Iridescence_Edge_Intensity_", "_Iridescence_Tint_", "_Iridescent_Map_",
+                "_Angle_", "_Reflected_", "_Frequency_", "_Vertical_Offset_", "_Gradient_Color_", "_Top_Left_",
+                "_Top_Right_", "_Bottom_Left_", "_Bottom_Right_", "_Edge_Width_", "_Edge_Power_", "_Line_Gradient_Blend_",
+                "_Fade_Out_"
+            ];
+            var samplers = [];
+            var uniformBuffers = new Array();
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareUniformsAndSamplersList({
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: defines,
+                maxSimultaneousLights: 4
+            });
+            subMesh.setEffect(scene.getEngine().createEffect(shaderName, {
+                attributes: attribs,
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: join,
+                fallbacks: fallbacks,
+                onCompiled: this.onCompiled,
+                onError: this.onError,
+                indexParameters: { maxSimultaneousLights: 4 }
+            }, engine), defines);
+        }
+        if (!subMesh.effect || !subMesh.effect.isReady()) {
+            return false;
+        }
+        defines._renderId = scene.getRenderId();
+        subMesh.effect._wasPreviouslyReady = true;
+        return true;
+    };
+    MRDLBackplateMaterial.prototype.bindForSubMesh = function (world, mesh, subMesh) {
+        var defines = subMesh._materialDefines;
+        if (!defines) {
+            return;
+        }
+        var effect = subMesh.effect;
+        if (!effect) {
+            return;
+        }
+        this._activeEffect = effect;
+        // Matrices
+        this.bindOnlyWorldMatrix(world);
+        this._activeEffect.setMatrix("viewProjection", this.getScene().getTransformMatrix());
+        this._activeEffect.setVector3("cameraPosition", this.getScene().activeCamera.position);
+        // "Round Rect"
+        this._activeEffect.setFloat("_Radius_", this.radius);
+        this._activeEffect.setFloat("_Line_Width_", this.lineWidth);
+        this._activeEffect.setFloat("_Absolute_Sizes_", this.absoluteSizes ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Filter_Width_", this._filterWidth);
+        this._activeEffect.setDirectColor4("_Base_Color_", this.baseColor);
+        this._activeEffect.setDirectColor4("_Line_Color_", this.lineColor);
+        // "Radii Multipliers"
+        this._activeEffect.setFloat("_Radius_Top_Left_", this.radiusTopLeft);
+        this._activeEffect.setFloat("_Radius_Top_Right_", this.radiusTopRight);
+        this._activeEffect.setFloat("_Radius_Bottom_Left_", this.radiusBottomLeft);
+        this._activeEffect.setFloat("_Radius_Bottom_Right_", this.radiusBottomRight);
+        // "Line Highlight"
+        this._activeEffect.setFloat("_Rate_", this._rate);
+        this._activeEffect.setDirectColor4("_Highlight_Color_", this.highlightColor);
+        this._activeEffect.setFloat("_Highlight_Width_", this.highlightWidth);
+        this._activeEffect.setVector4("_Highlight_Transform_", this._highlightTransform);
+        this._activeEffect.setFloat("_Highlight_", this._highlight);
+        // "Iridescence"
+        //define IRIDESCENCE_ENABLE true;
+        this._activeEffect.setFloat("_Iridescence_Intensity_", this.iridescenceIntensity);
+        this._activeEffect.setFloat("_Iridescence_Edge_Intensity_", this.iridescenceEdgeIntensity);
+        this._activeEffect.setDirectColor4("_Iridescence_Tint_", this.iridescenceTint);
+        this._activeEffect.setTexture("_Iridescent_Map_", this._iridescentMapTexture);
+        this._activeEffect.setFloat("_Angle_", this._angle);
+        this._activeEffect.setFloat("_Reflected_", this._reflected ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Frequency_", this._frequency);
+        this._activeEffect.setFloat("_Vertical_Offset_", this._verticalOffset);
+        // "Gradient"
+        this._activeEffect.setDirectColor4("_Gradient_Color_", this.gradientColor);
+        this._activeEffect.setDirectColor4("_Top_Left_", this.topLeftGradientColor);
+        this._activeEffect.setDirectColor4("_Top_Right_", this.topRightGradientColor);
+        this._activeEffect.setDirectColor4("_Bottom_Left_", this.bottomLeftGradientColor);
+        this._activeEffect.setDirectColor4("_Bottom_Right_", this.bottomRightGradientColor);
+        //define EDGE_ONLY false;
+        this._activeEffect.setFloat("_Edge_Width_", this.edgeWidth);
+        this._activeEffect.setFloat("_Edge_Power_", this.edgePower);
+        this._activeEffect.setFloat("_Line_Gradient_Blend_", this.edgeLineGradientBlend);
+        // "Fade"
+        this._activeEffect.setFloat("_Fade_Out_", this.fadeOut);
+        // "Antialiasing"
+        //define SMOOTH_EDGES true;
+        this._afterBind(mesh, this._activeEffect);
+    };
+    /**
+     * Get the list of animatables in the material.
+     * @returns the list of animatables object used in the material
+     */
+    MRDLBackplateMaterial.prototype.getAnimatables = function () {
+        return [];
+    };
+    MRDLBackplateMaterial.prototype.dispose = function (forceDisposeEffect) {
+        _super.prototype.dispose.call(this, forceDisposeEffect);
+    };
+    MRDLBackplateMaterial.prototype.clone = function (name) {
+        var _this = this;
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Clone(function () { return new MRDLBackplateMaterial(name, _this.getScene()); }, this);
+    };
+    MRDLBackplateMaterial.prototype.serialize = function () {
+        var serializationObject = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Serialize(this);
+        serializationObject.customType = "BABYLON.MRDLBackplateMaterial";
+        return serializationObject;
+    };
+    MRDLBackplateMaterial.prototype.getClassName = function () {
+        return "MRDLBackplateMaterial";
+    };
+    // Statics
+    MRDLBackplateMaterial.Parse = function (source, scene, rootUrl) {
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Parse(function () { return new MRDLBackplateMaterial(source.name, scene); }, source, scene, rootUrl);
+    };
+    /**
+     * URL pointing to the texture used to define the coloring for the Iridescent Map effect.
+     */
+    MRDLBackplateMaterial.IRIDESCENT_MAP_TEXTURE_URL = "https://assets.babylonjs.com/meshes/MRTK/MRDL/mrtk-mrdl-backplate-iridescence.png";
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "radius", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "lineWidth", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "absoluteSizes", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "baseColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "lineColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "radiusTopLeft", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "radiusTopRight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "radiusBottomLeft", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "radiusBottomRight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "highlightColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "highlightWidth", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "iridescenceIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "iridescenceEdgeIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "iridescenceTint", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "fadeOut", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "gradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "topLeftGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "topRightGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "bottomLeftGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "bottomRightGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "edgeWidth", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "edgePower", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLBackplateMaterial.prototype, "edgeLineGradientBlend", void 0);
+    return MRDLBackplateMaterial;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["PushMaterial"]));
+
+Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.MRDLBackplateMaterial", MRDLBackplateMaterial);
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/mrdlSliderBarMaterial.ts":
+/*!****************************************************!*\
+  !*** ./3D/materials/mrdl/mrdlSliderBarMaterial.ts ***!
+  \****************************************************/
+/*! exports provided: MRDLSliderBarMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderBarMaterial", function() { return MRDLSliderBarMaterial; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shaders_mrdlSliderBar_fragment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/mrdlSliderBar.fragment */ "./3D/materials/mrdl/shaders/mrdlSliderBar.fragment.ts");
+/* harmony import */ var _shaders_mrdlSliderBar_vertex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/mrdlSliderBar.vertex */ "./3D/materials/mrdl/shaders/mrdlSliderBar.vertex.ts");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** @hidden */
+var MRDLSliderBarMaterialDefines = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(MRDLSliderBarMaterialDefines, _super);
+    function MRDLSliderBarMaterialDefines() {
+        var _this = _super.call(this) || this;
+        /*
+            "SKY_ENABLED", "BLOB_ENABLE_2", "IRIDESCENCE_ENABLED"
+        */
+        _this.SKY_ENABLED = true;
+        _this.BLOB_ENABLE_2 = true;
+        _this.IRIDESCENCE_ENABLED = true;
+        _this._needNormals = true;
+        _this._needUVs = true;
+        _this.rebuild();
+        return _this;
+    }
+    return MRDLSliderBarMaterialDefines;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialDefines"]));
+/**
+ * Class used to render Slider Bar material with MRDL
+ */
+var MRDLSliderBarMaterial = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(MRDLSliderBarMaterial, _super);
+    function MRDLSliderBarMaterial(name, scene) {
+        var _this = _super.call(this, name, scene) || this;
+        /**
+         * Gets or sets the corner Radius on the slider bar.
+         */
+        _this.radius = 0.6;
+        /**
+         * Gets or sets the Bevel Front on the slider bar.
+         */
+        _this.bevelFront = 0.6;
+        /**
+         * Gets or sets the Bevel Front Stretch on the slider bar.
+         */
+        _this.bevelFrontStretch = 0.077;
+        /**
+         * Gets or sets the Bevel Back on the slider bar.
+         */
+        _this.bevelBack = 0;
+        /**
+         * Gets or sets the Bevel Back Stretch on the slider bar.
+         */
+        _this.bevelBackStretch = 0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusTopLeft = 1.0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusTopRight = 1.0;
+        /**
+        * Gets or sets the top left Radii Multiplier.
+        */
+        _this.radiusBottomLeft = 1.0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusBottomRight = 1.0;
+        /**
+         * Gets or sets whether Bulge is enabled.
+         * Default is false.
+         */
+        _this.bulgeEnabled = false;
+        /**
+         * Gets or sets the Bulge Height.
+         */
+        _this.bulgeHeight = -0.323;
+        /**
+         * Gets or sets the Bulge Radius.
+         */
+        _this.bulgeRadius = 0.73;
+        /**
+         * Gets or sets the Sun Intensity.
+         */
+        _this.sunIntensity = 1.102;
+        /**
+         * Gets or sets the Sun Theta.
+         */
+        _this.sunTheta = 0.76;
+        /**
+         * Gets or sets the Sun Phi.
+         */
+        _this.sunPhi = 0.526;
+        /**
+         * Gets or sets the Indirect Diffuse.
+         */
+        _this.indirectDiffuse = 0.658;
+        /**
+         * Gets or sets the base albedo.
+         */
+        _this.albedo = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.505882, 0.996078, 1);
+        /**
+         * Gets or sets the Specular value.
+         */
+        _this.specular = 0;
+        /**
+         * Gets or sets the Shininess value.
+         */
+        _this.shininess = 10;
+        /**
+         * Gets or sets the Sharpness value.
+         */
+        _this.sharpness = 0;
+        /**
+         * Gets or sets the Subsurface value.
+         */
+        _this.subsurface = 0;
+        /**
+         * Gets or sets the left gradient color.
+         */
+        _this.leftGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.505882, 0.996078, 1);
+        /**
+         * Gets or sets the right gradient color.
+         */
+        _this.rightGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.505882, 0.996078, 1);
+        /**
+         * Gets or sets the reflection value.
+         */
+        _this.reflection = 0.749;
+        /**
+         * Gets or sets the front reflect value.
+         */
+        _this.frontReflect = 0;
+        /**
+         * Gets or sets the edge reflect value.
+         */
+        _this.edgeReflect = 0.09;
+        /**
+         * Gets or sets the power value.
+         */
+        _this.power = 8.13;
+        /**
+         * Gets or sets the sky color.
+         */
+        _this.skyColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.964706, 0.996078, 1);
+        /**
+         * Gets or sets the horizon color.
+         */
+        _this.horizonColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.333333, 0.996078, 1);
+        /**
+         * Gets or sets the ground color.
+         */
+        _this.groundColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0, 0.254902, 0.996078, 1);
+        /**
+         * Gets or sets the horizon power value.
+         */
+        _this.horizonPower = 1;
+        /**
+         * Gets or sets the finger occlusion width value.
+         */
+        _this.width = 0.02;
+        /**
+         * Gets or sets the finger occlusion fuzz value.
+         */
+        _this.fuzz = 0.5;
+        /**
+         * Gets or sets the minimum finger occlusion fuzz value.
+         */
+        _this.minFuzz = 0.001;
+        /**
+         * Gets or sets the finger occlusion clip fade value.
+         */
+        _this.clipFade = 0.01;
+        /**
+         * Gets or sets the hue shift value.
+         */
+        _this.hueShift = 0;
+        /**
+         * Gets or sets the saturation shift value.
+         */
+        _this.saturationShift = 0;
+        /**
+         * Gets or sets the value shift.
+         */
+        _this.valueShift = 0;
+        /**
+         * Gets or sets the position of the hover glow effect.
+         */
+        _this.blobPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0.1);
+        /**
+         * Gets or sets the intensity of the hover glow effect.
+         */
+        _this.blobIntensity = 0.5;
+        /**
+         * Gets or sets the near size of the hover glow effect.
+         */
+        _this.blobNearSize = 0.01;
+        /**
+        * Gets or sets the far size of the hover glow effect.
+        */
+        _this.blobFarSize = 0.03;
+        /**
+         * Gets or sets the distance considered "near" to the mesh, which controls the size of the hover glow effect (see blobNearSize).
+         */
+        _this.blobNearDistance = 0;
+        /**
+         * Gets or sets the distance considered "far" from the mesh, which controls the size of the hover glow effect (see blobFarSize).
+         */
+        _this.blobFarDistance = 0.08;
+        /**
+         * Gets or sets the length of the hover glow effect fade.
+         */
+        _this.blobFadeLength = 0.576;
+        /**
+         * Gets or sets the progress of the hover glow effect selection animation corresponding to the left pointer (0.0 - 1.0).
+         */
+        _this.blobPulse = 0;
+        /**
+         * Gets or sets the opacity of the hover glow effect corresponding to the left pointer (0.0 - 1.0). Default is 0.
+         */
+        _this.blobFade = 1;
+        /**
+         * Gets or sets the position of the hover glow effect.
+         */
+        _this.blobPosition2 = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0.2, 0, 0.1);
+        /**
+         * Gets or sets the size of the hover glow effect when the right pointer is considered "near" to the mesh (see blobNearDistance).
+         */
+        _this.blobNearSize2 = 0.01;
+        /**
+         * Gets or sets the progress of the hover glow effect selection animation corresponding to the right pointer (0.0 - 1.0).
+         */
+        _this.blobPulse2 = 0;
+        /**
+         * Gets or sets the opacity of the hover glow effect corresponding to the right pointer (0.0 - 1.0). Default is 1.
+         */
+        _this.blobFade2 = 1;
+        /**
+         * Gets or sets the texture of the hover glow effect.
+         */
+        _this.blobTexture = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", _this.getScene());
+        /**
+         * Gets or sets the finger position for left index.
+         */
+        _this.leftIndexPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 1);
+        /**
+         * Gets or sets the finger position for right index.
+         */
+        _this.rightIndexPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](-1, -1, -1);
+        /**
+         * Gets or sets the finger position for left index middle position.
+         */
+        _this.leftIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        /**
+         * Gets or sets the finger position for right index middle position.
+         */
+        _this.rightIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        /**
+         * Gets or sets the Decal Scle for XY.
+         */
+        _this.decalScaleXY = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector2"](1.5, 1.5);
+        /**
+         * Gets or sets decalFrontOnly
+         * Default is true
+         */
+        _this.decalFrontOnly = true;
+        /**
+         * Gets or sets the Rim Light intensity.
+         */
+        _this.rimIntensity = 0.287;
+        /**
+         * Gets or sets the Rim Light hue shift value.
+         */
+        _this.rimHueShift = 0;
+        /**
+         * Gets or sets the Rim Light saturation shift value.
+         */
+        _this.rimSaturationShift = 0;
+        /**
+         * Gets or sets the Rim Light value shift.
+         */
+        _this.rimValueShift = -1;
+        /**
+         * Gets or sets the intensity of the iridescence effect.
+         */
+        _this.iridescenceIntensity = 0;
+        /**
+         * @hidden
+         */
+        _this.useGlobalLeftIndex = 1.0;
+        /**
+         * @hidden
+         */
+        _this.useGlobalRightIndex = 1.0;
+        /**
+         * @hidden
+         */
+        _this.globalLeftIndexTipProximity = 0.0;
+        /**
+         * @hidden
+         */
+        _this.globalRightIndexTipProximity = 0.0;
+        /**
+         * @hidden
+         */
+        _this.globalLeftIndexTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.5, 0.0, -0.55, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globaRightIndexTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.0, 0.0, 0.0, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalLeftThumbTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.5, 0.0, -0.55, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalRightThumbTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.0, 0.0, 0.0, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalLeftIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.5, 0.0, -0.55, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalRightIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.0, 0.0, 0.0, 1.0);
+        _this.alphaMode = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Constants"].ALPHA_DISABLE;
+        _this.backFaceCulling = false;
+        _this._blueGradientTexture = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"](MRDLSliderBarMaterial.BLUE_GRADIENT_TEXTURE_URL, scene, true, false, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE);
+        return _this;
+    }
+    MRDLSliderBarMaterial.prototype.needAlphaBlending = function () {
+        return false;
+    };
+    MRDLSliderBarMaterial.prototype.needAlphaTesting = function () {
+        return false;
+    };
+    MRDLSliderBarMaterial.prototype.getAlphaTestTexture = function () {
+        return null;
+    };
+    // Methods
+    MRDLSliderBarMaterial.prototype.isReadyForSubMesh = function (mesh, subMesh, useInstances) {
+        if (this.isFrozen) {
+            if (subMesh.effect && subMesh.effect._wasPreviouslyReady) {
+                return true;
+            }
+        }
+        if (!subMesh._materialDefines) {
+            subMesh.materialDefines = new MRDLSliderBarMaterialDefines();
+        }
+        var defines = subMesh._materialDefines;
+        var scene = this.getScene();
+        if (this._isReadyForSubMesh(subMesh)) {
+            return true;
+        }
+        var engine = scene.getEngine();
+        // Attribs
+        babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareDefinesForAttributes(mesh, defines, false, false);
+        // Get correct effect
+        if (defines.isDirty) {
+            defines.markAsProcessed();
+            scene.resetCachedMaterial();
+            // Fallbacks
+            var fallbacks = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["EffectFallbacks"]();
+            if (defines.FOG) {
+                fallbacks.addFallback(1, "FOG");
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].HandleFallbacksForShadows(defines, fallbacks);
+            defines.IMAGEPROCESSINGPOSTPROCESS = scene.imageProcessingConfiguration.applyByPostProcess;
+            //Attributes
+            var attribs = [babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].PositionKind];
+            if (defines.NORMAL) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].NormalKind);
+            }
+            if (defines.UV1) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UVKind);
+            }
+            if (defines.UV2) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UV2Kind);
+            }
+            if (defines.VERTEXCOLOR) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].ColorKind);
+            }
+            if (defines.TANGENT) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].TangentKind);
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareAttributesForInstances(attribs, defines);
+            // Legacy browser patch
+            var shaderName = "mrdlSliderBar";
+            var join = defines.toString();
+            var uniforms = [
+                "world", "viewProjection", "cameraPosition",
+                "_Radius_", "_Bevel_Front_", "_Bevel_Front_Stretch_", "_Bevel_Back_", "_Bevel_Back_Stretch_",
+                "_Radius_Top_Left_", "_Radius_Top_Right_", "_Radius_Bottom_Left_", "_Radius_Bottom_Right_",
+                "_Bulge_Enabled_", "_Bulge_Height_", "_Bulge_Radius_", "_Sun_Intensity_", "_Sun_Theta_", "_Sun_Phi_",
+                "_Indirect_Diffuse_", "_Albedo_", "_Specular_", "_Shininess_", "_Sharpness_", "_Subsurface_",
+                "_Left_Color_", "_Right_Color_", "_Reflection_", "_Front_Reflect_", "_Edge_Reflect_", "_Power_",
+                "_Sky_Color_", "_Horizon_Color_", "_Ground_Color_", "_Horizon_Power_", "_Reflection_Map_",
+                "_Indirect_Environment_", "_Width_", "_Fuzz_", "_Min_Fuzz_", "_Clip_Fade_", "_Hue_Shift_", "_Saturation_Shift_",
+                "_Value_Shift_", "_Blob_Position_", "_Blob_Intensity_", "_Blob_Near_Size_", "_Blob_Far_Size_",
+                "_Blob_Near_Distance_", "_Blob_Far_Distance_", "_Blob_Fade_Length_", "_Blob_Pulse_", "_Blob_Fade_",
+                "_Blob_Texture_", "_Blob_Position_2_", "_Blob_Near_Size_2_", "_Blob_Pulse_2_", "_Blob_Fade_2_",
+                "_Left_Index_Pos_", "_Right_Index_Pos_", "_Left_Index_Middle_Pos_", "_Right_Index_Middle_Pos_",
+                "_Decal_", "_Decal_Scale_XY_", "_Decal_Front_Only_", "_Rim_Intensity_", "_Rim_Texture_", "_Rim_Hue_Shift_",
+                "_Rim_Saturation_Shift_", "_Rim_Value_Shift_", "_Iridescence_Intensity_", "_Iridescence_Texture_",
+                "Use_Global_Left_Index", "Use_Global_Right_Index", "Global_Left_Index_Tip_Position", "Global_Right_Index_Tip_Position",
+                "Global_Left_Thumb_Tip_Position", "Global_Right_Thumb_Tip_Position", "Global_Left_Index_Middle_Position;", "Global_Right_Index_Middle_Position", "Global_Left_Index_Tip_Proximity", "Global_Right_Index_Tip_Proximity"
+            ];
+            var samplers = ["_Rim_Texture_", "_Iridescence_Texture_"];
+            var uniformBuffers = new Array();
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareUniformsAndSamplersList({
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: defines,
+                maxSimultaneousLights: 4
+            });
+            subMesh.setEffect(scene.getEngine().createEffect(shaderName, {
+                attributes: attribs,
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: join,
+                fallbacks: fallbacks,
+                onCompiled: this.onCompiled,
+                onError: this.onError,
+                indexParameters: { maxSimultaneousLights: 4 }
+            }, engine), defines, this._materialContext);
+        }
+        if (!subMesh.effect || !subMesh.effect.isReady()) {
+            return false;
+        }
+        defines._renderId = scene.getRenderId();
+        subMesh.effect._wasPreviouslyReady = true;
+        return true;
+    };
+    MRDLSliderBarMaterial.prototype.bindForSubMesh = function (world, mesh, subMesh) {
+        var defines = subMesh._materialDefines;
+        if (!defines) {
+            return;
+        }
+        var effect = subMesh.effect;
+        if (!effect) {
+            return;
+        }
+        this._activeEffect = effect;
+        // Matrices
+        this.bindOnlyWorldMatrix(world);
+        this._activeEffect.setMatrix("viewProjection", this.getScene().getTransformMatrix());
+        this._activeEffect.setVector3("cameraPosition", this.getScene().activeCamera.position);
+        // "Round Rect"
+        this._activeEffect.setFloat("_Radius_", this.radius);
+        this._activeEffect.setFloat("_Bevel_Front_", this.bevelFront);
+        this._activeEffect.setFloat("_Bevel_Front_Stretch_", this.bevelFrontStretch);
+        this._activeEffect.setFloat("_Bevel_Back_", this.bevelBack);
+        this._activeEffect.setFloat("_Bevel_Back_Stretch_", this.bevelBackStretch);
+        // "Radii Multipliers"
+        this._activeEffect.setFloat("_Radius_Top_Left_", this.radiusTopLeft);
+        this._activeEffect.setFloat("_Radius_Top_Right_", this.radiusTopRight);
+        this._activeEffect.setFloat("_Radius_Bottom_Left_", this.radiusBottomLeft);
+        this._activeEffect.setFloat("_Radius_Bottom_Right_", this.radiusBottomRight);
+        // "Bulge"
+        this._activeEffect.setFloat("_Bulge_Enabled_", this.bulgeEnabled ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Bulge_Height_", this.bulgeHeight);
+        this._activeEffect.setFloat("_Bulge_Radius_", this.bulgeRadius);
+        // "Sun"
+        this._activeEffect.setFloat("_Sun_Intensity_", this.sunIntensity);
+        this._activeEffect.setFloat("_Sun_Theta_", this.sunTheta);
+        this._activeEffect.setFloat("_Sun_Phi_", this.sunPhi);
+        this._activeEffect.setFloat("_Indirect_Diffuse_", this.indirectDiffuse);
+        // "Diffuse And Specular"
+        this._activeEffect.setDirectColor4("_Albedo_", this.albedo);
+        this._activeEffect.setFloat("_Specular_", this.specular);
+        this._activeEffect.setFloat("_Shininess_", this.shininess);
+        this._activeEffect.setFloat("_Sharpness_", this.sharpness);
+        this._activeEffect.setFloat("_Subsurface_", this.subsurface);
+        // "Gradient"
+        this._activeEffect.setDirectColor4("_Left_Color_", this.leftGradientColor);
+        this._activeEffect.setDirectColor4("_Right_Color_", this.rightGradientColor);
+        // "Reflection"
+        this._activeEffect.setFloat("_Reflection_", this.reflection);
+        this._activeEffect.setFloat("_Front_Reflect_", this.frontReflect);
+        this._activeEffect.setFloat("_Edge_Reflect_", this.edgeReflect);
+        this._activeEffect.setFloat("_Power_", this.power);
+        // "Sky Environment"
+        //define SKY_ENABLED true;
+        this._activeEffect.setDirectColor4("_Sky_Color_", this.skyColor);
+        this._activeEffect.setDirectColor4("_Horizon_Color_", this.horizonColor);
+        this._activeEffect.setDirectColor4("_Ground_Color_", this.groundColor);
+        this._activeEffect.setFloat("_Horizon_Power_", this.horizonPower);
+        // "Mapped Environment"
+        //define ENV_ENABLE false;
+        this._activeEffect.setTexture("_Reflection_Map_", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", this.getScene()));
+        this._activeEffect.setTexture("_Indirect_Environment_", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", this.getScene()));
+        // "FingerOcclusion"
+        //define OCCLUSION_ENABLED false;
+        this._activeEffect.setFloat("_Width_", this.width);
+        this._activeEffect.setFloat("_Fuzz_", this.fuzz);
+        this._activeEffect.setFloat("_Min_Fuzz_", this.minFuzz);
+        this._activeEffect.setFloat("_Clip_Fade_", this.clipFade);
+        // "View Based Color Shift"
+        this._activeEffect.setFloat("_Hue_Shift_", this.hueShift);
+        this._activeEffect.setFloat("_Saturation_Shift_", this.saturationShift);
+        this._activeEffect.setFloat("_Value_Shift_", this.valueShift);
+        // "Blob"
+        //define BLOB_ENABLE false;
+        this._activeEffect.setVector3("_Blob_Position_", this.blobPosition);
+        this._activeEffect.setFloat("_Blob_Intensity_", this.blobIntensity);
+        this._activeEffect.setFloat("_Blob_Near_Size_", this.blobNearSize);
+        this._activeEffect.setFloat("_Blob_Far_Size_", this.blobFarSize);
+        this._activeEffect.setFloat("_Blob_Near_Distance_", this.blobNearDistance);
+        this._activeEffect.setFloat("_Blob_Far_Distance_", this.blobFarDistance);
+        this._activeEffect.setFloat("_Blob_Fade_Length_", this.blobFadeLength);
+        this._activeEffect.setFloat("_Blob_Pulse_", this.blobPulse);
+        this._activeEffect.setFloat("_Blob_Fade_", this.blobFade);
+        // "Blob Texture"
+        this._activeEffect.setTexture("_Blob_Texture_", this.blobTexture);
+        // "Blob 2"
+        //define BLOB_ENABLE_2 true;
+        this._activeEffect.setVector3("_Blob_Position_2_", this.blobPosition2);
+        this._activeEffect.setFloat("_Blob_Near_Size_2_", this.blobNearSize2);
+        this._activeEffect.setFloat("_Blob_Pulse_2_", this.blobPulse2);
+        this._activeEffect.setFloat("_Blob_Fade_2_", this.blobFade2);
+        // "Finger Positions"
+        this._activeEffect.setVector3("_Left_Index_Pos_", this.leftIndexPosition);
+        this._activeEffect.setVector3("_Right_Index_Pos_", this.rightIndexPosition);
+        this._activeEffect.setVector3("_Left_Index_Middle_Pos_", this.leftIndexMiddlePosition);
+        this._activeEffect.setVector3("_Right_Index_Middle_Pos_", this.rightIndexMiddlePosition);
+        // "Decal Texture"
+        //define DECAL_ENABLE false;
+        this._activeEffect.setTexture("_Decal_", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", this.getScene()));
+        this._activeEffect.setVector2("_Decal_Scale_XY_", this.decalScaleXY);
+        this._activeEffect.setFloat("_Decal_Front_Only_", this.decalFrontOnly ? 1.0 : 0.0);
+        // "Rim Light"
+        this._activeEffect.setFloat("_Rim_Intensity_", this.rimIntensity);
+        this._activeEffect.setTexture("_Rim_Texture_", this._blueGradientTexture);
+        this._activeEffect.setFloat("_Rim_Hue_Shift_", this.rimHueShift);
+        this._activeEffect.setFloat("_Rim_Saturation_Shift_", this.rimSaturationShift);
+        this._activeEffect.setFloat("_Rim_Value_Shift_", this.rimValueShift);
+        // "Iridescence"
+        //define IRIDESCENCE_ENABLED true;
+        this._activeEffect.setFloat("_Iridescence_Intensity_", this.iridescenceIntensity);
+        this._activeEffect.setTexture("_Iridescence_Texture_", this._blueGradientTexture);
+        // Global inputs
+        this._activeEffect.setFloat("Use_Global_Left_Index", this.useGlobalLeftIndex);
+        this._activeEffect.setFloat("Use_Global_Right_Index", this.useGlobalRightIndex);
+        this._activeEffect.setVector4("Global_Left_Index_Tip_Position", this.globalLeftIndexTipPosition);
+        this._activeEffect.setVector4("Global_Right_Index_Tip_Position", this.globaRightIndexTipPosition);
+        this._activeEffect.setVector4("Global_Left_Thumb_Tip_Position", this.globalLeftThumbTipPosition);
+        this._activeEffect.setVector4("Global_Right_Thumb_Tip_Position", this.globalRightThumbTipPosition);
+        this._activeEffect.setVector4("Global_Left_Index_Middle_Position", this.globalLeftIndexMiddlePosition);
+        this._activeEffect.setVector4("Global_Right_Index_Middle_Position", this.globalRightIndexMiddlePosition);
+        this._activeEffect.setFloat("Global_Left_Index_Tip_Proximity", this.globalLeftIndexTipProximity);
+        this._activeEffect.setFloat("Global_Right_Index_Tip_Proximity", this.globalRightIndexTipProximity);
+        this._afterBind(mesh, this._activeEffect);
+    };
+    /**
+     * Get the list of animatables in the material.
+     * @returns the list of animatables object used in the material
+     */
+    MRDLSliderBarMaterial.prototype.getAnimatables = function () {
+        return [];
+    };
+    MRDLSliderBarMaterial.prototype.dispose = function (forceDisposeEffect) {
+        _super.prototype.dispose.call(this, forceDisposeEffect);
+    };
+    MRDLSliderBarMaterial.prototype.clone = function (name) {
+        var _this = this;
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Clone(function () { return new MRDLSliderBarMaterial(name, _this.getScene()); }, this);
+    };
+    MRDLSliderBarMaterial.prototype.serialize = function () {
+        var serializationObject = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Serialize(this);
+        serializationObject.customType = "BABYLON.MRDLSliderBarMaterial";
+        return serializationObject;
+    };
+    MRDLSliderBarMaterial.prototype.getClassName = function () {
+        return "MRDLSliderBarMaterial";
+    };
+    // Statics
+    MRDLSliderBarMaterial.Parse = function (source, scene, rootUrl) {
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Parse(function () { return new MRDLSliderBarMaterial(source.name, scene); }, source, scene, rootUrl);
+    };
+    /**
+     * URL pointing to the texture used to define the coloring for the Iridescent Map effect.
+     */
+    MRDLSliderBarMaterial.BLUE_GRADIENT_TEXTURE_URL = "https://assets.babylonjs.com/meshes/MRTK/MRDL/mrtk-mrdl-blue-gradient.png";
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "radius", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "bevelFront", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "bevelFrontStretch", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "bevelBack", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "bevelBackStretch", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "radiusTopLeft", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "radiusTopRight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "radiusBottomLeft", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "radiusBottomRight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "bulgeEnabled", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "bulgeHeight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "bulgeRadius", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "sunIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "sunTheta", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "sunPhi", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "indirectDiffuse", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "albedo", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "specular", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "shininess", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "sharpness", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "subsurface", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "leftGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "rightGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "reflection", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "frontReflect", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "edgeReflect", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "power", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "skyColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "horizonColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "groundColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "horizonPower", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "width", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "fuzz", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "minFuzz", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "clipFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "hueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "saturationShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "valueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobNearSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobFarSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobNearDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobFarDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobFadeLength", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobPulse", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobPosition2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobNearSize2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobPulse2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobFade2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "blobTexture", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "leftIndexPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "rightIndexPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "leftIndexMiddlePosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "rightIndexMiddlePosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "decalScaleXY", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "decalFrontOnly", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "rimIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "rimHueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "rimSaturationShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "rimValueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderBarMaterial.prototype, "iridescenceIntensity", void 0);
+    return MRDLSliderBarMaterial;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["PushMaterial"]));
+
+Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.MRDLSliderBarMaterial", MRDLSliderBarMaterial);
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/mrdlSliderThumbMaterial.ts":
+/*!******************************************************!*\
+  !*** ./3D/materials/mrdl/mrdlSliderThumbMaterial.ts ***!
+  \******************************************************/
+/*! exports provided: MRDLSliderThumbMaterial */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderThumbMaterial", function() { return MRDLSliderThumbMaterial; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babylonjs/Misc/decorators */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _shaders_mrdlSliderThumb_fragment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shaders/mrdlSliderThumb.fragment */ "./3D/materials/mrdl/shaders/mrdlSliderThumb.fragment.ts");
+/* harmony import */ var _shaders_mrdlSliderThumb_vertex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shaders/mrdlSliderThumb.vertex */ "./3D/materials/mrdl/shaders/mrdlSliderThumb.vertex.ts");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** @hidden */
+var MRDLSliderThumbMaterialDefines = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(MRDLSliderThumbMaterialDefines, _super);
+    function MRDLSliderThumbMaterialDefines() {
+        var _this = _super.call(this) || this;
+        /*
+            "SKY_ENABLED", "BLOB_ENABLE_2", "IRIDESCENCE_ENABLED"
+        */
+        _this.SKY_ENABLED = true;
+        _this.BLOB_ENABLE_2 = true;
+        _this.IRIDESCENCE_ENABLED = true;
+        _this._needNormals = true;
+        _this._needUVs = true;
+        _this.rebuild();
+        return _this;
+    }
+    return MRDLSliderThumbMaterialDefines;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialDefines"]));
+/**
+ * Class used to render Slider Thumb material with MRDL
+ */
+var MRDLSliderThumbMaterial = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(MRDLSliderThumbMaterial, _super);
+    function MRDLSliderThumbMaterial(name, scene) {
+        var _this = _super.call(this, name, scene) || this;
+        /**
+         * Gets or sets the corner Radius on the slider thumb.
+         */
+        _this.radius = 0.157;
+        /**
+         * Gets or sets the Bevel Front on the slider thumb.
+         */
+        _this.bevelFront = 0.065;
+        /**
+         * Gets or sets the Bevel Front Stretch on the slider thumb.
+         */
+        _this.bevelFrontStretch = 0.077;
+        /**
+         * Gets or sets the Bevel Back on the slider thumb.
+         */
+        _this.bevelBack = 0.031;
+        /**
+         * Gets or sets the Bevel Back Stretch on the slider thumb.
+         */
+        _this.bevelBackStretch = 0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusTopLeft = 1.0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusTopRight = 1.0;
+        /**
+        * Gets or sets the top left Radii Multiplier.
+        */
+        _this.radiusBottomLeft = 1.0;
+        /**
+         * Gets or sets the top left Radii Multiplier.
+         */
+        _this.radiusBottomRight = 1.0;
+        /**
+         * Gets or sets whether Bulge is enabled.
+         * Default is false.
+         */
+        _this.bulgeEnabled = false;
+        /**
+         * Gets or sets the Bulge Height.
+         */
+        _this.bulgeHeight = -0.323;
+        /**
+         * Gets or sets the Bulge Radius.
+         */
+        _this.bulgeRadius = 0.73;
+        /**
+         * Gets or sets the Sun Intensity.
+         */
+        _this.sunIntensity = 2;
+        /**
+         * Gets or sets the Sun Theta.
+         */
+        _this.sunTheta = 0.937;
+        /**
+         * Gets or sets the Sun Phi.
+         */
+        _this.sunPhi = 0.555;
+        /**
+         * Gets or sets the Indirect Diffuse.
+         */
+        _this.indirectDiffuse = 1;
+        /**
+         * Gets or sets the base albedo.
+         */
+        _this.albedo = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.505882, 0.996078, 1);
+        /**
+         * Gets or sets the Specular value.
+         */
+        _this.specular = 0;
+        /**
+         * Gets or sets the Shininess value.
+         */
+        _this.shininess = 10;
+        /**
+         * Gets or sets the Sharpness value.
+         */
+        _this.sharpness = 0;
+        /**
+         * Gets or sets the Subsurface value.
+         */
+        _this.subsurface = 0.31;
+        /**
+         * Gets or sets the left gradient color.
+         */
+        _this.leftGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.505882, 0.996078, 1);
+        /**
+         * Gets or sets the right gradient color.
+         */
+        _this.rightGradientColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.505882, 0.996078, 1);
+        /**
+         * Gets or sets the reflection value.
+         */
+        _this.reflection = 0.749;
+        /**
+         * Gets or sets the front reflect value.
+         */
+        _this.frontReflect = 0;
+        /**
+         * Gets or sets the edge reflect value.
+         */
+        _this.edgeReflect = 0.09;
+        /**
+         * Gets or sets the power value.
+         */
+        _this.power = 8.1;
+        /**
+         * Gets or sets the sky color.
+         */
+        _this.skyColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.960784, 0.996078, 1);
+        /**
+         * Gets or sets the horizon color.
+         */
+        _this.horizonColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0.0117647, 0.333333, 0.996078, 1);
+        /**
+         * Gets or sets the ground color.
+         */
+        _this.groundColor = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Color4"](0, 0.254902, 0.996078, 1);
+        /**
+         * Gets or sets the horizon power value.
+         */
+        _this.horizonPower = 1;
+        /**
+         * Gets or sets the finger occlusion width value.
+         */
+        _this.width = 0.02;
+        /**
+         * Gets or sets the finger occlusion fuzz value.
+         */
+        _this.fuzz = 0.5;
+        /**
+         * Gets or sets the minimum finger occlusion fuzz value.
+         */
+        _this.minFuzz = 0.001;
+        /**
+         * Gets or sets the finger occlusion clip fade value.
+         */
+        _this.clipFade = 0.01;
+        /**
+         * Gets or sets the hue shift value.
+         */
+        _this.hueShift = 0;
+        /**
+         * Gets or sets the saturation shift value.
+         */
+        _this.saturationShift = 0;
+        /**
+         * Gets or sets the value shift.
+         */
+        _this.valueShift = 0;
+        /**
+         * Gets or sets the position of the hover glow effect.
+         */
+        _this.blobPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0.1);
+        /**
+         * Gets or sets the intensity of the hover glow effect.
+         */
+        _this.blobIntensity = 0.5;
+        /**
+         * Gets or sets the near size of the hover glow effect.
+         */
+        _this.blobNearSize = 0.01;
+        /**
+        * Gets or sets the far size of the hover glow effect.
+        */
+        _this.blobFarSize = 0.03;
+        /**
+         * Gets or sets the distance considered "near" to the mesh, which controls the size of the hover glow effect (see blobNearSize).
+         */
+        _this.blobNearDistance = 0;
+        /**
+         * Gets or sets the distance considered "far" from the mesh, which controls the size of the hover glow effect (see blobFarSize).
+         */
+        _this.blobFarDistance = 0.08;
+        /**
+         * Gets or sets the length of the hover glow effect fade.
+         */
+        _this.blobFadeLength = 0.576;
+        /**
+         * Gets or sets the progress of the hover glow effect selection animation corresponding to the left pointer (0.0 - 1.0).
+         */
+        _this.blobPulse = 0;
+        /**
+         * Gets or sets the opacity of the hover glow effect corresponding to the left pointer (0.0 - 1.0). Default is 0.
+         */
+        _this.blobFade = 1;
+        /**
+         * Gets or sets the position of the hover glow effect.
+         */
+        _this.blobPosition2 = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0.2, 0, 0.1);
+        /**
+         * Gets or sets the size of the hover glow effect when the right pointer is considered "near" to the mesh (see blobNearDistance).
+         */
+        _this.blobNearSize2 = 0.01;
+        /**
+         * Gets or sets the progress of the hover glow effect selection animation corresponding to the right pointer (0.0 - 1.0).
+         */
+        _this.blobPulse2 = 0;
+        /**
+         * Gets or sets the opacity of the hover glow effect corresponding to the right pointer (0.0 - 1.0). Default is 1.
+         */
+        _this.blobFade2 = 1;
+        /**
+         * Gets or sets the texture of the hover glow effect.
+         */
+        _this.blobTexture = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", _this.getScene());
+        /**
+         * Gets or sets the finger position for left index.
+         */
+        _this.leftIndexPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 1);
+        /**
+         * Gets or sets the finger position for right index.
+         */
+        _this.rightIndexPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](-1, -1, -1);
+        /**
+         * Gets or sets the finger position for left index middle position.
+         */
+        _this.leftIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        /**
+         * Gets or sets the finger position for right index middle position.
+         */
+        _this.rightIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, 0);
+        /**
+         * Gets or sets the Decal Scle for XY.
+         */
+        _this.decalScaleXY = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector2"](1.5, 1.5);
+        /**
+         * Gets or sets decalFrontOnly
+         * Default is true
+         */
+        _this.decalFrontOnly = true;
+        /**
+         * Gets or sets the Rim Light intensity.
+         */
+        _this.rimIntensity = 0.287;
+        /**
+         * Gets or sets the Rim Light hue shift value.
+         */
+        _this.rimHueShift = 0;
+        /**
+         * Gets or sets the Rim Light saturation shift value.
+         */
+        _this.rimSaturationShift = 0;
+        /**
+         * Gets or sets the Rim Light value shift.
+         */
+        _this.rimValueShift = -1;
+        /**
+         * Gets or sets the intensity of the iridescence effect.
+         */
+        _this.iridescenceIntensity = 0;
+        /**
+         * @hidden
+         */
+        _this.useGlobalLeftIndex = 1.0;
+        /**
+         * @hidden
+         */
+        _this.useGlobalRightIndex = 1.0;
+        /**
+         * @hidden
+         */
+        _this.globalLeftIndexTipProximity = 0.0;
+        /**
+         * @hidden
+         */
+        _this.globalRightIndexTipProximity = 0.0;
+        /**
+         * @hidden
+         */
+        _this.globalLeftIndexTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.5, 0.0, -0.55, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globaRightIndexTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.0, 0.0, 0.0, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalLeftThumbTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.5, 0.0, -0.55, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalRightThumbTipPosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.0, 0.0, 0.0, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalLeftIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.5, 0.0, -0.55, 1.0);
+        /**
+         * @hidden
+         */
+        _this.globalRightIndexMiddlePosition = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Vector4"](0.0, 0.0, 0.0, 1.0);
+        _this.alphaMode = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Constants"].ALPHA_DISABLE;
+        _this.backFaceCulling = false;
+        _this._blueGradientTexture = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"](MRDLSliderThumbMaterial.BLUE_GRADIENT_TEXTURE_URL, scene, true, false, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"].NEAREST_SAMPLINGMODE);
+        return _this;
+    }
+    MRDLSliderThumbMaterial.prototype.needAlphaBlending = function () {
+        return false;
+    };
+    MRDLSliderThumbMaterial.prototype.needAlphaTesting = function () {
+        return false;
+    };
+    MRDLSliderThumbMaterial.prototype.getAlphaTestTexture = function () {
+        return null;
+    };
+    // Methods
+    MRDLSliderThumbMaterial.prototype.isReadyForSubMesh = function (mesh, subMesh, useInstances) {
+        if (this.isFrozen) {
+            if (subMesh.effect && subMesh.effect._wasPreviouslyReady) {
+                return true;
+            }
+        }
+        if (!subMesh._materialDefines) {
+            subMesh.materialDefines = new MRDLSliderThumbMaterialDefines();
+        }
+        var defines = subMesh._materialDefines;
+        var scene = this.getScene();
+        if (this._isReadyForSubMesh(subMesh)) {
+            return true;
+        }
+        var engine = scene.getEngine();
+        // Attribs
+        babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareDefinesForAttributes(mesh, defines, false, false);
+        // Get correct effect
+        if (defines.isDirty) {
+            defines.markAsProcessed();
+            scene.resetCachedMaterial();
+            // Fallbacks
+            var fallbacks = new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["EffectFallbacks"]();
+            if (defines.FOG) {
+                fallbacks.addFallback(1, "FOG");
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].HandleFallbacksForShadows(defines, fallbacks);
+            defines.IMAGEPROCESSINGPOSTPROCESS = scene.imageProcessingConfiguration.applyByPostProcess;
+            //Attributes
+            var attribs = [babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].PositionKind];
+            if (defines.NORMAL) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].NormalKind);
+            }
+            if (defines.UV1) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UVKind);
+            }
+            if (defines.UV2) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].UV2Kind);
+            }
+            if (defines.VERTEXCOLOR) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].ColorKind);
+            }
+            if (defines.TANGENT) {
+                attribs.push(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["VertexBuffer"].TangentKind);
+            }
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareAttributesForInstances(attribs, defines);
+            // Legacy browser patch
+            var shaderName = "mrdlSliderThumb";
+            var join = defines.toString();
+            var uniforms = [
+                "world", "viewProjection", "cameraPosition",
+                "_Radius_", "_Bevel_Front_", "_Bevel_Front_Stretch_", "_Bevel_Back_", "_Bevel_Back_Stretch_",
+                "_Radius_Top_Left_", "_Radius_Top_Right_", "_Radius_Bottom_Left_", "_Radius_Bottom_Right_",
+                "_Bulge_Enabled_", "_Bulge_Height_", "_Bulge_Radius_", "_Sun_Intensity_", "_Sun_Theta_", "_Sun_Phi_",
+                "_Indirect_Diffuse_", "_Albedo_", "_Specular_", "_Shininess_", "_Sharpness_", "_Subsurface_",
+                "_Left_Color_", "_Right_Color_", "_Reflection_", "_Front_Reflect_", "_Edge_Reflect_", "_Power_",
+                "_Sky_Color_", "_Horizon_Color_", "_Ground_Color_", "_Horizon_Power_", "_Reflection_Map_",
+                "_Indirect_Environment_", "_Width_", "_Fuzz_", "_Min_Fuzz_", "_Clip_Fade_", "_Hue_Shift_", "_Saturation_Shift_",
+                "_Value_Shift_", "_Blob_Position_", "_Blob_Intensity_", "_Blob_Near_Size_", "_Blob_Far_Size_",
+                "_Blob_Near_Distance_", "_Blob_Far_Distance_", "_Blob_Fade_Length_", "_Blob_Pulse_", "_Blob_Fade_",
+                "_Blob_Texture_", "_Blob_Position_2_", "_Blob_Near_Size_2_", "_Blob_Pulse_2_", "_Blob_Fade_2_",
+                "_Left_Index_Pos_", "_Right_Index_Pos_", "_Left_Index_Middle_Pos_", "_Right_Index_Middle_Pos_",
+                "_Decal_", "_Decal_Scale_XY_", "_Decal_Front_Only_", "_Rim_Intensity_", "_Rim_Texture_", "_Rim_Hue_Shift_",
+                "_Rim_Saturation_Shift_", "_Rim_Value_Shift_", "_Iridescence_Intensity_", "_Iridescence_Texture_",
+                "Use_Global_Left_Index", "Use_Global_Right_Index", "Global_Left_Index_Tip_Position", "Global_Right_Index_Tip_Position",
+                "Global_Left_Thumb_Tip_Position", "Global_Right_Thumb_Tip_Position", "Global_Left_Index_Middle_Position;", "Global_Right_Index_Middle_Position", "Global_Left_Index_Tip_Proximity", "Global_Right_Index_Tip_Proximity"
+            ];
+            var samplers = ["_Rim_Texture_", "_Iridescence_Texture_"];
+            var uniformBuffers = new Array();
+            babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["MaterialHelper"].PrepareUniformsAndSamplersList({
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: defines,
+                maxSimultaneousLights: 4
+            });
+            subMesh.setEffect(scene.getEngine().createEffect(shaderName, {
+                attributes: attribs,
+                uniformsNames: uniforms,
+                uniformBuffersNames: uniformBuffers,
+                samplers: samplers,
+                defines: join,
+                fallbacks: fallbacks,
+                onCompiled: this.onCompiled,
+                onError: this.onError,
+                indexParameters: { maxSimultaneousLights: 4 }
+            }, engine), defines);
+        }
+        if (!subMesh.effect || !subMesh.effect.isReady()) {
+            return false;
+        }
+        defines._renderId = scene.getRenderId();
+        subMesh.effect._wasPreviouslyReady = true;
+        return true;
+    };
+    MRDLSliderThumbMaterial.prototype.bindForSubMesh = function (world, mesh, subMesh) {
+        var defines = subMesh._materialDefines;
+        if (!defines) {
+            return;
+        }
+        var effect = subMesh.effect;
+        if (!effect) {
+            return;
+        }
+        this._activeEffect = effect;
+        // Matrices
+        this.bindOnlyWorldMatrix(world);
+        this._activeEffect.setMatrix("viewProjection", this.getScene().getTransformMatrix());
+        this._activeEffect.setVector3("cameraPosition", this.getScene().activeCamera.position);
+        // "Round Rect"
+        this._activeEffect.setFloat("_Radius_", this.radius);
+        this._activeEffect.setFloat("_Bevel_Front_", this.bevelFront);
+        this._activeEffect.setFloat("_Bevel_Front_Stretch_", this.bevelFrontStretch);
+        this._activeEffect.setFloat("_Bevel_Back_", this.bevelBack);
+        this._activeEffect.setFloat("_Bevel_Back_Stretch_", this.bevelBackStretch);
+        // "Radii Multipliers"
+        this._activeEffect.setFloat("_Radius_Top_Left_", this.radiusTopLeft);
+        this._activeEffect.setFloat("_Radius_Top_Right_", this.radiusTopRight);
+        this._activeEffect.setFloat("_Radius_Bottom_Left_", this.radiusBottomLeft);
+        this._activeEffect.setFloat("_Radius_Bottom_Right_", this.radiusBottomRight);
+        // "Bulge"
+        this._activeEffect.setFloat("_Bulge_Enabled_", this.bulgeEnabled ? 1.0 : 0.0);
+        this._activeEffect.setFloat("_Bulge_Height_", this.bulgeHeight);
+        this._activeEffect.setFloat("_Bulge_Radius_", this.bulgeRadius);
+        // "Sun"
+        this._activeEffect.setFloat("_Sun_Intensity_", this.sunIntensity);
+        this._activeEffect.setFloat("_Sun_Theta_", this.sunTheta);
+        this._activeEffect.setFloat("_Sun_Phi_", this.sunPhi);
+        this._activeEffect.setFloat("_Indirect_Diffuse_", this.indirectDiffuse);
+        // "Diffuse And Specular"
+        this._activeEffect.setDirectColor4("_Albedo_", this.albedo);
+        this._activeEffect.setFloat("_Specular_", this.specular);
+        this._activeEffect.setFloat("_Shininess_", this.shininess);
+        this._activeEffect.setFloat("_Sharpness_", this.sharpness);
+        this._activeEffect.setFloat("_Subsurface_", this.subsurface);
+        // "Gradient"
+        this._activeEffect.setDirectColor4("_Left_Color_", this.leftGradientColor);
+        this._activeEffect.setDirectColor4("_Right_Color_", this.rightGradientColor);
+        // "Reflection"
+        this._activeEffect.setFloat("_Reflection_", this.reflection);
+        this._activeEffect.setFloat("_Front_Reflect_", this.frontReflect);
+        this._activeEffect.setFloat("_Edge_Reflect_", this.edgeReflect);
+        this._activeEffect.setFloat("_Power_", this.power);
+        // "Sky Environment"
+        //define SKY_ENABLED true;
+        this._activeEffect.setDirectColor4("_Sky_Color_", this.skyColor);
+        this._activeEffect.setDirectColor4("_Horizon_Color_", this.horizonColor);
+        this._activeEffect.setDirectColor4("_Ground_Color_", this.groundColor);
+        this._activeEffect.setFloat("_Horizon_Power_", this.horizonPower);
+        // "Mapped Environment"
+        //define ENV_ENABLE false;
+        this._activeEffect.setTexture("_Reflection_Map_", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", this.getScene()));
+        this._activeEffect.setTexture("_Indirect_Environment_", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", this.getScene()));
+        // "FingerOcclusion"
+        //define OCCLUSION_ENABLED false;
+        this._activeEffect.setFloat("_Width_", this.width);
+        this._activeEffect.setFloat("_Fuzz_", this.fuzz);
+        this._activeEffect.setFloat("_Min_Fuzz_", this.minFuzz);
+        this._activeEffect.setFloat("_Clip_Fade_", this.clipFade);
+        // "View Based Color Shift"
+        this._activeEffect.setFloat("_Hue_Shift_", this.hueShift);
+        this._activeEffect.setFloat("_Saturation_Shift_", this.saturationShift);
+        this._activeEffect.setFloat("_Value_Shift_", this.valueShift);
+        // "Blob"
+        //define BLOB_ENABLE false;
+        this._activeEffect.setVector3("_Blob_Position_", this.blobPosition);
+        this._activeEffect.setFloat("_Blob_Intensity_", this.blobIntensity);
+        this._activeEffect.setFloat("_Blob_Near_Size_", this.blobNearSize);
+        this._activeEffect.setFloat("_Blob_Far_Size_", this.blobFarSize);
+        this._activeEffect.setFloat("_Blob_Near_Distance_", this.blobNearDistance);
+        this._activeEffect.setFloat("_Blob_Far_Distance_", this.blobFarDistance);
+        this._activeEffect.setFloat("_Blob_Fade_Length_", this.blobFadeLength);
+        this._activeEffect.setFloat("_Blob_Pulse_", this.blobPulse);
+        this._activeEffect.setFloat("_Blob_Fade_", this.blobFade);
+        // "Blob Texture"
+        this._activeEffect.setTexture("_Blob_Texture_", this.blobTexture);
+        // "Blob 2"
+        //define BLOB_ENABLE_2 true;
+        this._activeEffect.setVector3("_Blob_Position_2_", this.blobPosition2);
+        this._activeEffect.setFloat("_Blob_Near_Size_2_", this.blobNearSize2);
+        this._activeEffect.setFloat("_Blob_Pulse_2_", this.blobPulse2);
+        this._activeEffect.setFloat("_Blob_Fade_2_", this.blobFade2);
+        // "Finger Positions"
+        this._activeEffect.setVector3("_Left_Index_Pos_", this.leftIndexPosition);
+        this._activeEffect.setVector3("_Right_Index_Pos_", this.rightIndexPosition);
+        this._activeEffect.setVector3("_Left_Index_Middle_Pos_", this.leftIndexMiddlePosition);
+        this._activeEffect.setVector3("_Right_Index_Middle_Pos_", this.rightIndexMiddlePosition);
+        // "Decal Texture"
+        //define DECAL_ENABLE false;
+        this._activeEffect.setTexture("_Decal_", new babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Texture"]("", this.getScene()));
+        this._activeEffect.setVector2("_Decal_Scale_XY_", this.decalScaleXY);
+        this._activeEffect.setFloat("_Decal_Front_Only_", this.decalFrontOnly ? 1.0 : 0.0);
+        // "Rim Light"
+        this._activeEffect.setFloat("_Rim_Intensity_", this.rimIntensity);
+        this._activeEffect.setTexture("_Rim_Texture_", this._blueGradientTexture);
+        this._activeEffect.setFloat("_Rim_Hue_Shift_", this.rimHueShift);
+        this._activeEffect.setFloat("_Rim_Saturation_Shift_", this.rimSaturationShift);
+        this._activeEffect.setFloat("_Rim_Value_Shift_", this.rimValueShift);
+        // "Iridescence"
+        //define IRIDESCENCE_ENABLED true;
+        this._activeEffect.setFloat("_Iridescence_Intensity_", this.iridescenceIntensity);
+        this._activeEffect.setTexture("_Iridescence_Texture_", this._blueGradientTexture);
+        // Global inputs
+        this._activeEffect.setFloat("Use_Global_Left_Index", this.useGlobalLeftIndex);
+        this._activeEffect.setFloat("Use_Global_Right_Index", this.useGlobalRightIndex);
+        this._activeEffect.setVector4("Global_Left_Index_Tip_Position", this.globalLeftIndexTipPosition);
+        this._activeEffect.setVector4("Global_Right_Index_Tip_Position", this.globaRightIndexTipPosition);
+        this._activeEffect.setVector4("Global_Left_Thumb_Tip_Position", this.globalLeftThumbTipPosition);
+        this._activeEffect.setVector4("Global_Right_Thumb_Tip_Position", this.globalRightThumbTipPosition);
+        this._activeEffect.setVector4("Global_Left_Index_Middle_Position", this.globalLeftIndexMiddlePosition);
+        this._activeEffect.setVector4("Global_Right_Index_Middle_Position", this.globalRightIndexMiddlePosition);
+        this._activeEffect.setFloat("Global_Left_Index_Tip_Proximity", this.globalLeftIndexTipProximity);
+        this._activeEffect.setFloat("Global_Right_Index_Tip_Proximity", this.globalRightIndexTipProximity);
+        this._afterBind(mesh, this._activeEffect);
+    };
+    /**
+     * Get the list of animatables in the material.
+     * @returns the list of animatables object used in the material
+     */
+    MRDLSliderThumbMaterial.prototype.getAnimatables = function () {
+        return [];
+    };
+    MRDLSliderThumbMaterial.prototype.dispose = function (forceDisposeEffect) {
+        _super.prototype.dispose.call(this, forceDisposeEffect);
+    };
+    MRDLSliderThumbMaterial.prototype.clone = function (name) {
+        var _this = this;
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Clone(function () { return new MRDLSliderThumbMaterial(name, _this.getScene()); }, this);
+    };
+    MRDLSliderThumbMaterial.prototype.serialize = function () {
+        var serializationObject = babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Serialize(this);
+        serializationObject.customType = "BABYLON.MRDLSliderThumbMaterial";
+        return serializationObject;
+    };
+    MRDLSliderThumbMaterial.prototype.getClassName = function () {
+        return "MRDLSliderThumbMaterial";
+    };
+    // Statics
+    MRDLSliderThumbMaterial.Parse = function (source, scene, rootUrl) {
+        return babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["SerializationHelper"].Parse(function () { return new MRDLSliderThumbMaterial(source.name, scene); }, source, scene, rootUrl);
+    };
+    /**
+     * URL pointing to the texture used to define the coloring for the Iridescent Map effect.
+     */
+    MRDLSliderThumbMaterial.BLUE_GRADIENT_TEXTURE_URL = "https://assets.babylonjs.com/meshes/MRTK/MRDL/mrtk-mrdl-blue-gradient.png";
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "radius", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "bevelFront", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "bevelFrontStretch", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "bevelBack", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "bevelBackStretch", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "radiusTopLeft", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "radiusTopRight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "radiusBottomLeft", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "radiusBottomRight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "bulgeEnabled", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "bulgeHeight", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "bulgeRadius", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "sunIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "sunTheta", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "sunPhi", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "indirectDiffuse", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "albedo", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "specular", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "shininess", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "sharpness", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "subsurface", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "leftGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "rightGradientColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "reflection", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "frontReflect", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "edgeReflect", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "power", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "skyColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "horizonColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "groundColor", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "horizonPower", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "width", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "fuzz", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "minFuzz", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "clipFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "hueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "saturationShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "valueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobNearSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobFarSize", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobNearDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobFarDistance", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobFadeLength", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobPulse", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobFade", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobPosition2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobNearSize2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobPulse2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobFade2", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "blobTexture", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "leftIndexPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "rightIndexPosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "leftIndexMiddlePosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "rightIndexMiddlePosition", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "decalScaleXY", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "decalFrontOnly", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "rimIntensity", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "rimHueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "rimSaturationShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "rimValueShift", void 0);
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["serialize"])()
+    ], MRDLSliderThumbMaterial.prototype, "iridescenceIntensity", void 0);
+    return MRDLSliderThumbMaterial;
+}(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["PushMaterial"]));
+
+Object(babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["RegisterClass"])("BABYLON.GUI.MRDLSliderThumbMaterial", MRDLSliderThumbMaterial);
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/shaders/mrdlBackplate.fragment.ts":
+/*!*************************************************************!*\
+  !*** ./3D/materials/mrdl/shaders/mrdlBackplate.fragment.ts ***!
+  \*************************************************************/
+/*! exports provided: mrdlBackplatePixelShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mrdlBackplatePixelShader", function() { return mrdlBackplatePixelShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'mrdlBackplatePixelShader';
+var shader = "uniform vec3 cameraPosition;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\nuniform float _Radius_;\nuniform float _Line_Width_;\nuniform bool _Absolute_Sizes_;\nuniform float _Filter_Width_;\nuniform vec4 _Base_Color_;\nuniform vec4 _Line_Color_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\nuniform float _Rate_;\nuniform vec4 _Highlight_Color_;\nuniform float _Highlight_Width_;\nuniform vec4 _Highlight_Transform_;\nuniform float _Highlight_;\n\nuniform float _Iridescence_Intensity_;\nuniform float _Iridescence_Edge_Intensity_;\nuniform vec4 _Iridescence_Tint_;\nuniform sampler2D _Iridescent_Map_;\nuniform float _Angle_;\nuniform bool _Reflected_;\nuniform float _Frequency_;\nuniform float _Vertical_Offset_;\nuniform vec4 _Gradient_Color_;\nuniform vec4 _Top_Left_;\nuniform vec4 _Top_Right_;\nuniform vec4 _Bottom_Left_;\nuniform vec4 _Bottom_Right_;\n\nuniform float _Edge_Width_;\nuniform float _Edge_Power_;\nuniform float _Line_Gradient_Blend_;\nuniform float _Fade_Out_;\n\n\nvoid FastLinearTosRGB_B353(\nvec4 Linear,\nout vec4 sRGB)\n{\nsRGB.rgb=sqrt(clamp(Linear.rgb,0.0,1.0));\nsRGB.a=Linear.a;\n}\n\n\nvoid Round_Rect_Fragment_B332(\nfloat Radius,\nfloat Line_Width,\nvec4 Line_Color,\nfloat Filter_Width,\nvec2 UV,\nfloat Line_Visibility,\nvec4 Rect_Parms,\nvec4 Fill_Color,\nout vec4 Color)\n{\nfloat d=length(max(abs(UV)-Rect_Parms.xy,0.0));\nfloat dx=max(fwidth(d)*Filter_Width,0.00001);\n\nfloat g=min(Rect_Parms.z,Rect_Parms.w);\nfloat dgrad=max(fwidth(g)*Filter_Width,0.00001);\nfloat Inside_Rect=clamp(g/dgrad,0.0,1.0);\n\n\nfloat inner=clamp((d+dx*0.5-max(Radius-Line_Width,d-dx*0.5))/dx,0.0,1.0);\nColor=clamp(mix(Fill_Color,Line_Color,inner),0.0,1.0)*Inside_Rect;\n\n\n\n}\n\n\nvoid Iridescence_B343(\nvec3 Position,\nvec3 Normal,\nvec2 UV,\nvec3 Axis,\nvec3 Eye,\nvec4 Tint,\nsampler2D Texture,\nbool Reflected,\nfloat Frequency,\nfloat Vertical_Offset,\nout vec4 Color)\n{\nvec3 i=normalize(Position-Eye);\nvec3 r=reflect(i,Normal);\nfloat idota=dot(i,Axis);\nfloat idotr=dot(i,r);\nfloat x=Reflected ? idotr : idota;\nvec2 xy;\nxy.x=fract((x*Frequency+1.0)*0.5+UV.y*Vertical_Offset);\nxy.y=0.5;\nColor=texture(Texture,xy);\nColor.rgb*=Tint.rgb;\n}\n\n\nvoid Scale_RGB_B346(\nvec4 Color,\nfloat Scalar,\nout vec4 Result)\n{\nResult=vec4(Scalar,Scalar,Scalar,1)*Color;\n}\n\n\nvoid Scale_RGB_B344(\nfloat Scalar,\nvec4 Color,\nout vec4 Result)\n{\nResult=vec4(Scalar,Scalar,Scalar,1)*Color;\n}\n\n\nvoid Line_Fragment_B362(\nvec4 Base_Color,\nvec4 Highlight_Color,\nfloat Highlight_Width,\nvec3 Line_Vertex,\nfloat Highlight,\nout vec4 Line_Color)\n{\nfloat k2=1.0-clamp(abs(Line_Vertex.y/Highlight_Width),0.0,1.0);\nLine_Color=mix(Base_Color,Highlight_Color,Highlight*k2);\n}\n\n\nvoid Edge_B356(\nvec4 RectParms,\nfloat Radius,\nfloat Line_Width,\nvec2 UV,\nfloat Edge_Width,\nfloat Edge_Power,\nout float Result)\n{\nfloat d=length(max(abs(UV)-RectParms.xy,0.0));\nfloat edge=1.0-clamp((1.0-d/(Radius-Line_Width))/Edge_Width,0.0,1.0);\nResult=pow(edge,Edge_Power);\n}\n\n\nvoid Gradient_B355(\nvec4 Gradient_Color,\nvec4 Top_Left,\nvec4 Top_Right,\nvec4 Bottom_Left,\nvec4 Bottom_Right,\nvec2 UV,\nout vec4 Result)\n{\nvec3 top=Top_Left.rgb+(Top_Right.rgb-Top_Left.rgb)*UV.x;\nvec3 bottom=Bottom_Left.rgb+(Bottom_Right.rgb-Bottom_Left.rgb)*UV.x;\nResult.rgb=Gradient_Color.rgb*(bottom+(top-bottom)*UV.y);\nResult.a=1.0;\n}\n\nvoid main()\n{\n\nfloat X_Q338;\nfloat Y_Q338;\nfloat Z_Q338;\nfloat W_Q338;\nX_Q338=vExtra2.x;\nY_Q338=vExtra2.y;\nZ_Q338=vExtra2.z;\nW_Q338=vExtra2.w;\nvec4 Color_Q343;\n#if IRIDESCENCE_ENABLE\nIridescence_B343(vPosition,vNormal,vUV,vBinormal,cameraPosition,_Iridescence_Tint_,_Iridescent_Map_,_Reflected_,_Frequency_,_Vertical_Offset_,Color_Q343);\n#else\nColor_Q343=vec4(0,0,0,0);\n#endif\nvec4 Result_Q344;\nScale_RGB_B344(_Iridescence_Intensity_,Color_Q343,Result_Q344);\nvec4 Line_Color_Q362;\nLine_Fragment_B362(_Line_Color_,_Highlight_Color_,_Highlight_Width_,vTangent,_Highlight_,Line_Color_Q362);\nfloat Result_Q356;\n#if EDGE_ONLY\nEdge_B356(vExtra1,Z_Q338,W_Q338,vUV,_Edge_Width_,_Edge_Power_,Result_Q356);\n#else\nResult_Q356=1.0;\n#endif\n\nvec2 Vec2_Q339=vec2(X_Q338,Y_Q338);\nvec4 Result_Q355;\nGradient_B355(_Gradient_Color_,_Top_Left_,_Top_Right_,_Bottom_Left_,_Bottom_Right_,Vec2_Q339,Result_Q355);\n\nvec4 Linear_Q348;\nLinear_Q348.rgb=clamp(Result_Q355.rgb*Result_Q355.rgb,0.0,1.0);\nLinear_Q348.a=Result_Q355.a;\nvec4 Result_Q346;\nScale_RGB_B346(Linear_Q348,Result_Q356,Result_Q346);\n\nvec4 Sum_Q345=Result_Q346+Result_Q344;\n\nvec4 Color_At_T_Q347=mix(Line_Color_Q362,Result_Q346,_Line_Gradient_Blend_);\n\nvec4 Base_And_Iridescent_Q350;\nBase_And_Iridescent_Q350=_Base_Color_+vec4(Sum_Q345.rgb,0.0);\n\nvec4 Sum_Q349=Color_At_T_Q347+_Iridescence_Edge_Intensity_*Color_Q343;\n\nvec4 Result_Q351=Sum_Q349; Result_Q351.a=1.0;\nvec4 Color_Q332;\nRound_Rect_Fragment_B332(Z_Q338,W_Q338,Result_Q351,_Filter_Width_,vUV,1.0,vExtra1,Base_And_Iridescent_Q350,Color_Q332);\n\nvec4 Result_Q354=_Fade_Out_*Color_Q332;\nvec4 sRGB_Q353;\nFastLinearTosRGB_B353(Result_Q354,sRGB_Q353);\nvec4 Out_Color=sRGB_Q353;\nfloat Clip_Threshold=0.001;\nbool To_sRGB=false;\ngl_FragColor=Out_Color;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var mrdlBackplatePixelShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/shaders/mrdlBackplate.vertex.ts":
+/*!***********************************************************!*\
+  !*** ./3D/materials/mrdl/shaders/mrdlBackplate.vertex.ts ***!
+  \***********************************************************/
+/*! exports provided: mrdlBackplateVertexShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mrdlBackplateVertexShader", function() { return mrdlBackplateVertexShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'mrdlBackplateVertexShader';
+var shader = "uniform mat4 world;\nuniform mat4 viewProjection;\nuniform vec3 cameraPosition;\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec3 tangent;\nuniform float _Radius_;\nuniform float _Line_Width_;\nuniform bool _Absolute_Sizes_;\nuniform float _Filter_Width_;\nuniform vec4 _Base_Color_;\nuniform vec4 _Line_Color_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\nuniform float _Rate_;\nuniform vec4 _Highlight_Color_;\nuniform float _Highlight_Width_;\nuniform vec4 _Highlight_Transform_;\nuniform float _Highlight_;\n\nuniform float _Iridescence_Intensity_;\nuniform float _Iridescence_Edge_Intensity_;\nuniform vec4 _Iridescence_Tint_;\nuniform sampler2D _Iridescent_Map_;\nuniform float _Angle_;\nuniform bool _Reflected_;\nuniform float _Frequency_;\nuniform float _Vertical_Offset_;\nuniform vec4 _Gradient_Color_;\nuniform vec4 _Top_Left_;\nuniform vec4 _Top_Right_;\nuniform vec4 _Bottom_Left_;\nuniform vec4 _Bottom_Right_;\n\nuniform float _Edge_Width_;\nuniform float _Edge_Power_;\nuniform float _Line_Gradient_Blend_;\nuniform float _Fade_Out_;\n\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\n\nvoid Object_To_World_Pos_B314(\nvec3 Pos_Object,\nout vec3 Pos_World)\n{\nPos_World=(world*vec4(Pos_Object,1.0)).xyz;\n}\n\n\nvoid Round_Rect_Vertex_B357(\nvec2 UV,\nfloat Radius,\nfloat Margin,\nfloat Anisotropy,\nfloat Gradient1,\nfloat Gradient2,\nvec3 Normal,\nvec4 Color_Scale_Translate,\nout vec2 Rect_UV,\nout vec4 Rect_Parms,\nout vec2 Scale_XY,\nout vec2 Line_UV,\nout vec2 Color_UV_Info)\n{\nScale_XY=vec2(Anisotropy,1.0);\nLine_UV=(UV-vec2(0.5,0.5));\nRect_UV=Line_UV*Scale_XY;\nRect_Parms.xy=Scale_XY*0.5-vec2(Radius,Radius)-vec2(Margin,Margin);\nRect_Parms.z=Gradient1;\nRect_Parms.w=Gradient2;\nColor_UV_Info=(Line_UV+vec2(0.5,0.5))*Color_Scale_Translate.xy+Color_Scale_Translate.zw;\n}\n\n\nvoid Line_Vertex_B333(\nvec2 Scale_XY,\nvec2 UV,\nfloat Time,\nfloat Rate,\nvec4 Highlight_Transform,\nout vec3 Line_Vertex)\n{\nfloat angle2=(Rate*Time)*2.0*3.1416;\nfloat sinAngle2=sin(angle2);\nfloat cosAngle2=cos(angle2);\nvec2 xformUV=UV*Highlight_Transform.xy+Highlight_Transform.zw;\nLine_Vertex.x=0.0;\nLine_Vertex.y=cosAngle2*xformUV.x-sinAngle2*xformUV.y;\nLine_Vertex.z=0.0;\n}\n\n\nvoid PickDir_B334(\nfloat Degrees,\nvec3 DirX,\nvec3 DirY,\nout vec3 Dir)\n{\n\nfloat a=Degrees*3.14159/180.0;\nDir=cos(a)*DirX+sin(a)*DirY;\n}\n\n\nvoid Move_Verts_B327(\nfloat Anisotropy,\nvec3 P,\nfloat Radius,\nout vec3 New_P,\nout vec2 New_UV,\nout float Radial_Gradient,\nout vec3 Radial_Dir)\n{\nvec2 UV=P.xy*2.0+0.5;\nvec2 center=clamp(UV,0.0,1.0);\nvec2 delta=UV-center;\nvec2 r2=2.0*vec2(Radius/Anisotropy,Radius);\nNew_UV=center+r2*(UV-2.0*center+0.5);\nNew_P=vec3(New_UV-0.5,P.z);\nRadial_Gradient=1.0-length(delta)*2.0;\nRadial_Dir=vec3(delta*r2,0.0);\n}\n\n\nvoid Pick_Radius_B336(\nfloat Radius,\nfloat Radius_Top_Left,\nfloat Radius_Top_Right,\nfloat Radius_Bottom_Left,\nfloat Radius_Bottom_Right,\nvec3 Position,\nout float Result)\n{\nbool whichY=Position.y>0.0;\nResult=Position.x<0.0 ? (whichY ? Radius_Top_Left : Radius_Bottom_Left) : (whichY ? Radius_Top_Right : Radius_Bottom_Right);\nResult*=Radius;\n}\n\n\nvoid Edge_AA_Vertex_B328(\nvec3 Position_World,\nvec3 Position_Object,\nvec3 Normal_Object,\nvec3 Eye,\nfloat Radial_Gradient,\nvec3 Radial_Dir,\nvec3 Tangent,\nout float Gradient1,\nout float Gradient2)\n{\n\nvec3 I=(Eye-Position_World);\nvec3 T=(vec4(Tangent,0.0)).xyz;\nfloat g=(dot(T,I)<0.0) ? 0.0 : 1.0;\nif (Normal_Object.z==0.0) {\n\nGradient1=Position_Object.z>0.0 ? g : 1.0;\nGradient2=Position_Object.z>0.0 ? 1.0 : g;\n} else {\n\n\n\n\nGradient1=g+(1.0-g)*(Radial_Gradient);\nGradient2=1.0;\n}\n}\n\n\nvoid Object_To_World_Dir_B330(\nvec3 Dir_Object,\nout vec3 Binormal_World,\nout vec3 Binormal_World_N,\nout float Binormal_Length)\n{\nBinormal_World=(world*vec4(Dir_Object,0.0)).xyz;\nBinormal_Length=length(Binormal_World);\nBinormal_World_N=Binormal_World/Binormal_Length;\n}\n\n\nvoid RelativeOrAbsoluteDetail_B341(\nfloat Nominal_Radius,\nfloat Nominal_LineWidth,\nbool Absolute_Measurements,\nfloat Height,\nout float Radius,\nout float Line_Width)\n{\nfloat scale=Absolute_Measurements ? 1.0/Height : 1.0;\nRadius=Nominal_Radius*scale;\nLine_Width=Nominal_LineWidth*scale;\n}\n\nvoid main()\n{\n\nvec3 Nrm_World_Q326;\nNrm_World_Q326=normalize((world*vec4(normal,0.0)).xyz);\n\nvec3 Tangent_World_Q329;\nvec3 Tangent_World_N_Q329;\nfloat Tangent_Length_Q329;\nTangent_World_Q329=(world*vec4(vec3(1,0,0),0.0)).xyz;\nTangent_Length_Q329=length(Tangent_World_Q329);\nTangent_World_N_Q329=Tangent_World_Q329/Tangent_Length_Q329;\nvec3 Binormal_World_Q330;\nvec3 Binormal_World_N_Q330;\nfloat Binormal_Length_Q330;\nObject_To_World_Dir_B330(vec3(0,1,0),Binormal_World_Q330,Binormal_World_N_Q330,Binormal_Length_Q330);\nfloat Radius_Q341;\nfloat Line_Width_Q341;\nRelativeOrAbsoluteDetail_B341(_Radius_,_Line_Width_,_Absolute_Sizes_,Binormal_Length_Q330,Radius_Q341,Line_Width_Q341);\nvec3 Dir_Q334;\nPickDir_B334(_Angle_,Tangent_World_N_Q329,Binormal_World_N_Q330,Dir_Q334);\nfloat Result_Q336;\nPick_Radius_B336(Radius_Q341,_Radius_Top_Left_,_Radius_Top_Right_,_Radius_Bottom_Left_,_Radius_Bottom_Right_,position,Result_Q336);\n\nfloat Anisotropy_Q331=Tangent_Length_Q329/Binormal_Length_Q330;\n\nvec4 Out_Color_Q337=vec4(Result_Q336,Line_Width_Q341,0,1);\nvec3 New_P_Q327;\nvec2 New_UV_Q327;\nfloat Radial_Gradient_Q327;\nvec3 Radial_Dir_Q327;\nMove_Verts_B327(Anisotropy_Q331,position,Result_Q336,New_P_Q327,New_UV_Q327,Radial_Gradient_Q327,Radial_Dir_Q327);\nvec3 Pos_World_Q314;\nObject_To_World_Pos_B314(New_P_Q327,Pos_World_Q314);\nfloat Gradient1_Q328;\nfloat Gradient2_Q328;\n#if SMOOTH_EDGES\nEdge_AA_Vertex_B328(Pos_World_Q314,position,normal,cameraPosition,Radial_Gradient_Q327,Radial_Dir_Q327,tangent,Gradient1_Q328,Gradient2_Q328);\n#else\nGradient1_Q328=1.0;\nGradient2_Q328=1.0;\n#endif\nvec2 Rect_UV_Q357;\nvec4 Rect_Parms_Q357;\nvec2 Scale_XY_Q357;\nvec2 Line_UV_Q357;\nvec2 Color_UV_Info_Q357;\nRound_Rect_Vertex_B357(New_UV_Q327,Result_Q336,0.0,Anisotropy_Q331,Gradient1_Q328,Gradient2_Q328,normal,vec4(1,1,0,0),Rect_UV_Q357,Rect_Parms_Q357,Scale_XY_Q357,Line_UV_Q357,Color_UV_Info_Q357);\nvec3 Line_Vertex_Q333;\nLine_Vertex_B333(Scale_XY_Q357,Line_UV_Q357,(20.0),_Rate_,_Highlight_Transform_,Line_Vertex_Q333);\n\nfloat X_Q359;\nfloat Y_Q359;\nX_Q359=Color_UV_Info_Q357.x;\nY_Q359=Color_UV_Info_Q357.y;\n\nvec4 Vec4_Q358=vec4(X_Q359,Y_Q359,Result_Q336,Line_Width_Q341);\nvec3 Position=Pos_World_Q314;\nvec3 Normal=Nrm_World_Q326;\nvec2 UV=Rect_UV_Q357;\nvec3 Tangent=Line_Vertex_Q333;\nvec3 Binormal=Dir_Q334;\nvec4 Color=Out_Color_Q337;\nvec4 Extra1=Rect_Parms_Q357;\nvec4 Extra2=Vec4_Q358;\nvec4 Extra3=vec4(0,0,0,0);\ngl_Position=viewProjection*vec4(Position,1);\nvPosition=Position;\nvNormal=Normal;\nvUV=UV;\nvTangent=Tangent;\nvBinormal=Binormal;\nvExtra1=Extra1;\nvExtra2=Extra2;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var mrdlBackplateVertexShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/shaders/mrdlSliderBar.fragment.ts":
+/*!*************************************************************!*\
+  !*** ./3D/materials/mrdl/shaders/mrdlSliderBar.fragment.ts ***!
+  \*************************************************************/
+/*! exports provided: mrdlSliderBarPixelShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mrdlSliderBarPixelShader", function() { return mrdlSliderBarPixelShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'mrdlSliderBarPixelShader';
+var shader = "uniform vec3 cameraPosition;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\nvarying vec4 vExtra3;\nuniform float _Radius_;\nuniform float _Bevel_Front_;\nuniform float _Bevel_Front_Stretch_;\nuniform float _Bevel_Back_;\nuniform float _Bevel_Back_Stretch_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\nuniform bool _Bulge_Enabled_;\nuniform float _Bulge_Height_;\nuniform float _Bulge_Radius_;\nuniform float _Sun_Intensity_;\nuniform float _Sun_Theta_;\nuniform float _Sun_Phi_;\nuniform float _Indirect_Diffuse_;\nuniform vec4 _Albedo_;\nuniform float _Specular_;\nuniform float _Shininess_;\nuniform float _Sharpness_;\nuniform float _Subsurface_;\nuniform vec4 _Left_Color_;\nuniform vec4 _Right_Color_;\nuniform float _Reflection_;\nuniform float _Front_Reflect_;\nuniform float _Edge_Reflect_;\nuniform float _Power_;\n\nuniform vec4 _Sky_Color_;\nuniform vec4 _Horizon_Color_;\nuniform vec4 _Ground_Color_;\nuniform float _Horizon_Power_;\n\nuniform sampler2D _Reflection_Map_;\nuniform sampler2D _Indirect_Environment_;\n\nuniform float _Width_;\nuniform float _Fuzz_;\nuniform float _Min_Fuzz_;\nuniform float _Clip_Fade_;\nuniform float _Hue_Shift_;\nuniform float _Saturation_Shift_;\nuniform float _Value_Shift_;\n\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\n\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform vec3 _Left_Index_Pos_;\nuniform vec3 _Right_Index_Pos_;\nuniform vec3 _Left_Index_Middle_Pos_;\nuniform vec3 _Right_Index_Middle_Pos_;\n\nuniform sampler2D _Decal_;\nuniform vec2 _Decal_Scale_XY_;\nuniform bool _Decal_Front_Only_;\nuniform float _Rim_Intensity_;\nuniform sampler2D _Rim_Texture_;\nuniform float _Rim_Hue_Shift_;\nuniform float _Rim_Saturation_Shift_;\nuniform float _Rim_Value_Shift_;\n\nuniform float _Iridescence_Intensity_;\nuniform sampler2D _Iridescence_Texture_;\nuniform bool Use_Global_Left_Index;\nuniform bool Use_Global_Right_Index;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\nuniform vec4 Global_Left_Thumb_Tip_Position;\nuniform vec4 Global_Right_Thumb_Tip_Position;\nuniform vec4 Global_Left_Index_Middle_Position;\nuniform vec4 Global_Right_Index_Middle_Position;\nuniform float Global_Left_Index_Tip_Proximity;\nuniform float Global_Right_Index_Tip_Proximity;\n\nvoid Blob_Fragment_B30(\nsampler2D Blob_Texture,\nvec4 Blob_Info1,\nvec4 Blob_Info2,\nout vec4 Blob_Color)\n{\nfloat k1=dot(Blob_Info1.xy,Blob_Info1.xy);\nfloat k2=dot(Blob_Info2.xy,Blob_Info2.xy);\nvec3 closer=k1<k2 ? vec3(k1,Blob_Info1.z,Blob_Info1.w) : vec3(k2,Blob_Info2.z,Blob_Info2.w);\nBlob_Color=closer.z*texture(Blob_Texture,vec2(vec2(sqrt(closer.x),closer.y).x,1.0-vec2(sqrt(closer.x),closer.y).y))*clamp(1.0-closer.x,0.0,1.0);\n}\n\n\nvoid FastLinearTosRGB_B42(\nvec4 Linear,\nout vec4 sRGB)\n{\nsRGB.rgb=sqrt(clamp(Linear.rgb,0.0,1.0));\nsRGB.a=Linear.a;\n}\n\n\nvoid Scale_RGB_B59(\nvec4 Color,\nfloat Scalar,\nout vec4 Result)\n{\nResult=vec4(Scalar,Scalar,Scalar,1)*Color;\n}\n\n\nvoid Fragment_Main_B121(\nfloat Sun_Intensity,\nfloat Sun_Theta,\nfloat Sun_Phi,\nvec3 Normal,\nvec4 Albedo,\nfloat Fresnel_Reflect,\nfloat Shininess,\nvec3 Incident,\nvec4 Horizon_Color,\nvec4 Sky_Color,\nvec4 Ground_Color,\nfloat Indirect_Diffuse,\nfloat Specular,\nfloat Horizon_Power,\nfloat Reflection,\nvec4 Reflection_Sample,\nvec4 Indirect_Sample,\nfloat Sharpness,\nfloat SSS,\nfloat Subsurface,\nvec4 Translucence,\nvec4 Rim_Light,\nvec4 Iridescence,\nout vec4 Result)\n{\nfloat theta=Sun_Theta*2.0*3.14159;\nfloat phi=Sun_Phi*3.14159;\nvec3 lightDir=vec3(cos(phi)*cos(theta),sin(phi),cos(phi)*sin(theta));\nfloat NdotL=max(dot(lightDir,Normal),0.0);\n\nvec3 R=reflect(Incident,Normal);\nfloat RdotL=max(0.0,dot(R,lightDir));\nfloat specular=pow(RdotL,Shininess);\nspecular=mix(specular,smoothstep(0.495*Sharpness,1.0-0.495*Sharpness,specular),Sharpness);\nvec4 gi=mix(Ground_Color,Sky_Color,Normal.y*0.5+0.5);\n\nResult=((Sun_Intensity*NdotL+Indirect_Sample*Indirect_Diffuse+Translucence)*(1.0+SSS*Subsurface))*Albedo*(1.0-Fresnel_Reflect)+(Sun_Intensity*specular*Specular+Fresnel_Reflect*Reflection*Reflection_Sample)+Fresnel_Reflect*Rim_Light+Iridescence;\n}\n\n\nvoid Bulge_B79(\nbool Enabled,\nvec3 Normal,\nvec3 Tangent,\nfloat Bulge_Height,\nvec4 UV,\nfloat Bulge_Radius,\nvec3 ButtonN,\nout vec3 New_Normal)\n{\nvec2 xy=clamp(UV.xy*2.0,vec2(-1,-1),vec2(1,1));\nvec3 B=(cross(Normal,Tangent));\n\n\n\n\nfloat k=-clamp(1.0-length(xy)/Bulge_Radius,0.0,1.0)*Bulge_Height;\nk=sin(k*3.14159*0.5);\nk*=smoothstep(0.9998,0.9999,abs(dot(ButtonN,Normal)));\nNew_Normal=Normal*sqrt(1.0-k*k)+(xy.x*Tangent+xy.y*B)*k;\nNew_Normal=Enabled ? New_Normal : Normal;\n}\n\n\nvoid SSS_B77(\nvec3 ButtonN,\nvec3 Normal,\nvec3 Incident,\nout float Result)\n{\nfloat NdotI=abs(dot(Normal,Incident));\nfloat BdotI=abs(dot(ButtonN,Incident));\nResult=(abs(NdotI-BdotI));\n\n}\n\n\nvoid FingerOcclusion_B67(\nfloat Width,\nfloat DistToCenter,\nfloat Fuzz,\nfloat Min_Fuzz,\nvec3 Position,\nvec3 Forward,\nvec3 Nearest,\nfloat Fade_Out,\nout float NotInShadow)\n{\nfloat d=dot((Nearest-Position),Forward);\nfloat sh=smoothstep(Width*0.5,Width*0.5+Fuzz*max(d,0.0)+Min_Fuzz,DistToCenter);\nNotInShadow=1.0-(1.0-sh)*smoothstep(-Fade_Out,0.0,d);\n}\n\n\nvoid FingerOcclusion_B68(\nfloat Width,\nfloat DistToCenter,\nfloat Fuzz,\nfloat Min_Fuzz,\nvec3 Position,\nvec3 Forward,\nvec3 Nearest,\nfloat Fade_Out,\nout float NotInShadow)\n{\nfloat d=dot((Nearest-Position),Forward);\nfloat sh=smoothstep(Width*0.5,Width*0.5+Fuzz*max(d,0.0)+Min_Fuzz,DistToCenter);\nNotInShadow=1.0-(1.0-sh)*smoothstep(-Fade_Out,0.0,d);\n}\n\n\nvoid Scale_Color_B91(\nvec4 Color,\nfloat Scalar,\nout vec4 Result)\n{\nResult=Scalar*Color;\n}\n\n\nvoid From_HSV_B73(\nfloat Hue,\nfloat Saturation,\nfloat Value,\nfloat Alpha,\nout vec4 Color)\n{\n\nvec4 K=vec4(1.0,2.0/3.0,1.0/3.0,3.0);\nvec3 p=abs(fract(vec3(Hue,Hue,Hue)+K.xyz)*6.0-K.www);\nColor.rgb=Value*mix(K.xxx,clamp(p-K.xxx,0.0,1.0),Saturation);\nColor.a=Alpha;\n}\n\n\nvoid Fast_Fresnel_B122(\nfloat Front_Reflect,\nfloat Edge_Reflect,\nfloat Power,\nvec3 Normal,\nvec3 Incident,\nout float Transmit,\nout float Reflect)\n{\nfloat d=max(-dot(Incident,Normal),0.0);\nReflect=Front_Reflect+(Edge_Reflect-Front_Reflect)*pow(.01-d,Power);\nTransmit=1.0-Reflect;\n}\n\n\nvoid Mapped_Environment_B51(\nsampler2D Reflected_Environment,\nsampler2D Indirect_Environment,\nvec3 Dir,\nout vec4 Reflected_Color,\nout vec4 Indirect_Diffuse)\n{\n\nReflected_Color=texture(Reflected_Environment,vec2(atan(Dir.z,Dir.x)/3.14159*0.5,asin(Dir.y)/3.14159+0.5));\nIndirect_Diffuse=texture(Indirect_Environment,vec2(atan(Dir.z,Dir.x)/3.14159*0.5,asin(Dir.y)/3.14159+0.5));\n}\n\n\nvec4 SampleEnv_Bid50(vec3 D,vec4 S,vec4 H,vec4 G,float exponent)\n{\nfloat k=pow(abs(D.y),exponent);\nvec4 C;\nif (D.y>0.0) {\nC=mix(H,S,k);\n} else {\nC=mix(H,G,k);\n}\nreturn C;\n}\nvoid Sky_Environment_B50(\nvec3 Normal,\nvec3 Reflected,\nvec4 Sky_Color,\nvec4 Horizon_Color,\nvec4 Ground_Color,\nfloat Horizon_Power,\nout vec4 Reflected_Color,\nout vec4 Indirect_Color)\n{\n\nReflected_Color=SampleEnv_Bid50(Reflected,Sky_Color,Horizon_Color,Ground_Color,Horizon_Power);\nIndirect_Color=mix(Ground_Color,Sky_Color,Normal.y*0.5+0.5);\n}\n\n\nvoid Min_Segment_Distance_B65(\nvec3 P0,\nvec3 P1,\nvec3 Q0,\nvec3 Q1,\nout vec3 NearP,\nout vec3 NearQ,\nout float Distance)\n{\nvec3 u=P1-P0;\nvec3 v=Q1-Q0;\nvec3 w=P0-Q0;\nfloat a=dot(u,u);\nfloat b=dot(u,v);\nfloat c=dot(v,v);\nfloat d=dot(u,w);\nfloat e=dot(v,w);\nfloat D=a*c-b*b;\nfloat sD=D;\nfloat tD=D;\nfloat sc,sN,tc,tN;\nif (D<0.00001) {\nsN=0.0;\nsD=1.0;\ntN=e;\ntD=c;\n} else {\nsN=(b*e-c*d);\ntN=(a*e-b*d);\nif (sN<0.0) {\nsN=0.0;\ntN=e;\ntD=c;\n} else if (sN>sD) {\nsN=sD;\ntN=e+b;\ntD=c;\n}\n}\nif (tN<0.0) {\ntN=0.0;\nif (-d<0.0) {\nsN=0.0;\n} else if (-d>a) {\nsN=sD;\n} else {\nsN=-d;\nsD=a;\n}\n} else if (tN>tD) {\ntN=tD;\nif ((-d+b)<0.0) {\nsN=0.0;\n} else if ((-d+b)>a) {\nsN=sD;\n} else {\nsN=(-d+b);\nsD=a;\n}\n}\nsc=abs(sN)<0.000001 ? 0.0 : sN/sD;\ntc=abs(tN)<0.000001 ? 0.0 : tN/tD;\nNearP=P0+sc*u;\nNearQ=Q0+tc*v;\nDistance=distance(NearP,NearQ);\n}\n\n\nvoid To_XYZ_B74(\nvec3 Vec3,\nout float X,\nout float Y,\nout float Z)\n{\nX=Vec3.x;\nY=Vec3.y;\nZ=Vec3.z;\n}\n\n\nvoid Finger_Positions_B64(\nvec3 Left_Index_Pos,\nvec3 Right_Index_Pos,\nvec3 Left_Index_Middle_Pos,\nvec3 Right_Index_Middle_Pos,\nout vec3 Left_Index,\nout vec3 Right_Index,\nout vec3 Left_Index_Middle,\nout vec3 Right_Index_Middle)\n{\nLeft_Index=(Use_Global_Left_Index ? Global_Left_Index_Tip_Position.xyz : Left_Index_Pos);\nRight_Index=(Use_Global_Right_Index ? Global_Right_Index_Tip_Position.xyz : Right_Index_Pos);\nLeft_Index_Middle=(Use_Global_Left_Index ? Global_Left_Index_Middle_Position.xyz : Left_Index_Middle_Pos);\nRight_Index_Middle=(Use_Global_Right_Index ? Global_Right_Index_Middle_Position.xyz : Right_Index_Middle_Pos);\n}\n\n\nvoid VaryHSV_B108(\nvec3 HSV_In,\nfloat Hue_Shift,\nfloat Saturation_Shift,\nfloat Value_Shift,\nout vec3 HSV_Out)\n{\nHSV_Out=vec3(fract(HSV_In.x+Hue_Shift),clamp(HSV_In.y+Saturation_Shift,0.0,1.0),clamp(HSV_In.z+Value_Shift,0.0,1.0));\n}\n\n\nvoid Remap_Range_B114(\nfloat In_Min,\nfloat In_Max,\nfloat Out_Min,\nfloat Out_Max,\nfloat In,\nout float Out)\n{\nOut=mix(Out_Min,Out_Max,clamp((In-In_Min)/(In_Max-In_Min),0.0,1.0));\n}\n\n\nvoid To_HSV_B75(\nvec4 Color,\nout float Hue,\nout float Saturation,\nout float Value,\nout float Alpha,\nout vec3 HSV)\n{\n\nvec4 K=vec4(0.0,-1.0/3.0,2.0/3.0,-1.0);\nvec4 p=Color.g<Color.b ? vec4(Color.bg,K.wz) : vec4(Color.gb,K.xy);\nvec4 q=Color.r<p.x ? vec4(p.xyw,Color.r) : vec4(Color.r,p.yzx);\nfloat d=q.x-min(q.w,q.y);\nfloat e=1.0e-10;\nHue=abs(q.z+(q.w-q.y)/(6.0*d+e));\nSaturation=d/(q.x+e);\nValue=q.x;\nAlpha=Color.a;\nHSV=vec3(Hue,Saturation,Value);\n}\n\n\nvoid Code_B110(\nfloat X,\nout float Result)\n{\nResult=(acos(X)/3.14159-0.5)*2.0;\n}\n\n\nvoid Rim_Light_B132(\nvec3 Front,\nvec3 Normal,\nvec3 Incident,\nfloat Rim_Intensity,\nsampler2D Texture,\nout vec4 Result)\n{\nvec3 R=reflect(Incident,Normal);\nfloat RdotF=dot(R,Front);\nfloat RdotL=sqrt(1.0-RdotF*RdotF);\nvec2 UV=vec2(R.y*0.5+0.5,0.5);\nvec4 Color=texture(Texture,UV);\nResult=Color;\n}\n\nvoid main()\n{\nvec4 Blob_Color_Q30;\n#if BLOB_ENABLE\nBlob_Fragment_B30(_Blob_Texture_,vExtra2,vExtra3,Blob_Color_Q30);\n#else\nBlob_Color_Q30=vec4(0,0,0,0);\n#endif\n\nvec3 Incident_Q39=normalize(vPosition-cameraPosition);\n\nvec3 Normalized_Q38=normalize(vNormal);\n\nvec3 Normalized_Q71=normalize(vTangent);\n\nvec4 Color_Q83;\n#if DECAL_ENABLE\nColor_Q83=texture(_Decal_,vUV);\n#else\nColor_Q83=vec4(0,0,0,0);\n#endif\n\nfloat X_Q90;\nfloat Y_Q90;\nfloat Z_Q90;\nfloat W_Q90;\nX_Q90=vExtra1.x;\nY_Q90=vExtra1.y;\nZ_Q90=vExtra1.z;\nW_Q90=vExtra1.w;\n\nvec4 Linear_Q43;\nLinear_Q43.rgb=clamp(_Sky_Color_.rgb*_Sky_Color_.rgb,0.0,1.0);\nLinear_Q43.a=_Sky_Color_.a;\n\nvec4 Linear_Q44;\nLinear_Q44.rgb=clamp(_Horizon_Color_.rgb*_Horizon_Color_.rgb,0.0,1.0);\nLinear_Q44.a=_Horizon_Color_.a;\n\nvec4 Linear_Q45;\nLinear_Q45.rgb=clamp(_Ground_Color_.rgb*_Ground_Color_.rgb,0.0,1.0);\nLinear_Q45.a=_Ground_Color_.a;\nvec3 Left_Index_Q64;\nvec3 Right_Index_Q64;\nvec3 Left_Index_Middle_Q64;\nvec3 Right_Index_Middle_Q64;\nFinger_Positions_B64(_Left_Index_Pos_,_Right_Index_Pos_,_Left_Index_Middle_Pos_,_Right_Index_Middle_Pos_,Left_Index_Q64,Right_Index_Q64,Left_Index_Middle_Q64,Right_Index_Middle_Q64);\n\nvec4 Linear_Q46;\nLinear_Q46.rgb=clamp(_Albedo_.rgb*_Albedo_.rgb,0.0,1.0);\nLinear_Q46.a=_Albedo_.a;\n\nvec3 Normalized_Q107=normalize(vBinormal);\n\nvec3 Incident_Q70=normalize(vPosition-cameraPosition);\nvec3 New_Normal_Q79;\nBulge_B79(_Bulge_Enabled_,Normalized_Q38,Normalized_Q71,_Bulge_Height_,vColor,_Bulge_Radius_,vBinormal,New_Normal_Q79);\nfloat Result_Q77;\nSSS_B77(vBinormal,New_Normal_Q79,Incident_Q39,Result_Q77);\nvec4 Result_Q91;\nScale_Color_B91(Color_Q83,X_Q90,Result_Q91);\nfloat Transmit_Q122;\nfloat Reflect_Q122;\nFast_Fresnel_B122(_Front_Reflect_,_Edge_Reflect_,_Power_,New_Normal_Q79,Incident_Q39,Transmit_Q122,Reflect_Q122);\n\nfloat Product_Q125=Y_Q90*Y_Q90;\nvec3 NearP_Q65;\nvec3 NearQ_Q65;\nfloat Distance_Q65;\nMin_Segment_Distance_B65(Left_Index_Q64,Left_Index_Middle_Q64,vPosition,cameraPosition,NearP_Q65,NearQ_Q65,Distance_Q65);\nvec3 NearP_Q63;\nvec3 NearQ_Q63;\nfloat Distance_Q63;\nMin_Segment_Distance_B65(Right_Index_Q64,Right_Index_Middle_Q64,vPosition,cameraPosition,NearP_Q63,NearQ_Q63,Distance_Q63);\n\nvec3 Reflected_Q47=reflect(Incident_Q39,New_Normal_Q79);\n\nvec4 Product_Q103=Linear_Q46*vec4(1,1,1,1);\nvec4 Result_Q132;\nRim_Light_B132(Normalized_Q107,Normalized_Q38,Incident_Q70,_Rim_Intensity_,_Rim_Texture_,Result_Q132);\n\nfloat Dot_Q72=dot(Incident_Q70,Normalized_Q71);\n\nfloat MaxAB_Q123=max(Reflect_Q122,Product_Q125);\nfloat NotInShadow_Q67;\n#if OCCLUSION_ENABLED\nFingerOcclusion_B67(_Width_,Distance_Q65,_Fuzz_,_Min_Fuzz_,vPosition,vBinormal,NearP_Q65,_Clip_Fade_,NotInShadow_Q67);\n#else\nNotInShadow_Q67=1.0;\n#endif\nfloat NotInShadow_Q68;\n#if OCCLUSION_ENABLED\nFingerOcclusion_B68(_Width_,Distance_Q63,_Fuzz_,_Min_Fuzz_,vPosition,vBinormal,NearP_Q63,_Clip_Fade_,NotInShadow_Q68);\n#else\nNotInShadow_Q68=1.0;\n#endif\nvec4 Reflected_Color_Q51;\nvec4 Indirect_Diffuse_Q51;\n#if ENV_ENABLE\nMapped_Environment_B51(_Reflection_Map_,_Indirect_Environment_,Reflected_Q47,Reflected_Color_Q51,Indirect_Diffuse_Q51);\n#else\nReflected_Color_Q51=vec4(0,0,0,1);\nIndirect_Diffuse_Q51=vec4(0,0,0,1);\n#endif\nvec4 Reflected_Color_Q50;\nvec4 Indirect_Color_Q50;\n#if SKY_ENABLED\nSky_Environment_B50(New_Normal_Q79,Reflected_Q47,Linear_Q43,Linear_Q44,Linear_Q45,_Horizon_Power_,Reflected_Color_Q50,Indirect_Color_Q50);\n#else\nReflected_Color_Q50=vec4(0,0,0,1);\nIndirect_Color_Q50=vec4(0,0,0,1);\n#endif\nfloat Hue_Q75;\nfloat Saturation_Q75;\nfloat Value_Q75;\nfloat Alpha_Q75;\nvec3 HSV_Q75;\nTo_HSV_B75(Product_Q103,Hue_Q75,Saturation_Q75,Value_Q75,Alpha_Q75,HSV_Q75);\nfloat Hue_Q127;\nfloat Saturation_Q127;\nfloat Value_Q127;\nfloat Alpha_Q127;\nvec3 HSV_Q127;\nTo_HSV_B75(Result_Q132,Hue_Q127,Saturation_Q127,Value_Q127,Alpha_Q127,HSV_Q127);\nfloat Result_Q110;\nCode_B110(Dot_Q72,Result_Q110);\n\nfloat AbsA_Q76=abs(Result_Q110);\n\nfloat MinAB_Q58=min(NotInShadow_Q67,NotInShadow_Q68);\n\nvec4 Sum_Q48=Reflected_Color_Q51+Reflected_Color_Q50;\n\nvec4 Sum_Q49=Indirect_Diffuse_Q51+Indirect_Color_Q50;\nvec3 HSV_Out_Q126;\nVaryHSV_B108(HSV_Q127,_Rim_Hue_Shift_,_Rim_Saturation_Shift_,_Rim_Value_Shift_,HSV_Out_Q126);\nfloat Out_Q114;\nRemap_Range_B114(-1.0,1.0,0.0,1.0,Result_Q110,Out_Q114);\n\nfloat Product_Q106;\nProduct_Q106=AbsA_Q76*_Hue_Shift_;\n\nfloat X_Q128;\nfloat Y_Q128;\nfloat Z_Q128;\nTo_XYZ_B74(HSV_Out_Q126,X_Q128,Y_Q128,Z_Q128);\n\nvec2 Vec2_Q112=vec2(Out_Q114,0.5);\nvec3 HSV_Out_Q108;\nVaryHSV_B108(HSV_Q75,Product_Q106,_Saturation_Shift_,_Value_Shift_,HSV_Out_Q108);\nvec4 Color_Q129;\nFrom_HSV_B73(X_Q128,Y_Q128,Z_Q128,0.0,Color_Q129);\n\nvec4 Color_Q111;\n#if IRIDESCENCE_ENABLED\nColor_Q111=texture(_Iridescence_Texture_,Vec2_Q112);\n#else\nColor_Q111=vec4(0,0,0,0);\n#endif\nfloat X_Q74;\nfloat Y_Q74;\nfloat Z_Q74;\nTo_XYZ_B74(HSV_Out_Q108,X_Q74,Y_Q74,Z_Q74);\n\nvec4 Result_Q131=_Rim_Intensity_*Color_Q129;\n\nvec4 Result_Q113=_Iridescence_Intensity_*Color_Q111;\nvec4 Color_Q73;\nFrom_HSV_B73(X_Q74,Y_Q74,Z_Q74,0.0,Color_Q73);\n\nvec4 Result_Q84=Result_Q91+(1.0-Result_Q91.a)*Color_Q73;\nvec4 Result_Q121;\nFragment_Main_B121(_Sun_Intensity_,_Sun_Theta_,_Sun_Phi_,New_Normal_Q79,Result_Q84,MaxAB_Q123,_Shininess_,Incident_Q39,_Horizon_Color_,_Sky_Color_,_Ground_Color_,_Indirect_Diffuse_,_Specular_,_Horizon_Power_,_Reflection_,Sum_Q48,Sum_Q49,_Sharpness_,Result_Q77,_Subsurface_,vec4(0,0,0,0),Result_Q131,Result_Q113,Result_Q121);\nvec4 Result_Q59;\nScale_RGB_B59(Result_Q121,MinAB_Q58,Result_Q59);\nvec4 sRGB_Q42;\nFastLinearTosRGB_B42(Result_Q59,sRGB_Q42);\n\nvec4 Result_Q31=Blob_Color_Q30+(1.0-Blob_Color_Q30.a)*sRGB_Q42;\n\nvec4 Result_Q40=Result_Q31; Result_Q40.a=1.0;\nvec4 Out_Color=Result_Q40;\nfloat Clip_Threshold=0.001;\nbool To_sRGB=false;\ngl_FragColor=Out_Color;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var mrdlSliderBarPixelShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/shaders/mrdlSliderBar.vertex.ts":
+/*!***********************************************************!*\
+  !*** ./3D/materials/mrdl/shaders/mrdlSliderBar.vertex.ts ***!
+  \***********************************************************/
+/*! exports provided: mrdlSliderBarVertexShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mrdlSliderBarVertexShader", function() { return mrdlSliderBarVertexShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'mrdlSliderBarVertexShader';
+var shader = "uniform mat4 world;\nuniform mat4 viewProjection;\nuniform vec3 cameraPosition;\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 uv;\n#ifdef TANGENT\nattribute vec3 tangent;\n#else\nconst vec3 tangent=vec3(0.);\n#endif\nuniform float _Radius_;\nuniform float _Bevel_Front_;\nuniform float _Bevel_Front_Stretch_;\nuniform float _Bevel_Back_;\nuniform float _Bevel_Back_Stretch_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\nuniform bool _Bulge_Enabled_;\nuniform float _Bulge_Height_;\nuniform float _Bulge_Radius_;\nuniform float _Sun_Intensity_;\nuniform float _Sun_Theta_;\nuniform float _Sun_Phi_;\nuniform float _Indirect_Diffuse_;\nuniform vec4 _Albedo_;\nuniform float _Specular_;\nuniform float _Shininess_;\nuniform float _Sharpness_;\nuniform float _Subsurface_;\nuniform vec4 _Left_Color_;\nuniform vec4 _Right_Color_;\nuniform float _Reflection_;\nuniform float _Front_Reflect_;\nuniform float _Edge_Reflect_;\nuniform float _Power_;\n\nuniform vec4 _Sky_Color_;\nuniform vec4 _Horizon_Color_;\nuniform vec4 _Ground_Color_;\nuniform float _Horizon_Power_;\n\nuniform sampler2D _Reflection_Map_;\nuniform sampler2D _Indirect_Environment_;\n\nuniform float _Width_;\nuniform float _Fuzz_;\nuniform float _Min_Fuzz_;\nuniform float _Clip_Fade_;\nuniform float _Hue_Shift_;\nuniform float _Saturation_Shift_;\nuniform float _Value_Shift_;\n\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\n\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform vec3 _Left_Index_Pos_;\nuniform vec3 _Right_Index_Pos_;\nuniform vec3 _Left_Index_Middle_Pos_;\nuniform vec3 _Right_Index_Middle_Pos_;\n\nuniform sampler2D _Decal_;\nuniform vec2 _Decal_Scale_XY_;\nuniform bool _Decal_Front_Only_;\nuniform float _Rim_Intensity_;\nuniform sampler2D _Rim_Texture_;\nuniform float _Rim_Hue_Shift_;\nuniform float _Rim_Saturation_Shift_;\nuniform float _Rim_Value_Shift_;\n\nuniform float _Iridescence_Intensity_;\nuniform sampler2D _Iridescence_Texture_;\nuniform bool Use_Global_Left_Index;\nuniform bool Use_Global_Right_Index;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\nuniform vec4 Global_Left_Thumb_Tip_Position;\nuniform vec4 Global_Right_Thumb_Tip_Position;\nuniform float Global_Left_Index_Tip_Proximity;\nuniform float Global_Right_Index_Tip_Proximity;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\nvarying vec4 vExtra3;\n\nvoid Object_To_World_Pos_B12(\nvec3 Pos_Object,\nout vec3 Pos_World)\n{\nPos_World=(world*vec4(Pos_Object,1.0)).xyz;\n}\n\n\nvoid Object_To_World_Normal_B32(\nvec3 Nrm_Object,\nout vec3 Nrm_World)\n{\nNrm_World=(vec4(Nrm_Object,0.0)).xyz;\n}\n\n\nvoid Blob_Vertex_B23(\nvec3 Position,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nvec3 Blob_Position,\nfloat Intensity,\nfloat Blob_Near_Size,\nfloat Blob_Far_Size,\nfloat Blob_Near_Distance,\nfloat Blob_Far_Distance,\nfloat Blob_Fade_Length,\nfloat Blob_Pulse,\nfloat Blob_Fade,\nout vec4 Blob_Info)\n{\nvec3 blob=(Use_Global_Left_Index ? Global_Left_Index_Tip_Position.xyz : Blob_Position);\nvec3 delta=blob-Position;\nfloat dist=dot(Normal,delta);\nfloat lerpValue=clamp((abs(dist)-Blob_Near_Distance)/(Blob_Far_Distance-Blob_Near_Distance),0.0,1.0);\nfloat fadeValue=1.0-clamp((abs(dist)-Blob_Far_Distance)/Blob_Fade_Length,0.0,1.0);\nfloat size=Blob_Near_Size+(Blob_Far_Size-Blob_Near_Size)*lerpValue;\nvec2 blobXY=vec2(dot(delta,Tangent),dot(delta,Bitangent))/(0.0001+size);\nfloat Fade=fadeValue*Intensity*Blob_Fade;\nfloat Distance=(lerpValue*0.5+0.5)*(1.0-Blob_Pulse);\nBlob_Info=vec4(blobXY.x,blobXY.y,Distance,Fade);\n}\n\n\nvoid Blob_Vertex_B24(\nvec3 Position,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nvec3 Blob_Position,\nfloat Intensity,\nfloat Blob_Near_Size,\nfloat Blob_Far_Size,\nfloat Blob_Near_Distance,\nfloat Blob_Far_Distance,\nfloat Blob_Fade_Length,\nfloat Blob_Pulse,\nfloat Blob_Fade,\nout vec4 Blob_Info)\n{\nvec3 blob=(Use_Global_Right_Index ? Global_Right_Index_Tip_Position.xyz : Blob_Position);\nvec3 delta=blob-Position;\nfloat dist=dot(Normal,delta);\nfloat lerpValue=clamp((abs(dist)-Blob_Near_Distance)/(Blob_Far_Distance-Blob_Near_Distance),0.0,1.0);\nfloat fadeValue=1.0-clamp((abs(dist)-Blob_Far_Distance)/Blob_Fade_Length,0.0,1.0);\nfloat size=Blob_Near_Size+(Blob_Far_Size-Blob_Near_Size)*lerpValue;\nvec2 blobXY=vec2(dot(delta,Tangent),dot(delta,Bitangent))/(0.0001+size);\nfloat Fade=fadeValue*Intensity*Blob_Fade;\nfloat Distance=(lerpValue*0.5+0.5)*(1.0-Blob_Pulse);\nBlob_Info=vec4(blobXY.x,blobXY.y,Distance,Fade);\n}\n\n\nvoid Move_Verts_B130(\nfloat Anisotropy,\nvec3 P,\nfloat Radius,\nfloat Bevel,\nvec3 Normal_Object,\nfloat ScaleZ,\nfloat Stretch,\nout vec3 New_P,\nout vec2 New_UV,\nout float Radial_Gradient,\nout vec3 Radial_Dir,\nout vec3 New_Normal)\n{\nvec2 UV=P.xy*2.0+0.5;\nvec2 center=clamp(UV,0.0,1.0);\nvec2 delta=UV-center;\nfloat deltad=(length(delta)*2.0);\nfloat f=(Bevel+(Radius-Bevel)*Stretch)/Radius;\n\nfloat innerd=clamp(deltad*2.0,0.0,1.0);\nfloat outerd=clamp(deltad*2.0-1.0,0.0,1.0);\nfloat bevelAngle=outerd*3.14159*0.5;\nfloat sinb=sin(bevelAngle);\nfloat cosb=cos(bevelAngle);\nfloat beveld=(1.0-f)*innerd+f*sinb;\nfloat br=outerd;\nvec2 r2=2.0*vec2(Radius/Anisotropy,Radius);\nfloat dir=P.z<0.0001 ? 1.0 : -1.0;\n\nNew_UV=center+r2*((0.5-center)+normalize(delta+vec2(0.0,0.000001))*beveld*0.5);\nNew_P=vec3(New_UV-0.5,P.z+dir*(1.0-cosb)*Bevel*ScaleZ);\nRadial_Gradient=clamp((deltad-0.5)*2.0,0.0,1.0);\nRadial_Dir=vec3(delta*r2,0.0);\nvec3 beveledNormal=cosb*Normal_Object+sinb*vec3(delta.x,delta.y,0.0);\nNew_Normal=Normal_Object.z==0.0 ? Normal_Object : beveledNormal;\n}\n\n\nvoid Object_To_World_Dir_B60(\nvec3 Dir_Object,\nout vec3 Normal_World,\nout vec3 Normal_World_N,\nout float Normal_Length)\n{\nNormal_World=(world*vec4(Dir_Object,0.0)).xyz;\nNormal_Length=length(Normal_World);\nNormal_World_N=Normal_World/Normal_Length;\n}\n\n\nvoid To_XYZ_B78(\nvec3 Vec3,\nout float X,\nout float Y,\nout float Z)\n{\nX=Vec3.x;\nY=Vec3.y;\nZ=Vec3.z;\n}\n\n\nvoid Conditional_Float_B93(\nbool Which,\nfloat If_True,\nfloat If_False,\nout float Result)\n{\nResult=Which ? If_True : If_False;\n}\n\n\nvoid Object_To_World_Dir_B28(\nvec3 Dir_Object,\nout vec3 Binormal_World,\nout vec3 Binormal_World_N,\nout float Binormal_Length)\n{\nBinormal_World=(world*vec4(Dir_Object,0.0)).xyz;\nBinormal_Length=length(Binormal_World);\nBinormal_World_N=Binormal_World/Binormal_Length;\n}\n\n\nvoid Pick_Radius_B69(\nfloat Radius,\nfloat Radius_Top_Left,\nfloat Radius_Top_Right,\nfloat Radius_Bottom_Left,\nfloat Radius_Bottom_Right,\nvec3 Position,\nout float Result)\n{\nbool whichY=Position.y>0.0;\nResult=Position.x<0.0 ? (whichY ? Radius_Top_Left : Radius_Bottom_Left) : (whichY ? Radius_Top_Right : Radius_Bottom_Right);\nResult*=Radius;\n}\n\n\nvoid Conditional_Float_B36(\nbool Which,\nfloat If_True,\nfloat If_False,\nout float Result)\n{\nResult=Which ? If_True : If_False;\n}\n\n\nvoid Greater_Than_B37(\nfloat Left,\nfloat Right,\nout bool Not_Greater_Than,\nout bool Greater_Than)\n{\nGreater_Than=Left>Right;\nNot_Greater_Than=!Greater_Than;\n}\n\n\nvoid Remap_Range_B105(\nfloat In_Min,\nfloat In_Max,\nfloat Out_Min,\nfloat Out_Max,\nfloat In,\nout float Out)\n{\nOut=mix(Out_Min,Out_Max,clamp((In-In_Min)/(In_Max-In_Min),0.0,1.0));\n}\n\nvoid main()\n{\n\nvec2 XY_Q85;\nXY_Q85=(uv-vec2(0.5,0.5))*_Decal_Scale_XY_+vec2(0.5,0.5);\n\nvec3 Tangent_World_Q27;\nvec3 Tangent_World_N_Q27;\nfloat Tangent_Length_Q27;\nTangent_World_Q27=(world*vec4(vec3(1,0,0),0.0)).xyz;\nTangent_Length_Q27=length(Tangent_World_Q27);\nTangent_World_N_Q27=Tangent_World_Q27/Tangent_Length_Q27;\nvec3 Normal_World_Q60;\nvec3 Normal_World_N_Q60;\nfloat Normal_Length_Q60;\nObject_To_World_Dir_B60(vec3(0,0,1),Normal_World_Q60,Normal_World_N_Q60,Normal_Length_Q60);\nfloat X_Q78;\nfloat Y_Q78;\nfloat Z_Q78;\nTo_XYZ_B78(position,X_Q78,Y_Q78,Z_Q78);\n\nvec3 Nrm_World_Q26;\nNrm_World_Q26=normalize((world*vec4(normal,0.0)).xyz);\nvec3 Binormal_World_Q28;\nvec3 Binormal_World_N_Q28;\nfloat Binormal_Length_Q28;\nObject_To_World_Dir_B28(vec3(0,1,0),Binormal_World_Q28,Binormal_World_N_Q28,Binormal_Length_Q28);\n\nfloat Anisotropy_Q29=Tangent_Length_Q27/Binormal_Length_Q28;\nfloat Result_Q69;\nPick_Radius_B69(_Radius_,_Radius_Top_Left_,_Radius_Top_Right_,_Radius_Bottom_Left_,_Radius_Bottom_Right_,position,Result_Q69);\n\nfloat Anisotropy_Q53=Binormal_Length_Q28/Normal_Length_Q60;\nbool Not_Greater_Than_Q37;\nbool Greater_Than_Q37;\nGreater_Than_B37(Z_Q78,0.0,Not_Greater_Than_Q37,Greater_Than_Q37);\n\nvec4 Linear_Q101;\nLinear_Q101.rgb=clamp(_Left_Color_.rgb*_Left_Color_.rgb,0.0,1.0);\nLinear_Q101.a=_Left_Color_.a;\n\nvec4 Linear_Q102;\nLinear_Q102.rgb=clamp(_Right_Color_.rgb*_Right_Color_.rgb,0.0,1.0);\nLinear_Q102.a=_Right_Color_.a;\n\nvec3 Difference_Q61=vec3(0,0,0)-Normal_World_N_Q60;\n\nvec4 Out_Color_Q34=vec4(X_Q78,Y_Q78,Z_Q78,1);\nfloat Result_Q36;\nConditional_Float_B36(Greater_Than_Q37,_Bevel_Back_,_Bevel_Front_,Result_Q36);\nfloat Result_Q94;\nConditional_Float_B36(Greater_Than_Q37,_Bevel_Back_Stretch_,_Bevel_Front_Stretch_,Result_Q94);\nvec3 New_P_Q130;\nvec2 New_UV_Q130;\nfloat Radial_Gradient_Q130;\nvec3 Radial_Dir_Q130;\nvec3 New_Normal_Q130;\nMove_Verts_B130(Anisotropy_Q29,position,Result_Q69,Result_Q36,normal,Anisotropy_Q53,Result_Q94,New_P_Q130,New_UV_Q130,Radial_Gradient_Q130,Radial_Dir_Q130,New_Normal_Q130);\n\nfloat X_Q98;\nfloat Y_Q98;\nX_Q98=New_UV_Q130.x;\nY_Q98=New_UV_Q130.y;\nvec3 Pos_World_Q12;\nObject_To_World_Pos_B12(New_P_Q130,Pos_World_Q12);\nvec3 Nrm_World_Q32;\nObject_To_World_Normal_B32(New_Normal_Q130,Nrm_World_Q32);\nvec4 Blob_Info_Q23;\n#if BLOB_ENABLE\nBlob_Vertex_B23(Pos_World_Q12,Nrm_World_Q26,Tangent_World_N_Q27,Binormal_World_N_Q28,_Blob_Position_,_Blob_Intensity_,_Blob_Near_Size_,_Blob_Far_Size_,_Blob_Near_Distance_,_Blob_Far_Distance_,_Blob_Fade_Length_,_Blob_Pulse_,_Blob_Fade_,Blob_Info_Q23);\n#else\nBlob_Info_Q23=vec4(0,0,0,0);\n#endif\nvec4 Blob_Info_Q24;\n#if BLOB_ENABLE_2\nBlob_Vertex_B24(Pos_World_Q12,Nrm_World_Q26,Tangent_World_N_Q27,Binormal_World_N_Q28,_Blob_Position_2_,_Blob_Intensity_,_Blob_Near_Size_2_,_Blob_Far_Size_,_Blob_Near_Distance_,_Blob_Far_Distance_,_Blob_Fade_Length_,_Blob_Pulse_2_,_Blob_Fade_2_,Blob_Info_Q24);\n#else\nBlob_Info_Q24=vec4(0,0,0,0);\n#endif\nfloat Out_Q105;\nRemap_Range_B105(0.0,1.0,0.0,1.0,X_Q98,Out_Q105);\nfloat X_Q86;\nfloat Y_Q86;\nfloat Z_Q86;\nTo_XYZ_B78(Nrm_World_Q32,X_Q86,Y_Q86,Z_Q86);\n\nvec4 Color_At_T_Q97=mix(Linear_Q101,Linear_Q102,Out_Q105);\n\nfloat Minus_F_Q87=-Z_Q86;\n\nfloat R_Q99;\nfloat G_Q99;\nfloat B_Q99;\nfloat A_Q99;\nR_Q99=Color_At_T_Q97.r; G_Q99=Color_At_T_Q97.g; B_Q99=Color_At_T_Q97.b; A_Q99=Color_At_T_Q97.a;\n\nfloat ClampF_Q88=clamp(0.0,Minus_F_Q87,1.0);\nfloat Result_Q93;\nConditional_Float_B93(_Decal_Front_Only_,ClampF_Q88,1.0,Result_Q93);\n\nvec4 Vec4_Q89=vec4(Result_Q93,Radial_Gradient_Q130,G_Q99,B_Q99);\nvec3 Position=Pos_World_Q12;\nvec3 Normal=Nrm_World_Q32;\nvec2 UV=XY_Q85;\nvec3 Tangent=Tangent_World_N_Q27;\nvec3 Binormal=Difference_Q61;\nvec4 Color=Out_Color_Q34;\nvec4 Extra1=Vec4_Q89;\nvec4 Extra2=Blob_Info_Q23;\nvec4 Extra3=Blob_Info_Q24;\ngl_Position=viewProjection*vec4(Position,1);\nvPosition=Position;\nvNormal=Normal;\nvUV=UV;\nvTangent=Tangent;\nvBinormal=Binormal;\nvColor=Color;\nvExtra1=Extra1;\nvExtra2=Extra2;\nvExtra3=Extra3;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var mrdlSliderBarVertexShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/shaders/mrdlSliderThumb.fragment.ts":
+/*!***************************************************************!*\
+  !*** ./3D/materials/mrdl/shaders/mrdlSliderThumb.fragment.ts ***!
+  \***************************************************************/
+/*! exports provided: mrdlSliderThumbPixelShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mrdlSliderThumbPixelShader", function() { return mrdlSliderThumbPixelShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'mrdlSliderThumbPixelShader';
+var shader = "uniform vec3 cameraPosition;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\nvarying vec4 vExtra3;\nuniform float _Radius_;\nuniform float _Bevel_Front_;\nuniform float _Bevel_Front_Stretch_;\nuniform float _Bevel_Back_;\nuniform float _Bevel_Back_Stretch_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\nuniform bool _Bulge_Enabled_;\nuniform float _Bulge_Height_;\nuniform float _Bulge_Radius_;\nuniform float _Sun_Intensity_;\nuniform float _Sun_Theta_;\nuniform float _Sun_Phi_;\nuniform float _Indirect_Diffuse_;\nuniform vec4 _Albedo_;\nuniform float _Specular_;\nuniform float _Shininess_;\nuniform float _Sharpness_;\nuniform float _Subsurface_;\nuniform vec4 _Left_Color_;\nuniform vec4 _Right_Color_;\nuniform float _Reflection_;\nuniform float _Front_Reflect_;\nuniform float _Edge_Reflect_;\nuniform float _Power_;\n\nuniform vec4 _Sky_Color_;\nuniform vec4 _Horizon_Color_;\nuniform vec4 _Ground_Color_;\nuniform float _Horizon_Power_;\n\nuniform sampler2D _Reflection_Map_;\nuniform sampler2D _Indirect_Environment_;\n\nuniform float _Width_;\nuniform float _Fuzz_;\nuniform float _Min_Fuzz_;\nuniform float _Clip_Fade_;\nuniform float _Hue_Shift_;\nuniform float _Saturation_Shift_;\nuniform float _Value_Shift_;\n\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\n\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform vec3 _Left_Index_Pos_;\nuniform vec3 _Right_Index_Pos_;\nuniform vec3 _Left_Index_Middle_Pos_;\nuniform vec3 _Right_Index_Middle_Pos_;\n\nuniform sampler2D _Decal_;\nuniform vec2 _Decal_Scale_XY_;\nuniform bool _Decal_Front_Only_;\nuniform float _Rim_Intensity_;\nuniform sampler2D _Rim_Texture_;\nuniform float _Rim_Hue_Shift_;\nuniform float _Rim_Saturation_Shift_;\nuniform float _Rim_Value_Shift_;\n\nuniform float _Iridescence_Intensity_;\nuniform sampler2D _Iridescence_Texture_;\nuniform bool Use_Global_Left_Index;\nuniform bool Use_Global_Right_Index;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\nuniform vec4 Global_Left_Thumb_Tip_Position;\nuniform vec4 Global_Right_Thumb_Tip_Position;\nuniform vec4 Global_Left_Index_Middle_Position;\nuniform vec4 Global_Right_Index_Middle_Position;\nuniform float Global_Left_Index_Tip_Proximity;\nuniform float Global_Right_Index_Tip_Proximity;\n\nvoid Blob_Fragment_B180(\nsampler2D Blob_Texture,\nvec4 Blob_Info1,\nvec4 Blob_Info2,\nout vec4 Blob_Color)\n{\nfloat k1=dot(Blob_Info1.xy,Blob_Info1.xy);\nfloat k2=dot(Blob_Info2.xy,Blob_Info2.xy);\nvec3 closer=k1<k2 ? vec3(k1,Blob_Info1.z,Blob_Info1.w) : vec3(k2,Blob_Info2.z,Blob_Info2.w);\nBlob_Color=closer.z*texture(Blob_Texture,vec2(vec2(sqrt(closer.x),closer.y).x,1.0-vec2(sqrt(closer.x),closer.y).y))*clamp(1.0-closer.x,0.0,1.0);\n}\n\n\nvoid FastLinearTosRGB_B192(\nvec4 Linear,\nout vec4 sRGB)\n{\nsRGB.rgb=sqrt(clamp(Linear.rgb,0.0,1.0));\nsRGB.a=Linear.a;\n}\n\n\nvoid Scale_RGB_B209(\nvec4 Color,\nfloat Scalar,\nout vec4 Result)\n{\nResult=vec4(Scalar,Scalar,Scalar,1)*Color;\n}\n\n\nvoid Fragment_Main_B271(\nfloat Sun_Intensity,\nfloat Sun_Theta,\nfloat Sun_Phi,\nvec3 Normal,\nvec4 Albedo,\nfloat Fresnel_Reflect,\nfloat Shininess,\nvec3 Incident,\nvec4 Horizon_Color,\nvec4 Sky_Color,\nvec4 Ground_Color,\nfloat Indirect_Diffuse,\nfloat Specular,\nfloat Horizon_Power,\nfloat Reflection,\nvec4 Reflection_Sample,\nvec4 Indirect_Sample,\nfloat Sharpness,\nfloat SSS,\nfloat Subsurface,\nvec4 Translucence,\nvec4 Rim_Light,\nvec4 Iridescence,\nout vec4 Result)\n{\nfloat theta=Sun_Theta*2.0*3.14159;\nfloat phi=Sun_Phi*3.14159;\nvec3 lightDir=vec3(cos(phi)*cos(theta),sin(phi),cos(phi)*sin(theta));\nfloat NdotL=max(dot(lightDir,Normal),0.0);\n\nvec3 R=reflect(Incident,Normal);\nfloat RdotL=max(0.0,dot(R,lightDir));\nfloat specular=pow(RdotL,Shininess);\nspecular=mix(specular,smoothstep(0.495*Sharpness,1.0-0.495*Sharpness,specular),Sharpness);\nvec4 gi=mix(Ground_Color,Sky_Color,Normal.y*0.5+0.5);\n\nResult=((Sun_Intensity*NdotL+Indirect_Sample*Indirect_Diffuse+Translucence)*(1.0+SSS*Subsurface))*Albedo*(1.0-Fresnel_Reflect)+(Sun_Intensity*specular*Specular+Fresnel_Reflect*Reflection*Reflection_Sample)+Fresnel_Reflect*Rim_Light+Iridescence;\n}\n\n\nvoid Bulge_B229(\nbool Enabled,\nvec3 Normal,\nvec3 Tangent,\nfloat Bulge_Height,\nvec4 UV,\nfloat Bulge_Radius,\nvec3 ButtonN,\nout vec3 New_Normal)\n{\nvec2 xy=clamp(UV.xy*2.0,vec2(-1,-1),vec2(1,1));\nvec3 B=(cross(Normal,Tangent));\n\n\n\n\nfloat k=-clamp(1.0-length(xy)/Bulge_Radius,0.0,1.0)*Bulge_Height;\nk=sin(k*3.14159*0.5);\nk*=smoothstep(0.9998,0.9999,abs(dot(ButtonN,Normal)));\nNew_Normal=Normal*sqrt(1.0-k*k)+(xy.x*Tangent+xy.y*B)*k;\nNew_Normal=Enabled ? New_Normal : Normal;\n}\n\n\nvoid SSS_B227(\nvec3 ButtonN,\nvec3 Normal,\nvec3 Incident,\nout float Result)\n{\nfloat NdotI=abs(dot(Normal,Incident));\nfloat BdotI=abs(dot(ButtonN,Incident));\nResult=(abs(NdotI-BdotI));\n\n}\n\n\nvoid FingerOcclusion_B217(\nfloat Width,\nfloat DistToCenter,\nfloat Fuzz,\nfloat Min_Fuzz,\nvec3 Position,\nvec3 Forward,\nvec3 Nearest,\nfloat Fade_Out,\nout float NotInShadow)\n{\nfloat d=dot((Nearest-Position),Forward);\nfloat sh=smoothstep(Width*0.5,Width*0.5+Fuzz*max(d,0.0)+Min_Fuzz,DistToCenter);\nNotInShadow=1.0-(1.0-sh)*smoothstep(-Fade_Out,0.0,d);\n}\n\n\nvoid FingerOcclusion_B218(\nfloat Width,\nfloat DistToCenter,\nfloat Fuzz,\nfloat Min_Fuzz,\nvec3 Position,\nvec3 Forward,\nvec3 Nearest,\nfloat Fade_Out,\nout float NotInShadow)\n{\nfloat d=dot((Nearest-Position),Forward);\nfloat sh=smoothstep(Width*0.5,Width*0.5+Fuzz*max(d,0.0)+Min_Fuzz,DistToCenter);\nNotInShadow=1.0-(1.0-sh)*smoothstep(-Fade_Out,0.0,d);\n}\n\n\nvoid Scale_Color_B241(\nvec4 Color,\nfloat Scalar,\nout vec4 Result)\n{\nResult=Scalar*Color;\n}\n\n\nvoid From_HSV_B223(\nfloat Hue,\nfloat Saturation,\nfloat Value,\nfloat Alpha,\nout vec4 Color)\n{\n\nvec4 K=vec4(1.0,2.0/3.0,1.0/3.0,3.0);\nvec3 p=abs(fract(vec3(Hue,Hue,Hue)+K.xyz)*6.0-K.www);\nColor.rgb=Value*mix(K.xxx,clamp(p-K.xxx,0.0,1.0),Saturation);\nColor.a=Alpha;\n}\n\n\nvoid Fast_Fresnel_B272(\nfloat Front_Reflect,\nfloat Edge_Reflect,\nfloat Power,\nvec3 Normal,\nvec3 Incident,\nout float Transmit,\nout float Reflect)\n{\nfloat d=max(-dot(Incident,Normal),0.0);\nReflect=Front_Reflect+(Edge_Reflect-Front_Reflect)*pow(1.0-d,Power);\nTransmit=1.0-Reflect;\n}\n\n\nvoid Mapped_Environment_B201(\nsampler2D Reflected_Environment,\nsampler2D Indirect_Environment,\nvec3 Dir,\nout vec4 Reflected_Color,\nout vec4 Indirect_Diffuse)\n{\n\nReflected_Color=texture(Reflected_Environment,vec2(atan(Dir.z,Dir.x)/3.14159*0.5,asin(Dir.y)/3.14159+0.5));\nIndirect_Diffuse=texture(Indirect_Environment,vec2(atan(Dir.z,Dir.x)/3.14159*0.5,asin(Dir.y)/3.14159+0.5));\n}\n\n\nvec4 SampleEnv_Bid200(vec3 D,vec4 S,vec4 H,vec4 G,float exponent)\n{\nfloat k=pow(abs(D.y),exponent);\nvec4 C;\nif (D.y>0.0) {\nC=mix(H,S,k);\n} else {\nC=mix(H,G,k);\n}\nreturn C;\n}\nvoid Sky_Environment_B200(\nvec3 Normal,\nvec3 Reflected,\nvec4 Sky_Color,\nvec4 Horizon_Color,\nvec4 Ground_Color,\nfloat Horizon_Power,\nout vec4 Reflected_Color,\nout vec4 Indirect_Color)\n{\n\nReflected_Color=SampleEnv_Bid200(Reflected,Sky_Color,Horizon_Color,Ground_Color,Horizon_Power);\nIndirect_Color=mix(Ground_Color,Sky_Color,Normal.y*0.5+0.5);\n}\n\n\nvoid Min_Segment_Distance_B215(\nvec3 P0,\nvec3 P1,\nvec3 Q0,\nvec3 Q1,\nout vec3 NearP,\nout vec3 NearQ,\nout float Distance)\n{\nvec3 u=P1-P0;\nvec3 v=Q1-Q0;\nvec3 w=P0-Q0;\nfloat a=dot(u,u);\nfloat b=dot(u,v);\nfloat c=dot(v,v);\nfloat d=dot(u,w);\nfloat e=dot(v,w);\nfloat D=a*c-b*b;\nfloat sD=D;\nfloat tD=D;\nfloat sc,sN,tc,tN;\nif (D<0.00001) {\nsN=0.0;\nsD=1.0;\ntN=e;\ntD=c;\n} else {\nsN=(b*e-c*d);\ntN=(a*e-b*d);\nif (sN<0.0) {\nsN=0.0;\ntN=e;\ntD=c;\n} else if (sN>sD) {\nsN=sD;\ntN=e+b;\ntD=c;\n}\n}\nif (tN<0.0) {\ntN=0.0;\nif (-d<0.0) {\nsN=0.0;\n} else if (-d>a) {\nsN=sD;\n} else {\nsN=-d;\nsD=a;\n}\n} else if (tN>tD) {\ntN=tD;\nif ((-d+b)<0.0) {\nsN=0.0;\n} else if ((-d+b)>a) {\nsN=sD;\n} else {\nsN=(-d+b);\nsD=a;\n}\n}\nsc=abs(sN)<0.000001 ? 0.0 : sN/sD;\ntc=abs(tN)<0.000001 ? 0.0 : tN/tD;\nNearP=P0+sc*u;\nNearQ=Q0+tc*v;\nDistance=distance(NearP,NearQ);\n}\n\n\nvoid To_XYZ_B224(\nvec3 Vec3,\nout float X,\nout float Y,\nout float Z)\n{\nX=Vec3.x;\nY=Vec3.y;\nZ=Vec3.z;\n}\n\n\nvoid Finger_Positions_B214(\nvec3 Left_Index_Pos,\nvec3 Right_Index_Pos,\nvec3 Left_Index_Middle_Pos,\nvec3 Right_Index_Middle_Pos,\nout vec3 Left_Index,\nout vec3 Right_Index,\nout vec3 Left_Index_Middle,\nout vec3 Right_Index_Middle)\n{\nLeft_Index=(Use_Global_Left_Index ? Global_Left_Index_Tip_Position.xyz : Left_Index_Pos);\nRight_Index=(Use_Global_Right_Index ? Global_Right_Index_Tip_Position.xyz : Right_Index_Pos);\nLeft_Index_Middle=(Use_Global_Left_Index ? Global_Left_Index_Middle_Position.xyz : Left_Index_Middle_Pos);\nRight_Index_Middle=(Use_Global_Right_Index ? Global_Right_Index_Middle_Position.xyz : Right_Index_Middle_Pos);\n}\n\n\nvoid VaryHSV_B258(\nvec3 HSV_In,\nfloat Hue_Shift,\nfloat Saturation_Shift,\nfloat Value_Shift,\nout vec3 HSV_Out)\n{\nHSV_Out=vec3(fract(HSV_In.x+Hue_Shift),clamp(HSV_In.y+Saturation_Shift,0.0,1.0),clamp(HSV_In.z+Value_Shift,0.0,1.0));\n}\n\n\nvoid Remap_Range_B264(\nfloat In_Min,\nfloat In_Max,\nfloat Out_Min,\nfloat Out_Max,\nfloat In,\nout float Out)\n{\nOut=mix(Out_Min,Out_Max,clamp((In-In_Min)/(In_Max-In_Min),0.0,1.0));\n}\n\n\nvoid To_HSV_B225(\nvec4 Color,\nout float Hue,\nout float Saturation,\nout float Value,\nout float Alpha,\nout vec3 HSV)\n{\n\nvec4 K=vec4(0.0,-1.0/3.0,2.0/3.0,-1.0);\nvec4 p=Color.g<Color.b ? vec4(Color.bg,K.wz) : vec4(Color.gb,K.xy);\nvec4 q=Color.r<p.x ? vec4(p.xyw,Color.r) : vec4(Color.r,p.yzx);\nfloat d=q.x-min(q.w,q.y);\nfloat e=1.0e-10;\nHue=abs(q.z+(q.w-q.y)/(6.0*d+e));\nSaturation=d/(q.x+e);\nValue=q.x;\nAlpha=Color.a;\nHSV=vec3(Hue,Saturation,Value);\n}\n\n\nvoid Code_B260(\nfloat X,\nout float Result)\n{\nResult=(acos(X)/3.14159-0.5)*2.0;\n}\n\n\nvoid Rim_Light_B282(\nvec3 Front,\nvec3 Normal,\nvec3 Incident,\nfloat Rim_Intensity,\nsampler2D Texture,\nout vec4 Result)\n{\nvec3 R=reflect(Incident,Normal);\nfloat RdotF=dot(R,Front);\nfloat RdotL=sqrt(1.0-RdotF*RdotF);\nvec2 UV=vec2(R.y*0.5+0.5,0.5);\nvec4 Color=texture(Texture,UV);\nResult=Color;\n}\n\nvoid main()\n{\nvec4 Blob_Color_Q180;\n#if BLOB_ENABLE\nBlob_Fragment_B180(_Blob_Texture_,vExtra2,vExtra3,Blob_Color_Q180);\n#else\nBlob_Color_Q180=vec4(0,0,0,0);\n#endif\n\nvec3 Incident_Q189=normalize(vPosition-cameraPosition);\n\nvec3 Normalized_Q188=normalize(vNormal);\n\nvec3 Normalized_Q221=normalize(vTangent);\n\nvec4 Color_Q233;\n#if DECAL_ENABLE\nColor_Q233=texture(_Decal_,vUV);\n#else\nColor_Q233=vec4(0,0,0,0);\n#endif\n\nfloat X_Q240;\nfloat Y_Q240;\nfloat Z_Q240;\nfloat W_Q240;\nX_Q240=vExtra1.x;\nY_Q240=vExtra1.y;\nZ_Q240=vExtra1.z;\nW_Q240=vExtra1.w;\n\nvec4 Linear_Q193;\nLinear_Q193.rgb=clamp(_Sky_Color_.rgb*_Sky_Color_.rgb,0.0,1.0);\nLinear_Q193.a=_Sky_Color_.a;\n\nvec4 Linear_Q194;\nLinear_Q194.rgb=clamp(_Horizon_Color_.rgb*_Horizon_Color_.rgb,0.0,1.0);\nLinear_Q194.a=_Horizon_Color_.a;\n\nvec4 Linear_Q195;\nLinear_Q195.rgb=clamp(_Ground_Color_.rgb*_Ground_Color_.rgb,0.0,1.0);\nLinear_Q195.a=_Ground_Color_.a;\nvec3 Left_Index_Q214;\nvec3 Right_Index_Q214;\nvec3 Left_Index_Middle_Q214;\nvec3 Right_Index_Middle_Q214;\nFinger_Positions_B214(_Left_Index_Pos_,_Right_Index_Pos_,_Left_Index_Middle_Pos_,_Right_Index_Middle_Pos_,Left_Index_Q214,Right_Index_Q214,Left_Index_Middle_Q214,Right_Index_Middle_Q214);\n\nvec4 Linear_Q196;\nLinear_Q196.rgb=clamp(_Albedo_.rgb*_Albedo_.rgb,0.0,1.0);\nLinear_Q196.a=_Albedo_.a;\n\nvec3 Normalized_Q257=normalize(vBinormal);\n\nvec3 Incident_Q220=normalize(vPosition-cameraPosition);\nvec3 New_Normal_Q229;\nBulge_B229(_Bulge_Enabled_,Normalized_Q188,Normalized_Q221,_Bulge_Height_,vColor,_Bulge_Radius_,vBinormal,New_Normal_Q229);\nfloat Result_Q227;\nSSS_B227(vBinormal,New_Normal_Q229,Incident_Q189,Result_Q227);\nvec4 Result_Q241;\nScale_Color_B241(Color_Q233,X_Q240,Result_Q241);\nfloat Transmit_Q272;\nfloat Reflect_Q272;\nFast_Fresnel_B272(_Front_Reflect_,_Edge_Reflect_,_Power_,New_Normal_Q229,Incident_Q189,Transmit_Q272,Reflect_Q272);\n\nfloat Product_Q275=Y_Q240*Y_Q240;\nvec3 NearP_Q215;\nvec3 NearQ_Q215;\nfloat Distance_Q215;\nMin_Segment_Distance_B215(Left_Index_Q214,Left_Index_Middle_Q214,vPosition,cameraPosition,NearP_Q215,NearQ_Q215,Distance_Q215);\nvec3 NearP_Q213;\nvec3 NearQ_Q213;\nfloat Distance_Q213;\nMin_Segment_Distance_B215(Right_Index_Q214,Right_Index_Middle_Q214,vPosition,cameraPosition,NearP_Q213,NearQ_Q213,Distance_Q213);\n\nvec3 Reflected_Q197=reflect(Incident_Q189,New_Normal_Q229);\n\nvec4 Product_Q253=Linear_Q196*vec4(1,1,1,1);\nvec4 Result_Q282;\nRim_Light_B282(Normalized_Q257,Normalized_Q188,Incident_Q220,_Rim_Intensity_,_Rim_Texture_,Result_Q282);\n\nfloat Dot_Q222=dot(Incident_Q220,Normalized_Q221);\n\nfloat MaxAB_Q273=max(Reflect_Q272,Product_Q275);\nfloat NotInShadow_Q217;\n#if OCCLUSION_ENABLED\nFingerOcclusion_B217(_Width_,Distance_Q215,_Fuzz_,_Min_Fuzz_,vPosition,vBinormal,NearP_Q215,_Clip_Fade_,NotInShadow_Q217);\n#else\nNotInShadow_Q217=1.0;\n#endif\nfloat NotInShadow_Q218;\n#if OCCLUSION_ENABLED\nFingerOcclusion_B218(_Width_,Distance_Q213,_Fuzz_,_Min_Fuzz_,vPosition,vBinormal,NearP_Q213,_Clip_Fade_,NotInShadow_Q218);\n#else\nNotInShadow_Q218=1.0;\n#endif\nvec4 Reflected_Color_Q201;\nvec4 Indirect_Diffuse_Q201;\n#if ENV_ENABLE\nMapped_Environment_B201(_Reflection_Map_,_Indirect_Environment_,Reflected_Q197,Reflected_Color_Q201,Indirect_Diffuse_Q201);\n#else\nReflected_Color_Q201=vec4(0,0,0,1);\nIndirect_Diffuse_Q201=vec4(0,0,0,1);\n#endif\nvec4 Reflected_Color_Q200;\nvec4 Indirect_Color_Q200;\n#if SKY_ENABLED\nSky_Environment_B200(New_Normal_Q229,Reflected_Q197,Linear_Q193,Linear_Q194,Linear_Q195,_Horizon_Power_,Reflected_Color_Q200,Indirect_Color_Q200);\n#else\nReflected_Color_Q200=vec4(0,0,0,1);\nIndirect_Color_Q200=vec4(0,0,0,1);\n#endif\nfloat Hue_Q225;\nfloat Saturation_Q225;\nfloat Value_Q225;\nfloat Alpha_Q225;\nvec3 HSV_Q225;\nTo_HSV_B225(Product_Q253,Hue_Q225,Saturation_Q225,Value_Q225,Alpha_Q225,HSV_Q225);\nfloat Hue_Q277;\nfloat Saturation_Q277;\nfloat Value_Q277;\nfloat Alpha_Q277;\nvec3 HSV_Q277;\nTo_HSV_B225(Result_Q282,Hue_Q277,Saturation_Q277,Value_Q277,Alpha_Q277,HSV_Q277);\nfloat Result_Q260;\nCode_B260(Dot_Q222,Result_Q260);\n\nfloat AbsA_Q226=abs(Result_Q260);\n\nfloat MinAB_Q208=min(NotInShadow_Q217,NotInShadow_Q218);\n\nvec4 Sum_Q198=Reflected_Color_Q201+Reflected_Color_Q200;\n\nvec4 Sum_Q199=Indirect_Diffuse_Q201+Indirect_Color_Q200;\nvec3 HSV_Out_Q276;\nVaryHSV_B258(HSV_Q277,_Rim_Hue_Shift_,_Rim_Saturation_Shift_,_Rim_Value_Shift_,HSV_Out_Q276);\nfloat Out_Q264;\nRemap_Range_B264(-1.0,1.0,0.0,1.0,Result_Q260,Out_Q264);\n\nfloat Product_Q256;\nProduct_Q256=AbsA_Q226*_Hue_Shift_;\n\nfloat X_Q278;\nfloat Y_Q278;\nfloat Z_Q278;\nTo_XYZ_B224(HSV_Out_Q276,X_Q278,Y_Q278,Z_Q278);\n\nvec2 Vec2_Q262=vec2(Out_Q264,0.5);\nvec3 HSV_Out_Q258;\nVaryHSV_B258(HSV_Q225,Product_Q256,_Saturation_Shift_,_Value_Shift_,HSV_Out_Q258);\nvec4 Color_Q279;\nFrom_HSV_B223(X_Q278,Y_Q278,Z_Q278,0.0,Color_Q279);\n\nvec4 Color_Q261;\n#if IRIDESCENCE_ENABLED\nColor_Q261=texture(_Iridescence_Texture_,Vec2_Q262);\n#else\nColor_Q261=vec4(0,0,0,0);\n#endif\nfloat X_Q224;\nfloat Y_Q224;\nfloat Z_Q224;\nTo_XYZ_B224(HSV_Out_Q258,X_Q224,Y_Q224,Z_Q224);\n\nvec4 Result_Q281=_Rim_Intensity_*Color_Q279;\n\nvec4 Result_Q263=_Iridescence_Intensity_*Color_Q261;\nvec4 Color_Q223;\nFrom_HSV_B223(X_Q224,Y_Q224,Z_Q224,0.0,Color_Q223);\n\nvec4 Result_Q234=Result_Q241+(1.0-Result_Q241.a)*Color_Q223;\nvec4 Result_Q271;\nFragment_Main_B271(_Sun_Intensity_,_Sun_Theta_,_Sun_Phi_,New_Normal_Q229,Result_Q234,MaxAB_Q273,_Shininess_,Incident_Q189,_Horizon_Color_,_Sky_Color_,_Ground_Color_,_Indirect_Diffuse_,_Specular_,_Horizon_Power_,_Reflection_,Sum_Q198,Sum_Q199,_Sharpness_,Result_Q227,_Subsurface_,vec4(0,0,0,0),Result_Q281,Result_Q263,Result_Q271);\nvec4 Result_Q209;\nScale_RGB_B209(Result_Q271,MinAB_Q208,Result_Q209);\nvec4 sRGB_Q192;\nFastLinearTosRGB_B192(Result_Q209,sRGB_Q192);\n\nvec4 Result_Q181=Blob_Color_Q180+(1.0-Blob_Color_Q180.a)*sRGB_Q192;\n\nvec4 Result_Q190=Result_Q181; Result_Q190.a=1.0;\nvec4 Out_Color=Result_Q190;\nfloat Clip_Threshold=0.001;\nbool To_sRGB=false;\ngl_FragColor=Out_Color;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var mrdlSliderThumbPixelShader = { name: name, shader: shader };
+
+
+/***/ }),
+
+/***/ "./3D/materials/mrdl/shaders/mrdlSliderThumb.vertex.ts":
+/*!*************************************************************!*\
+  !*** ./3D/materials/mrdl/shaders/mrdlSliderThumb.vertex.ts ***!
+  \*************************************************************/
+/*! exports provided: mrdlSliderThumbVertexShader */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mrdlSliderThumbVertexShader", function() { return mrdlSliderThumbVertexShader; });
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Engines/shaderStore */ "babylonjs/Misc/observable");
+/* harmony import */ var babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__);
+
+var name = 'mrdlSliderThumbVertexShader';
+var shader = "uniform mat4 world;\nuniform mat4 viewProjection;\nuniform vec3 cameraPosition;\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 uv;\n#ifdef TANGENT\nattribute vec3 tangent;\n#else\nconst vec3 tangent=vec3(0.);\n#endif\nuniform float _Radius_;\nuniform float _Bevel_Front_;\nuniform float _Bevel_Front_Stretch_;\nuniform float _Bevel_Back_;\nuniform float _Bevel_Back_Stretch_;\nuniform float _Radius_Top_Left_;\nuniform float _Radius_Top_Right_;\nuniform float _Radius_Bottom_Left_;\nuniform float _Radius_Bottom_Right_;\nuniform bool _Bulge_Enabled_;\nuniform float _Bulge_Height_;\nuniform float _Bulge_Radius_;\nuniform float _Sun_Intensity_;\nuniform float _Sun_Theta_;\nuniform float _Sun_Phi_;\nuniform float _Indirect_Diffuse_;\nuniform vec4 _Albedo_;\nuniform float _Specular_;\nuniform float _Shininess_;\nuniform float _Sharpness_;\nuniform float _Subsurface_;\nuniform vec4 _Left_Color_;\nuniform vec4 _Right_Color_;\nuniform float _Reflection_;\nuniform float _Front_Reflect_;\nuniform float _Edge_Reflect_;\nuniform float _Power_;\n\nuniform vec4 _Sky_Color_;\nuniform vec4 _Horizon_Color_;\nuniform vec4 _Ground_Color_;\nuniform float _Horizon_Power_;\n\nuniform sampler2D _Reflection_Map_;\nuniform sampler2D _Indirect_Environment_;\n\nuniform float _Width_;\nuniform float _Fuzz_;\nuniform float _Min_Fuzz_;\nuniform float _Clip_Fade_;\nuniform float _Hue_Shift_;\nuniform float _Saturation_Shift_;\nuniform float _Value_Shift_;\n\nuniform vec3 _Blob_Position_;\nuniform float _Blob_Intensity_;\nuniform float _Blob_Near_Size_;\nuniform float _Blob_Far_Size_;\nuniform float _Blob_Near_Distance_;\nuniform float _Blob_Far_Distance_;\nuniform float _Blob_Fade_Length_;\nuniform float _Blob_Pulse_;\nuniform float _Blob_Fade_;\nuniform sampler2D _Blob_Texture_;\n\nuniform vec3 _Blob_Position_2_;\nuniform float _Blob_Near_Size_2_;\nuniform float _Blob_Pulse_2_;\nuniform float _Blob_Fade_2_;\nuniform vec3 _Left_Index_Pos_;\nuniform vec3 _Right_Index_Pos_;\nuniform vec3 _Left_Index_Middle_Pos_;\nuniform vec3 _Right_Index_Middle_Pos_;\n\nuniform sampler2D _Decal_;\nuniform vec2 _Decal_Scale_XY_;\nuniform bool _Decal_Front_Only_;\nuniform float _Rim_Intensity_;\nuniform sampler2D _Rim_Texture_;\nuniform float _Rim_Hue_Shift_;\nuniform float _Rim_Saturation_Shift_;\nuniform float _Rim_Value_Shift_;\n\nuniform float _Iridescence_Intensity_;\nuniform sampler2D _Iridescence_Texture_;\nuniform bool Use_Global_Left_Index;\nuniform bool Use_Global_Right_Index;\nuniform vec4 Global_Left_Index_Tip_Position;\nuniform vec4 Global_Right_Index_Tip_Position;\nuniform vec4 Global_Left_Thumb_Tip_Position;\nuniform vec4 Global_Right_Thumb_Tip_Position;\nuniform float Global_Left_Index_Tip_Proximity;\nuniform float Global_Right_Index_Tip_Proximity;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUV;\nvarying vec3 vTangent;\nvarying vec3 vBinormal;\nvarying vec4 vColor;\nvarying vec4 vExtra1;\nvarying vec4 vExtra2;\nvarying vec4 vExtra3;\n\nvoid Object_To_World_Pos_B162(\nvec3 Pos_Object,\nout vec3 Pos_World)\n{\nPos_World=(world*vec4(Pos_Object,1.0)).xyz;\n}\n\n\nvoid Object_To_World_Normal_B182(\nvec3 Nrm_Object,\nout vec3 Nrm_World)\n{\nNrm_World=(vec4(Nrm_Object,0.0)).xyz;\n}\n\n\nvoid Blob_Vertex_B173(\nvec3 Position,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nvec3 Blob_Position,\nfloat Intensity,\nfloat Blob_Near_Size,\nfloat Blob_Far_Size,\nfloat Blob_Near_Distance,\nfloat Blob_Far_Distance,\nfloat Blob_Fade_Length,\nfloat Blob_Pulse,\nfloat Blob_Fade,\nout vec4 Blob_Info)\n{\nvec3 blob=(Use_Global_Left_Index ? Global_Left_Index_Tip_Position.xyz : Blob_Position);\nvec3 delta=blob-Position;\nfloat dist=dot(Normal,delta);\nfloat lerpValue=clamp((abs(dist)-Blob_Near_Distance)/(Blob_Far_Distance-Blob_Near_Distance),0.0,1.0);\nfloat fadeValue=1.0-clamp((abs(dist)-Blob_Far_Distance)/Blob_Fade_Length,0.0,1.0);\nfloat size=Blob_Near_Size+(Blob_Far_Size-Blob_Near_Size)*lerpValue;\nvec2 blobXY=vec2(dot(delta,Tangent),dot(delta,Bitangent))/(0.0001+size);\nfloat Fade=fadeValue*Intensity*Blob_Fade;\nfloat Distance=(lerpValue*0.5+0.5)*(1.0-Blob_Pulse);\nBlob_Info=vec4(blobXY.x,blobXY.y,Distance,Fade);\n}\n\n\nvoid Blob_Vertex_B174(\nvec3 Position,\nvec3 Normal,\nvec3 Tangent,\nvec3 Bitangent,\nvec3 Blob_Position,\nfloat Intensity,\nfloat Blob_Near_Size,\nfloat Blob_Far_Size,\nfloat Blob_Near_Distance,\nfloat Blob_Far_Distance,\nfloat Blob_Fade_Length,\nfloat Blob_Pulse,\nfloat Blob_Fade,\nout vec4 Blob_Info)\n{\nvec3 blob=(Use_Global_Right_Index ? Global_Right_Index_Tip_Position.xyz : Blob_Position);\nvec3 delta=blob-Position;\nfloat dist=dot(Normal,delta);\nfloat lerpValue=clamp((abs(dist)-Blob_Near_Distance)/(Blob_Far_Distance-Blob_Near_Distance),0.0,1.0);\nfloat fadeValue=1.0-clamp((abs(dist)-Blob_Far_Distance)/Blob_Fade_Length,0.0,1.0);\nfloat size=Blob_Near_Size+(Blob_Far_Size-Blob_Near_Size)*lerpValue;\nvec2 blobXY=vec2(dot(delta,Tangent),dot(delta,Bitangent))/(0.0001+size);\nfloat Fade=fadeValue*Intensity*Blob_Fade;\nfloat Distance=(lerpValue*0.5+0.5)*(1.0-Blob_Pulse);\nBlob_Info=vec4(blobXY.x,blobXY.y,Distance,Fade);\n}\n\n\nvoid Move_Verts_B280(\nfloat Anisotropy,\nvec3 P,\nfloat Radius,\nfloat Bevel,\nvec3 Normal_Object,\nfloat ScaleZ,\nfloat Stretch,\nout vec3 New_P,\nout vec2 New_UV,\nout float Radial_Gradient,\nout vec3 Radial_Dir,\nout vec3 New_Normal)\n{\nvec2 UV=P.xy*2.0+0.5;\nvec2 center=clamp(UV,0.0,1.0);\nvec2 delta=UV-center;\nfloat deltad=(length(delta)*2.0);\nfloat f=(Bevel+(Radius-Bevel)*Stretch)/Radius;\n\nfloat innerd=clamp(deltad*2.0,0.0,1.0);\nfloat outerd=clamp(deltad*2.0-1.0,0.0,1.0);\nfloat bevelAngle=outerd*3.14159*0.5;\nfloat sinb=sin(bevelAngle);\nfloat cosb=cos(bevelAngle);\nfloat beveld=(1.0-f)*innerd+f*sinb;\nfloat br=outerd;\nvec2 r2=2.0*vec2(Radius/Anisotropy,Radius);\nfloat dir=P.z<0.0001 ? 1.0 : -1.0;\n\nNew_UV=center+r2*((0.5-center)+normalize(delta+vec2(0.0,0.000001))*beveld*0.5);\nNew_P=vec3(New_UV-0.5,P.z+dir*(1.0-cosb)*Bevel*ScaleZ);\nRadial_Gradient=clamp((deltad-0.5)*2.0,0.0,1.0);\nRadial_Dir=vec3(delta*r2,0.0);\nvec3 beveledNormal=cosb*Normal_Object+sinb*vec3(delta.x,delta.y,0.0);\nNew_Normal=Normal_Object.z==0.0 ? Normal_Object : beveledNormal;\n}\n\n\nvoid Object_To_World_Dir_B210(\nvec3 Dir_Object,\nout vec3 Normal_World,\nout vec3 Normal_World_N,\nout float Normal_Length)\n{\nNormal_World=(world*vec4(Dir_Object,0.0)).xyz;\nNormal_Length=length(Normal_World);\nNormal_World_N=Normal_World/Normal_Length;\n}\n\n\nvoid To_XYZ_B228(\nvec3 Vec3,\nout float X,\nout float Y,\nout float Z)\n{\nX=Vec3.x;\nY=Vec3.y;\nZ=Vec3.z;\n}\n\n\nvoid Conditional_Float_B243(\nbool Which,\nfloat If_True,\nfloat If_False,\nout float Result)\n{\nResult=Which ? If_True : If_False;\n}\n\n\nvoid Object_To_World_Dir_B178(\nvec3 Dir_Object,\nout vec3 Binormal_World,\nout vec3 Binormal_World_N,\nout float Binormal_Length)\n{\nBinormal_World=(world*vec4(Dir_Object,0.0)).xyz;\nBinormal_Length=length(Binormal_World);\nBinormal_World_N=Binormal_World/Binormal_Length;\n}\n\n\nvoid Pick_Radius_B219(\nfloat Radius,\nfloat Radius_Top_Left,\nfloat Radius_Top_Right,\nfloat Radius_Bottom_Left,\nfloat Radius_Bottom_Right,\nvec3 Position,\nout float Result)\n{\nbool whichY=Position.y>0.0;\nResult=Position.x<0.0 ? (whichY ? Radius_Top_Left : Radius_Bottom_Left) : (whichY ? Radius_Top_Right : Radius_Bottom_Right);\nResult*=Radius;\n}\n\n\nvoid Conditional_Float_B186(\nbool Which,\nfloat If_True,\nfloat If_False,\nout float Result)\n{\nResult=Which ? If_True : If_False;\n}\n\n\nvoid Greater_Than_B187(\nfloat Left,\nfloat Right,\nout bool Not_Greater_Than,\nout bool Greater_Than)\n{\nGreater_Than=Left>Right;\nNot_Greater_Than=!Greater_Than;\n}\n\n\nvoid Remap_Range_B255(\nfloat In_Min,\nfloat In_Max,\nfloat Out_Min,\nfloat Out_Max,\nfloat In,\nout float Out)\n{\nOut=mix(Out_Min,Out_Max,clamp((In-In_Min)/(In_Max-In_Min),0.0,1.0));\n}\n\nvoid main()\n{\n\nvec2 XY_Q235;\nXY_Q235=(uv-vec2(0.5,0.5))*_Decal_Scale_XY_+vec2(0.5,0.5);\n\nvec3 Tangent_World_Q177;\nvec3 Tangent_World_N_Q177;\nfloat Tangent_Length_Q177;\nTangent_World_Q177=(world*vec4(vec3(1,0,0),0.0)).xyz;\nTangent_Length_Q177=length(Tangent_World_Q177);\nTangent_World_N_Q177=Tangent_World_Q177/Tangent_Length_Q177;\nvec3 Normal_World_Q210;\nvec3 Normal_World_N_Q210;\nfloat Normal_Length_Q210;\nObject_To_World_Dir_B210(vec3(0,0,1),Normal_World_Q210,Normal_World_N_Q210,Normal_Length_Q210);\nfloat X_Q228;\nfloat Y_Q228;\nfloat Z_Q228;\nTo_XYZ_B228(position,X_Q228,Y_Q228,Z_Q228);\n\nvec3 Nrm_World_Q176;\nNrm_World_Q176=normalize((world*vec4(normal,0.0)).xyz);\nvec3 Binormal_World_Q178;\nvec3 Binormal_World_N_Q178;\nfloat Binormal_Length_Q178;\nObject_To_World_Dir_B178(vec3(0,1,0),Binormal_World_Q178,Binormal_World_N_Q178,Binormal_Length_Q178);\n\nfloat Anisotropy_Q179=Tangent_Length_Q177/Binormal_Length_Q178;\nfloat Result_Q219;\nPick_Radius_B219(_Radius_,_Radius_Top_Left_,_Radius_Top_Right_,_Radius_Bottom_Left_,_Radius_Bottom_Right_,position,Result_Q219);\n\nfloat Anisotropy_Q203=Binormal_Length_Q178/Normal_Length_Q210;\nbool Not_Greater_Than_Q187;\nbool Greater_Than_Q187;\nGreater_Than_B187(Z_Q228,0.0,Not_Greater_Than_Q187,Greater_Than_Q187);\n\nvec4 Linear_Q251;\nLinear_Q251.rgb=clamp(_Left_Color_.rgb*_Left_Color_.rgb,0.0,1.0);\nLinear_Q251.a=_Left_Color_.a;\n\nvec4 Linear_Q252;\nLinear_Q252.rgb=clamp(_Right_Color_.rgb*_Right_Color_.rgb,0.0,1.0);\nLinear_Q252.a=_Right_Color_.a;\n\nvec3 Difference_Q211=vec3(0,0,0)-Normal_World_N_Q210;\n\nvec4 Out_Color_Q184=vec4(X_Q228,Y_Q228,Z_Q228,1);\nfloat Result_Q186;\nConditional_Float_B186(Greater_Than_Q187,_Bevel_Back_,_Bevel_Front_,Result_Q186);\nfloat Result_Q244;\nConditional_Float_B186(Greater_Than_Q187,_Bevel_Back_Stretch_,_Bevel_Front_Stretch_,Result_Q244);\nvec3 New_P_Q280;\nvec2 New_UV_Q280;\nfloat Radial_Gradient_Q280;\nvec3 Radial_Dir_Q280;\nvec3 New_Normal_Q280;\nMove_Verts_B280(Anisotropy_Q179,position,Result_Q219,Result_Q186,normal,Anisotropy_Q203,Result_Q244,New_P_Q280,New_UV_Q280,Radial_Gradient_Q280,Radial_Dir_Q280,New_Normal_Q280);\n\nfloat X_Q248;\nfloat Y_Q248;\nX_Q248=New_UV_Q280.x;\nY_Q248=New_UV_Q280.y;\nvec3 Pos_World_Q162;\nObject_To_World_Pos_B162(New_P_Q280,Pos_World_Q162);\nvec3 Nrm_World_Q182;\nObject_To_World_Normal_B182(New_Normal_Q280,Nrm_World_Q182);\nvec4 Blob_Info_Q173;\n#if BLOB_ENABLE\nBlob_Vertex_B173(Pos_World_Q162,Nrm_World_Q176,Tangent_World_N_Q177,Binormal_World_N_Q178,_Blob_Position_,_Blob_Intensity_,_Blob_Near_Size_,_Blob_Far_Size_,_Blob_Near_Distance_,_Blob_Far_Distance_,_Blob_Fade_Length_,_Blob_Pulse_,_Blob_Fade_,Blob_Info_Q173);\n#else\nBlob_Info_Q173=vec4(0,0,0,0);\n#endif\nvec4 Blob_Info_Q174;\n#if BLOB_ENABLE_2\nBlob_Vertex_B174(Pos_World_Q162,Nrm_World_Q176,Tangent_World_N_Q177,Binormal_World_N_Q178,_Blob_Position_2_,_Blob_Intensity_,_Blob_Near_Size_2_,_Blob_Far_Size_,_Blob_Near_Distance_,_Blob_Far_Distance_,_Blob_Fade_Length_,_Blob_Pulse_2_,_Blob_Fade_2_,Blob_Info_Q174);\n#else\nBlob_Info_Q174=vec4(0,0,0,0);\n#endif\nfloat Out_Q255;\nRemap_Range_B255(0.0,1.0,0.0,1.0,X_Q248,Out_Q255);\nfloat X_Q236;\nfloat Y_Q236;\nfloat Z_Q236;\nTo_XYZ_B228(Nrm_World_Q182,X_Q236,Y_Q236,Z_Q236);\n\nvec4 Color_At_T_Q247=mix(Linear_Q251,Linear_Q252,Out_Q255);\n\nfloat Minus_F_Q237=-Z_Q236;\n\nfloat R_Q249;\nfloat G_Q249;\nfloat B_Q249;\nfloat A_Q249;\nR_Q249=Color_At_T_Q247.r; G_Q249=Color_At_T_Q247.g; B_Q249=Color_At_T_Q247.b; A_Q249=Color_At_T_Q247.a;\n\nfloat ClampF_Q238=clamp(0.0,Minus_F_Q237,1.0);\nfloat Result_Q243;\nConditional_Float_B243(_Decal_Front_Only_,ClampF_Q238,1.0,Result_Q243);\n\nvec4 Vec4_Q239=vec4(Result_Q243,Radial_Gradient_Q280,G_Q249,B_Q249);\nvec3 Position=Pos_World_Q162;\nvec3 Normal=Nrm_World_Q182;\nvec2 UV=XY_Q235;\nvec3 Tangent=Tangent_World_N_Q177;\nvec3 Binormal=Difference_Q211;\nvec4 Color=Out_Color_Q184;\nvec4 Extra1=Vec4_Q239;\nvec4 Extra2=Blob_Info_Q173;\nvec4 Extra3=Blob_Info_Q174;\ngl_Position=viewProjection*vec4(Position,1);\nvPosition=Position;\nvNormal=Normal;\nvUV=UV;\nvTangent=Tangent;\nvBinormal=Binormal;\nvColor=Color;\nvExtra1=Extra1;\nvExtra2=Extra2;\nvExtra3=Extra3;\n}";
+babylonjs_Engines_shaderStore__WEBPACK_IMPORTED_MODULE_0__["ShaderStore"].ShadersStore[name] = shader;
+/** @hidden */
+var mrdlSliderThumbVertexShader = { name: name, shader: shader };
 
 
 /***/ }),
@@ -17727,128 +25530,174 @@ var Vector3WithInfo = /** @class */ (function (_super) {
 /*!******************!*\
   !*** ./index.ts ***!
   \******************/
-/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name, AdvancedDynamicTexture, AdvancedDynamicTextureInstrumentation, Vector2WithInfo, Matrix2D, Measure, MultiLinePoint, Style, ValueAndUnit, XmlLoader, AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, MeshButton3D, PlanePanel, ScatterPanel, SpherePanel, StackPanel3D, VolumeBasedPanel, FluentMaterialDefines, FluentMaterial, GUI3DManager, Vector3WithInfo */
+/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, FocusableButton, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, ToggleButton, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name, AdvancedDynamicTexture, AdvancedDynamicTextureInstrumentation, Vector2WithInfo, Matrix2D, Measure, MultiLinePoint, Style, ValueAndUnit, XmlLoader, AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, HolographicSlate, HandMenu, MeshButton3D, NearMenu, PlanePanel, ScatterPanel, Slider3D, SpherePanel, StackPanel3D, TouchButton3D, TouchMeshButton3D, TouchHolographicButton, TouchHolographicMenu, TouchToggleButton3D, VolumeBasedPanel, HolographicBackplate, FluentMaterialDefines, FluentMaterial, FluentButtonMaterial, FluentBackplateMaterial, HandleMaterial, MRDLSliderBarMaterial, MRDLSliderThumbMaterial, MRDLBackplateMaterial, SlateGizmo, HandleState, GizmoHandle, SideHandle, CornerHandle, GUI3DManager, Vector3WithInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _2D__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./2D */ "./2D/index.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Button"]; });
+/* harmony import */ var _2D_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./2D/index */ "./2D/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Button"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Checkbox", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Checkbox"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Checkbox", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Checkbox"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ColorPicker", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["ColorPicker"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ColorPicker", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["ColorPicker"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Container"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Container"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Control"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Control"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Ellipse", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Ellipse"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Ellipse", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Ellipse"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Grid"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FocusableButton", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["FocusableButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Image", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Image"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Grid"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputText", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["InputText"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Image", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Image"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputPassword", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["InputPassword"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputText", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["InputText"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Line"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InputPassword", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["InputPassword"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLine", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["MultiLine"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Line", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Line"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioButton", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["RadioButton"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLine", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["MultiLine"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["StackPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioButton", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["RadioButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectorGroup", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["SelectorGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["StackPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["CheckboxGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectorGroup", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["SelectorGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioGroup", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["RadioGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["CheckboxGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SliderGroup", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["SliderGroup"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RadioGroup", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["RadioGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionPanel", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["SelectionPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SliderGroup", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["SliderGroup"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollViewer", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["ScrollViewer"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionPanel", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["SelectionPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapping", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["TextWrapping"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollViewer", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["ScrollViewer"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextBlock", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["TextBlock"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapping", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["TextWrapping"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapper", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["TextWrapper"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextBlock", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["TextBlock"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyPropertySet", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["KeyPropertySet"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapper", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["TextWrapper"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualKeyboard", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["VirtualKeyboard"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ToggleButton", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["ToggleButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rectangle", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Rectangle"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyPropertySet", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["KeyPropertySet"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DisplayGrid", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["DisplayGrid"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualKeyboard", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["VirtualKeyboard"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseSlider", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["BaseSlider"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Rectangle", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Rectangle"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Slider"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DisplayGrid", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["DisplayGrid"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageBasedSlider", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["ImageBasedSlider"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseSlider", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["BaseSlider"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollBar", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["ScrollBar"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Slider"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageScrollBar", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["ImageScrollBar"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageBasedSlider", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["ImageBasedSlider"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "name", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["name"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScrollBar", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["ScrollBar"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AdvancedDynamicTexture", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["AdvancedDynamicTexture"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ImageScrollBar", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["ImageScrollBar"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AdvancedDynamicTextureInstrumentation", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["AdvancedDynamicTextureInstrumentation"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "name", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["name"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Vector2WithInfo", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Vector2WithInfo"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AdvancedDynamicTexture", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["AdvancedDynamicTexture"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Matrix2D", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Matrix2D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AdvancedDynamicTextureInstrumentation", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["AdvancedDynamicTextureInstrumentation"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Measure", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Measure"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Vector2WithInfo", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Vector2WithInfo"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLinePoint", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["MultiLinePoint"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Matrix2D", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Matrix2D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Style", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["Style"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Measure", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Measure"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueAndUnit", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["ValueAndUnit"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MultiLinePoint", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["MultiLinePoint"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "XmlLoader", function() { return _2D__WEBPACK_IMPORTED_MODULE_0__["XmlLoader"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Style", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["Style"]; });
 
-/* harmony import */ var _3D__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./3D */ "./3D/index.ts");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AbstractButton3D", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["AbstractButton3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueAndUnit", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["ValueAndUnit"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button3D", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["Button3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "XmlLoader", function() { return _2D_index__WEBPACK_IMPORTED_MODULE_0__["XmlLoader"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container3D", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["Container3D"]; });
+/* harmony import */ var _3D_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./3D/index */ "./3D/index.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AbstractButton3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["AbstractButton3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control3D", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["Control3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Button3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["Button3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CylinderPanel", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["CylinderPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Container3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["Container3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicButton", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["HolographicButton"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["Control3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MeshButton3D", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["MeshButton3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CylinderPanel", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["CylinderPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PlanePanel", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["PlanePanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicButton", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["HolographicButton"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScatterPanel", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["ScatterPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicSlate", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["HolographicSlate"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SpherePanel", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["SpherePanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandMenu", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["HandMenu"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel3D", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["StackPanel3D"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MeshButton3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["MeshButton3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VolumeBasedPanel", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["VolumeBasedPanel"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NearMenu", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["NearMenu"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterialDefines", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["FluentMaterialDefines"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PlanePanel", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["PlanePanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterial", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["FluentMaterial"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScatterPanel", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["ScatterPanel"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GUI3DManager", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["GUI3DManager"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["Slider3D"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Vector3WithInfo", function() { return _3D__WEBPACK_IMPORTED_MODULE_1__["Vector3WithInfo"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SpherePanel", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["SpherePanel"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["StackPanel3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchButton3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["TouchButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchMeshButton3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["TouchMeshButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicButton", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["TouchHolographicButton"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicMenu", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["TouchHolographicMenu"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchToggleButton3D", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["TouchToggleButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VolumeBasedPanel", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["VolumeBasedPanel"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicBackplate", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["HolographicBackplate"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterialDefines", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["FluentMaterialDefines"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterial", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["FluentMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentButtonMaterial", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["FluentButtonMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentBackplateMaterial", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["FluentBackplateMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleMaterial", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["HandleMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderBarMaterial", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["MRDLSliderBarMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderThumbMaterial", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["MRDLSliderThumbMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLBackplateMaterial", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["MRDLBackplateMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SlateGizmo", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["SlateGizmo"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleState", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["HandleState"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GizmoHandle", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["GizmoHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SideHandle", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["SideHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CornerHandle", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["CornerHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GUI3DManager", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["GUI3DManager"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Vector3WithInfo", function() { return _3D_index__WEBPACK_IMPORTED_MODULE_1__["Vector3WithInfo"]; });
 
 
 
@@ -17860,7 +25709,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!**************************!*\
   !*** ./legacy/legacy.ts ***!
   \**************************/
-/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name, AdvancedDynamicTexture, AdvancedDynamicTextureInstrumentation, Vector2WithInfo, Matrix2D, Measure, MultiLinePoint, Style, ValueAndUnit, XmlLoader, AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, MeshButton3D, PlanePanel, ScatterPanel, SpherePanel, StackPanel3D, VolumeBasedPanel, FluentMaterialDefines, FluentMaterial, GUI3DManager, Vector3WithInfo */
+/*! exports provided: Button, Checkbox, ColorPicker, Container, Control, Ellipse, FocusableButton, Grid, Image, InputText, InputPassword, Line, MultiLine, RadioButton, StackPanel, SelectorGroup, CheckboxGroup, RadioGroup, SliderGroup, SelectionPanel, ScrollViewer, TextWrapping, TextBlock, TextWrapper, ToggleButton, KeyPropertySet, VirtualKeyboard, Rectangle, DisplayGrid, BaseSlider, Slider, ImageBasedSlider, ScrollBar, ImageScrollBar, name, AdvancedDynamicTexture, AdvancedDynamicTextureInstrumentation, Vector2WithInfo, Matrix2D, Measure, MultiLinePoint, Style, ValueAndUnit, XmlLoader, AbstractButton3D, Button3D, Container3D, Control3D, CylinderPanel, HolographicButton, HolographicSlate, HandMenu, MeshButton3D, NearMenu, PlanePanel, ScatterPanel, Slider3D, SpherePanel, StackPanel3D, TouchButton3D, TouchMeshButton3D, TouchHolographicButton, TouchHolographicMenu, TouchToggleButton3D, VolumeBasedPanel, HolographicBackplate, FluentMaterialDefines, FluentMaterial, FluentButtonMaterial, FluentBackplateMaterial, HandleMaterial, MRDLSliderBarMaterial, MRDLSliderThumbMaterial, MRDLBackplateMaterial, SlateGizmo, HandleState, GizmoHandle, SideHandle, CornerHandle, GUI3DManager, Vector3WithInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17877,6 +25726,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Control", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["Control"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Ellipse", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["Ellipse"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FocusableButton", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["FocusableButton"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["Grid"]; });
 
@@ -17911,6 +25762,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextBlock", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["TextBlock"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextWrapper", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["TextWrapper"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ToggleButton", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["ToggleButton"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyPropertySet", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["KeyPropertySet"]; });
 
@@ -17962,21 +25815,63 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicButton", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["HolographicButton"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicSlate", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["HolographicSlate"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandMenu", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["HandMenu"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MeshButton3D", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["MeshButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NearMenu", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["NearMenu"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PlanePanel", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["PlanePanel"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScatterPanel", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["ScatterPanel"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Slider3D", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["Slider3D"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SpherePanel", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["SpherePanel"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackPanel3D", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["StackPanel3D"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchButton3D", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["TouchButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchMeshButton3D", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["TouchMeshButton3D"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicButton", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["TouchHolographicButton"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchHolographicMenu", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["TouchHolographicMenu"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchToggleButton3D", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["TouchToggleButton3D"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VolumeBasedPanel", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["VolumeBasedPanel"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HolographicBackplate", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["HolographicBackplate"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterialDefines", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["FluentMaterialDefines"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentMaterial", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["FluentMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentButtonMaterial", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["FluentButtonMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FluentBackplateMaterial", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["FluentBackplateMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleMaterial", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["HandleMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderBarMaterial", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["MRDLSliderBarMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLSliderThumbMaterial", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["MRDLSliderThumbMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MRDLBackplateMaterial", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["MRDLBackplateMaterial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SlateGizmo", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["SlateGizmo"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HandleState", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["HandleState"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GizmoHandle", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["GizmoHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SideHandle", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["SideHandle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CornerHandle", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["CornerHandle"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GUI3DManager", function() { return _index__WEBPACK_IMPORTED_MODULE_0__["GUI3DManager"]; });
 
