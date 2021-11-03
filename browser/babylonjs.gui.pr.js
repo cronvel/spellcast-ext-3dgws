@@ -13703,6 +13703,7 @@ var TextBlock = /** @class */ (function (_super) {
         _this.name = name;
         _this._text = "";
         _this._structuredText = []; //++CR
+        _this._useStructuredText = false; //++CR this is probably temp, everything should use structuredText internally
         _this._textWrapping = TextWrapping.Clip;
         _this._textHorizontalAlignment = _control__WEBPACK_IMPORTED_MODULE_3__["Control"].HORIZONTAL_ALIGNMENT_CENTER;
         _this._textVerticalAlignment = _control__WEBPACK_IMPORTED_MODULE_3__["Control"].VERTICAL_ALIGNMENT_CENTER;
@@ -13793,6 +13794,7 @@ var TextBlock = /** @class */ (function (_super) {
             }
             this._text = value + ""; // Making sure it is a text
             this._structuredText = [{ text: this._text }];
+            this._useStructuredText = false;
             this._markAsDirty();
             this.onTextChangedObservable.notifyObservers(this);
         },
@@ -13807,6 +13809,8 @@ var TextBlock = /** @class */ (function (_super) {
         get: function () {
             return this._structuredText;
         },
+        //--CR
+        //++CR
         /**
          * Gets or sets structured text to display
          */
@@ -13815,6 +13819,7 @@ var TextBlock = /** @class */ (function (_super) {
                 return;
             }
             this._structuredText = value;
+            this._useStructuredText = true;
             this._text = this._structuredText.reduce(function (accumulator, part) { return accumulator + part.text; }, '');
             this._markAsDirty();
             this.onTextChangedObservable.notifyObservers(this);
@@ -14059,7 +14064,7 @@ var TextBlock = /** @class */ (function (_super) {
                 x = (width - textWidth) / 2;
                 break;
         }
-        console.warn("****************** ._drawStructuredText()", structuredText, textWidth, y);
+        //console.warn( "****************** ._drawStructuredText()" , structuredText , textWidth , y ) ;
         var halfThickness = Math.round(this.fontSizeInPixels * 0.025), underlineYOffset = 3, lineThroughYOffset = -this.fontSizeInPixels / 3;
         for (var _i = 0, structuredText_1 = structuredText; _i < structuredText_1.length; _i++) {
             var part = structuredText_1[_i];
@@ -14118,7 +14123,7 @@ var TextBlock = /** @class */ (function (_super) {
         context.fillStyle = attr.color;
         // Disallow changing font size and family? If this would be allowed, line-height computing would need to be upgraded...
         context.font = attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily;
-        console.warn("************?????????????????", attr, attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily);
+        //console.warn( "************?????????????????" , attr , attr.fontStyle + " " + attr.fontWeight + " " + this.fontSize + " " + this._fontFamily ) ;
         if (attr.shadowBlur || attr.shadowOffsetX || attr.shadowOffsetY) {
             if (attr.shadowColor) {
                 context.shadowColor = attr.shadowColor;
@@ -14165,11 +14170,9 @@ var TextBlock = /** @class */ (function (_super) {
         }
     };
     TextBlock.prototype._breakLines = function (refWidth, context) {
-        //++CR
-        if (this._structuredText) {
+        if (this._useStructuredText) {
             return this._breakStructuredTextLines(refWidth, context);
-        }
-        //--CR
+        } //++CR
         var lines = [];
         var _lines = this.text.split("\n");
         if (this._textWrapping === TextWrapping.Ellipsis) {
@@ -14241,14 +14244,7 @@ var TextBlock = /** @class */ (function (_super) {
     };
     //++CR
     TextBlock.prototype._parseStructuredTextLine = function (line, context) {
-        var textMetrics, lineWidth = 0;
-        for (var _i = 0, line_1 = line; _i < line_1.length; _i++) {
-            var _part = line_1[_i];
-            //CR:TODO set up the style before measure the size
-            textMetrics = context.measureText(_part.text);
-            _part.width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-            lineWidth += _part.width;
-        }
+        var lineWidth = this._structuredTextWidth(line, context);
         return { parts: line, width: lineWidth };
     };
     ;
@@ -14390,7 +14386,7 @@ var TextBlock = /** @class */ (function (_super) {
                 part.width = textMetrics.width;
                 //part.width = Math.abs( textMetrics.actualBoundingBoxLeft ) + Math.abs( textMetrics.actualBoundingBoxRight ) ;
                 //part.width = Math.abs( textMetrics.actualBoundingBoxRight - textMetrics.actualBoundingBoxLeft ) ;
-                console.warn("******************* ._structuredTextWidth() ", part, textMetrics);
+                //console.warn( "******************* ._structuredTextWidth() " , part , textMetrics ) ;
             }
             return width + part.width;
         }, 0);
@@ -14405,8 +14401,8 @@ var TextBlock = /** @class */ (function (_super) {
     TextBlock.prototype._parseStructuredTextLineWordWrap = function (line, width, context) {
         var _part, _word, wordText, lines = [], words = [], wordSplittingFunction = this.wordSplittingFunction || TextBlock._defaultWordSplittingFunction;
         // Split each part of the line
-        for (var _i = 0, line_2 = line; _i < line_2.length; _i++) {
-            _part = line_2[_i];
+        for (var _i = 0, line_1 = line; _i < line_1.length; _i++) {
+            _part = line_1[_i];
             for (var _a = 0, _b = wordSplittingFunction(_part.text); _a < _b.length; _a++) {
                 wordText = _b[_a];
                 _word = Object.assign({}, _part);
@@ -14432,7 +14428,6 @@ var TextBlock = /** @class */ (function (_super) {
                 testWidth = this._structuredTextWidth(testLine, context);
             }
         }
-        //lines.push( { parts: testLine , width: testWidth } ) ;
         lines.push({ parts: TextBlock._fuseStructuredTextParts(testLine), width: testWidth });
         return lines;
     };
@@ -14464,7 +14459,7 @@ var TextBlock = /** @class */ (function (_super) {
                 }
             }
             //++CR
-            if (line.parts) {
+            if (this._useStructuredText) {
                 this._drawStructuredText(line.parts, line.width, rootY, context);
             }
             else {
