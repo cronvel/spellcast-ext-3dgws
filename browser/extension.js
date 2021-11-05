@@ -5229,7 +5229,7 @@ function Message( dom , gScene , text , options = {} ) {
 	this.babylon = {
 		rectangle: null ,
 		image: null ,
-		textBlock: null
+		structuredTextBlock: null
 	} ;
 }
 
@@ -5241,7 +5241,7 @@ module.exports = Message ;
 
 
 Message.prototype.destroy = function() {
-	if ( this.babylon.textBlock ) { this.babylon.textBlock.dispose() ; }
+	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
 	if ( this.babylon.rectangle ) { this.babylon.rectangle.dispose() ; }
 	if ( this.babylon.image ) { this.babylon.image.dispose() ; }
 } ;
@@ -5310,7 +5310,7 @@ Message.prototype.setControlAlignment = function( control , type ) {
 */
 
 Message.prototype.create = function() {
-	var rectangle , image , textBlock ,
+	var rectangle , image , structuredTextBlock ,
 		ui = this.gScene.getUi() ,
 		theme = this.dom.themeConfig?.message?.default ,
 		defaultTheme = THEME.default ;
@@ -5347,28 +5347,28 @@ Message.prototype.create = function() {
 		rectangle.background = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
 	}
 
-	textBlock = this.babylon.textBlock = new BABYLON.GUI.TextBlock() ;
-	//textBlock.height = "50px" ;
-	textBlock.structuredText = this.parseText( this.text ) ;
-	//textBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
-	textBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
-	textBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
-	textBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
-	textBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
+	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
+	//structuredTextBlock.height = "50px" ;
+	structuredTextBlock.structuredText = this.parseText( this.text ) ;
+	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
+	structuredTextBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
+	structuredTextBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
+	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
+	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
 
 	if ( theme?.text?.padding ?? defaultTheme?.text?.padding ) {
-		textBlock.paddingLeft = textBlock.paddingRight = textBlock.paddingTop = textBlock.paddingBottom = theme?.text?.padding ?? defaultTheme?.text?.padding ;
+		structuredTextBlock.paddingLeft = structuredTextBlock.paddingRight = structuredTextBlock.paddingTop = structuredTextBlock.paddingBottom = theme?.text?.padding ?? defaultTheme?.text?.padding ;
 	}
 
-	//textBlock.textWrapping = true ;
-	//textBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
-	//textBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
-	textBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
+	//structuredTextBlock.textWrapping = true ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
+	structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
 
-	//textBlock.color = this.special.content.textColor ;
-	//textBlock.alpha = this.opacity ;
-	//textBlock.resizeToFit = true ;
-	rectangle.addControl( textBlock ) ;
+	//structuredTextBlock.color = this.special.content.textColor ;
+	//structuredTextBlock.alpha = this.opacity ;
+	//structuredTextBlock.resizeToFit = true ;
+	rectangle.addControl( structuredTextBlock ) ;
 } ;
 
 
