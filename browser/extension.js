@@ -5399,7 +5399,10 @@ MARKUP_COLOR_TO_CSS.grey = MARKUP_COLOR_TO_CSS.gray = MARKUP_COLOR_TO_CSS.bright
 Message.prototype.parseText = function( text ) {
 	return extension.host.exports.toolkit.parseMarkup( text ).map( _part => {
 		var part = { text: _part.text } ;
-		part.color = MARKUP_COLOR_TO_CSS[ _part.color ] ;
+		part.color =
+			! _part.color ? undefined :
+			_part.color[ 0 ] === '#' ? _part.color :
+			MARKUP_COLOR_TO_CSS[ _part.color ] ;
 		part.fontStyle = _part.italic ? 'italic' : '' ;
 		part.fontWeight = _part.bold ? 'bold' : '' ;
 		part.underline = !! _part.underline ;
