@@ -4,7 +4,7 @@
   "description": "3D Ground With Sprites - A Spellcast's Client Extension.",
   "main": "lib/extension.js",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=14.15.0"
   },
   "directories": {
     "test": "test"

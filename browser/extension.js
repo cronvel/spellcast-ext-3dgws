@@ -402,7 +402,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],2:[function(require,module,exports){
+},{"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],2:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -781,7 +781,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 } ;
 
 
-},{"./meshUtils.js":23,"seventh":44}],3:[function(require,module,exports){
+},{"./meshUtils.js":23,"seventh":45}],3:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -1942,7 +1942,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":18,"./Parametric.js":20,"nextgen-events/lib/LeanEvents.js":32,"seventh":44}],4:[function(require,module,exports){
+},{"./GTransition.js":18,"./Parametric.js":20,"nextgen-events/lib/LeanEvents.js":33,"seventh":45}],4:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2066,7 +2066,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"seventh":44}],5:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":45}],5:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2163,7 +2163,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],6:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],6:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2278,7 +2278,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],7:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2498,7 +2498,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],8:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2660,7 +2660,7 @@ GEntityFx.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],9:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2788,7 +2788,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"seventh":44}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":45}],10:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2922,7 +2922,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],11:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3529,7 +3529,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],12:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3656,7 +3656,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],13:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3781,7 +3781,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],14:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3839,7 +3839,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],15:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4102,7 +4102,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":44}],16:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":25,"seventh":45}],16:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4965,7 +4965,7 @@ GScene.prototype.addMessage = function( text , options ) {
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":18,"./Message.js":19,"nextgen-events/lib/LeanEvents.js":32,"seventh":44}],18:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":18,"./Message.js":19,"nextgen-events/lib/LeanEvents.js":33,"seventh":45}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5181,7 +5181,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":25,"seventh":44}],19:[function(require,module,exports){
+},{"array-kit":26,"seventh":45}],19:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5213,6 +5213,8 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 /* global BABYLON */
 
 
+
+const misc = require( './misc.js' ) ;
 
 const extension = require( './browser-extension.js' ) ;
 const Promise = require( 'seventh' ) ;
@@ -5373,7 +5375,7 @@ Message.prototype.create = function() {
 
 
 
-const MARKUP_COLOR_TO_CSS = {
+const MARKUP_COLOR_CODE = {
 	black: '#000000',
 	brightBlack: '#555753', //grey: '#555753',
 	red: '#cc0000',
@@ -5392,21 +5394,31 @@ const MARKUP_COLOR_TO_CSS = {
 	brightWhite: '#eeeeec'
 } ;
 
-MARKUP_COLOR_TO_CSS.grey = MARKUP_COLOR_TO_CSS.gray = MARKUP_COLOR_TO_CSS.brightBlack ;
+MARKUP_COLOR_CODE.grey = MARKUP_COLOR_CODE.gray = MARKUP_COLOR_CODE.brightBlack ;
 
 
 
 Message.prototype.parseText = function( text ) {
-	return extension.host.exports.toolkit.parseMarkup( text ).map( _part => {
-		var part = { text: _part.text } ;
-		part.color =
-			! _part.color ? undefined :
-			_part.color[ 0 ] === '#' ? _part.color :
-			MARKUP_COLOR_TO_CSS[ _part.color ] ;
-		part.fontStyle = _part.italic ? 'italic' : '' ;
-		part.fontWeight = _part.bold ? 'bold' : '' ;
-		part.underline = !! _part.underline ;
-		part.lineThrough = !! _part.strike ;
+	return extension.host.exports.toolkit.parseMarkup( text ).map( input => {
+		var part = { text: input.text } ;
+		
+		if ( input.color ) {
+			part.color = input.color[ 0 ] === '#' ? input.color : MARKUP_COLOR_CODE[ input.color ] ;
+		}
+
+		if ( input.italic ) { part.fontStyle = 'italic' ; }
+		if ( input.bold ) { part.fontWeight = 'bold' ; }
+		if ( input.underline ) { part.underline = true ; }
+		if ( input.strike ) { part.lineThrough = true ; }
+		
+		if ( input.bgColor ) {
+			part.frame = true ;
+			part.frameColor = input.bgColor ;
+			part.frameOutlineWidth = 2 ;
+			part.frameOutlineColor = misc.getContrastColorCode( part.frameColor , 0.7 ) ;
+			part.frameCornerRadius = 5 ;
+		}
+		
 		return part ;
 	} ) ;
 } ;
@@ -5426,7 +5438,7 @@ Message.prototype.run = async function() {
 } ;
 
 
-},{"./browser-extension.js":21,"seventh":44}],20:[function(require,module,exports){
+},{"./browser-extension.js":21,"./misc.js":24,"seventh":45}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5658,7 +5670,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":22,"exm/lib/BrowserExm.js":31,"path":34}],22:[function(require,module,exports){
+},{"./engine.js":22,"exm/lib/BrowserExm.js":32,"path":35}],22:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5786,6 +5798,66 @@ exports.getUpmostBoxMeshFace = boxMesh => {
 
 
 },{}],24:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+
+
+const extension = require( './browser-extension.js' ) ;
+
+
+
+const misc = {} ;
+module.exports = misc ;
+
+
+
+misc.getContrastColorCode = ( colorStr , rate = 0.5 ) => {
+	var color = extension.host.exports.toolkit.hexToRgb( colorStr ) ;
+
+	if ( color.r + color.g + color.b >= 192 ) {
+		// This is a light color, we will contrast it with a darker color
+		color.r = Math.round( color.r * rate ) ;
+		color.g = Math.round( color.g * rate ) ;
+		color.b = Math.round( color.b * rate ) ;
+	}
+	else {
+		// This is a dark color, we will contrast it with a lighter color
+		color.r = Math.round( 255 - ( ( 255 - color.r ) * rate ) ) ;
+		color.g = Math.round( 255 - ( ( 255 - color.g ) * rate ) ) ;
+		color.b = Math.round( 255 - ( ( 255 - color.b ) * rate ) ) ;
+	}
+
+	return extension.host.exports.toolkit.rgbToHex( color ) ;
+} ;
+
+
+},{"./browser-extension.js":21}],25:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5942,7 +6014,7 @@ utils.epsilonAsin = utils.easin = v => {
 } ;
 
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -5986,7 +6058,7 @@ module.exports = arrayKit ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 
 
-},{"./delete.js":26,"./deleteValue.js":27,"./inPlaceFilter.js":28,"./range.js":29,"./sample.js":30}],26:[function(require,module,exports){
+},{"./delete.js":27,"./deleteValue.js":28,"./inPlaceFilter.js":29,"./range.js":30,"./sample.js":31}],27:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6038,7 +6110,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6102,7 +6174,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6167,7 +6239,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6234,7 +6306,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6291,7 +6363,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (global){(function (){
 /*
 	EXM
@@ -6476,7 +6548,7 @@ if ( ! global.EXM ) {
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -6702,7 +6774,7 @@ LeanEvents.prototype.getAllStates = function() {
 } ;
 
 
-},{"../package.json":33}],33:[function(require,module,exports){
+},{"../package.json":34}],34:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.5.2",
@@ -6762,7 +6834,7 @@ module.exports={
   }
 }
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -7295,7 +7367,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":35}],35:[function(require,module,exports){
+},{"_process":36}],36:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -7481,7 +7553,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
@@ -7671,7 +7743,7 @@ process.umask = function() { return 0; };
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":35}],37:[function(require,module,exports){
+},{"_process":36}],38:[function(require,module,exports){
 /*
 	Seventh
 
@@ -7900,7 +7972,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":44}],38:[function(require,module,exports){
+},{"./seventh.js":45}],39:[function(require,module,exports){
 /*
 	Seventh
 
@@ -7984,7 +8056,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":44}],39:[function(require,module,exports){
+},{"./seventh.js":45}],40:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8593,7 +8665,7 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":44}],40:[function(require,module,exports){
+},{"./seventh.js":45}],41:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Seventh
@@ -9352,7 +9424,7 @@ if ( process.browser ) {
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":35,"setimmediate":36,"timers":46}],41:[function(require,module,exports){
+},{"_process":36,"setimmediate":37,"timers":47}],42:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9858,7 +9930,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 */
 
 
-},{"./seventh.js":44}],42:[function(require,module,exports){
+},{"./seventh.js":45}],43:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Seventh
@@ -9958,7 +10030,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./seventh.js":44,"_process":35}],43:[function(require,module,exports){
+},{"./seventh.js":45,"_process":36}],44:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10010,7 +10082,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":44}],44:[function(require,module,exports){
+},{"./seventh.js":45}],45:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10054,7 +10126,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":37,"./api.js":38,"./batch.js":39,"./core.js":40,"./decorators.js":41,"./misc.js":42,"./parasite.js":43,"./wrapper.js":45}],45:[function(require,module,exports){
+},{"./Queue.js":38,"./api.js":39,"./batch.js":40,"./core.js":41,"./decorators.js":42,"./misc.js":43,"./parasite.js":44,"./wrapper.js":46}],46:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10219,7 +10291,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":44}],46:[function(require,module,exports){
+},{"./seventh.js":45}],47:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -10298,4 +10370,4 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":35,"timers":46}]},{},[21]);
+},{"process/browser.js":36,"timers":47}]},{},[21]);
