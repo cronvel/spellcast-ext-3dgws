@@ -4958,10 +4958,8 @@ GScene.prototype.getUi = function() {
 // Event catching/dispatching
 
 GScene.prototype.addMessage = function( text , options ) {
-	console.warn( "!!!!!!!!! Catching message:" , text ) ;
 	var message = new Message( this.dom , this , text , options ) ;
-	message.run() ;
-	return Promise.resolved ;
+	return message.run() ;
 } ;
 
 
@@ -5226,7 +5224,10 @@ function Message( dom , gScene , text , options = {} ) {
 	this.dom = dom ;    // Dom instance, immutable
 
 	this.text = text ;
-	this.options = options ;
+	this.type = options.type ;
+	this.wait = options.wait || 0 ;
+	this.slowTyping = !! options.slowTyping ;
+	this.next = !! options.next ;
 
 	this.babylon = {
 		rectangle: null ,
@@ -5305,11 +5306,7 @@ Message.prototype.setControlAlignment = function( control , type ) {
 	}
 } ;
 
-/*
-	New TextBlock tests:
-	https://playground.babylonjs.com/#G5H9IN#74
-	https://harlequin-silkworm-ygwlmhhr.ws-eu17.gitpod.io/
-*/
+
 
 Message.prototype.create = function() {
 	var rectangle , image , structuredTextBlock ,
@@ -5358,6 +5355,9 @@ Message.prototype.create = function() {
 	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
 	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
 
+	// Slow-typing: don't write characters ATM
+	if ( this.slowTyping ) { structuredTextBlock.characterLimit = 0 ; }
+
 	if ( theme?.text?.padding ?? defaultTheme?.text?.padding ) {
 		structuredTextBlock.paddingLeft = structuredTextBlock.paddingRight = structuredTextBlock.paddingTop = structuredTextBlock.paddingBottom = theme?.text?.padding ?? defaultTheme?.text?.padding ;
 	}
@@ -5371,6 +5371,12 @@ Message.prototype.create = function() {
 	//structuredTextBlock.alpha = this.opacity ;
 	//structuredTextBlock.resizeToFit = true ;
 	rectangle.addControl( structuredTextBlock ) ;
+	
+	// The mainControl will be the control where events are tested
+	this.babylon.mainControl = rectangle ;
+
+	// Needed for rectangle.onPointerClickObservable
+	this.babylon.mainControl.isPointerBlocker = true ;
 } ;
 
 
@@ -5425,19 +5431,40 @@ Message.prototype.parseText = function( text ) {
 
 
 
+Message.prototype.slowType = async function() {
+	var i ,
+		structuredTextBlock = this.babylon.structuredTextBlock ,
+		count = structuredTextBlock._characterCount ;
+
+	console.warn( "?.???.??....???..?? SLOWTYPING" , count , structuredTextBlock.characterLimit ) ;
+	count = 1000 ;
+	await Promise.resolveTimeout( 100 ) ;
+
+	for ( i = 1 ; i < count ; i ++ ) {
+		structuredTextBlock.characterLimit = i ;
+		await Promise.resolveTimeout( 100 ) ;
+	}
+} ;
+
+
+
 Message.prototype.confirm = function() {
-	return Promise.resolveTimeout( 200000 ) ;
+	var promise = new Promise() ;
+	this.babylon.mainControl.onPointerClickObservable.add( () => promise.resolve() ) ;
+	return promise ;
 } ;
 
 
 
 Message.prototype.run = async function() {
 	this.create() ;
-	await this.confirm() ;
+
+	if ( this.slowTyping ) { await this.slowType() ; }
+	if ( this.next ) { await this.confirm() ; }
+	if ( this.wait ) { await Promise.resolveTimeout( this.wait * 1000 ) ; }
+
 	this.destroy() ;
 } ;
-
-
 },{"./browser-extension.js":21,"./misc.js":24,"seventh":45}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
