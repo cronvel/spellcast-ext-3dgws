@@ -5431,18 +5431,51 @@ Message.prototype.parseText = function( text ) {
 
 
 
-Message.prototype.slowType = async function() {
-	var i ,
+Message.prototype.getNthCharacter = function( index ) {
+	var part ,
 		structuredTextBlock = this.babylon.structuredTextBlock ,
-		count = structuredTextBlock._characterCount ;
+		structuredText = structuredTextBlock.structuredText ,
+        count = structuredTextBlock.characterCount ;
+	
+	if ( index > count ) { return '' ; }
 
-	console.warn( "?.???.??....???..?? SLOWTYPING" , count , structuredTextBlock.characterLimit ) ;
-	count = 1000 ;
-	await Promise.resolveTimeout( 100 ) ;
+	for ( part of structuredText ) {
+		if ( index < part.text.length ) { return part.text[ index ] ; }
+		index -= part.text.length ;
+	}
+	
+	return '' ;
+} ;
 
-	for ( i = 1 ; i < count ; i ++ ) {
-		structuredTextBlock.characterLimit = i ;
-		await Promise.resolveTimeout( 100 ) ;
+
+
+const CHARACTER_PAUSE_RATE = {
+	' ': 2 ,
+	',': 5 ,
+	':': 5 ,
+	';': 10 ,
+	'.': 15 ,
+	'!': 15 ,
+	'?': 20 ,
+	'…': 40 ,
+	'\n': 10
+} ;
+
+
+
+Message.prototype.slowType = async function() {
+	var limit , character , rate ,
+		baseTimeout = 20 ,
+		structuredTextBlock = this.babylon.structuredTextBlock ,
+		count = structuredTextBlock.characterCount ;
+
+	await Promise.resolveTimeout( baseTimeout ) ;
+
+	for ( limit = 1 ; limit < count ; limit ++ ) {
+		structuredTextBlock.characterLimit = limit ;
+		character = this.getNthCharacter( limit - 1 ) ;
+		rate = CHARACTER_PAUSE_RATE[ character ] || 1 ;
+		await Promise.resolveTimeout( baseTimeout * rate ) ;
 	}
 } ;
 
@@ -5465,6 +5498,8 @@ Message.prototype.run = async function() {
 
 	this.destroy() ;
 } ;
+
+
 },{"./browser-extension.js":21,"./misc.js":24,"seventh":45}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
