@@ -5231,8 +5231,9 @@ function Message( dom , gScene , text , options = {} ) {
 
 	this.babylon = {
 		rectangle: null ,
-		image: null ,
-		structuredTextBlock: null
+		structuredTextBlock: null ,
+		boxImage: null ,
+		nextImage: null
 	} ;
 }
 
@@ -5244,9 +5245,10 @@ module.exports = Message ;
 
 
 Message.prototype.destroy = function() {
-	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
 	if ( this.babylon.rectangle ) { this.babylon.rectangle.dispose() ; }
-	if ( this.babylon.image ) { this.babylon.image.dispose() ; }
+	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.dispose() ; }
+	if ( this.babylon.nextImage ) { this.babylon.nextImage.dispose() ; }
 } ;
 
 
@@ -5309,7 +5311,7 @@ Message.prototype.setControlAlignment = function( control , type ) {
 
 
 Message.prototype.create = function() {
-	var rectangle , image , structuredTextBlock ,
+	var rectangle , boxImage , nextImage , structuredTextBlock ,
 		ui = this.gScene.getUi() ,
 		theme = this.dom.themeConfig?.message?.default ,
 		defaultTheme = THEME.default ;
@@ -5328,22 +5330,31 @@ Message.prototype.create = function() {
 	console.warn( "THEME:" , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
 	//if ( false ) {
 	if ( theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) {
-		image = this.babylon.image = new BABYLON.GUI.Image( 'message-background' , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
-		//image.width = "200px";
-		//image.height = "300px";
-		image.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
-		image.sliceLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
-		image.sliceTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
-		image.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? image.width ;
-		image.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? image.height ;
+		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'message-background' , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
+		//boxImage.width = "200px";
+		//boxImage.height = "300px";
+		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
+		boxImage.sliceLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
+		boxImage.sliceTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
+		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
+		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
 
-		rectangle.addControl( image ) ;
+		rectangle.addControl( boxImage ) ;
 	}
 	else {
 		rectangle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
 		rectangle.color = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
 		rectangle.thickness = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
 		rectangle.background = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
+	}
+
+	if ( this.next ) {
+		nextImage = this.babylon.nextImage = new BABYLON.GUI.Image( 'message-next' , '/icons/dialog-next.png' ) ;
+		nextImage.width = "50px";
+		nextImage.height = "25px";
+		nextImage.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+		nextImage.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+		rectangle.addControl( nextImage ) ;
 	}
 
 	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
