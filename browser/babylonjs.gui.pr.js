@@ -14571,12 +14571,11 @@ var StructuredTextBlock = /** @class */ (function (_super) {
                     return;
                 }
                 var attr = this._inheritAttributes(part);
-                if (charCount + part.text.length <= this._characterLimit) {
-                    this._drawText(part.text, attr, x, rootY, partWidth, lineHeight, context);
-                }
-                else {
+                if (charCount + part.text.length > this._characterLimit) {
                     this._drawText(part.text.slice(0, this._characterLimit - charCount), attr, x, rootY, 0, lineHeight, context);
+                    return;
                 }
+                this._drawText(part.text, attr, x, rootY, partWidth, lineHeight, context);
                 x += partWidth;
                 charCount += part.text.length;
             }
