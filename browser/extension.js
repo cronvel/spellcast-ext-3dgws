@@ -5260,11 +5260,16 @@ THEME.default = {
 		backgroundColor: "green" ,
 		borderColor: "orange" ,
 		borderWidth: 4 ,
-		cornerRadius: 20
+		cornerRadius: 20 ,
+		padding: {
+			left: "10px" ,
+			top: "10px" ,
+			right: "10px" ,
+			bottom: "10px"
+		}
 	} ,
 	text: {
-		color: "white" ,
-		padding: "10px"
+		color: "white"
 	}
 } ;
 
@@ -5335,10 +5340,17 @@ Message.prototype.create = function() {
 		//boxImage.width = "200px";
 		//boxImage.height = "300px";
 		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
+		
+		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
+		// /!\ This will produce bug!
 		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
 		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
-		boxImage.sliceRight = paddingRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
-		boxImage.sliceBottom = paddingBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
+		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
+		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
+		
+		// /!\ TMP, due to previous bug
+		paddingRight = paddingLeft ;
+		paddingBottom = paddingTop ;
 
 		rectangle.addControl( boxImage ) ;
 	}
@@ -5348,6 +5360,11 @@ Message.prototype.create = function() {
 		rectangle.thickness = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
 		rectangle.background = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
 	}
+
+	paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? 0 ;
+	paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? 0 ;
+	paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? 0 ;
+	paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? 0 ;
 
 	if ( this.next ) {
 		nextImage = this.babylon.nextImage = new BABYLON.GUI.Image( 'message-next' , '/icons/dialog-next.png' ) ;
@@ -5360,7 +5377,16 @@ Message.prototype.create = function() {
 	}
 
 	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
-	structuredTextBlock.paddingTop = "50px" ;
+
+	// Padding, priority: theme, nine-patch slice, default theme or 0
+	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
+	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
+	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
+	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
+	//structuredTextBlock.paddingLeft = "50px" ;
+	//structuredTextBlock.paddingRight = "50px" ;
+	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
+
 	//structuredTextBlock.height = "50px" ;
 	structuredTextBlock.structuredText = this.parseText( this.text ) ;
 	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
@@ -5372,9 +5398,6 @@ Message.prototype.create = function() {
 	// Slow-typing: don't write characters ATM
 	if ( this.slowTyping ) { structuredTextBlock.characterLimit = 0 ; }
 
-	if ( theme?.text?.padding ?? defaultTheme?.text?.padding ) {
-		structuredTextBlock.paddingLeft = structuredTextBlock.paddingRight = structuredTextBlock.paddingTop = structuredTextBlock.paddingBottom = theme?.text?.padding ?? defaultTheme?.text?.padding ;
-	}
 
 	//structuredTextBlock.textWrapping = true ;
 	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
@@ -5483,7 +5506,7 @@ const SPECIAL_CHARACTER_PAUSE_RATE = {
 const TYPING_TIMEOUT = {
 	normal: { base: 30 , special: 180 , increment: 1 } ,
 	fast: { base: 20 , special: 150 , increment: 1 } ,
-	faster: { base: 20 , special: 100 , increment: 2 } ,
+	faster: { base: 20 , special: 80 , increment: 2 } ,
 } ;
 
 
