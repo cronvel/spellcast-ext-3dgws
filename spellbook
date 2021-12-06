@@ -14,12 +14,15 @@
 [spell browser]
 	[summon]
 		- browser/extension.min.js
-		- browser/babylonjs.js
-		- browser/babylonjs.gui.js
+		#- browser/babylonjs.js
+		#- browser/babylonjs.gui.js
 
 [summoning browser/extension.js]
 	[summon]
 		- lib/*.js
+		- browser/babylonjs.js
+		- browser/babylonjs.gui.js
+		- browser/babylonjs.gui.pr.js
 	[scroll]
 		- $> ${browserify} lib/browser-extension.js -i fs -i buffer -o browser/extension.js
 
@@ -29,15 +32,15 @@
 	[scroll]
 		- $> ${uglify} browser/extension.js -o browser/extension.min.js -m
 
-[summoning browser/babylonjs.js]
-	[summon]
-		- node_modules/babylonjs/babylon.js
-	[scroll]
-		- $> cp node_modules/babylonjs/babylon.js browser/babylonjs.js
+#[summoning browser/babylonjs.js]
+#	[summon]
+#		- node_modules/babylonjs/babylon.js
+#	[scroll]
+#		- $> cp node_modules/babylonjs/babylon.js browser/babylonjs.js
 
-[summoning browser/babylonjs.gui.js]
-	[summon]
-		- node_modules/babylonjs-gui/babylon.gui.min.js
-	[scroll]
-		- $> cp node_modules/babylonjs-gui/babylon.gui.min.js browser/babylonjs.gui.js
+#[summoning browser/babylonjs.gui.js]
+#	[summon]
+#		- node_modules/babylonjs-gui/babylon.gui.min.js
+#	[scroll]
+#		- $> cp node_modules/babylonjs-gui/babylon.gui.min.js browser/babylonjs.gui.js
 

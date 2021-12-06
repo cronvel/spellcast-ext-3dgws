@@ -5344,14 +5344,14 @@ Message.prototype.create = function() {
 		//boxImage.width = "200px";
 		//boxImage.height = "300px";
 		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
-		
+
 		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
 		// /!\ This will produce bug!
 		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
 		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
 		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
 		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
-		
+
 		// /!\ TMP, due to previous bug
 		paddingRight = paddingLeft ;
 		paddingBottom = paddingTop ;
@@ -5365,15 +5365,10 @@ Message.prototype.create = function() {
 		rectangle.background = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
 	}
 
-	paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? 0 ;
-	paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? 0 ;
-	paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? 0 ;
-	paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? 0 ;
-
 	if ( this.next ) {
 		nextImage = this.babylon.nextImage = new BABYLON.GUI.Image( 'message-next' , '/icons/dialog-next.png' ) ;
-		nextImage.width = "50px";
-		nextImage.height = "25px";
+		nextImage.width = "50px" ;
+		nextImage.height = "25px" ;
 		nextImage.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
 		nextImage.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
 		nextImage.isVisible = false ;
@@ -5387,10 +5382,19 @@ Message.prototype.create = function() {
 	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
 	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
 	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
-	//structuredTextBlock.paddingLeft = "50px" ;
-	//structuredTextBlock.paddingRight = "50px" ;
-	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
 	
+	/*
+	// Not defined in time (because width is not in pixels but is a rate)
+	if ( paddingLeft + paddingRight > rectangle.widthInPixels / 2 ) {
+		paddingLeft = paddingRight = Math.round( rectangle.widthInPixels / 4 ) ;
+	}
+	if ( paddingTop + paddingBottom > rectangle.heightInPixels / 2 ) {
+		paddingTop = paddingBottom = Math.round( rectangle.heightInPixels / 4 ) ;
+	}
+	*/
+
+	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
+
 	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
 	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
 
@@ -5414,7 +5418,7 @@ Message.prototype.create = function() {
 	//structuredTextBlock.alpha = this.opacity ;
 	//structuredTextBlock.resizeToFit = true ;
 	rectangle.addControl( structuredTextBlock ) ;
-	
+
 	// The mainControl will be the control where events are tested
 	this.babylon.mainControl = rectangle ;
 
@@ -5425,21 +5429,21 @@ Message.prototype.create = function() {
 
 
 const MARKUP_COLOR_CODE = {
-	black: '#000000',
-	brightBlack: '#555753', //grey: '#555753',
-	red: '#cc0000',
-	brightRed: '#ef2929',
-	green: '#4e9a06',
-	brightGreen: '#8ae234',
-	yellow: '#c4a000',
-	brightYellow: '#fce94f',
-	blue: '#3465a4',
-	brightBlue: '#729fcf',
-	magenta: '#75507b',
-	brightMagenta: '#ad7fa8',
-	cyan: '#06989a',
-	brightCyan: '#34e2e2',
-	white: '#d3d7cf',
+	black: '#000000' ,
+	brightBlack: '#555753' , //grey: '#555753',
+	red: '#cc0000' ,
+	brightRed: '#ef2929' ,
+	green: '#4e9a06' ,
+	brightGreen: '#8ae234' ,
+	yellow: '#c4a000' ,
+	brightYellow: '#fce94f' ,
+	blue: '#3465a4' ,
+	brightBlue: '#729fcf' ,
+	magenta: '#75507b' ,
+	brightMagenta: '#ad7fa8' ,
+	cyan: '#06989a' ,
+	brightCyan: '#34e2e2' ,
+	white: '#d3d7cf' ,
 	brightWhite: '#eeeeec'
 } ;
 
@@ -5450,7 +5454,7 @@ MARKUP_COLOR_CODE.grey = MARKUP_COLOR_CODE.gray = MARKUP_COLOR_CODE.brightBlack 
 Message.prototype.parseText = function( text ) {
 	return extension.host.exports.toolkit.parseMarkup( text ).map( input => {
 		var part = { text: input.text } ;
-		
+
 		if ( input.color ) {
 			part.color = input.color[ 0 ] === '#' ? input.color : MARKUP_COLOR_CODE[ input.color ] ;
 		}
@@ -5459,7 +5463,7 @@ Message.prototype.parseText = function( text ) {
 		if ( input.bold ) { part.fontWeight = 'bold' ; }
 		if ( input.underline ) { part.underline = true ; }
 		if ( input.strike ) { part.lineThrough = true ; }
-		
+
 		if ( input.bgColor ) {
 			part.frame = true ;
 			part.frameColor = input.bgColor ;
@@ -5467,7 +5471,7 @@ Message.prototype.parseText = function( text ) {
 			part.frameOutlineColor = misc.getContrastColorCode( part.frameColor , 0.7 ) ;
 			part.frameCornerRadius = 5 ;
 		}
-		
+
 		return part ;
 	} ) ;
 } ;
@@ -5478,8 +5482,8 @@ Message.prototype.getNthCharacter = function( index ) {
 	var part , line ,
 		structuredTextBlock = this.babylon.structuredTextBlock ,
 		lines = structuredTextBlock.lines ,
-        count = structuredTextBlock.characterCount ;
-	
+		count = structuredTextBlock.characterCount ;
+
 	if ( index > count ) { return '' ; }
 
 	for ( line of lines ) {
@@ -5488,7 +5492,7 @@ Message.prototype.getNthCharacter = function( index ) {
 			index -= part.text.length ;
 		}
 	}
-	
+
 	return '' ;
 } ;
 
@@ -5499,7 +5503,7 @@ const SAME_SPECIAL_CHARACTER_PAUSE_RATE = 0.5 ;
 
 const SPECIAL_CHARACTER_PAUSE_RATE = {
 	' ': 0.3 ,
-	',': 1,
+	',': 1 ,
 	':': 1 ,
 	';': 1.5 ,
 	'.': 2 ,
@@ -5512,7 +5516,7 @@ const SPECIAL_CHARACTER_PAUSE_RATE = {
 const TYPING_TIMEOUT = {
 	normal: { base: 30 , special: 180 , increment: 1 } ,
 	fast: { base: 20 , special: 150 , increment: 1 } ,
-	faster: { base: 20 , special: 80 , increment: 2 } ,
+	faster: { base: 20 , special: 80 , increment: 2 }
 } ;
 
 
@@ -5525,16 +5529,16 @@ Message.prototype.slowType = async function() {
 		baseTimeout = TYPING_TIMEOUT[ typingSpeed ].base ,
 		specialBaseTimeout = TYPING_TIMEOUT[ typingSpeed ].special ,
 		increment = TYPING_TIMEOUT[ typingSpeed ].increment ,
-		structuredTextBlock = this.babylon.structuredTextBlock ,
-		max = structuredTextBlock.characterCount - 1 ;
+		structuredTextBlock = this.babylon.structuredTextBlock ;
 
 	this.babylon.mainControl.onPointerClickObservable.addOnce( () => clicked = true ) ;
 
 	await Promise.resolveTimeout( baseTimeout ) ;
-
-	for ( limit = 1 ; limit <= max ; limit ++ ) {
+	
+	// Don't cache .characterCount because it may change if the dialog is resized because of line-breaks
+	for ( limit = 1 ; limit <= structuredTextBlock.characterCount ; limit ++ ) {
 		if ( clicked ) {
-			structuredTextBlock.characterLimit = count ;
+			structuredTextBlock.characterLimit = structuredTextBlock.characterCount ;
 			return ;
 		}
 
@@ -5550,13 +5554,17 @@ Message.prototype.slowType = async function() {
 			// Now set the pause
 			await Promise.resolveTimeout( specialBaseTimeout * rate ) ;
 		}
-		else {
-			if ( limit % increment === 0 || limit === max ) {
-				// Set the new limit
-				structuredTextBlock.characterLimit = limit ;
-				// Now set the pause
-				await Promise.resolveTimeout( baseTimeout ) ;
-			}
+		else if ( limit >= structuredTextBlock.characterCount ) {
+			// Set the new limit
+			structuredTextBlock.characterLimit = Infinity ;
+			// Now set the pause
+			await Promise.resolveTimeout( baseTimeout ) ;
+		}
+		else if ( limit % increment === 0 ) {
+			// Set the new limit
+			structuredTextBlock.characterLimit = limit ;
+			// Now set the pause
+			await Promise.resolveTimeout( baseTimeout ) ;
 		}
 	}
 } ;
@@ -5565,17 +5573,27 @@ Message.prototype.slowType = async function() {
 
 Message.prototype.confirm = function() {
 	var promise = new Promise() ;
+	
+	var	topBase ,
+		theme = this.dom.themeConfig?.message?.default ,
+		defaultTheme = THEME.default ,
+		nextImage = this.babylon.nextImage ,
+		t0 = Date.now() ;
 
-	var nextImage = this.babylon.nextImage ;
 	nextImage.isVisible = true ;
-	
-	var count = 0 ;
+	nextImage.topInPixels = topBase = nextImage.topInPixels - Math.round( ( theme?.panel?.padding?.top ?? defaultTheme?.panel?.padding?.top ?? 0 ) / 2 ) ;
+	nextImage.leftInPixels = nextImage.leftInPixels - Math.round( ( theme?.panel?.padding?.left ?? defaultTheme?.panel?.padding?.left ?? 0 ) / 2 ) ;
+
 	var timer = setInterval( () => {
-		nextImage.topInPixels = nextImage.topInPixels - 1 ;
+		var delta = ( Date.now() - t0 ) / 1000 ;
+		nextImage.topInPixels = topBase - Math.abs( Math.sin( 3 * delta ) * 10 ) ;
 	} , 20 ) ;
-	
-	this.babylon.mainControl.onPointerClickObservable.addOnce( () => promise.resolve() ) ;
-	
+
+	this.babylon.mainControl.onPointerClickObservable.addOnce( () => {
+		clearInterval( timer ) ;
+		promise.resolve() ;
+	} ) ;
+
 	return promise ;
 } ;
 
