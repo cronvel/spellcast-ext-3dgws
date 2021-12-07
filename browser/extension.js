@@ -34,12 +34,23 @@
 const TextBox = require( './TextBox.js' ) ;
 
 const extension = require( './browser-extension.js' ) ;
+
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
 const Promise = require( 'seventh' ) ;
 
 
 
 function Button( dom , gScene , text , options = {} ) {
 	TextBox.call( this , dom , gScene , text , options ) ;
+
+	this.hoverWidth = this.pressedDownWidth = null ;
+	this.hoverHeight = this.pressedDownHeight = null ;
+
+	this.rectangleHoverStyle = {} ;
+	this.rectanglePressedDownStyle = {} ;
+
+	this.hoverNinePatchImageUrl = null ;
+	this.pressedDownNinePatchImageUrl = null ;
 	
 	// The hook to be called when the Button is pressed
 	this.onPress = null ;
@@ -52,53 +63,141 @@ module.exports = Button ;
 
 
 
-Button.prototype.run = function(  ) {
-	this.createGUI() ;
+Button.prototype.run = function( onPress ) {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
 	this.onPress = onPress ;
 } ;
 
 
 
-const THEME = {} ;
-
-THEME.default = {
-	panel: {
-		backgroundColor: "green" ,
-		borderColor: "orange" ,
-		borderWidth: 4 ,
-		cornerRadius: 20 ,
-		padding: {
-			left: "10px" ,
-			top: "10px" ,
-			right: "10px" ,
-			bottom: "10px"
+const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
+	default: {
+		panel: {
+			width: 0.25 ,
+			height: 0.2 ,
+			backgroundColor: "green" ,
+			borderColor: "orange" ,
+			borderWidth: 4 ,
+			cornerRadius: 20 ,
+			padding: {
+				left: "10px" ,
+				top: "10px" ,
+				right: "10px" ,
+				bottom: "10px"
+			} ,
+			hover: {
+				//size: 0.95 ,
+				backgroundColor: "green" ,
+				borderColor: "red" ,
+				borderWidth: 4
+			} ,
+			pressedDown: {
+				size: 0.9 ,
+				backgroundColor: "#66aa66" ,
+				borderColor: "red" ,
+				borderWidth: 4
+			}
+		} ,
+		text: {
+			color: "white"
 		}
-	} ,
-	text: {
-		color: "white"
 	}
-} ;
+} ) ;
 
 
 
 Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.default , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
 	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
 	
-	this.babylon.mainControl.onPointerClickObservable.add( () => {
-		this.press() ;
-	} ) ;
+	if ( defaultTheme?.panel?.hover ) { deepExtend( this.rectangleHoverStyle , defaultTheme.panel.hover ) ; }
+	if ( theme?.panel?.hover ) { deepExtend( this.rectangleHoverStyle , theme.panel.hover ) ; }
+
+	if ( defaultTheme?.panel?.pressedDown ) { deepExtend( this.rectanglePressedDownStyle , defaultTheme.panel.pressedDown ) ; }
+	if ( theme?.panel?.pressedDown ) { deepExtend( this.rectanglePressedDownStyle , theme.panel.pressedDown ) ; }
+
+	if ( this.rectangleHoverStyle.size ) {
+		this.hoverWidth = this.width * this.rectangleHoverStyle.size ;
+		this.hoverHeight = this.height * this.rectangleHoverStyle.size ;
+	}
+	
+	if ( this.rectanglePressedDownStyle.size ) {
+		this.pressedDownWidth = this.width * this.rectanglePressedDownStyle.size ;
+		this.pressedDownHeight = this.height * this.rectanglePressedDownStyle.size ;
+	}
+
+	this.babylon.mainControl.hoverCursor = 'pointer' ;
+
+	this.babylon.mainControl.onPointerEnterObservable.add( () => this.hover() ) ;
+	this.babylon.mainControl.onPointerOutObservable.add( () => this.initialState() ) ;
+	this.babylon.mainControl.onPointerDownObservable.add( () => this.pressDown() ) ;
+	this.babylon.mainControl.onPointerUpObservable.add( () => this.pressUp() ) ;
 } ;
 
 
 
-Button.prototype.press = async function() {
-	if ( this.onPress ) {
-		await this.onPress() ;
+const initialState = 1 ;
+
+Button.prototype.initialState = function() {
+	console.warn( "!!!!! ENTERING .initialState()" ) ;
+	if ( this.hoverWidth || this.pressedDownWidth ) {
+		this.babylon.mainControl.width = this.width ;
+		this.babylon.mainControl.height = this.height ;
+	}
+	
+	if ( this.babylon.rectangle ) {
+		this.babylon.rectangle.alpha = initialState ;
+		this.applyRectangleStyle( this.babylon.rectangle , this.rectangleStyle ) ;
+	}
+
+	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = initialState ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = initialState ; }
+} ;
+
+
+
+const hoverAlpha = 0.5 ;
+
+Button.prototype.hover = function() {
+	console.warn( "!!!!! ENTERING .hover()" ) ;
+	if ( this.hoverWidth ) {
+		this.babylon.mainControl.width = this.hoverWidth ;
+		this.babylon.mainControl.height = this.hoverHeight ;
+		console.warn( "+++ set size to" , this.hoverWidth , this.hoverHeight ) ;
+	}
+
+	if ( this.babylon.rectangle ) {
+		this.babylon.rectangle.alpha = hoverAlpha ;
+		this.applyRectangleStyle( this.babylon.rectangle , this.rectangleHoverStyle ) ;
+	}
+
+	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = hoverAlpha ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = hoverAlpha ; }
+} ;
+
+
+
+Button.prototype.pressDown = function() {
+	if ( this.pressedDownWidth ) {
+		this.babylon.mainControl.width = this.pressedDownWidth ;
+		this.babylon.mainControl.height = this.pressedDownHeight ;
+	}
+
+	if ( this.babylon.rectangle ) {
+		this.applyRectangleStyle( this.babylon.rectangle , this.rectanglePressedDownStyle ) ;
 	}
 } ;
 
 
-},{"./TextBox.js":23,"./browser-extension.js":24,"seventh":48}],2:[function(require,module,exports){
+
+Button.prototype.pressUp = function() {
+	this.initialState() ;
+	if ( this.onPress ) { this.onPress() ; }
+} ;
+
+
+},{"./TextBox.js":23,"./browser-extension.js":24,"seventh":48,"tree-kit/lib/extend.js":51}],2:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -538,6 +637,8 @@ Camera.prototype.updateOrbital = function( data ) {
 const Button = require( './Button.js' ) ;
 
 const extension = require( './browser-extension.js' ) ;
+
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
 const Promise = require( 'seventh' ) ;
 
 
@@ -546,14 +647,16 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 	this.gScene = gScene ;
 	this.dom = dom ;    // Dom instance, immutable
 
-    this.choices = choices ;
-    this.undecidedNames = undecidedNames ;
-    this.onSelect = onSelect ;
+	this.choices = choices ;
+	this.undecidedNames = undecidedNames ;
+	this.onSelect = onSelect ;
 
 	//this.type = options.type ;
 	//this.wait = options.wait || 0 ;
-	
-	this.buttons = [] ;
+
+	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} ) ) ;
+
+	this.guiCreates = false ;
 }
 
 module.exports = Choices ;
@@ -567,15 +670,18 @@ Choices.prototype.destroy = function() {
 
 
 Choices.prototype.run = async function() {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+
 	var promise = new Promise() ;
 
 	var choose = index => {
+		console.warn( "Choice index:" , index ) ;
 	} ;
 
 	this.buttons.forEach( ( button , index ) => {
 		button.run( () => choose( index ) ) ;
 	} ) ;
-	
+
 	await promise ;
 
 	this.destroy() ;
@@ -583,28 +689,35 @@ Choices.prototype.run = async function() {
 
 
 
-const THEME = {} ;
-
-THEME.default = {
-	panel: {
-		backgroundColor: "green" ,
-		borderColor: "orange" ,
-		borderWidth: 4 ,
-		cornerRadius: 20 ,
-		padding: {
-			left: "10px" ,
-			top: "10px" ,
-			right: "10px" ,
-			bottom: "10px"
+const THEME = Choices.THEME = deepExtend( {} , Button.THEME , {
+	default: {
+		panel: {
+			width: 0.2 ,
+			height: 0.1 ,
+		} ,
+		text: {
+			color: "black" ,
+			fontSize: "22px" ,
+			outlineWidth: 2 ,
+			outlineColor: "white"
 		}
-	} ,
-	text: {
-		color: "white"
 	}
+} ) ;
+
+
+
+Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.default , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	this.buttons.forEach( button => {
+		button.createGUI( theme , defaultTheme ) ;
+	} ) ;
+
+	this.guiCreated = true ;
 } ;
 
 
-},{"./Button.js":1,"./browser-extension.js":24,"seventh":48}],4:[function(require,module,exports){
+},{"./Button.js":1,"./browser-extension.js":24,"seventh":48,"tree-kit/lib/extend.js":51}],4:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5172,6 +5285,7 @@ GScene.prototype.addMessage = function( text , options ) {
 
 // For choices (nextList)
 GScene.prototype.setChoices = function( choices , undecidedNames , onSelect , options ) {
+	console.warn( "3DGWS .setChoices()" , choices , undecidedNames , onSelect , options ) ;
 	var choices = new Choices( this.dom , this , choices , undecidedNames , onSelect , options ) ;
 	return choices.run() ;
 } ;
@@ -5429,6 +5543,8 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 const TextBox = require( './TextBox.js' ) ;
 
 const extension = require( './browser-extension.js' ) ;
+
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
 const Promise = require( 'seventh' ) ;
 
 
@@ -5459,7 +5575,7 @@ Message.prototype.destroy = function() {
 
 
 Message.prototype.run = async function() {
-	this.createGUI() ;
+	if ( ! this.guiCreated ) { this.createGUI() ; }
 
 	if ( this.slowTyping ) { await this.slowType() ; }
 	if ( this.next ) { await this.confirm() ; }
@@ -5470,29 +5586,33 @@ Message.prototype.run = async function() {
 
 
 
-const THEME = {} ;
-
-THEME.default = {
-	panel: {
-		backgroundColor: "green" ,
-		borderColor: "orange" ,
-		borderWidth: 4 ,
-		cornerRadius: 20 ,
-		padding: {
-			left: "10px" ,
-			top: "10px" ,
-			right: "10px" ,
-			bottom: "10px"
+const THEME = Message.THEME = deepExtend( {} , TextBox.THEME , {
+	default: {
+		panel: {
+			width: 0.5 ,
+			height: 0.2 ,
+			backgroundColor: "green" ,
+			borderColor: "orange" ,
+			borderWidth: 4 ,
+			cornerRadius: 20 ,
+			padding: {
+				left: "10px" ,
+				top: "10px" ,
+				right: "10px" ,
+				bottom: "10px"
+			}
+		} ,
+		text: {
+			color: "white"
 		}
-	} ,
-	text: {
-		color: "white"
 	}
-} ;
+} ) ;
 
 
 
 Message.prototype.createGUI = function( theme = this.dom.themeConfig?.message?.default , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
 	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
 
 	if ( this.next ) {
@@ -5506,7 +5626,7 @@ Message.prototype.createGUI = function( theme = this.dom.themeConfig?.message?.d
 	}
 
 	// Slow-typing: don't write characters ATM
-	if ( this.slowTyping ) { structuredTextBlock.characterLimit = 0 ; }
+	if ( this.slowTyping ) { this.babylon.structuredTextBlock.characterLimit = 0 ; }
 } ;
 
 
@@ -5611,7 +5731,7 @@ Message.prototype.confirm = function() {
 } ;
 
 
-},{"./TextBox.js":23,"./browser-extension.js":24,"seventh":48}],22:[function(require,module,exports){
+},{"./TextBox.js":23,"./browser-extension.js":24,"seventh":48,"tree-kit/lib/extend.js":51}],22:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5833,6 +5953,14 @@ function TextBox( dom , gScene , text , options = {} ) {
 
 	this.text = text ;
 	//this.type = options.type ;
+	
+	this.width = 0 ;
+	this.height = 0 ;
+
+	this.ninePatchImageUrl = null ;
+	this.rectangleStyle = {} ;
+	
+	this.guiCreated = false ;
 
 	this.babylon = {
 		mainControl: null ,
@@ -5857,30 +5985,130 @@ TextBox.prototype.destroy = function() {
 
 // Should be redefined
 TextBox.prototype.run = async function() {
-	this.createGUI() ;
+	if ( ! this.guiCreated ) { this.createGUI() ; }
 	this.destroy() ;
 } ;
 
 
 
-const THEME = {} ;
-
-THEME.default = {
-	panel: {
-		backgroundColor: "green" ,
-		borderColor: "orange" ,
-		borderWidth: 4 ,
-		cornerRadius: 20 ,
-		padding: {
-			left: "10px" ,
-			top: "10px" ,
-			right: "10px" ,
-			bottom: "10px"
+const THEME = TextBox.THEME = {
+	default: {
+		position: 'center' ,
+		panel: {
+			width: 0.5 ,
+			height: 0.2 ,
+			backgroundColor: "green" ,
+			borderColor: "orange" ,
+			borderWidth: 4 ,
+			cornerRadius: 20 ,
+			padding: {
+				left: "10px" ,
+				top: "10px" ,
+				right: "10px" ,
+				bottom: "10px"
+			}
+		} ,
+		text: {
+			color: "white"
 		}
-	} ,
-	text: {
-		color: "white"
 	}
+} ;
+
+
+
+TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	var rectangle , boxImage , structuredTextBlock ,
+		paddingLeft , paddingTop , paddingRight , paddingBottom ,
+		ui = this.gScene.getUi() ;
+
+	rectangle = this.babylon.rectangle = new BABYLON.GUI.Rectangle() ;
+	rectangle.width = this.width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
+	rectangle.height = this.height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
+	rectangle.thickness = 0 ;
+
+	this.setControlAlignment( rectangle , theme?.position ?? defaultTheme?.position ) ;
+
+	ui.addControl( rectangle ) ;
+
+	console.warn( "THEME:" , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
+
+	this.ninePatchImageUrl = theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ;
+	
+	if ( this.ninePatchImageUrl ) {
+		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'message-background' , this.ninePatchImageUrl ) ;
+		//boxImage.width = "200px";
+		//boxImage.height = "300px";
+		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
+
+		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
+		// /!\ This will produce bug!
+		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
+		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
+		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
+		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
+
+		// /!\ TMP, due to previous bug
+		paddingRight = paddingLeft ;
+		paddingBottom = paddingTop ;
+
+		rectangle.addControl( boxImage ) ;
+	}
+	else {
+		this.rectangleStyle.backgroundColor = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
+		this.rectangleStyle.borderColor = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
+		this.rectangleStyle.borderWidth = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
+		this.rectangleStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
+		this.applyRectangleStyle( rectangle , this.rectangleStyle ) ;
+	}
+
+	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
+
+	// Padding, priority: theme, nine-patch slice, default theme or 0
+	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
+	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
+	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
+	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
+	
+	/*
+	// Not defined in time (because width is not in pixels but is a rate)
+	if ( paddingLeft + paddingRight > rectangle.widthInPixels / 2 ) {
+		paddingLeft = paddingRight = Math.round( rectangle.widthInPixels / 4 ) ;
+	}
+	if ( paddingTop + paddingBottom > rectangle.heightInPixels / 2 ) {
+		paddingTop = paddingBottom = Math.round( rectangle.heightInPixels / 4 ) ;
+	}
+	*/
+
+	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
+
+	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+
+	structuredTextBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
+	structuredTextBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
+	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
+	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
+	structuredTextBlock.structuredText = this.parseText( this.text ) ;
+	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
+
+	//structuredTextBlock.textWrapping = true ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
+	structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
+
+	//structuredTextBlock.color = this.special.content.textColor ;
+	//structuredTextBlock.alpha = this.opacity ;
+	//structuredTextBlock.resizeToFit = true ;
+	rectangle.addControl( structuredTextBlock ) ;
+
+	// The mainControl will be the control where events are tested
+	this.babylon.mainControl = rectangle ;
+
+	// Needed for rectangle.onPointerClickObservable
+	this.babylon.mainControl.isPointerBlocker = true ;
+	this.guiCreated = true ;
 } ;
 
 
@@ -5929,95 +6157,12 @@ TextBox.prototype.setControlAlignment = function( control , type ) {
 
 
 
-TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
-	var rectangle , boxImage , structuredTextBlock ,
-		paddingLeft , paddingTop , paddingRight , paddingBottom ,
-		ui = this.gScene.getUi() ;
-
-	rectangle = this.babylon.rectangle = new BABYLON.GUI.Rectangle() ;
-	rectangle.width = 0.5 ;
-	rectangle.height = "160px" ;
-	rectangle.thickness = 0 ;
-
-	if ( theme?.position ?? defaultTheme?.position ) {
-		this.setControlAlignment( rectangle , theme?.position ?? defaultTheme?.position ) ;
-	}
-
-	ui.addControl( rectangle ) ;
-
-	console.warn( "THEME:" , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
-	//if ( false ) {
-	if ( theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) {
-		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'message-background' , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
-		//boxImage.width = "200px";
-		//boxImage.height = "300px";
-		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
-
-		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
-		// /!\ This will produce bug!
-		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
-		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
-		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
-		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
-
-		// /!\ TMP, due to previous bug
-		paddingRight = paddingLeft ;
-		paddingBottom = paddingTop ;
-
-		rectangle.addControl( boxImage ) ;
-	}
-	else {
-		rectangle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
-		rectangle.color = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
-		rectangle.thickness = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
-		rectangle.background = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
-	}
-
-	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
-
-	// Padding, priority: theme, nine-patch slice, default theme or 0
-	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
-	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
-	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
-	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
-	
-	/*
-	// Not defined in time (because width is not in pixels but is a rate)
-	if ( paddingLeft + paddingRight > rectangle.widthInPixels / 2 ) {
-		paddingLeft = paddingRight = Math.round( rectangle.widthInPixels / 4 ) ;
-	}
-	if ( paddingTop + paddingBottom > rectangle.heightInPixels / 2 ) {
-		paddingTop = paddingBottom = Math.round( rectangle.heightInPixels / 4 ) ;
-	}
-	*/
-
-	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
-
-	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-
-	structuredTextBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
-	structuredTextBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
-	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
-	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
-	structuredTextBlock.structuredText = this.parseText( this.text ) ;
-	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
-
-	//structuredTextBlock.textWrapping = true ;
-	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
-	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
-	structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
-
-	//structuredTextBlock.color = this.special.content.textColor ;
-	//structuredTextBlock.alpha = this.opacity ;
-	//structuredTextBlock.resizeToFit = true ;
-	rectangle.addControl( structuredTextBlock ) ;
-
-	// The mainControl will be the control where events are tested
-	this.babylon.mainControl = rectangle ;
-
-	// Needed for rectangle.onPointerClickObservable
-	this.babylon.mainControl.isPointerBlocker = true ;
+TextBox.prototype.applyRectangleStyle = function( rectangle , style ) {
+	console.warn( "******** APPLY STYLE" , style ) ;
+	if ( style.backgroundColor !== undefined ) { rectangle.background = style.backgroundColor ; }
+	if ( style.borderColor !== undefined ) { rectangle.color = style.borderColor ; }
+	if ( style.borderWidth !== undefined ) { rectangle.thickness = style.borderWidth ; }
+	if ( style.cornerRadius !== undefined ) { rectangle.cornerRadius = style.cornerRadius ; }
 } ;
 
 
@@ -10847,4 +10992,328 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":39,"timers":50}]},{},[24]);
+},{"process/browser.js":39,"timers":50}],51:[function(require,module,exports){
+/*
+	Tree Kit
+
+	Copyright (c) 2014 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+
+
+/*
+	== Extend function ==
+*/
+
+/*
+	options:
+		* own: only copy own properties that are enumerable
+		* nonEnum: copy non-enumerable properties as well, works only with own:true
+		* descriptor: preserve property's descriptor
+		* deep: boolean/Array/Set, if true perform a deep (recursive) extend, if it is an Array/Set of prototypes, only deep-copy
+			objects of those prototypes
+			(it is a replacement for deepFilter.whitelist which was removed in Tree Kit 0.6).
+		* immutables: an Array/Set of immutable object's prototypes that are filtered out for deep-copy
+			(it is a replacement for deepFilter.blacklist which was removed in Tree Kit 0.6).
+		* maxDepth: used in conjunction with deep, when max depth is reached an exception is raised, default to 100 when
+			the 'circular' option is off, or default to null if 'circular' is on
+		* circular: boolean, circular references reconnection
+		* move: boolean, move properties to target (delete properties from the sources)
+		* preserve: boolean, existing properties in the target object are not overwritten
+		* mask: boolean or number, reverse of 'preserve', only update existing properties in the target, do not create new keys,
+			if its a number, the mask effect is only effective for the Nth element.
+			E.g: .extend( {mask:2} , {} , object1 , object2 )
+			So object1 extends the empty object like, but object2 do not create new keys not present in object1.
+			With mask:true or mask:1, the mask behavior would apply at step 1 too, when object1 would try to extend the empty object,
+			and since an empty object has no key, nothing would change, and the whole extend would return an empty object.
+		* nofunc: skip functions
+		* deepFunc: in conjunction with 'deep', this will process sources functions like objects rather than
+			copying/referencing them directly into the source, thus, the result will not be a function, it forces 'deep'
+		* proto: try to clone objects with the right prototype, using Object.create() or mutating it with Object.setPrototypeOf(),
+			it forces option 'own'.
+		* inherit: rather than mutating target prototype for source prototype like the 'proto' option does, here it is
+			the source itself that IS the prototype for the target. Force option 'own' and disable 'proto'.
+		* skipRoot: the prototype of the target root object is NOT mutated only if this option is set.
+		* flat: extend into the target top-level only, compose name with the path of the source, force 'deep',
+			disable 'unflat', 'proto', 'inherit'
+		* unflat: assume sources are in the 'flat' format, expand all properties deeply into the target, disable 'flat'
+*/
+function extend( options , target , ... sources ) {
+	var i , source , newTarget = false , length = sources.length ;
+
+	if ( ! length ) { return target ; }
+
+	if ( ! options || typeof options !== 'object' ) { options = {} ; }
+
+	var runtime = { depth: 0 , prefix: '' } ;
+
+	if ( options.deep ) {
+		if ( Array.isArray( options.deep ) ) { options.deep = new Set( options.deep ) ; }
+		else if ( ! ( options.deep instanceof Set ) ) { options.deep = true ; }
+	}
+
+	if ( options.immutables ) {
+		if ( Array.isArray( options.immutables ) ) { options.immutables = new Set( options.immutables ) ; }
+		else if ( ! ( options.immutables instanceof Set ) ) { delete options.immutables ; }
+	}
+
+	if ( ! options.maxDepth && options.deep && ! options.circular ) { options.maxDepth = 100 ; }
+
+	if ( options.deepFunc ) { options.deep = true ; }
+
+	// 'flat' option force 'deep'
+	if ( options.flat ) {
+		options.deep = true ;
+		options.proto = false ;
+		options.inherit = false ;
+		options.unflat = false ;
+		if ( typeof options.flat !== 'string' ) { options.flat = '.' ; }
+	}
+
+	if ( options.unflat ) {
+		options.deep = false ;
+		options.proto = false ;
+		options.inherit = false ;
+		options.flat = false ;
+		if ( typeof options.unflat !== 'string' ) { options.unflat = '.' ; }
+	}
+
+	// If the prototype is applied, only owned properties should be copied
+	if ( options.inherit ) { options.own = true ; options.proto = false ; }
+	else if ( options.proto ) { options.own = true ; }
+
+	if ( ! target || ( typeof target !== 'object' && typeof target !== 'function' ) ) {
+		newTarget = true ;
+	}
+
+	if ( ! options.skipRoot && ( options.inherit || options.proto ) ) {
+		for ( i = length - 1 ; i >= 0 ; i -- ) {
+			source = sources[ i ] ;
+			if ( source && ( typeof source === 'object' || typeof source === 'function' ) ) {
+				if ( options.inherit ) {
+					if ( newTarget ) { target = Object.create( source ) ; }
+					else { Object.setPrototypeOf( target , source ) ; }
+				}
+				else if ( options.proto ) {
+					if ( newTarget ) { target = Object.create( Object.getPrototypeOf( source ) ) ; }
+					else { Object.setPrototypeOf( target , Object.getPrototypeOf( source ) ) ; }
+				}
+
+				break ;
+			}
+		}
+	}
+	else if ( newTarget ) {
+		target = {} ;
+	}
+
+	runtime.references = { sources: [] , targets: [] } ;
+
+	for ( i = 0 ; i < length ; i ++ ) {
+		source = sources[ i ] ;
+		if ( ! source || ( typeof source !== 'object' && typeof source !== 'function' ) ) { continue ; }
+		extendOne( runtime , options , target , source , options.mask <= i + 1 ) ;
+	}
+
+	return target ;
+}
+
+module.exports = extend ;
+
+
+
+function extendOne( runtime , options , target , source , mask ) {
+	var j , jmax , path ,
+		sourceKeys , sourceKey , sourceValue , sourceValueIsObject , sourceValueProto , sourceDescriptor ,
+		targetKey , targetPointer , targetValue , targetValueIsObject ,
+		indexOfSource = -1 ;
+
+	// Max depth check
+	if ( options.maxDepth && runtime.depth > options.maxDepth ) {
+		throw new Error( '[tree] extend(): max depth reached(' + options.maxDepth + ')' ) ;
+	}
+
+
+	if ( options.circular ) {
+		runtime.references.sources.push( source ) ;
+		runtime.references.targets.push( target ) ;
+	}
+
+	if ( options.own ) {
+		if ( options.nonEnum ) { sourceKeys = Object.getOwnPropertyNames( source ) ; }
+		else { sourceKeys = Object.keys( source ) ; }
+	}
+	else { sourceKeys = source ; }
+
+	for ( sourceKey in sourceKeys ) {
+		if ( options.own ) { sourceKey = sourceKeys[ sourceKey ] ; }
+
+		// OMG, this DEPRECATED __proto__ shit is still alive and can be used to hack anything ><
+		if ( sourceKey === '__proto__' ) { continue ; }
+
+		// If descriptor is on, get it now
+		if ( options.descriptor ) {
+			sourceDescriptor = Object.getOwnPropertyDescriptor( source , sourceKey ) ;
+			sourceValue = sourceDescriptor.value ;
+		}
+		else {
+			// We have to trigger an eventual getter only once
+			sourceValue = source[ sourceKey ] ;
+		}
+
+		targetPointer = target ;
+		targetKey = runtime.prefix + sourceKey ;
+
+		// Do not copy if property is a function and we don't want them
+		if ( options.nofunc && typeof sourceValue === 'function' ) { continue ; }
+
+		// 'unflat' mode computing
+		if ( options.unflat && runtime.depth === 0 ) {
+			path = sourceKey.split( options.unflat ) ;
+			jmax = path.length - 1 ;
+
+			if ( jmax ) {
+				for ( j = 0 ; j < jmax ; j ++ ) {
+					if ( ! targetPointer[ path[ j ] ] ||
+						( typeof targetPointer[ path[ j ] ] !== 'object' &&
+							typeof targetPointer[ path[ j ] ] !== 'function' ) ) {
+						targetPointer[ path[ j ] ] = {} ;
+					}
+
+					targetPointer = targetPointer[ path[ j ] ] ;
+				}
+
+				targetKey = runtime.prefix + path[ jmax ] ;
+			}
+		}
+
+		// Again, trigger an eventual getter only once
+		targetValue = targetPointer[ targetKey ] ;
+		targetValueIsObject = targetValue && ( typeof targetValue === 'object' || typeof targetValue === 'function' ) ;
+		sourceValueIsObject = sourceValue && ( typeof sourceValue === 'object' || typeof sourceValue === 'function' ) ;
+
+
+		if ( options.deep	// eslint-disable-line no-constant-condition
+			&& sourceValue
+			&& ( typeof sourceValue === 'object' || ( options.deepFunc && typeof sourceValue === 'function' ) )
+			&& ( ! options.descriptor || ! sourceDescriptor.get )
+			// not a condition we just cache sourceValueProto now... ok it's trashy ><
+			&& ( ( sourceValueProto = Object.getPrototypeOf( sourceValue ) ) || true )
+			&& ( ! ( options.deep instanceof Set ) || options.deep.has( sourceValueProto ) )
+			&& ( ! options.immutables || ! options.immutables.has( sourceValueProto ) )
+			&& ( ! options.preserve || targetValueIsObject )
+			&& ( ! mask || targetValueIsObject )
+		) {
+			if ( options.circular ) {
+				indexOfSource = runtime.references.sources.indexOf( sourceValue ) ;
+			}
+
+			if ( options.flat ) {
+				// No circular references reconnection when in 'flat' mode
+				if ( indexOfSource >= 0 ) { continue ; }
+
+				extendOne(
+					{ depth: runtime.depth + 1 , prefix: runtime.prefix + sourceKey + options.flat , references: runtime.references } ,
+					options , targetPointer , sourceValue , mask
+				) ;
+			}
+			else {
+				if ( indexOfSource >= 0 ) {
+					// Circular references reconnection...
+					targetValue = runtime.references.targets[ indexOfSource ] ;
+
+					if ( options.descriptor ) {
+						Object.defineProperty( targetPointer , targetKey , {
+							value: targetValue ,
+							enumerable: sourceDescriptor.enumerable ,
+							writable: sourceDescriptor.writable ,
+							configurable: sourceDescriptor.configurable
+						} ) ;
+					}
+					else {
+						targetPointer[ targetKey ] = targetValue ;
+					}
+
+					continue ;
+				}
+
+				if ( ! targetValueIsObject || ! Object.prototype.hasOwnProperty.call( targetPointer , targetKey ) ) {
+					if ( Array.isArray( sourceValue ) ) { targetValue = [] ; }
+					else if ( options.proto ) { targetValue = Object.create( sourceValueProto ) ; }	// jshint ignore:line
+					else if ( options.inherit ) { targetValue = Object.create( sourceValue ) ; }
+					else { targetValue = {} ; }
+
+					if ( options.descriptor ) {
+						Object.defineProperty( targetPointer , targetKey , {
+							value: targetValue ,
+							enumerable: sourceDescriptor.enumerable ,
+							writable: sourceDescriptor.writable ,
+							configurable: sourceDescriptor.configurable
+						} ) ;
+					}
+					else {
+						targetPointer[ targetKey ] = targetValue ;
+					}
+				}
+				else if ( options.proto && Object.getPrototypeOf( targetValue ) !== sourceValueProto ) {
+					Object.setPrototypeOf( targetValue , sourceValueProto ) ;
+				}
+				else if ( options.inherit && Object.getPrototypeOf( targetValue ) !== sourceValue ) {
+					Object.setPrototypeOf( targetValue , sourceValue ) ;
+				}
+
+				if ( options.circular ) {
+					runtime.references.sources.push( sourceValue ) ;
+					runtime.references.targets.push( targetValue ) ;
+				}
+
+				// Recursively extends sub-object
+				extendOne(
+					{ depth: runtime.depth + 1 , prefix: '' , references: runtime.references } ,
+					options , targetValue , sourceValue , mask
+				) ;
+			}
+		}
+		else if ( mask && ( targetValue === undefined || targetValueIsObject || sourceValueIsObject ) ) {
+			// Do not create new value, and so do not delete source's properties that were not moved.
+			// We also do not overwrite object with non-object, and we don't overwrite non-object with object (preserve hierarchy)
+			continue ;
+		}
+		else if ( options.preserve && targetValue !== undefined ) {
+			// Do not overwrite, and so do not delete source's properties that were not moved
+			continue ;
+		}
+		else if ( ! options.inherit ) {
+			if ( options.descriptor ) { Object.defineProperty( targetPointer , targetKey , sourceDescriptor ) ; }
+			else { targetPointer[ targetKey ] = targetValue = sourceValue ; }
+		}
+
+		// Delete owned property of the source object
+		if ( options.move ) { delete source[ sourceKey ] ; }
+	}
+}
+
+
+},{}]},{},[24]);
