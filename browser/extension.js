@@ -31,205 +31,6 @@
 
 
 
-const TextBox = require( './TextBox.js' ) ;
-
-const extension = require( './browser-extension.js' ) ;
-
-const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
-const Promise = require( 'seventh' ) ;
-
-
-
-function Button( dom , gScene , text , options = {} ) {
-	TextBox.call( this , dom , gScene , text , options ) ;
-
-	this.hoverWidth = this.pressedDownWidth = null ;
-	this.hoverHeight = this.pressedDownHeight = null ;
-
-	this.rectangleHoverStyle = {} ;
-	this.rectanglePressedDownStyle = {} ;
-
-	this.hoverNinePatchImageUrl = null ;
-	this.pressedDownNinePatchImageUrl = null ;
-	
-	// The hook to be called when the Button is pressed
-	this.onPress = null ;
-}
-
-Button.prototype = Object.create( TextBox.prototype ) ;
-Button.prototype.constructor = Button ;
-
-module.exports = Button ;
-
-
-
-Button.prototype.run = function( onPress ) {
-	if ( ! this.guiCreated ) { this.createGUI() ; }
-	this.onPress = onPress ;
-} ;
-
-
-
-const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
-	default: {
-		panel: {
-			width: 0.25 ,
-			height: 0.2 ,
-			backgroundColor: "green" ,
-			borderColor: "orange" ,
-			borderWidth: 4 ,
-			cornerRadius: 20 ,
-			padding: {
-				left: "10px" ,
-				top: "10px" ,
-				right: "10px" ,
-				bottom: "10px"
-			} ,
-			hover: {
-				//size: 0.95 ,
-				backgroundColor: "green" ,
-				borderColor: "red" ,
-				borderWidth: 4
-			} ,
-			pressedDown: {
-				size: 0.9 ,
-				backgroundColor: "#66aa66" ,
-				borderColor: "red" ,
-				borderWidth: 4
-			}
-		} ,
-		text: {
-			color: "white"
-		}
-	}
-} ) ;
-
-
-
-Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.default , defaultTheme = THEME.default ) {
-	if ( this.guiCreated ) { return ; }
-
-	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
-	
-	if ( defaultTheme?.panel?.hover ) { deepExtend( this.rectangleHoverStyle , defaultTheme.panel.hover ) ; }
-	if ( theme?.panel?.hover ) { deepExtend( this.rectangleHoverStyle , theme.panel.hover ) ; }
-
-	if ( defaultTheme?.panel?.pressedDown ) { deepExtend( this.rectanglePressedDownStyle , defaultTheme.panel.pressedDown ) ; }
-	if ( theme?.panel?.pressedDown ) { deepExtend( this.rectanglePressedDownStyle , theme.panel.pressedDown ) ; }
-
-	if ( this.rectangleHoverStyle.size ) {
-		this.hoverWidth = this.width * this.rectangleHoverStyle.size ;
-		this.hoverHeight = this.height * this.rectangleHoverStyle.size ;
-	}
-	
-	if ( this.rectanglePressedDownStyle.size ) {
-		this.pressedDownWidth = this.width * this.rectanglePressedDownStyle.size ;
-		this.pressedDownHeight = this.height * this.rectanglePressedDownStyle.size ;
-	}
-
-	this.babylon.mainControl.hoverCursor = 'pointer' ;
-
-	this.babylon.mainControl.onPointerEnterObservable.add( () => this.hover() ) ;
-	this.babylon.mainControl.onPointerOutObservable.add( () => this.initialState() ) ;
-	this.babylon.mainControl.onPointerDownObservable.add( () => this.pressDown() ) ;
-	this.babylon.mainControl.onPointerUpObservable.add( () => this.pressUp() ) ;
-} ;
-
-
-
-const initialState = 1 ;
-
-Button.prototype.initialState = function() {
-	console.warn( "!!!!! ENTERING .initialState()" ) ;
-	if ( this.hoverWidth || this.pressedDownWidth ) {
-		this.babylon.mainControl.width = this.width ;
-		this.babylon.mainControl.height = this.height ;
-	}
-	
-	if ( this.babylon.rectangle ) {
-		this.babylon.rectangle.alpha = initialState ;
-		this.applyRectangleStyle( this.babylon.rectangle , this.rectangleStyle ) ;
-	}
-
-	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = initialState ; }
-	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = initialState ; }
-} ;
-
-
-
-const hoverAlpha = 0.5 ;
-
-Button.prototype.hover = function() {
-	console.warn( "!!!!! ENTERING .hover()" ) ;
-	if ( this.hoverWidth ) {
-		this.babylon.mainControl.width = this.hoverWidth ;
-		this.babylon.mainControl.height = this.hoverHeight ;
-		console.warn( "+++ set size to" , this.hoverWidth , this.hoverHeight ) ;
-	}
-
-	if ( this.babylon.rectangle ) {
-		this.babylon.rectangle.alpha = hoverAlpha ;
-		this.applyRectangleStyle( this.babylon.rectangle , this.rectangleHoverStyle ) ;
-	}
-
-	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = hoverAlpha ; }
-	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = hoverAlpha ; }
-} ;
-
-
-
-Button.prototype.pressDown = function() {
-	if ( this.pressedDownWidth ) {
-		this.babylon.mainControl.width = this.pressedDownWidth ;
-		this.babylon.mainControl.height = this.pressedDownHeight ;
-	}
-
-	if ( this.babylon.rectangle ) {
-		this.applyRectangleStyle( this.babylon.rectangle , this.rectanglePressedDownStyle ) ;
-	}
-} ;
-
-
-
-Button.prototype.pressUp = function() {
-	this.initialState() ;
-	if ( this.onPress ) { this.onPress() ; }
-} ;
-
-
-},{"./TextBox.js":23,"./browser-extension.js":24,"seventh":48,"tree-kit/lib/extend.js":51}],2:[function(require,module,exports){
-/*
-	3D Ground With Sprites
-
-	Copyright (c) 2020 - 2021 Cédric Ronvel
-
-	The MIT License (MIT)
-
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-
-	The above copyright notice and this permission notice shall be included in all
-	copies or substantial portions of the Software.
-
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	SOFTWARE.
-*/
-
-"use strict" ;
-
-/* global BABYLON */
-
-
-
 const GTransition = require( './GTransition.js' ) ;
 const vectorUtils = require( './vectorUtils.js' ) ;
 //const domKit = require( 'dom-kit' ) ;
@@ -601,123 +402,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],3:[function(require,module,exports){
-/*
-	3D Ground With Sprites
-
-	Copyright (c) 2020 - 2021 Cédric Ronvel
-
-	The MIT License (MIT)
-
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-
-	The above copyright notice and this permission notice shall be included in all
-	copies or substantial portions of the Software.
-
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	SOFTWARE.
-*/
-
-"use strict" ;
-
-/* global BABYLON */
-
-
-
-const Button = require( './Button.js' ) ;
-
-const extension = require( './browser-extension.js' ) ;
-
-const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
-const Promise = require( 'seventh' ) ;
-
-
-
-function Choices( dom , gScene , choices , undecidedNames , onSelect , options = {} ) {
-	this.gScene = gScene ;
-	this.dom = dom ;    // Dom instance, immutable
-
-	this.choices = choices ;
-	this.undecidedNames = undecidedNames ;
-	this.onSelect = onSelect ;
-
-	//this.type = options.type ;
-	//this.wait = options.wait || 0 ;
-
-	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} ) ) ;
-
-	this.guiCreates = false ;
-}
-
-module.exports = Choices ;
-
-
-
-Choices.prototype.destroy = function() {
-	this.buttons.forEach( button => button.destroy() ) ;
-} ;
-
-
-
-Choices.prototype.run = async function() {
-	if ( ! this.guiCreated ) { this.createGUI() ; }
-
-	var promise = new Promise() ;
-
-	var choose = index => {
-		console.warn( "Choice index:" , index ) ;
-	} ;
-
-	this.buttons.forEach( ( button , index ) => {
-		button.run( () => choose( index ) ) ;
-	} ) ;
-
-	await promise ;
-
-	this.destroy() ;
-} ;
-
-
-
-const THEME = Choices.THEME = deepExtend( {} , Button.THEME , {
-	default: {
-		panel: {
-			width: 0.2 ,
-			height: 0.1 ,
-		} ,
-		text: {
-			color: "black" ,
-			fontSize: "22px" ,
-			outlineWidth: 2 ,
-			outlineColor: "white"
-		}
-	}
-} ) ;
-
-
-
-Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.default , defaultTheme = THEME.default ) {
-	if ( this.guiCreated ) { return ; }
-
-	this.buttons.forEach( button => {
-		button.createGUI( theme , defaultTheme ) ;
-	} ) ;
-
-	this.guiCreated = true ;
-} ;
-
-
-},{"./Button.js":1,"./browser-extension.js":24,"seventh":48,"tree-kit/lib/extend.js":51}],4:[function(require,module,exports){
+},{"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],2:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -1096,7 +781,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 } ;
 
 
-},{"./meshUtils.js":26,"seventh":48}],5:[function(require,module,exports){
+},{"./meshUtils.js":22,"seventh":48}],3:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2257,7 +1942,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":20,"./Parametric.js":22,"nextgen-events/lib/LeanEvents.js":36,"seventh":48}],6:[function(require,module,exports){
+},{"./GTransition.js":18,"./Parametric.js":19,"nextgen-events/lib/LeanEvents.js":36,"seventh":48}],4:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2381,7 +2066,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"seventh":48}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":48}],5:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2478,7 +2163,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],6:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2593,7 +2278,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],7:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2813,7 +2498,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],8:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2975,7 +2660,7 @@ GEntityFx.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],9:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3103,7 +2788,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"seventh":48}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":48}],10:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3237,7 +2922,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],11:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3844,7 +3529,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],12:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3971,7 +3656,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],13:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4096,7 +3781,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],16:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],14:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4154,7 +3839,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],17:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],15:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4417,7 +4102,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":5,"./GTransition.js":20,"./vectorUtils.js":28,"seventh":48}],18:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],16:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4725,7 +4410,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 } ;
 
 
-},{"./GEntity.js":5,"./GEntityFloatingText.js":9}],19:[function(require,module,exports){
+},{"./GEntity.js":3,"./GEntityFloatingText.js":7}],17:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4759,8 +4444,8 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 
 
 const Camera = require( './Camera.js' ) ;
-const Message = require( './Message.js' ) ;
-const Choices = require( './Choices.js' ) ;
+const Message = require( './widgets/Message.js' ) ;
+const Choices = require( './widgets/Choices.js' ) ;
 const GTransition = require( './GTransition.js' ) ;
 
 //const Ngev = require( 'nextgen-events/lib/browser.js' ) ;
@@ -5291,7 +4976,7 @@ GScene.prototype.setChoices = function( choices , undecidedNames , onSelect , op
 } ;
 
 
-},{"./Camera.js":2,"./Choices.js":3,"./GTransition.js":20,"./Message.js":21,"nextgen-events/lib/LeanEvents.js":36,"seventh":48}],20:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":18,"./widgets/Choices.js":26,"./widgets/Message.js":27,"nextgen-events/lib/LeanEvents.js":36,"seventh":48}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5507,231 +5192,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":29,"seventh":48}],21:[function(require,module,exports){
-/*
-	3D Ground With Sprites
-
-	Copyright (c) 2020 - 2021 Cédric Ronvel
-
-	The MIT License (MIT)
-
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-
-	The above copyright notice and this permission notice shall be included in all
-	copies or substantial portions of the Software.
-
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	SOFTWARE.
-*/
-
-"use strict" ;
-
-/* global BABYLON */
-
-
-
-const TextBox = require( './TextBox.js' ) ;
-
-const extension = require( './browser-extension.js' ) ;
-
-const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
-const Promise = require( 'seventh' ) ;
-
-
-
-function Message( dom , gScene , text , options = {} ) {
-	TextBox.call( this , dom , gScene , text , options ) ;
-
-	//this.type = options.type ;
-	this.wait = options.wait || 0 ;
-	this.slowTyping = !! options.slowTyping ;
-	this.next = !! options.next ;
-	
-	this.babylon.nextImage = null ;
-}
-
-Message.prototype = Object.create( TextBox.prototype ) ;
-Message.prototype.constructor = Message ;
-
-module.exports = Message ;
-
-
-
-Message.prototype.destroy = function() {
-	TextBox.prototype.destroy.call( this ) ;
-	if ( this.babylon.nextImage ) { this.babylon.nextImage.dispose() ; }
-} ;
-
-
-
-Message.prototype.run = async function() {
-	if ( ! this.guiCreated ) { this.createGUI() ; }
-
-	if ( this.slowTyping ) { await this.slowType() ; }
-	if ( this.next ) { await this.confirm() ; }
-	if ( this.wait ) { await Promise.resolveTimeout( this.wait * 1000 ) ; }
-	
-	this.destroy() ;
-} ;
-
-
-
-const THEME = Message.THEME = deepExtend( {} , TextBox.THEME , {
-	default: {
-		panel: {
-			width: 0.5 ,
-			height: 0.2 ,
-			backgroundColor: "green" ,
-			borderColor: "orange" ,
-			borderWidth: 4 ,
-			cornerRadius: 20 ,
-			padding: {
-				left: "10px" ,
-				top: "10px" ,
-				right: "10px" ,
-				bottom: "10px"
-			}
-		} ,
-		text: {
-			color: "white"
-		}
-	}
-} ) ;
-
-
-
-Message.prototype.createGUI = function( theme = this.dom.themeConfig?.message?.default , defaultTheme = THEME.default ) {
-	if ( this.guiCreated ) { return ; }
-
-	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
-
-	if ( this.next ) {
-		let nextImage = this.babylon.nextImage = new BABYLON.GUI.Image( 'message-next' , '/icons/dialog-next.png' ) ;
-		nextImage.width = "30px" ;
-		nextImage.height = "15px" ;
-		nextImage.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-		nextImage.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
-		nextImage.isVisible = false ;
-		this.babylon.mainControl.addControl( nextImage ) ;
-	}
-
-	// Slow-typing: don't write characters ATM
-	if ( this.slowTyping ) { this.babylon.structuredTextBlock.characterLimit = 0 ; }
-} ;
-
-
-
-// A penalty applied to repeated punctuation
-const SAME_SPECIAL_CHARACTER_PAUSE_RATE = 0.5 ;
-
-const SPECIAL_CHARACTER_PAUSE_RATE = {
-	' ': 0.3 ,
-	',': 1 ,
-	':': 1 ,
-	';': 1.5 ,
-	'.': 2 ,
-	'!': 2 ,
-	'?': 2.5 ,
-	'…': 4 ,
-	'\n': 4
-} ;
-
-const TYPING_TIMEOUT = {
-	normal: { base: 30 , special: 180 , increment: 1 } ,
-	fast: { base: 20 , special: 150 , increment: 1 } ,
-	faster: { base: 20 , special: 80 , increment: 2 }
-} ;
-
-
-
-Message.prototype.slowType = async function() {
-	var limit , character ,
-		clicked = false ,
-		//typingSpeed = 'normal' ,
-		typingSpeed = 'faster' ,
-		baseTimeout = TYPING_TIMEOUT[ typingSpeed ].base ,
-		specialBaseTimeout = TYPING_TIMEOUT[ typingSpeed ].special ,
-		increment = TYPING_TIMEOUT[ typingSpeed ].increment ,
-		structuredTextBlock = this.babylon.structuredTextBlock ;
-
-	this.babylon.mainControl.onPointerClickObservable.addOnce( () => clicked = true ) ;
-
-	await Promise.resolveTimeout( baseTimeout ) ;
-	
-	// Don't cache .characterCount because it may change if the dialog is resized because of line-breaks
-	for ( limit = 1 ; limit <= structuredTextBlock.characterCount ; limit ++ ) {
-		if ( clicked ) {
-			structuredTextBlock.characterLimit = structuredTextBlock.characterCount ;
-			return ;
-		}
-
-		character = this.getNthCharacter( limit - 1 ) ;
-
-		if ( SPECIAL_CHARACTER_PAUSE_RATE[ character ] !== undefined ) {
-			// Set the new limit
-			structuredTextBlock.characterLimit = limit ;
-
-			let rate = SPECIAL_CHARACTER_PAUSE_RATE[ character ] ;
-			// If the next character is the same than this one, cut the rate
-			if ( character === this.getNthCharacter( limit ) ) { rate *= SAME_SPECIAL_CHARACTER_PAUSE_RATE ; }
-			// Now set the pause
-			await Promise.resolveTimeout( specialBaseTimeout * rate ) ;
-		}
-		else if ( limit >= structuredTextBlock.characterCount ) {
-			// Set the new limit
-			structuredTextBlock.characterLimit = Infinity ;
-			// Now set the pause
-			await Promise.resolveTimeout( baseTimeout ) ;
-		}
-		else if ( limit % increment === 0 ) {
-			// Set the new limit
-			structuredTextBlock.characterLimit = limit ;
-			// Now set the pause
-			await Promise.resolveTimeout( baseTimeout ) ;
-		}
-	}
-} ;
-
-
-
-Message.prototype.confirm = function() {
-	var promise = new Promise() ;
-	
-	var	topBase ,
-		theme = this.dom.themeConfig?.message?.default ,
-		defaultTheme = THEME.default ,
-		nextImage = this.babylon.nextImage ,
-		t0 = Date.now() ;
-
-	nextImage.isVisible = true ;
-	nextImage.topInPixels = topBase = nextImage.topInPixels - Math.round( ( theme?.panel?.padding?.top ?? defaultTheme?.panel?.padding?.top ?? 0 ) / 2 ) ;
-	nextImage.leftInPixels = nextImage.leftInPixels - ( theme?.panel?.padding?.left ?? defaultTheme?.panel?.padding?.left ?? 0 ) ;
-
-	var timer = setInterval( () => {
-		var delta = ( Date.now() - t0 ) / 1000 ;
-		nextImage.topInPixels = topBase - Math.abs( Math.sin( 3 * delta ) * 10 ) ;
-	} , 20 ) ;
-
-	this.babylon.mainControl.onPointerClickObservable.addOnce( () => {
-		clearInterval( timer ) ;
-		promise.resolve() ;
-	} ) ;
-
-	return promise ;
-} ;
-
-
-},{"./TextBox.js":23,"./browser-extension.js":24,"seventh":48,"tree-kit/lib/extend.js":51}],22:[function(require,module,exports){
+},{"array-kit":29,"seventh":48}],19:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5907,336 +5368,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 } ;
 
 
-},{"./browser-extension.js":24}],23:[function(require,module,exports){
-/*
-	3D Ground With Sprites
-
-	Copyright (c) 2020 - 2021 Cédric Ronvel
-
-	The MIT License (MIT)
-
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-
-	The above copyright notice and this permission notice shall be included in all
-	copies or substantial portions of the Software.
-
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	SOFTWARE.
-*/
-
-"use strict" ;
-
-/* global BABYLON */
-
-
-
-const misc = require( './misc.js' ) ;
-
-const extension = require( './browser-extension.js' ) ;
-const Promise = require( 'seventh' ) ;
-
-
-
-function TextBox( dom , gScene , text , options = {} ) {
-	this.gScene = gScene ;
-	this.dom = dom ;    // Dom instance, immutable
-
-	this.text = text ;
-	//this.type = options.type ;
-	
-	this.width = 0 ;
-	this.height = 0 ;
-
-	this.ninePatchImageUrl = null ;
-	this.rectangleStyle = {} ;
-	
-	this.guiCreated = false ;
-
-	this.babylon = {
-		mainControl: null ,
-		rectangle: null ,
-		structuredTextBlock: null ,
-		boxImage: null
-	} ;
-}
-
-module.exports = TextBox ;
-
-
-
-TextBox.prototype.destroy = function() {
-	if ( this.babylon.rectangle ) { this.babylon.rectangle.dispose() ; }
-	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
-	if ( this.babylon.boxImage ) { this.babylon.boxImage.dispose() ; }
-	this.babylon.mainControl = null ;
-} ;
-
-
-
-// Should be redefined
-TextBox.prototype.run = async function() {
-	if ( ! this.guiCreated ) { this.createGUI() ; }
-	this.destroy() ;
-} ;
-
-
-
-const THEME = TextBox.THEME = {
-	default: {
-		position: 'center' ,
-		panel: {
-			width: 0.5 ,
-			height: 0.2 ,
-			backgroundColor: "green" ,
-			borderColor: "orange" ,
-			borderWidth: 4 ,
-			cornerRadius: 20 ,
-			padding: {
-				left: "10px" ,
-				top: "10px" ,
-				right: "10px" ,
-				bottom: "10px"
-			}
-		} ,
-		text: {
-			color: "white"
-		}
-	}
-} ;
-
-
-
-TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
-	if ( this.guiCreated ) { return ; }
-
-	var rectangle , boxImage , structuredTextBlock ,
-		paddingLeft , paddingTop , paddingRight , paddingBottom ,
-		ui = this.gScene.getUi() ;
-
-	rectangle = this.babylon.rectangle = new BABYLON.GUI.Rectangle() ;
-	rectangle.width = this.width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
-	rectangle.height = this.height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
-	rectangle.thickness = 0 ;
-
-	this.setControlAlignment( rectangle , theme?.position ?? defaultTheme?.position ) ;
-
-	ui.addControl( rectangle ) ;
-
-	console.warn( "THEME:" , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
-
-	this.ninePatchImageUrl = theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ;
-	
-	if ( this.ninePatchImageUrl ) {
-		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'message-background' , this.ninePatchImageUrl ) ;
-		//boxImage.width = "200px";
-		//boxImage.height = "300px";
-		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
-
-		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
-		// /!\ This will produce bug!
-		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
-		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
-		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
-		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
-
-		// /!\ TMP, due to previous bug
-		paddingRight = paddingLeft ;
-		paddingBottom = paddingTop ;
-
-		rectangle.addControl( boxImage ) ;
-	}
-	else {
-		this.rectangleStyle.backgroundColor = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
-		this.rectangleStyle.borderColor = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
-		this.rectangleStyle.borderWidth = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
-		this.rectangleStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
-		this.applyRectangleStyle( rectangle , this.rectangleStyle ) ;
-	}
-
-	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
-
-	// Padding, priority: theme, nine-patch slice, default theme or 0
-	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
-	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
-	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
-	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
-	
-	/*
-	// Not defined in time (because width is not in pixels but is a rate)
-	if ( paddingLeft + paddingRight > rectangle.widthInPixels / 2 ) {
-		paddingLeft = paddingRight = Math.round( rectangle.widthInPixels / 4 ) ;
-	}
-	if ( paddingTop + paddingBottom > rectangle.heightInPixels / 2 ) {
-		paddingTop = paddingBottom = Math.round( rectangle.heightInPixels / 4 ) ;
-	}
-	*/
-
-	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
-
-	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-
-	structuredTextBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
-	structuredTextBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
-	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
-	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
-	structuredTextBlock.structuredText = this.parseText( this.text ) ;
-	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
-
-	//structuredTextBlock.textWrapping = true ;
-	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
-	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
-	structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
-
-	//structuredTextBlock.color = this.special.content.textColor ;
-	//structuredTextBlock.alpha = this.opacity ;
-	//structuredTextBlock.resizeToFit = true ;
-	rectangle.addControl( structuredTextBlock ) ;
-
-	// The mainControl will be the control where events are tested
-	this.babylon.mainControl = rectangle ;
-
-	// Needed for rectangle.onPointerClickObservable
-	this.babylon.mainControl.isPointerBlocker = true ;
-	this.guiCreated = true ;
-} ;
-
-
-
-TextBox.prototype.setControlAlignment = function( control , type ) {
-	switch ( type ) {
-		case 'top' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
-			break ;
-		case 'bottom' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-			break ;
-		case 'left' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
-			break ;
-		case 'right' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
-			break ;
-		case 'top-left' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-			break ;
-		case 'top-right' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
-			break ;
-		case 'bottom-left' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-			break ;
-		case 'bottom-right' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
-			break ;
-		case 'center' :
-		default :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
-			break ;
-	}
-} ;
-
-
-
-TextBox.prototype.applyRectangleStyle = function( rectangle , style ) {
-	console.warn( "******** APPLY STYLE" , style ) ;
-	if ( style.backgroundColor !== undefined ) { rectangle.background = style.backgroundColor ; }
-	if ( style.borderColor !== undefined ) { rectangle.color = style.borderColor ; }
-	if ( style.borderWidth !== undefined ) { rectangle.thickness = style.borderWidth ; }
-	if ( style.cornerRadius !== undefined ) { rectangle.cornerRadius = style.cornerRadius ; }
-} ;
-
-
-
-const MARKUP_COLOR_CODE = {
-	black: '#000000' ,
-	brightBlack: '#555753' , //grey: '#555753',
-	red: '#cc0000' ,
-	brightRed: '#ef2929' ,
-	green: '#4e9a06' ,
-	brightGreen: '#8ae234' ,
-	yellow: '#c4a000' ,
-	brightYellow: '#fce94f' ,
-	blue: '#3465a4' ,
-	brightBlue: '#729fcf' ,
-	magenta: '#75507b' ,
-	brightMagenta: '#ad7fa8' ,
-	cyan: '#06989a' ,
-	brightCyan: '#34e2e2' ,
-	white: '#d3d7cf' ,
-	brightWhite: '#eeeeec'
-} ;
-
-MARKUP_COLOR_CODE.grey = MARKUP_COLOR_CODE.gray = MARKUP_COLOR_CODE.brightBlack ;
-
-
-
-TextBox.prototype.parseText = function( text ) {
-	return extension.host.exports.toolkit.parseMarkup( text ).map( input => {
-		var part = { text: input.text } ;
-
-		if ( input.color ) {
-			part.color = input.color[ 0 ] === '#' ? input.color : MARKUP_COLOR_CODE[ input.color ] ;
-		}
-
-		if ( input.italic ) { part.fontStyle = 'italic' ; }
-		if ( input.bold ) { part.fontWeight = 'bold' ; }
-		if ( input.underline ) { part.underline = true ; }
-		if ( input.strike ) { part.lineThrough = true ; }
-
-		if ( input.bgColor ) {
-			part.frame = true ;
-			part.frameColor = input.bgColor ;
-			part.frameOutlineWidth = 2 ;
-			part.frameOutlineColor = misc.getContrastColorCode( part.frameColor , 0.7 ) ;
-			part.frameCornerRadius = 5 ;
-		}
-
-		return part ;
-	} ) ;
-} ;
-
-
-
-TextBox.prototype.getNthCharacter = function( index ) {
-	var part , line ,
-		structuredTextBlock = this.babylon.structuredTextBlock ,
-		lines = structuredTextBlock.lines ,
-		count = structuredTextBlock.characterCount ;
-
-	if ( index > count ) { return '' ; }
-
-	for ( line of lines ) {
-		for ( part of line.parts ) {
-			if ( index < part.text.length ) { return part.text[ index ] ; }
-			index -= part.text.length ;
-		}
-	}
-
-	return '' ;
-} ;
-
-
-},{"./browser-extension.js":24,"./misc.js":27,"seventh":48}],24:[function(require,module,exports){
+},{"./browser-extension.js":20}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6292,7 +5424,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":25,"exm/lib/BrowserExm.js":35,"path":38}],25:[function(require,module,exports){
+},{"./engine.js":21,"exm/lib/BrowserExm.js":35,"path":38}],21:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6348,7 +5480,7 @@ engine.perUsageGEntity = {
 engine.DiceRoller = require( './DiceRoller.js' ) ;
 
 
-},{"./Camera.js":2,"./DiceRoller.js":4,"./GEntity.js":5,"./GEntityBackground.js":6,"./GEntityBasicShape.js":7,"./GEntityDirectionalLight.js":8,"./GEntityFloatingText.js":9,"./GEntityFx.js":10,"./GEntityGround.js":11,"./GEntityHemisphericLight.js":12,"./GEntityParticleSystem.js":13,"./GEntityPointLight.js":14,"./GEntityShadow.js":15,"./GEntitySpotLight.js":16,"./GEntitySprite.js":17,"./GEntityUiFloatingText.js":18,"./GScene.js":19}],26:[function(require,module,exports){
+},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityDirectionalLight.js":6,"./GEntityFloatingText.js":7,"./GEntityFx.js":8,"./GEntityGround.js":9,"./GEntityHemisphericLight.js":10,"./GEntityParticleSystem.js":11,"./GEntityPointLight.js":12,"./GEntityShadow.js":13,"./GEntitySpotLight.js":14,"./GEntitySprite.js":15,"./GEntityUiFloatingText.js":16,"./GScene.js":17}],22:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6419,7 +5551,7 @@ exports.getUpmostBoxMeshFace = boxMesh => {
 } ;
 
 
-},{}],27:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6479,7 +5611,7 @@ misc.getContrastColorCode = ( colorStr , rate = 0.5 ) => {
 } ;
 
 
-},{"./browser-extension.js":24}],28:[function(require,module,exports){
+},{"./browser-extension.js":20}],24:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6636,7 +5768,850 @@ utils.epsilonAsin = utils.easin = v => {
 } ;
 
 
-},{}],29:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const TextBox = require( './TextBox.js' ) ;
+
+const extension = require( '../browser-extension.js' ) ;
+
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
+const Promise = require( 'seventh' ) ;
+
+
+
+function Button( dom , gScene , text , options = {} ) {
+	TextBox.call( this , dom , gScene , text , options ) ;
+
+	this.containerRectHoverStyle = {} ;
+	this.containerRectPressedDownStyle = {} ;
+
+	this.hoverNinePatchImageUrl = null ;
+	this.pressedDownNinePatchImageUrl = null ;
+
+	// The hook to be called when the Button is pressed
+	this.onPress = null ;
+}
+
+Button.prototype = Object.create( TextBox.prototype ) ;
+Button.prototype.constructor = Button ;
+
+module.exports = Button ;
+
+
+
+Button.prototype.run = function( onPress ) {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+	this.onPress = onPress ;
+} ;
+
+
+
+const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
+	default: {
+		panel: {
+			width: 0.25 ,
+			height: 0.2 ,
+			backgroundColor: "green" ,
+			borderColor: "orange" ,
+			borderWidth: 4 ,
+			cornerRadius: 20 ,
+			padding: {
+				left: "10px" ,
+				top: "10px" ,
+				right: "10px" ,
+				bottom: "10px"
+			} ,
+			hover: {
+				//size: 0.95 ,
+				backgroundColor: "green" ,
+				borderColor: "red" ,
+				borderWidth: 4
+			} ,
+			pressedDown: {
+				size: 0.9 ,
+				backgroundColor: "#66aa66" ,
+				borderColor: "red" ,
+				borderWidth: 4
+			}
+		} ,
+		text: {
+			color: "white"
+		}
+	}
+} ) ;
+
+
+
+Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.default , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
+
+	if ( defaultTheme?.panel?.hover ) { deepExtend( this.containerRectHoverStyle , defaultTheme.panel.hover ) ; }
+	if ( theme?.panel?.hover ) { deepExtend( this.containerRectHoverStyle , theme.panel.hover ) ; }
+
+	if ( defaultTheme?.panel?.pressedDown ) { deepExtend( this.containerRectPressedDownStyle , defaultTheme.panel.pressedDown ) ; }
+	if ( theme?.panel?.pressedDown ) { deepExtend( this.containerRectPressedDownStyle , theme.panel.pressedDown ) ; }
+
+	if ( this.containerRectHoverStyle.size ) {
+		this.containerRectHoverStyle.width = this.containerRectStyle.width * this.containerRectHoverStyle.size ;
+		this.containerRectHoverStyle.height = this.containerRectStyle.height * this.containerRectHoverStyle.size ;
+	}
+
+	if ( this.containerRectPressedDownStyle.size ) {
+		this.containerRectPressedDownStyle.width = this.containerRectStyle.width * this.containerRectPressedDownStyle.size ;
+		this.containerRectPressedDownStyle.height = this.containerRectStyle.height * this.containerRectPressedDownStyle.size ;
+	}
+
+	this.babylon.containerRect.hoverCursor = 'pointer' ;
+
+	this.babylon.containerRect.onPointerEnterObservable.add( () => this.hover() ) ;
+	this.babylon.containerRect.onPointerOutObservable.add( () => this.initialState() ) ;
+	this.babylon.containerRect.onPointerDownObservable.add( () => this.pressDown() ) ;
+	this.babylon.containerRect.onPointerUpObservable.add( () => this.pressUp() ) ;
+} ;
+
+
+
+const initialState = 1 ;
+
+Button.prototype.initialState = function() {
+	console.warn( "!!!!! ENTERING .initialState()" ) ;
+	if ( this.babylon.containerRect ) {
+		this.babylon.containerRect.alpha = initialState ;
+		this.applyRectangleStyle( this.babylon.containerRect , this.containerRectStyle ) ;
+	}
+
+	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = initialState ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = initialState ; }
+} ;
+
+
+
+const hoverAlpha = 0.5 ;
+
+Button.prototype.hover = function() {
+	console.warn( "!!!!! ENTERING .hover()" ) ;
+	if ( this.babylon.containerRect ) {
+		this.babylon.containerRect.alpha = hoverAlpha ;
+		this.applyRectangleStyle( this.babylon.containerRect , this.containerRectHoverStyle ) ;
+	}
+
+	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = hoverAlpha ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = hoverAlpha ; }
+} ;
+
+
+
+Button.prototype.pressDown = function() {
+	if ( this.babylon.containerRect ) {
+		this.applyRectangleStyle( this.babylon.containerRect , this.containerRectPressedDownStyle ) ;
+	}
+} ;
+
+
+
+Button.prototype.pressUp = function() {
+	this.initialState() ;
+	if ( this.onPress ) { this.onPress() ; }
+} ;
+
+
+},{"../browser-extension.js":20,"./TextBox.js":28,"seventh":48,"tree-kit/lib/extend.js":51}],26:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const Button = require( './Button.js' ) ;
+
+const extension = require( '../browser-extension.js' ) ;
+
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
+const Promise = require( 'seventh' ) ;
+
+
+
+function Choices( dom , gScene , choices , undecidedNames , onSelect , options = {} ) {
+	this.gScene = gScene ;
+	this.dom = dom ;    // Dom instance, immutable
+
+	this.choices = choices ;
+	this.undecidedNames = undecidedNames ;
+	this.onSelect = onSelect ;
+
+	//this.type = options.type ;
+	//this.wait = options.wait || 0 ;
+
+	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} ) ) ;
+
+	this.guiCreates = false ;
+}
+
+module.exports = Choices ;
+
+
+
+Choices.prototype.destroy = function() {
+	this.buttons.forEach( button => button.destroy() ) ;
+} ;
+
+
+
+Choices.prototype.run = async function() {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+
+	var promise = new Promise() ;
+
+	var choose = index => {
+		console.warn( "Choice index:" , index ) ;
+	} ;
+
+	this.buttons.forEach( ( button , index ) => {
+		button.run( () => choose( index ) ) ;
+	} ) ;
+
+	await promise ;
+
+	this.destroy() ;
+} ;
+
+
+
+const THEME = Choices.THEME = deepExtend( {} , Button.THEME , {
+	default: {
+		panel: {
+			width: 0.2 ,
+			height: 0.1
+		} ,
+		text: {
+			color: "black" ,
+			fontSize: "22px" ,
+			outlineWidth: 2 ,
+			outlineColor: "white"
+		}
+	}
+} ) ;
+
+
+
+Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.default , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	this.buttons.forEach( button => {
+		button.createGUI( theme , defaultTheme ) ;
+	} ) ;
+
+	this.guiCreated = true ;
+} ;
+
+
+},{"../browser-extension.js":20,"./Button.js":25,"seventh":48,"tree-kit/lib/extend.js":51}],27:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const TextBox = require( './TextBox.js' ) ;
+
+const extension = require( '../browser-extension.js' ) ;
+
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
+const Promise = require( 'seventh' ) ;
+
+
+
+function Message( dom , gScene , text , options = {} ) {
+	TextBox.call( this , dom , gScene , text , options ) ;
+
+	//this.type = options.type ;
+	this.wait = options.wait || 0 ;
+	this.slowTyping = !! options.slowTyping ;
+	this.next = !! options.next ;
+
+	this.babylon.nextImage = null ;
+}
+
+Message.prototype = Object.create( TextBox.prototype ) ;
+Message.prototype.constructor = Message ;
+
+module.exports = Message ;
+
+
+
+Message.prototype.destroy = function() {
+	TextBox.prototype.destroy.call( this ) ;
+	if ( this.babylon.nextImage ) { this.babylon.nextImage.dispose() ; }
+} ;
+
+
+
+Message.prototype.run = async function() {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+
+	if ( this.slowTyping ) { await this.slowType() ; }
+	if ( this.next ) { await this.confirm() ; }
+	if ( this.wait ) { await Promise.resolveTimeout( this.wait * 1000 ) ; }
+
+	this.destroy() ;
+} ;
+
+
+
+const THEME = Message.THEME = deepExtend( {} , TextBox.THEME , {
+	default: {
+		panel: {
+			width: 0.5 ,
+			height: 0.2 ,
+			backgroundColor: "green" ,
+			borderColor: "orange" ,
+			borderWidth: 4 ,
+			cornerRadius: 20 ,
+			padding: {
+				left: "10px" ,
+				top: "10px" ,
+				right: "10px" ,
+				bottom: "10px"
+			}
+		} ,
+		text: {
+			color: "white"
+		}
+	}
+} ) ;
+
+
+
+Message.prototype.createGUI = function( theme = this.dom.themeConfig?.message?.default , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
+
+	if ( this.next ) {
+		let nextImage = this.babylon.nextImage = new BABYLON.GUI.Image( 'message-next' , '/icons/dialog-next.png' ) ;
+		nextImage.width = "30px" ;
+		nextImage.height = "15px" ;
+		nextImage.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+		nextImage.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+		nextImage.isVisible = false ;
+		this.babylon.containerRect.addControl( nextImage ) ;
+	}
+
+	// Slow-typing: don't write characters ATM
+	if ( this.slowTyping ) { this.babylon.structuredTextBlock.characterLimit = 0 ; }
+} ;
+
+
+
+// A penalty applied to repeated punctuation
+const SAME_SPECIAL_CHARACTER_PAUSE_RATE = 0.5 ;
+
+const SPECIAL_CHARACTER_PAUSE_RATE = {
+	' ': 0.3 ,
+	',': 1 ,
+	':': 1 ,
+	';': 1.5 ,
+	'.': 2 ,
+	'!': 2 ,
+	'?': 2.5 ,
+	'…': 4 ,
+	'\n': 4
+} ;
+
+const TYPING_TIMEOUT = {
+	normal: { base: 30 , special: 180 , increment: 1 } ,
+	fast: { base: 20 , special: 150 , increment: 1 } ,
+	faster: { base: 20 , special: 80 , increment: 2 }
+} ;
+
+
+
+Message.prototype.slowType = async function() {
+	var limit , character ,
+		clicked = false ,
+		//typingSpeed = 'normal' ,
+		typingSpeed = 'faster' ,
+		baseTimeout = TYPING_TIMEOUT[ typingSpeed ].base ,
+		specialBaseTimeout = TYPING_TIMEOUT[ typingSpeed ].special ,
+		increment = TYPING_TIMEOUT[ typingSpeed ].increment ,
+		structuredTextBlock = this.babylon.structuredTextBlock ;
+
+	this.babylon.containerRect.onPointerClickObservable.addOnce( () => clicked = true ) ;
+
+	await Promise.resolveTimeout( baseTimeout ) ;
+
+	// Don't cache .characterCount because it may change if the dialog is resized because of line-breaks
+	for ( limit = 1 ; limit <= structuredTextBlock.characterCount ; limit ++ ) {
+		if ( clicked ) {
+			structuredTextBlock.characterLimit = structuredTextBlock.characterCount ;
+			return ;
+		}
+
+		character = this.getNthCharacter( limit - 1 ) ;
+
+		if ( SPECIAL_CHARACTER_PAUSE_RATE[ character ] !== undefined ) {
+			// Set the new limit
+			structuredTextBlock.characterLimit = limit ;
+
+			let rate = SPECIAL_CHARACTER_PAUSE_RATE[ character ] ;
+			// If the next character is the same than this one, cut the rate
+			if ( character === this.getNthCharacter( limit ) ) { rate *= SAME_SPECIAL_CHARACTER_PAUSE_RATE ; }
+			// Now set the pause
+			await Promise.resolveTimeout( specialBaseTimeout * rate ) ;
+		}
+		else if ( limit >= structuredTextBlock.characterCount ) {
+			// Set the new limit
+			structuredTextBlock.characterLimit = Infinity ;
+			// Now set the pause
+			await Promise.resolveTimeout( baseTimeout ) ;
+		}
+		else if ( limit % increment === 0 ) {
+			// Set the new limit
+			structuredTextBlock.characterLimit = limit ;
+			// Now set the pause
+			await Promise.resolveTimeout( baseTimeout ) ;
+		}
+	}
+} ;
+
+
+
+Message.prototype.confirm = function() {
+	var promise = new Promise() ;
+
+	var	topBase ,
+		theme = this.dom.themeConfig?.message?.default ,
+		defaultTheme = THEME.default ,
+		nextImage = this.babylon.nextImage ,
+		t0 = Date.now() ;
+
+	nextImage.isVisible = true ;
+	nextImage.topInPixels = topBase = nextImage.topInPixels - Math.round( ( theme?.panel?.padding?.top ?? defaultTheme?.panel?.padding?.top ?? 0 ) / 2 ) ;
+	nextImage.leftInPixels = nextImage.leftInPixels - ( theme?.panel?.padding?.left ?? defaultTheme?.panel?.padding?.left ?? 0 ) ;
+
+	var timer = setInterval( () => {
+		var delta = ( Date.now() - t0 ) / 1000 ;
+		nextImage.topInPixels = topBase - Math.abs( Math.sin( 3 * delta ) * 10 ) ;
+	} , 20 ) ;
+
+	this.babylon.containerRect.onPointerClickObservable.addOnce( () => {
+		clearInterval( timer ) ;
+		promise.resolve() ;
+	} ) ;
+
+	return promise ;
+} ;
+
+
+},{"../browser-extension.js":20,"./TextBox.js":28,"seventh":48,"tree-kit/lib/extend.js":51}],28:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const misc = require( '../misc.js' ) ;
+const extension = require( '../browser-extension.js' ) ;
+
+const Promise = require( 'seventh' ) ;
+
+
+
+function TextBox( dom , gScene , text , options = {} ) {
+	this.gScene = gScene ;
+	this.dom = dom ;    // Dom instance, immutable
+
+	this.text = text ;
+	//this.type = options.type ;
+
+	this.ninePatchImageUrl = null ;
+	this.containerRectStyle = {} ;
+
+	this.guiCreated = false ;
+
+	this.babylon = {
+		containerRect: null ,
+		structuredTextBlock: null ,
+		boxImage: null
+	} ;
+}
+
+module.exports = TextBox ;
+
+
+
+TextBox.prototype.destroy = function() {
+	if ( this.babylon.containerRect ) { this.babylon.containerRect.dispose() ; }
+	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.dispose() ; }
+} ;
+
+
+
+// Should be redefined
+TextBox.prototype.run = async function() {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+	this.destroy() ;
+} ;
+
+
+
+const THEME = TextBox.THEME = {
+	default: {
+		position: 'center' ,
+		panel: {
+			width: 0.5 ,
+			height: 0.2 ,
+			backgroundColor: "green" ,
+			borderColor: "orange" ,
+			borderWidth: 4 ,
+			cornerRadius: 20 ,
+			padding: {
+				left: "10px" ,
+				top: "10px" ,
+				right: "10px" ,
+				bottom: "10px"
+			}
+		} ,
+		text: {
+			color: "white"
+		}
+	}
+} ;
+
+
+
+TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	var containerRect , boxImage , structuredTextBlock ,
+		paddingLeft , paddingTop , paddingRight , paddingBottom ,
+		ui = this.gScene.getUi() ;
+
+	containerRect = this.babylon.containerRect = new BABYLON.GUI.Rectangle() ;
+	containerRect.width = this.containerRectStyle.width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
+	containerRect.height = this.containerRectStyle.height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
+	containerRect.thickness = 0 ;
+
+	this.setControlAlignment( containerRect , theme?.position ?? defaultTheme?.position ) ;
+
+	ui.addControl( containerRect ) ;
+
+	console.warn( "THEME: " , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
+
+	this.ninePatchImageUrl = theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ;
+
+	if ( this.ninePatchImageUrl ) {
+		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'message-background' , this.ninePatchImageUrl ) ;
+		//boxImage.width = "200px";
+		//boxImage.height = "300px";
+		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
+
+		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
+		// /!\ This will produce bug!
+		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
+		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
+		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
+		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
+
+		// /!\ TMP, due to previous bug
+		paddingRight = paddingLeft ;
+		paddingBottom = paddingTop ;
+
+		containerRect.addControl( boxImage ) ;
+	}
+	else {
+		this.containerRectStyle.backgroundColor = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
+		this.containerRectStyle.borderColor = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
+		this.containerRectStyle.borderWidth = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
+		this.containerRectStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
+		this.applyRectangleStyle( containerRect , this.containerRectStyle ) ;
+	}
+
+	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
+
+	// Padding, priority: theme, nine-patch slice, default theme or 0
+	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
+	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
+	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
+	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
+
+	/*
+	// Not defined in time (because width is not in pixels but is a rate)
+	if ( paddingLeft + paddingRight > containerRect.widthInPixels / 2 ) {
+		paddingLeft = paddingRight = Math.round( containerRect.widthInPixels / 4 ) ;
+	}
+	if ( paddingTop + paddingBottom > containerRect.heightInPixels / 2 ) {
+		paddingTop = paddingBottom = Math.round( containerRect.heightInPixels / 4 ) ;
+	}
+	*/
+
+	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
+
+	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+
+	structuredTextBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
+	structuredTextBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
+	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
+	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
+	structuredTextBlock.structuredText = this.parseText( this.text ) ;
+	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
+
+	//structuredTextBlock.textWrapping = true ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
+	structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
+
+	//structuredTextBlock.color = this.special.content.textColor ;
+	//structuredTextBlock.alpha = this.opacity ;
+	//structuredTextBlock.resizeToFit = true ;
+	containerRect.addControl( structuredTextBlock ) ;
+
+	// Needed for containerRect.onPointerClickObservable
+	this.babylon.containerRect.isPointerBlocker = true ;
+	this.guiCreated = true ;
+} ;
+
+
+
+TextBox.prototype.setControlAlignment = function( control , type ) {
+	switch ( type ) {
+		case 'top' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			break ;
+		case 'bottom' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			break ;
+		case 'left' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+		case 'right' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+		case 'top-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'top-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'bottom-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'bottom-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'center' :
+		default :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+	}
+} ;
+
+
+
+TextBox.prototype.applyRectangleStyle = function( rectangle , style ) {
+	console.warn( "******** APPLY STYLE" , style ) ;
+	if ( style.width !== undefined ) { rectangle.width = style.width ; }
+	if ( style.height !== undefined ) { rectangle.height = style.height ; }
+	if ( style.backgroundColor !== undefined ) { rectangle.background = style.backgroundColor ; }
+	if ( style.borderColor !== undefined ) { rectangle.color = style.borderColor ; }
+	if ( style.borderWidth !== undefined ) { rectangle.thickness = style.borderWidth ; }
+	if ( style.cornerRadius !== undefined ) { rectangle.cornerRadius = style.cornerRadius ; }
+} ;
+
+
+
+const MARKUP_COLOR_CODE = {
+	black: '#000000' ,
+	brightBlack: '#555753' , //grey: '#555753',
+	red: '#cc0000' ,
+	brightRed: '#ef2929' ,
+	green: '#4e9a06' ,
+	brightGreen: '#8ae234' ,
+	yellow: '#c4a000' ,
+	brightYellow: '#fce94f' ,
+	blue: '#3465a4' ,
+	brightBlue: '#729fcf' ,
+	magenta: '#75507b' ,
+	brightMagenta: '#ad7fa8' ,
+	cyan: '#06989a' ,
+	brightCyan: '#34e2e2' ,
+	white: '#d3d7cf' ,
+	brightWhite: '#eeeeec'
+} ;
+
+MARKUP_COLOR_CODE.grey = MARKUP_COLOR_CODE.gray = MARKUP_COLOR_CODE.brightBlack ;
+
+
+
+TextBox.prototype.parseText = function( text ) {
+	return extension.host.exports.toolkit.parseMarkup( text ).map( input => {
+		var part = { text: input.text } ;
+
+		if ( input.color ) {
+			part.color = input.color[ 0 ] === '#' ? input.color : MARKUP_COLOR_CODE[ input.color ] ;
+		}
+
+		if ( input.italic ) { part.fontStyle = 'italic' ; }
+		if ( input.bold ) { part.fontWeight = 'bold' ; }
+		if ( input.underline ) { part.underline = true ; }
+		if ( input.strike ) { part.lineThrough = true ; }
+
+		if ( input.bgColor ) {
+			part.frame = true ;
+			part.frameColor = input.bgColor ;
+			part.frameOutlineWidth = 2 ;
+			part.frameOutlineColor = misc.getContrastColorCode( part.frameColor , 0.7 ) ;
+			part.frameCornerRadius = 5 ;
+		}
+
+		return part ;
+	} ) ;
+} ;
+
+
+
+TextBox.prototype.getNthCharacter = function( index ) {
+	var part , line ,
+		structuredTextBlock = this.babylon.structuredTextBlock ,
+		lines = structuredTextBlock.lines ,
+		count = structuredTextBlock.characterCount ;
+
+	if ( index > count ) { return '' ; }
+
+	for ( line of lines ) {
+		for ( part of line.parts ) {
+			if ( index < part.text.length ) { return part.text[ index ] ; }
+			index -= part.text.length ;
+		}
+	}
+
+	return '' ;
+} ;
+
+
+},{"../browser-extension.js":20,"../misc.js":23,"seventh":48}],29:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -11316,4 +11291,4 @@ function extendOne( runtime , options , target , source , mask ) {
 }
 
 
-},{}]},{},[24]);
+},{}]},{},[20]);

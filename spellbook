@@ -19,7 +19,7 @@
 
 [summoning browser/extension.js]
 	[summon]
-		- lib/*.js
+		- lib/**/*.js
 		- browser/babylonjs.js
 		- browser/babylonjs.gui.js
 		- browser/babylonjs.gui.pr.js
