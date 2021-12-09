@@ -5842,10 +5842,11 @@ const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
 		panel: {
 			width: 0.25 ,
 			height: 0.2 ,
-			backgroundColor: "green" ,
-			borderColor: "orange" ,
-			borderWidth: 4 ,
-			cornerRadius: 20 ,
+			opacity: 1 ,
+			backgroundColor: "#496ad4" ,
+			borderColor: "#496ad4" ,
+			borderWidth: 0 ,
+			cornerRadius: 4 ,
 			padding: {
 				left: "10px" ,
 				top: "10px" ,
@@ -5854,15 +5855,17 @@ const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
 			} ,
 			hover: {
 				//size: 0.95 ,
-				backgroundColor: "green" ,
-				borderColor: "red" ,
-				borderWidth: 4
+				opacity: 1 ,
+				backgroundColor: "#748dde" ,
+				borderColor: "#748dde" ,
+				borderWidth: 0
 			} ,
 			pressedDown: {
-				size: 0.9 ,
-				backgroundColor: "#66aa66" ,
-				borderColor: "red" ,
-				borderWidth: 4
+				size: 0.95 ,
+				opacity: 1 ,
+				backgroundColor: "#748dde" ,
+				borderColor: "#748dde" ,
+				borderWidth: 0
 			}
 		} ,
 		text: {
@@ -5904,32 +5907,30 @@ Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.def
 
 
 
-const initialState = 1 ;
-
 Button.prototype.initialState = function() {
 	console.warn( "!!!!! ENTERING .initialState()" ) ;
 	if ( this.babylon.containerRect ) {
-		this.babylon.containerRect.alpha = initialState ;
 		this.applyRectangleStyle( this.babylon.containerRect , this.containerRectStyle ) ;
 	}
 
+	/*
 	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = initialState ; }
 	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = initialState ; }
+	*/
 } ;
 
 
 
-const hoverAlpha = 0.5 ;
-
 Button.prototype.hover = function() {
 	console.warn( "!!!!! ENTERING .hover()" ) ;
 	if ( this.babylon.containerRect ) {
-		this.babylon.containerRect.alpha = hoverAlpha ;
 		this.applyRectangleStyle( this.babylon.containerRect , this.containerRectHoverStyle ) ;
 	}
 
+	/*
 	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = hoverAlpha ; }
 	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = hoverAlpha ; }
+	*/
 } ;
 
 
@@ -6373,6 +6374,7 @@ const THEME = TextBox.THEME = {
 		panel: {
 			width: 0.5 ,
 			height: 0.2 ,
+			opacity: 1 ,
 			backgroundColor: "green" ,
 			borderColor: "orange" ,
 			borderWidth: 4 ,
@@ -6429,9 +6431,12 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 		paddingRight = paddingLeft ;
 		paddingBottom = paddingTop ;
 
+		//boxImage.isPointerBlocker = false ;
+
 		containerRect.addControl( boxImage ) ;
 	}
 	else {
+		this.containerRectStyle.opacity = theme?.panel?.opacity ?? defaultTheme?.panel?.opacity ;
 		this.containerRectStyle.backgroundColor = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
 		this.containerRectStyle.borderColor = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
 		this.containerRectStyle.borderWidth = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
@@ -6477,6 +6482,8 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	//structuredTextBlock.color = this.special.content.textColor ;
 	//structuredTextBlock.alpha = this.opacity ;
 	//structuredTextBlock.resizeToFit = true ;
+	//structuredTextBlock.isPointerBlocker = false ;
+
 	containerRect.addControl( structuredTextBlock ) ;
 
 	// Needed for containerRect.onPointerClickObservable
@@ -6534,6 +6541,7 @@ TextBox.prototype.applyRectangleStyle = function( rectangle , style ) {
 	console.warn( "******** APPLY STYLE" , style ) ;
 	if ( style.width !== undefined ) { rectangle.width = style.width ; }
 	if ( style.height !== undefined ) { rectangle.height = style.height ; }
+	if ( style.opacity !== undefined ) { rectangle.alpha = style.opacity ; }
 	if ( style.backgroundColor !== undefined ) { rectangle.background = style.backgroundColor ; }
 	if ( style.borderColor !== undefined ) { rectangle.color = style.borderColor ; }
 	if ( style.borderWidth !== undefined ) { rectangle.thickness = style.borderWidth ; }

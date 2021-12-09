@@ -14877,10 +14877,10 @@ var StructuredTextBlock = /** @class */ (function (_super) {
     };
     /** @hidden */
     StructuredTextBlock.prototype._onPointerUp = function (target, coordinates, pointerId, buttonIndex, notifyClick, pi) {
+        _super.prototype._onPointerUp.call(this, target, coordinates, pointerId, buttonIndex, notifyClick, pi);
         if (!this._isEnabled && !this._hasHref) {
             return;
         }
-        _super.prototype._onPointerUp.call(this, target, coordinates, pointerId, buttonIndex, notifyClick, pi);
         var part = this.getTextPartAt(coordinates.x, coordinates.y);
         if (!part || !part.href) {
             return;
@@ -14890,10 +14890,12 @@ var StructuredTextBlock = /** @class */ (function (_super) {
     /** @hidden */
     StructuredTextBlock.prototype._onPointerMove = function (target, coordinates, pointerId, pi) {
         if (!this._isEnabled) {
+            _super.prototype._onPointerMove.call(this, target, coordinates, pointerId, pi);
             return;
         }
         if (!this._hasHoverStyle && !this._hasHref) {
             this._updateHoveringPart(null);
+            _super.prototype._onPointerMove.call(this, target, coordinates, pointerId, pi);
             return;
         }
         var part = this.getTextPartAt(coordinates.x, coordinates.y);
@@ -14907,6 +14909,7 @@ var StructuredTextBlock = /** @class */ (function (_super) {
     StructuredTextBlock.prototype._onPointerOut = function (target, pi, force) {
         if (force === void 0) { force = false; }
         this._updateHoveringPart(null);
+        _super.prototype._onPointerOut.call(this, target, pi, force);
     };
     /** @hidden */
     StructuredTextBlock.prototype._updateHoveringPart = function (part) {
@@ -14928,6 +14931,7 @@ var StructuredTextBlock = /** @class */ (function (_super) {
     /** @hidden */
     StructuredTextBlock.prototype._onWheelScroll = function (deltaX, deltaY) {
         if (!this._isEnabled || !this._scrollable) {
+            _super.prototype._onWheelScroll.call(this, deltaX, deltaY);
             return;
         }
         if (deltaX) {
