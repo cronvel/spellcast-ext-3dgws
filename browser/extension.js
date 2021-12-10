@@ -4510,6 +4510,12 @@ module.exports = GScene ;
 
 
 
+// When a GScene is a parent of a widget, size in pixel is not required
+GScene.prototype.childrenWidthInPixelsRequired = false ;
+GScene.prototype.childrenHeightInPixelsRequired = false ;
+
+
+
 GScene.prototype.initScene = function() {
 	// Instanciate Babylon engine
 	var engine = this.babylon.engine = new BABYLON.Engine( this.$gscene , true ) ;
@@ -5810,8 +5816,8 @@ const Promise = require( 'seventh' ) ;
 
 
 
-function Button( dom , gScene , text , options = {} ) {
-	TextBox.call( this , dom , gScene , text , options ) ;
+function Button( dom , gScene , text , options = {} , parent = null ) {
+	TextBox.call( this , dom , gScene , text , options , parent ) ;
 
 	this.containerRectHoverStyle = {} ;
 	this.containerRectPressedDownStyle = {} ;
@@ -5876,6 +5882,13 @@ const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
 
 
 
+function scaleSizeString( size , rate ) {
+	if ( typeof size === 'number' ) { return size * rate ; }
+	if ( typeof size !== 'string' ) { throw new TypeError( "scaleSizeString: bad type: " + ( typeof size ) ) ; }
+	if ( size.endsWith( "px" ) ) { return ( parseInt( size , 10 ) * rate ) + "px" ; }
+	return parseInt( size , 10 ) * rate ;
+}
+
 Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 
@@ -5888,13 +5901,13 @@ Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.def
 	if ( theme?.panel?.pressedDown ) { deepExtend( this.containerRectPressedDownStyle , theme.panel.pressedDown ) ; }
 
 	if ( this.containerRectHoverStyle.size ) {
-		this.containerRectHoverStyle.width = this.containerRectStyle.width * this.containerRectHoverStyle.size ;
-		this.containerRectHoverStyle.height = this.containerRectStyle.height * this.containerRectHoverStyle.size ;
+		this.containerRectHoverStyle.width = scaleSizeString( this.containerRectStyle.width , this.containerRectHoverStyle.size ) ;
+		this.containerRectHoverStyle.height = scaleSizeString( this.containerRectStyle.height , this.containerRectHoverStyle.size ) ;
 	}
 
 	if ( this.containerRectPressedDownStyle.size ) {
-		this.containerRectPressedDownStyle.width = this.containerRectStyle.width * this.containerRectPressedDownStyle.size ;
-		this.containerRectPressedDownStyle.height = this.containerRectStyle.height * this.containerRectPressedDownStyle.size ;
+		this.containerRectPressedDownStyle.width = scaleSizeString( this.containerRectStyle.width , this.containerRectPressedDownStyle.size ) ;
+		this.containerRectPressedDownStyle.height = scaleSizeString( this.containerRectStyle.height , this.containerRectPressedDownStyle.size ) ;
 	}
 
 	this.babylon.containerRect.hoverCursor = 'pointer' ;
@@ -5991,9 +6004,10 @@ const Promise = require( 'seventh' ) ;
 
 
 
-function Choices( dom , gScene , choices , undecidedNames , onSelect , options = {} ) {
-	this.gScene = gScene ;
+function Choices( dom , gScene , choices , undecidedNames , onSelect , options = {} , parent = null ) {
 	this.dom = dom ;    // Dom instance, immutable
+	this.gScene = gScene ;
+	this.parent = parent ?? this.gScene ;
 
 	this.choices = choices ;
 	this.undecidedNames = undecidedNames ;
@@ -6002,9 +6016,13 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 	//this.type = options.type ;
 	//this.wait = options.wait || 0 ;
 
-	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} ) ) ;
+	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} , this ) ) ;
 
 	this.guiCreates = false ;
+
+	this.babylon = {
+		containerStack: null
+	} ;
 }
 
 module.exports = Choices ;
@@ -6014,6 +6032,10 @@ module.exports = Choices ;
 Choices.prototype.destroy = function() {
 	this.buttons.forEach( button => button.destroy() ) ;
 } ;
+
+
+
+Choices.prototype.getUi = function() { return this.babylon.containerStack ; } ;
 
 
 
@@ -6056,6 +6078,14 @@ const THEME = Choices.THEME = deepExtend( {} , Button.THEME , {
 
 Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
+
+	var stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
+	stack.isVertical = true ;
+	this.childrenWidthInPixelsRequired = false ;
+	this.childrenHeightInPixelsRequired = true ;
+	this.childrenMaxHeight = this.parent.getUi().getSize().height ;
+
+	this.parent.getUi().addControl( stack ) ;
 
 	this.buttons.forEach( button => {
 		button.createGUI( theme , defaultTheme ) ;
@@ -6107,8 +6137,8 @@ const Promise = require( 'seventh' ) ;
 
 
 
-function Message( dom , gScene , text , options = {} ) {
-	TextBox.call( this , dom , gScene , text , options ) ;
+function Message( dom , gScene , text , options = {} , parent = null ) {
+	TextBox.call( this , dom , gScene , text , options , parent ) ;
 
 	//this.type = options.type ;
 	this.wait = options.wait || 0 ;
@@ -6329,9 +6359,10 @@ const Promise = require( 'seventh' ) ;
 
 
 
-function TextBox( dom , gScene , text , options = {} ) {
-	this.gScene = gScene ;
+function TextBox( dom , gScene , text , options = {} , parent = null ) {
 	this.dom = dom ;    // Dom instance, immutable
+	this.gScene = gScene ;
+	this.parent = parent ?? this.gScene ;
 
 	this.text = text ;
 	//this.type = options.type ;
@@ -6352,6 +6383,13 @@ module.exports = TextBox ;
 
 
 
+TextBox.prototype.childrenWidthInPixelsRequired = false ;
+TextBox.prototype.childrenHeightInPixelsRequired = false ;
+TextBox.prototype.childrenMaxWidth = 0 ;
+TextBox.prototype.childrenMaxHeight = 0 ;
+
+
+
 TextBox.prototype.destroy = function() {
 	if ( this.babylon.containerRect ) { this.babylon.containerRect.dispose() ; }
 	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
@@ -6360,8 +6398,12 @@ TextBox.prototype.destroy = function() {
 
 
 
+TextBox.prototype.getUi = function() { return this.babylon.containerRect ; } ;
+
+
+
 // Should be redefined
-TextBox.prototype.run = async function() {
+TextBox.prototype.run = function() {
 	if ( ! this.guiCreated ) { this.createGUI() ; }
 	this.destroy() ;
 } ;
@@ -6397,25 +6439,33 @@ const THEME = TextBox.THEME = {
 TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 
-	var containerRect , boxImage , structuredTextBlock ,
-		paddingLeft , paddingTop , paddingRight , paddingBottom ,
-		ui = this.gScene.getUi() ;
+	var containerRect , boxImage , structuredTextBlock , width , height ,
+		paddingLeft , paddingTop , paddingRight , paddingBottom ;
 
-	containerRect = this.babylon.containerRect = new BABYLON.GUI.Rectangle() ;
-	containerRect.width = this.containerRectStyle.width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
-	containerRect.height = this.containerRectStyle.height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
+	width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
+	height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
+
+	console.warn( ".childrenHeightInPixelsRequired:" , this.parent.childrenHeightInPixelsRequired , height ) ;
+	if ( this.parent.childrenHeightInPixelsRequired && typeof height === 'number' ) {
+		height = ( height * this.parent.childrenMaxHeight ) + 'px' ;
+		console.warn( "Set height to:" , height ) ;
+	}
+
+	containerRect = this.babylon.containerRect = new BABYLON.GUI.Rectangle( 'containerRect' ) ;
+	containerRect.width = this.containerRectStyle.width = width ;
+	containerRect.height = this.containerRectStyle.height = height ;
 	containerRect.thickness = 0 ;
 
 	this.setControlAlignment( containerRect , theme?.position ?? defaultTheme?.position ) ;
 
-	ui.addControl( containerRect ) ;
+	this.parent.getUi().addControl( containerRect ) ;
 
 	console.warn( "THEME: " , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
 
 	this.ninePatchImageUrl = theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ;
 
 	if ( this.ninePatchImageUrl ) {
-		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'message-background' , this.ninePatchImageUrl ) ;
+		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'boxImage' , this.ninePatchImageUrl ) ;
 		//boxImage.width = "200px";
 		//boxImage.height = "300px";
 		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
@@ -6444,7 +6494,7 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 		this.applyRectangleStyle( containerRect , this.containerRectStyle ) ;
 	}
 
-	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock() ;
+	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock( 'structuredTextBlock' ) ;
 
 	// Padding, priority: theme, nine-patch slice, default theme or 0
 	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
