@@ -402,7 +402,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],2:[function(require,module,exports){
+},{"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],2:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -781,7 +781,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 } ;
 
 
-},{"./meshUtils.js":22,"seventh":48}],3:[function(require,module,exports){
+},{"./meshUtils.js":22,"seventh":49}],3:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -1942,7 +1942,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":18,"./Parametric.js":19,"nextgen-events/lib/LeanEvents.js":36,"seventh":48}],4:[function(require,module,exports){
+},{"./GTransition.js":18,"./Parametric.js":19,"nextgen-events/lib/LeanEvents.js":37,"seventh":49}],4:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2066,7 +2066,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"seventh":48}],5:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":49}],5:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2163,7 +2163,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],6:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],6:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2278,7 +2278,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],7:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2498,7 +2498,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],8:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2660,7 +2660,7 @@ GEntityFx.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],9:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2788,7 +2788,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"seventh":48}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":49}],10:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2922,7 +2922,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],11:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3529,7 +3529,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],12:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3656,7 +3656,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],13:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3781,7 +3781,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],14:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3839,7 +3839,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],15:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4102,7 +4102,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":48}],16:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],16:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4474,7 +4474,9 @@ function GScene( dom , data ) {
 	this.noLocalLightingGEntities = new Set() ;	// GEntities without local lighting
 	this.localLightGEntities = new Set() ;	// GEntities that are local lights
 	this.animationFunctions = new Set() ;	// Animations for things that are not supported by Babylonjs, like contrast/exposure animation
+
 	this.mainChoices = null ;
+	this.textInput = null ;
 
 	this.globalCamera = null ;
 	this.roleCamera = null ;	// For multiplayer, not implemented yet
@@ -4964,7 +4966,7 @@ GScene.prototype.getUi = function() {
 
 
 // Event catching/dispatching
-// The function names are forced, and it require in the KFG on GScene creation the 'catch' property:
+// The function names are forced, and it requires in the KFG on GScene creation the 'catch' property:
 // catch: { message: boolean, choices: boolean, ... }
 
 // For message
@@ -4986,12 +4988,26 @@ GScene.prototype.addChoices = function( choices , undecidedNames , onSelect , op
 
 
 GScene.prototype.clearChoices = function() {
-	console.warn( "3DGWS .celarChoices()" ) ;
+	console.warn( "3DGWS .clearChoices()" ) ;
 	if ( this.mainChoices ) { this.mainChoices.destroy() ; }
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":18,"./widgets/Choices.js":26,"./widgets/Message.js":27,"nextgen-events/lib/LeanEvents.js":36,"seventh":48}],18:[function(require,module,exports){
+
+GScene.prototype.textInput = function() {
+	console.warn( "3DGWS .textInput()" ) ;
+	if ( this.textInput ) { this.textInput.destroy() ; }
+} ;
+
+
+
+GScene.prototype.textInputDisabled = function() {
+	console.warn( "3DGWS .textInputDisabled()" ) ;
+	if ( this.textInput ) { this.textInput.destroy() ; }
+} ;
+
+
+},{"./Camera.js":1,"./GTransition.js":18,"./widgets/Choices.js":27,"./widgets/Message.js":28,"nextgen-events/lib/LeanEvents.js":37,"seventh":49}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5207,7 +5223,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":29,"seventh":48}],19:[function(require,module,exports){
+},{"array-kit":30,"seventh":49}],19:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5439,7 +5455,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":21,"exm/lib/BrowserExm.js":35,"path":38}],21:[function(require,module,exports){
+},{"./engine.js":21,"exm/lib/BrowserExm.js":36,"path":39}],21:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5816,6 +5832,278 @@ utils.epsilonAsin = utils.easin = v => {
 
 
 
+const misc = require( '../misc.js' ) ;
+const extension = require( '../browser-extension.js' ) ;
+
+const Promise = require( 'seventh' ) ;
+
+
+
+function Box( dom , gScene , text , options = {} , parent = null ) {
+	this.dom = dom ;    // Dom instance, immutable
+	this.gScene = gScene ;
+	this.parent = parent ?? this.gScene ;
+
+	this.ninePatchImageUrl = null ;
+	this.containerRectStyle = {} ;
+
+	this.guiCreated = false ;
+
+	this.babylon = {
+		containerRect: null ,
+		boxImage: null
+	} ;
+}
+
+module.exports = Box ;
+
+
+
+Box.prototype.childrenWidthInPixelsRequired = false ;
+Box.prototype.childrenHeightInPixelsRequired = false ;
+Box.prototype.childrenMaxWidth = 0 ;
+Box.prototype.childrenMaxHeight = 0 ;
+
+
+
+Box.prototype.destroy = function() {
+	if ( this.babylon.containerRect ) { this.babylon.containerRect.dispose() ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.dispose() ; }
+} ;
+
+
+
+Box.prototype.getUi = function() { return this.babylon.containerRect ; } ;
+
+
+
+// Should be redefined
+Box.prototype.run = function() {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+	this.destroy() ;
+} ;
+
+
+
+const THEME = Box.THEME = {
+	default: {
+		position: 'center' ,
+		panel: {
+			width: 0.5 ,
+			height: 0.2 ,
+			opacity: 1 ,
+			backgroundColor: "green" ,
+			borderColor: "orange" ,
+			borderWidth: 4 ,
+			cornerRadius: 20 ,
+			padding: {
+				left: "10px" ,
+				top: "10px" ,
+				right: "10px" ,
+				bottom: "10px"
+			}
+		}
+	}
+} ;
+
+
+
+Box.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	var containerRect , boxImage , structuredTextBlock , width , height ,
+		paddingLeft , paddingTop , paddingRight , paddingBottom ;
+
+	width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
+	height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
+
+	console.warn( ".childrenHeightInPixelsRequired:" , this.parent.childrenHeightInPixelsRequired , height ) ;
+	if ( this.parent.childrenHeightInPixelsRequired && typeof height === 'number' ) {
+		height = ( height * this.parent.childrenMaxHeight ) + 'px' ;
+		console.warn( "Set height to:" , height ) ;
+	}
+
+	containerRect = this.babylon.containerRect = new BABYLON.GUI.Rectangle( 'containerRect' ) ;
+	containerRect.width = this.containerRectStyle.width = width ;
+	containerRect.height = this.containerRectStyle.height = height ;
+	containerRect.thickness = 0 ;
+
+	this.setControlAlignment( containerRect , theme?.position ?? defaultTheme?.position ) ;
+
+	this.parent.getUi().addControl( containerRect ) ;
+
+	console.warn( "THEME: " , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
+
+	this.ninePatchImageUrl = theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ;
+
+	if ( this.ninePatchImageUrl ) {
+		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'boxImage' , this.ninePatchImageUrl ) ;
+		//boxImage.width = "200px";
+		//boxImage.height = "300px";
+		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
+
+		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
+		// /!\ This will produce bug!
+		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
+		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
+		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
+		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
+
+		// /!\ TMP, due to previous bug
+		paddingRight = paddingLeft ;
+		paddingBottom = paddingTop ;
+
+		//boxImage.isPointerBlocker = false ;
+
+		containerRect.addControl( boxImage ) ;
+	}
+	else {
+		this.containerRectStyle.opacity = theme?.panel?.opacity ?? defaultTheme?.panel?.opacity ;
+		this.containerRectStyle.backgroundColor = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
+		this.containerRectStyle.borderColor = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
+		this.containerRectStyle.borderWidth = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
+		this.containerRectStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
+		this.applyRectangleStyle( containerRect , this.containerRectStyle ) ;
+	}
+
+	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock( 'structuredTextBlock' ) ;
+
+	// Padding, priority: theme, nine-patch slice, default theme or 0
+	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
+	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
+	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
+	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
+
+	/*
+	// Not defined in time (because width is not in pixels but is a rate)
+	if ( paddingLeft + paddingRight > containerRect.widthInPixels / 2 ) {
+		paddingLeft = paddingRight = Math.round( containerRect.widthInPixels / 4 ) ;
+	}
+	if ( paddingTop + paddingBottom > containerRect.heightInPixels / 2 ) {
+		paddingTop = paddingBottom = Math.round( containerRect.heightInPixels / 4 ) ;
+	}
+	*/
+
+	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
+
+	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+
+	structuredTextBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
+	structuredTextBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
+	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
+	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
+	structuredTextBlock.structuredText = this.parseText( this.text ) ;
+	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
+
+	//structuredTextBlock.textWrapping = true ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
+	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
+	structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
+
+	//structuredTextBlock.color = this.special.content.textColor ;
+	//structuredTextBlock.alpha = this.opacity ;
+	//structuredTextBlock.resizeToFit = true ;
+	//structuredTextBlock.isPointerBlocker = false ;
+
+	containerRect.addControl( structuredTextBlock ) ;
+
+	// Needed for containerRect.onPointerClickObservable
+	this.babylon.containerRect.isPointerBlocker = true ;
+	this.guiCreated = true ;
+} ;
+
+
+
+Box.prototype.setControlAlignment = function( control , type ) {
+	switch ( type ) {
+		case 'top' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			break ;
+		case 'bottom' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			break ;
+		case 'left' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+		case 'right' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+		case 'top-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'top-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'bottom-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'bottom-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'center' :
+		default :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+	}
+} ;
+
+
+
+Box.prototype.applyRectangleStyle = function( rectangle , style ) {
+	console.warn( "******** APPLY STYLE" , style ) ;
+	if ( style.width !== undefined ) { rectangle.width = style.width ; }
+	if ( style.height !== undefined ) { rectangle.height = style.height ; }
+	if ( style.opacity !== undefined ) { rectangle.alpha = style.opacity ; }
+	if ( style.backgroundColor !== undefined ) { rectangle.background = style.backgroundColor ; }
+	if ( style.borderColor !== undefined ) { rectangle.color = style.borderColor ; }
+	if ( style.borderWidth !== undefined ) { rectangle.thickness = style.borderWidth ; }
+	if ( style.cornerRadius !== undefined ) { rectangle.cornerRadius = style.cornerRadius ; }
+} ;
+
+
+},{"../browser-extension.js":20,"../misc.js":23,"seventh":49}],26:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
 const TextBox = require( './TextBox.js' ) ;
 
 const extension = require( '../browser-extension.js' ) ;
@@ -5971,7 +6259,7 @@ Button.prototype.pressUp = function() {
 } ;
 
 
-},{"../browser-extension.js":20,"./TextBox.js":28,"seventh":48,"tree-kit/lib/extend.js":51}],26:[function(require,module,exports){
+},{"../browser-extension.js":20,"./TextBox.js":29,"seventh":49,"tree-kit/lib/extend.js":52}],27:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6112,7 +6400,7 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 } ;
 
 
-},{"../browser-extension.js":20,"./Button.js":25,"seventh":48,"tree-kit/lib/extend.js":51}],27:[function(require,module,exports){
+},{"../browser-extension.js":20,"./Button.js":26,"seventh":49,"tree-kit/lib/extend.js":52}],28:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6336,7 +6624,7 @@ Message.prototype.confirm = function() {
 } ;
 
 
-},{"../browser-extension.js":20,"./TextBox.js":28,"seventh":48,"tree-kit/lib/extend.js":51}],28:[function(require,module,exports){
+},{"../browser-extension.js":20,"./TextBox.js":29,"seventh":49,"tree-kit/lib/extend.js":52}],29:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6369,53 +6657,36 @@ Message.prototype.confirm = function() {
 
 
 
+const Box = require( './Box.js' ) ;
+
 const misc = require( '../misc.js' ) ;
 const extension = require( '../browser-extension.js' ) ;
 
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
 const Promise = require( 'seventh' ) ;
 
 
 
 function TextBox( dom , gScene , text , options = {} , parent = null ) {
-	this.dom = dom ;    // Dom instance, immutable
-	this.gScene = gScene ;
-	this.parent = parent ?? this.gScene ;
-
+	Box.call( this , dom , gScene , options , parent ) ;
+	
 	this.text = text ;
 	//this.type = options.type ;
 
-	this.ninePatchImageUrl = null ;
-	this.containerRectStyle = {} ;
-
-	this.guiCreated = false ;
-
-	this.babylon = {
-		containerRect: null ,
-		structuredTextBlock: null ,
-		boxImage: null
-	} ;
+	this.babylon.structuredTextBlock = null ;
 }
+
+TextBox.prototype = Object.create( Box.prototype ) ;
+TextBox.prototype.constructor = TextBox ;
 
 module.exports = TextBox ;
 
 
 
-TextBox.prototype.childrenWidthInPixelsRequired = false ;
-TextBox.prototype.childrenHeightInPixelsRequired = false ;
-TextBox.prototype.childrenMaxWidth = 0 ;
-TextBox.prototype.childrenMaxHeight = 0 ;
-
-
-
 TextBox.prototype.destroy = function() {
-	if ( this.babylon.containerRect ) { this.babylon.containerRect.dispose() ; }
+	Box.prototype.destroy.call( this ) ;
 	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
-	if ( this.babylon.boxImage ) { this.babylon.boxImage.dispose() ; }
 } ;
-
-
-
-TextBox.prototype.getUi = function() { return this.babylon.containerRect ; } ;
 
 
 
@@ -6427,7 +6698,7 @@ TextBox.prototype.run = function() {
 
 
 
-const THEME = TextBox.THEME = {
+const THEME = TextBox.THEME = deepExtend( {} , Box.THEME , {
 	default: {
 		position: 'center' ,
 		panel: {
@@ -6449,7 +6720,7 @@ const THEME = TextBox.THEME = {
 			color: "white"
 		}
 	}
-} ;
+} ) ;
 
 
 
@@ -6560,63 +6831,6 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 
 
 
-TextBox.prototype.setControlAlignment = function( control , type ) {
-	switch ( type ) {
-		case 'top' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
-			break ;
-		case 'bottom' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-			break ;
-		case 'left' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
-			break ;
-		case 'right' :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
-			break ;
-		case 'top-left' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-			break ;
-		case 'top-right' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
-			break ;
-		case 'bottom-left' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-			break ;
-		case 'bottom-right' :
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
-			break ;
-		case 'center' :
-		default :
-			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
-			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
-			break ;
-	}
-} ;
-
-
-
-TextBox.prototype.applyRectangleStyle = function( rectangle , style ) {
-	console.warn( "******** APPLY STYLE" , style ) ;
-	if ( style.width !== undefined ) { rectangle.width = style.width ; }
-	if ( style.height !== undefined ) { rectangle.height = style.height ; }
-	if ( style.opacity !== undefined ) { rectangle.alpha = style.opacity ; }
-	if ( style.backgroundColor !== undefined ) { rectangle.background = style.backgroundColor ; }
-	if ( style.borderColor !== undefined ) { rectangle.color = style.borderColor ; }
-	if ( style.borderWidth !== undefined ) { rectangle.thickness = style.borderWidth ; }
-	if ( style.cornerRadius !== undefined ) { rectangle.cornerRadius = style.cornerRadius ; }
-} ;
-
-
-
 const MARKUP_COLOR_CODE = {
 	black: '#000000' ,
 	brightBlack: '#555753' , //grey: '#555753',
@@ -6686,7 +6900,7 @@ TextBox.prototype.getNthCharacter = function( index ) {
 } ;
 
 
-},{"../browser-extension.js":20,"../misc.js":23,"seventh":48}],29:[function(require,module,exports){
+},{"../browser-extension.js":20,"../misc.js":23,"./Box.js":25,"seventh":49,"tree-kit/lib/extend.js":52}],30:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6730,7 +6944,7 @@ module.exports = arrayKit ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 
 
-},{"./delete.js":30,"./deleteValue.js":31,"./inPlaceFilter.js":32,"./range.js":33,"./sample.js":34}],30:[function(require,module,exports){
+},{"./delete.js":31,"./deleteValue.js":32,"./inPlaceFilter.js":33,"./range.js":34,"./sample.js":35}],31:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6782,7 +6996,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6846,7 +7060,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6911,7 +7125,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6978,7 +7192,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7035,7 +7249,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 (function (global){(function (){
 /*
 	EXM
@@ -7220,7 +7434,7 @@ if ( ! global.EXM ) {
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -7446,7 +7660,7 @@ LeanEvents.prototype.getAllStates = function() {
 } ;
 
 
-},{"../package.json":37}],37:[function(require,module,exports){
+},{"../package.json":38}],38:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.5.2",
@@ -7506,7 +7720,7 @@ module.exports={
   }
 }
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -8039,7 +8253,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":39}],39:[function(require,module,exports){
+},{"_process":40}],40:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -8225,7 +8439,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
@@ -8415,7 +8629,7 @@ process.umask = function() { return 0; };
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":39}],41:[function(require,module,exports){
+},{"_process":40}],42:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8644,7 +8858,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":48}],42:[function(require,module,exports){
+},{"./seventh.js":49}],43:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8728,7 +8942,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":48}],43:[function(require,module,exports){
+},{"./seventh.js":49}],44:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9337,7 +9551,7 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":48}],44:[function(require,module,exports){
+},{"./seventh.js":49}],45:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Seventh
@@ -10096,7 +10310,7 @@ if ( process.browser ) {
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":39,"setimmediate":40,"timers":50}],45:[function(require,module,exports){
+},{"_process":40,"setimmediate":41,"timers":51}],46:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10602,7 +10816,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 */
 
 
-},{"./seventh.js":48}],46:[function(require,module,exports){
+},{"./seventh.js":49}],47:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Seventh
@@ -10702,7 +10916,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./seventh.js":48,"_process":39}],47:[function(require,module,exports){
+},{"./seventh.js":49,"_process":40}],48:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10754,7 +10968,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":48}],48:[function(require,module,exports){
+},{"./seventh.js":49}],49:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10798,7 +11012,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":41,"./api.js":42,"./batch.js":43,"./core.js":44,"./decorators.js":45,"./misc.js":46,"./parasite.js":47,"./wrapper.js":49}],49:[function(require,module,exports){
+},{"./Queue.js":42,"./api.js":43,"./batch.js":44,"./core.js":45,"./decorators.js":46,"./misc.js":47,"./parasite.js":48,"./wrapper.js":50}],50:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10963,7 +11177,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":48}],50:[function(require,module,exports){
+},{"./seventh.js":49}],51:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -11042,7 +11256,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":39,"timers":50}],51:[function(require,module,exports){
+},{"process/browser.js":40,"timers":51}],52:[function(require,module,exports){
 /*
 	Tree Kit
 
