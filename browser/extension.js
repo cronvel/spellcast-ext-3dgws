@@ -4460,7 +4460,7 @@ function GScene( dom , data ) {
 	//this.id = data.id ;		// immutable
 	this.engineId = data.engineId ;	// immutable
 	//this.rightHanded = data.rightHanded !== undefined ? !! data.rightHanded : true ;    // immutable
-
+	
 	this.active = false ;
 	this.paused = false ;
 	this.persistent = false ;
@@ -4474,6 +4474,7 @@ function GScene( dom , data ) {
 	this.noLocalLightingGEntities = new Set() ;	// GEntities without local lighting
 	this.localLightGEntities = new Set() ;	// GEntities that are local lights
 	this.animationFunctions = new Set() ;	// Animations for things that are not supported by Babylonjs, like contrast/exposure animation
+	this.mainChoices = null ;
 
 	this.globalCamera = null ;
 	this.roleCamera = null ;	// For multiplayer, not implemented yet
@@ -4485,7 +4486,7 @@ function GScene( dom , data ) {
 	this.dom.$gfx.append( this.$gscene ) ;
 
 	this.resizeObserver = null ;	// used to detect when the canvas element is resized
-
+	
 	// What have changed before the last rendered scene
 	this.changes = {
 		camera: false
@@ -4975,10 +4976,18 @@ GScene.prototype.addMessage = function( text , options ) {
 
 
 // For choices (nextList)
-GScene.prototype.setChoices = function( choices , undecidedNames , onSelect , options ) {
-	console.warn( "3DGWS .setChoices()" , choices , undecidedNames , onSelect , options ) ;
-	var choices = new Choices( this.dom , this , choices , undecidedNames , onSelect , options ) ;
-	return choices.run() ;
+GScene.prototype.addChoices = function( choices , undecidedNames , onSelect , options ) {
+	console.warn( "3DGWS .addChoices()" , choices , undecidedNames , onSelect , options ) ;
+	if ( this.mainChoices ) { this.clearChoices() ; }
+	this.mainChoices = new Choices( this.dom , this , choices , undecidedNames , onSelect , options ) ;
+	this.mainChoices.run() ;
+} ;
+
+
+
+GScene.prototype.clearChoices = function() {
+	console.warn( "3DGWS .celarChoices()" ) ;
+	if ( this.mainChoices ) { this.mainChoices.destroy() ; }
 } ;
 
 
@@ -5850,28 +5859,28 @@ const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
 			height: 0.2 ,
 			opacity: 1 ,
 			backgroundColor: "#496ad4" ,
-			borderColor: "#496ad4" ,
-			borderWidth: 0 ,
+			borderColor: "#ddd" ,
+			borderWidth: 2 ,
 			cornerRadius: 4 ,
 			padding: {
 				left: "10px" ,
-				top: "10px" ,
 				right: "10px" ,
-				bottom: "10px"
+				top: "4px" ,
+				bottom: "4px"
 			} ,
 			hover: {
 				//size: 0.95 ,
 				opacity: 1 ,
 				backgroundColor: "#748dde" ,
-				borderColor: "#748dde" ,
-				borderWidth: 0
+				borderColor: "#eee" ,
+				borderWidth: 2
 			} ,
 			pressedDown: {
 				size: 0.95 ,
 				opacity: 1 ,
 				backgroundColor: "#748dde" ,
-				borderColor: "#748dde" ,
-				borderWidth: 0
+				borderColor: "#eee" ,
+				borderWidth: 2
 			}
 		} ,
 		text: {
@@ -5885,7 +5894,7 @@ const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
 function scaleSizeString( size , rate ) {
 	if ( typeof size === 'number' ) { return size * rate ; }
 	if ( typeof size !== 'string' ) { throw new TypeError( "scaleSizeString: bad type: " + ( typeof size ) ) ; }
-	if ( size.endsWith( "px" ) ) { return ( parseInt( size , 10 ) * rate ) + "px" ; }
+	if ( size.endsWith( "px" ) ) { return Math.round( parseInt( size , 10 ) * rate ) + "px" ; }
 	return parseInt( size , 10 ) * rate ;
 }
 
@@ -6031,6 +6040,7 @@ module.exports = Choices ;
 
 Choices.prototype.destroy = function() {
 	this.buttons.forEach( button => button.destroy() ) ;
+	if ( this.babylon.containerStack ) { this.babylon.containerStack.dispose() ; }
 } ;
 
 
@@ -6042,28 +6052,26 @@ Choices.prototype.getUi = function() { return this.babylon.containerStack ; } ;
 Choices.prototype.run = async function() {
 	if ( ! this.guiCreated ) { this.createGUI() ; }
 
-	var promise = new Promise() ;
-
 	var choose = index => {
 		console.warn( "Choice index:" , index ) ;
+		this.onSelect( index ) ;
 	} ;
 
 	this.buttons.forEach( ( button , index ) => {
 		button.run( () => choose( index ) ) ;
 	} ) ;
-
-	await promise ;
-
-	this.destroy() ;
 } ;
 
 
 
 const THEME = Choices.THEME = deepExtend( {} , Button.THEME , {
 	default: {
+		group: {
+			spacing: 0.01
+		} ,
 		panel: {
 			width: 0.2 ,
-			height: 0.1
+			height: "38px"
 		} ,
 		text: {
 			color: "black" ,
@@ -6079,13 +6087,22 @@ const THEME = Choices.THEME = deepExtend( {} , Button.THEME , {
 Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 
-	var stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
+	var stack , spacing ,
+		parentContainer = this.parent.getUi() ,
+		parentSize = parentContainer.getSize() ;
+	
+	stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
+	spacing = theme?.group?.spacing ?? defaultTheme?.group?.spacing ?? 0 ;
+	
+	// Vertical stack (only one suppported ATM)
 	stack.isVertical = true ;
 	this.childrenWidthInPixelsRequired = false ;
 	this.childrenHeightInPixelsRequired = true ;
-	this.childrenMaxHeight = this.parent.getUi().getSize().height ;
+	this.childrenMaxHeight = parentSize.height ;
+	if ( typeof spacing === 'number' ) { spacing = Math.ceil( spacing * parentSize.height ) ; }
+	stack.spacing = spacing ;
 
-	this.parent.getUi().addControl( stack ) ;
+	parentContainer.addControl( stack ) ;
 
 	this.buttons.forEach( button => {
 		button.createGUI( theme , defaultTheme ) ;
