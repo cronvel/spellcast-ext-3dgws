@@ -402,7 +402,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],2:[function(require,module,exports){
+},{"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],2:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -781,7 +781,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 } ;
 
 
-},{"./meshUtils.js":22,"seventh":49}],3:[function(require,module,exports){
+},{"./meshUtils.js":22,"seventh":50}],3:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -1942,7 +1942,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":18,"./Parametric.js":19,"nextgen-events/lib/LeanEvents.js":37,"seventh":49}],4:[function(require,module,exports){
+},{"./GTransition.js":18,"./Parametric.js":19,"nextgen-events/lib/LeanEvents.js":38,"seventh":50}],4:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2066,7 +2066,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"seventh":49}],5:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":50}],5:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2163,7 +2163,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],6:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],6:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2278,7 +2278,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],7:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2498,7 +2498,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],8:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2660,7 +2660,7 @@ GEntityFx.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],9:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2788,7 +2788,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"seventh":49}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"seventh":50}],10:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2922,7 +2922,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],11:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3529,7 +3529,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],12:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3656,7 +3656,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],13:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3781,7 +3781,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],14:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3839,7 +3839,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],15:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4102,7 +4102,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":49}],16:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":18,"./vectorUtils.js":24,"seventh":50}],16:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4446,6 +4446,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 const Camera = require( './Camera.js' ) ;
 const Message = require( './widgets/Message.js' ) ;
 const Choices = require( './widgets/Choices.js' ) ;
+const TextInput = require( './widgets/TextInput.js' ) ;
 const GTransition = require( './GTransition.js' ) ;
 
 //const Ngev = require( 'nextgen-events/lib/browser.js' ) ;
@@ -4997,6 +4998,8 @@ GScene.prototype.clearChoices = function() {
 GScene.prototype.textInput = function() {
 	console.warn( "3DGWS .textInput()" ) ;
 	if ( this.textInput ) { this.textInput.destroy() ; }
+	this.textInput = new TextInput( this.dom , this , options ) ;
+	this.textInput.run() ;
 } ;
 
 
@@ -5004,10 +5007,12 @@ GScene.prototype.textInput = function() {
 GScene.prototype.textInputDisabled = function() {
 	console.warn( "3DGWS .textInputDisabled()" ) ;
 	if ( this.textInput ) { this.textInput.destroy() ; }
+	this.textInput = new TextInput( this.dom , this , options ) ;
+	this.textInput.runDisabled() ;
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":18,"./widgets/Choices.js":27,"./widgets/Message.js":28,"nextgen-events/lib/LeanEvents.js":37,"seventh":49}],18:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":18,"./widgets/Choices.js":27,"./widgets/Message.js":28,"./widgets/TextInput.js":30,"nextgen-events/lib/LeanEvents.js":38,"seventh":50}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5223,7 +5228,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":30,"seventh":49}],19:[function(require,module,exports){
+},{"array-kit":31,"seventh":50}],19:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5455,7 +5460,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":21,"exm/lib/BrowserExm.js":36,"path":39}],21:[function(require,module,exports){
+},{"./engine.js":21,"exm/lib/BrowserExm.js":37,"path":40}],21:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5844,6 +5849,8 @@ function Box( dom , gScene , options = {} , parent = null ) {
 	this.gScene = gScene ;
 	this.parent = parent ?? this.gScene ;
 
+	this.paddingRight = this.paddingLeft = this.paddingBottom = this.paddingTop = 0 ;
+
 	this.ninePatchImageUrl = null ;
 	this.containerRectStyle = {} ;
 
@@ -5911,8 +5918,7 @@ const THEME = Box.THEME = {
 Box.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 
-	var containerRect , boxImage , structuredTextBlock , width , height ,
-		paddingLeft , paddingTop , paddingRight , paddingBottom ;
+	var containerRect , boxImage , structuredTextBlock , width , height ;
 
 	width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
 	height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
@@ -5944,14 +5950,14 @@ Box.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 
 		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
 		// /!\ This will produce bug!
-		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
-		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
+		boxImage.sliceLeft = this.paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
+		boxImage.sliceTop = this.paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
 		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
 		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
 
 		// /!\ TMP, due to previous bug
-		paddingRight = paddingLeft ;
-		paddingBottom = paddingTop ;
+		this.paddingRight = this.paddingLeft ;
+		this.paddingBottom = this.paddingTop ;
 
 		//boxImage.isPointerBlocker = false ;
 
@@ -5965,48 +5971,16 @@ Box.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 		this.containerRectStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
 		this.applyRectangleStyle( containerRect , this.containerRectStyle ) ;
 	}
-
-	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock( 'structuredTextBlock' ) ;
-
-	// Padding, priority: theme, nine-patch slice, default theme or 0
-	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
-	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
-	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
-	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
-
+	
 	/*
 	// Not defined in time (because width is not in pixels but is a rate)
-	if ( paddingLeft + paddingRight > containerRect.widthInPixels / 2 ) {
-		paddingLeft = paddingRight = Math.round( containerRect.widthInPixels / 4 ) ;
+	if ( this.paddingLeft + this.paddingRight > containerRect.widthInPixels / 2 ) {
+		this.paddingLeft = this.paddingRight = Math.round( containerRect.widthInPixels / 4 ) ;
 	}
-	if ( paddingTop + paddingBottom > containerRect.heightInPixels / 2 ) {
-		paddingTop = paddingBottom = Math.round( containerRect.heightInPixels / 4 ) ;
+	if ( this.paddingTop + this.paddingBottom > containerRect.heightInPixels / 2 ) {
+		this.paddingTop = this.paddingBottom = Math.round( containerRect.heightInPixels / 4 ) ;
 	}
 	*/
-
-	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
-
-	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
-	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
-
-	structuredTextBlock.fontSize = theme?.text?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
-	structuredTextBlock.color = theme?.text?.color ?? defaultTheme?.text?.color ;
-	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
-	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
-	structuredTextBlock.structuredText = this.parseText( this.text ) ;
-	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
-
-	//structuredTextBlock.textWrapping = true ;
-	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
-	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
-	structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
-
-	//structuredTextBlock.color = this.special.content.textColor ;
-	//structuredTextBlock.alpha = this.opacity ;
-	//structuredTextBlock.resizeToFit = true ;
-	//structuredTextBlock.isPointerBlocker = false ;
-
-	containerRect.addControl( structuredTextBlock ) ;
 
 	// Needed for containerRect.onPointerClickObservable
 	this.babylon.containerRect.isPointerBlocker = true ;
@@ -6071,7 +6045,7 @@ Box.prototype.applyRectangleStyle = function( rectangle , style ) {
 } ;
 
 
-},{"../browser-extension.js":20,"../misc.js":23,"seventh":49}],26:[function(require,module,exports){
+},{"../browser-extension.js":20,"../misc.js":23,"seventh":50}],26:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6259,7 +6233,7 @@ Button.prototype.pressUp = function() {
 } ;
 
 
-},{"../browser-extension.js":20,"./TextBox.js":29,"seventh":49,"tree-kit/lib/extend.js":52}],27:[function(require,module,exports){
+},{"../browser-extension.js":20,"./TextBox.js":29,"seventh":50,"tree-kit/lib/extend.js":53}],27:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6400,7 +6374,7 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 } ;
 
 
-},{"../browser-extension.js":20,"./Button.js":26,"seventh":49,"tree-kit/lib/extend.js":52}],28:[function(require,module,exports){
+},{"../browser-extension.js":20,"./Button.js":26,"seventh":50,"tree-kit/lib/extend.js":53}],28:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6624,7 +6598,7 @@ Message.prototype.confirm = function() {
 } ;
 
 
-},{"../browser-extension.js":20,"./TextBox.js":29,"seventh":49,"tree-kit/lib/extend.js":52}],29:[function(require,module,exports){
+},{"../browser-extension.js":20,"./TextBox.js":29,"seventh":50,"tree-kit/lib/extend.js":53}],29:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6700,22 +6674,6 @@ TextBox.prototype.run = function() {
 
 const THEME = TextBox.THEME = deepExtend( {} , Box.THEME , {
 	default: {
-		position: 'center' ,
-		panel: {
-			width: 0.5 ,
-			height: 0.2 ,
-			opacity: 1 ,
-			backgroundColor: "green" ,
-			borderColor: "orange" ,
-			borderWidth: 4 ,
-			cornerRadius: 20 ,
-			padding: {
-				left: "10px" ,
-				top: "10px" ,
-				right: "10px" ,
-				bottom: "10px"
-			}
-		} ,
 		text: {
 			color: "white"
 		}
@@ -6726,81 +6684,16 @@ const THEME = TextBox.THEME = deepExtend( {} , Box.THEME , {
 
 TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
+	
+	Box.prototype.createGUI.call( this , theme , defaultTheme ) ;
 
-	var containerRect , boxImage , structuredTextBlock , width , height ,
-		paddingLeft , paddingTop , paddingRight , paddingBottom ;
-
-	width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
-	height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
-
-	console.warn( ".childrenHeightInPixelsRequired:" , this.parent.childrenHeightInPixelsRequired , height ) ;
-	if ( this.parent.childrenHeightInPixelsRequired && typeof height === 'number' ) {
-		height = ( height * this.parent.childrenMaxHeight ) + 'px' ;
-		console.warn( "Set height to:" , height ) ;
-	}
-
-	containerRect = this.babylon.containerRect = new BABYLON.GUI.Rectangle( 'containerRect' ) ;
-	containerRect.width = this.containerRectStyle.width = width ;
-	containerRect.height = this.containerRectStyle.height = height ;
-	containerRect.thickness = 0 ;
-
-	this.setControlAlignment( containerRect , theme?.position ?? defaultTheme?.position ) ;
-
-	this.parent.getUi().addControl( containerRect ) ;
-
-	console.warn( "THEME: " , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
-
-	this.ninePatchImageUrl = theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ;
-
-	if ( this.ninePatchImageUrl ) {
-		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'boxImage' , this.ninePatchImageUrl ) ;
-		//boxImage.width = "200px";
-		//boxImage.height = "300px";
-		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
-
-		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
-		// /!\ This will produce bug!
-		boxImage.sliceLeft = paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
-		boxImage.sliceTop = paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
-		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
-		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
-
-		// /!\ TMP, due to previous bug
-		paddingRight = paddingLeft ;
-		paddingBottom = paddingTop ;
-
-		//boxImage.isPointerBlocker = false ;
-
-		containerRect.addControl( boxImage ) ;
-	}
-	else {
-		this.containerRectStyle.opacity = theme?.panel?.opacity ?? defaultTheme?.panel?.opacity ;
-		this.containerRectStyle.backgroundColor = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
-		this.containerRectStyle.borderColor = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
-		this.containerRectStyle.borderWidth = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
-		this.containerRectStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
-		this.applyRectangleStyle( containerRect , this.containerRectStyle ) ;
-	}
-
-	structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock( 'structuredTextBlock' ) ;
+	var structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock( 'structuredTextBlock' ) ;
 
 	// Padding, priority: theme, nine-patch slice, default theme or 0
-	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
-	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
-	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
-	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
-
-	/*
-	// Not defined in time (because width is not in pixels but is a rate)
-	if ( paddingLeft + paddingRight > containerRect.widthInPixels / 2 ) {
-		paddingLeft = paddingRight = Math.round( containerRect.widthInPixels / 4 ) ;
-	}
-	if ( paddingTop + paddingBottom > containerRect.heightInPixels / 2 ) {
-		paddingTop = paddingBottom = Math.round( containerRect.heightInPixels / 4 ) ;
-	}
-	*/
-
-	console.warn( "+++++++++++++++ PADDING:" , structuredTextBlock.paddingLeft , structuredTextBlock.paddingTop , structuredTextBlock.paddingRight , structuredTextBlock.paddingBottom ) ;
+	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? this.paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
+	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? this.paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
+	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? this.paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
+	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? this.paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
 
 	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
 	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
@@ -6810,7 +6703,6 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
 	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
 	structuredTextBlock.structuredText = this.parseText( this.text ) ;
-	//structuredTextBlock.structuredText = [ { text: "one two three " } , { text: "four" , color: "red" } , { text: " five" , color: "#eeaa55" } ] ;
 
 	//structuredTextBlock.textWrapping = true ;
 	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
@@ -6822,11 +6714,7 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	//structuredTextBlock.resizeToFit = true ;
 	//structuredTextBlock.isPointerBlocker = false ;
 
-	containerRect.addControl( structuredTextBlock ) ;
-
-	// Needed for containerRect.onPointerClickObservable
-	this.babylon.containerRect.isPointerBlocker = true ;
-	this.guiCreated = true ;
+	this.babylon.containerRect.addControl( structuredTextBlock ) ;
 } ;
 
 
@@ -6900,7 +6788,126 @@ TextBox.prototype.getNthCharacter = function( index ) {
 } ;
 
 
-},{"../browser-extension.js":20,"../misc.js":23,"./Box.js":25,"seventh":49,"tree-kit/lib/extend.js":52}],30:[function(require,module,exports){
+},{"../browser-extension.js":20,"../misc.js":23,"./Box.js":25,"seventh":50,"tree-kit/lib/extend.js":53}],30:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const Box = require( './Box.js' ) ;
+
+const misc = require( '../misc.js' ) ;
+const extension = require( '../browser-extension.js' ) ;
+
+const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
+const Promise = require( 'seventh' ) ;
+
+
+
+function TextInput( dom , gScene , options = {} , parent = null ) {
+	Box.call( this , dom , gScene , options , parent ) ;
+	
+	this.text = options.placeholder || '' ;
+	//this.type = options.type ;
+
+	this.babylon.inputText = null ;
+}
+
+TextInput.prototype = Object.create( Box.prototype ) ;
+TextInput.prototype.constructor = TextInput ;
+
+module.exports = TextInput ;
+
+
+
+TextInput.prototype.destroy = function() {
+	Box.prototype.destroy.call( this ) ;
+	if ( this.babylon.inputText ) { this.babylon.inputText.dispose() ; }
+} ;
+
+
+
+// Should be redefined
+TextInput.prototype.run = function() {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+	this.destroy() ;
+} ;
+
+
+
+const THEME = TextInput.THEME = deepExtend( {} , Box.THEME , {
+	default: {
+		textInput: {
+			color: "white"
+		}
+	}
+} ) ;
+
+
+
+TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+	
+	Box.prototype.createGUI.call( this , theme , defaultTheme ) ;
+
+	var inputText = this.babylon.inputText = new BABYLON.GUI.InputText( 'inputText' ) ;
+
+	// Padding, priority: theme, nine-patch slice, default theme or 0
+	inputText.paddingLeft = theme?.panel?.padding?.left ?? this.paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
+	inputText.paddingTop = theme?.panel?.padding?.top ?? this.paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
+	inputText.paddingRight = theme?.panel?.padding?.right ?? this.paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
+	inputText.paddingBottom = theme?.panel?.padding?.bottom ?? this.paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
+
+	//inputText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+	inputText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+
+	inputText.fontSize = theme?.textInput?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
+	inputText.color = theme?.textInput?.color ?? defaultTheme?.text?.color ;
+	inputText.outlineWidth = theme?.textInput?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
+	inputText.outlineColor = theme?.textInput?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
+
+	//inputText.textWrapping = true ;
+	//inputText.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
+	//inputText.textWrapping = BABYLON.GUI.TextWrapping.Ellipsis ;
+	inputText.textWrapping = BABYLON.GUI.TextWrapping.WordWrap ;
+
+	//inputText.color = this.special.content.textColor ;
+	//inputText.alpha = this.opacity ;
+	//inputText.resizeToFit = true ;
+	//inputText.isPointerBlocker = false ;
+
+	this.babylon.containerRect.addControl( inputText ) ;
+} ;
+
+
+},{"../browser-extension.js":20,"../misc.js":23,"./Box.js":25,"seventh":50,"tree-kit/lib/extend.js":53}],31:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6944,7 +6951,7 @@ module.exports = arrayKit ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 
 
-},{"./delete.js":31,"./deleteValue.js":32,"./inPlaceFilter.js":33,"./range.js":34,"./sample.js":35}],31:[function(require,module,exports){
+},{"./delete.js":32,"./deleteValue.js":33,"./inPlaceFilter.js":34,"./range.js":35,"./sample.js":36}],32:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -6996,7 +7003,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7060,7 +7067,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7125,7 +7132,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7192,7 +7199,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7249,7 +7256,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (global){(function (){
 /*
 	EXM
@@ -7434,7 +7441,7 @@ if ( ! global.EXM ) {
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -7660,7 +7667,7 @@ LeanEvents.prototype.getAllStates = function() {
 } ;
 
 
-},{"../package.json":38}],38:[function(require,module,exports){
+},{"../package.json":39}],39:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.5.2",
@@ -7720,7 +7727,7 @@ module.exports={
   }
 }
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -8253,7 +8260,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":40}],40:[function(require,module,exports){
+},{"_process":41}],41:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -8439,7 +8446,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 (function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
@@ -8629,7 +8636,7 @@ process.umask = function() { return 0; };
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":40}],42:[function(require,module,exports){
+},{"_process":41}],43:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8858,7 +8865,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":49}],43:[function(require,module,exports){
+},{"./seventh.js":50}],44:[function(require,module,exports){
 /*
 	Seventh
 
@@ -8942,7 +8949,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":49}],44:[function(require,module,exports){
+},{"./seventh.js":50}],45:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9551,7 +9558,7 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":49}],45:[function(require,module,exports){
+},{"./seventh.js":50}],46:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Seventh
@@ -10310,7 +10317,7 @@ if ( process.browser ) {
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":40,"setimmediate":41,"timers":51}],46:[function(require,module,exports){
+},{"_process":41,"setimmediate":42,"timers":52}],47:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10816,7 +10823,7 @@ Promise.variableRetry = ( asyncFn , thisBinding ) => {
 */
 
 
-},{"./seventh.js":49}],47:[function(require,module,exports){
+},{"./seventh.js":50}],48:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Seventh
@@ -10916,7 +10923,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./seventh.js":49,"_process":40}],48:[function(require,module,exports){
+},{"./seventh.js":50,"_process":41}],49:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10968,7 +10975,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":49}],49:[function(require,module,exports){
+},{"./seventh.js":50}],50:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11012,7 +11019,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":42,"./api.js":43,"./batch.js":44,"./core.js":45,"./decorators.js":46,"./misc.js":47,"./parasite.js":48,"./wrapper.js":50}],50:[function(require,module,exports){
+},{"./Queue.js":43,"./api.js":44,"./batch.js":45,"./core.js":46,"./decorators.js":47,"./misc.js":48,"./parasite.js":49,"./wrapper.js":51}],51:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11177,7 +11184,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":49}],51:[function(require,module,exports){
+},{"./seventh.js":50}],52:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -11256,7 +11263,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":40,"timers":51}],52:[function(require,module,exports){
+},{"process/browser.js":41,"timers":52}],53:[function(require,module,exports){
 /*
 	Tree Kit
 
