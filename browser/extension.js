@@ -4477,7 +4477,7 @@ function GScene( dom , data ) {
 	this.animationFunctions = new Set() ;	// Animations for things that are not supported by Babylonjs, like contrast/exposure animation
 
 	this.mainChoices = null ;
-	this.textInput = null ;
+	this.mainTextInput = null ;
 
 	this.globalCamera = null ;
 	this.roleCamera = null ;	// For multiplayer, not implemented yet
@@ -4995,20 +4995,20 @@ GScene.prototype.clearChoices = function() {
 
 
 
-GScene.prototype.textInput = function() {
+GScene.prototype.textInput = function( options ) {
 	console.warn( "3DGWS .textInput()" ) ;
-	if ( this.textInput ) { this.textInput.destroy() ; }
-	this.textInput = new TextInput( this.dom , this , options ) ;
-	this.textInput.run() ;
+	if ( this.mainTextInput ) { this.mainTextInput.destroy() ; }
+	this.mainTextInput = new TextInput( this.dom , this , options ) ;
+	return this.mainTextInput.run() ;
 } ;
 
 
 
-GScene.prototype.textInputDisabled = function() {
+GScene.prototype.textInputDisabled = function( options ) {
 	console.warn( "3DGWS .textInputDisabled()" ) ;
-	if ( this.textInput ) { this.textInput.destroy() ; }
-	this.textInput = new TextInput( this.dom , this , options ) ;
-	this.textInput.runDisabled() ;
+	if ( this.mainTextInput ) { this.mainTextInput.destroy() ; }
+	this.mainTextInput = new TextInput( this.dom , this , options ) ;
+	return this.mainTextInput.runDisabled() ;
 } ;
 
 
@@ -5647,6 +5647,15 @@ misc.getContrastColorCode = ( colorStr , rate = 0.5 ) => {
 } ;
 
 
+
+misc.scaleSizeString = ( size , rate ) => {
+	if ( typeof size === 'number' ) { return size * rate ; }
+	if ( typeof size !== 'string' ) { throw new TypeError( "scaleSizeString: bad type: " + ( typeof size ) ) ; }
+	if ( size.endsWith( "px" ) ) { return Math.round( parseInt( size , 10 ) * rate ) + "px" ; }
+	return parseInt( size , 10 ) * rate ;
+} ;
+
+
 },{"./browser-extension.js":20}],24:[function(require,module,exports){
 /*
 	3D Ground With Sprites
@@ -6079,6 +6088,7 @@ Box.prototype.applyRectangleStyle = function( rectangle , style ) {
 
 
 const TextBox = require( './TextBox.js' ) ;
+const misc = require( '../misc.js' ) ;
 
 const extension = require( '../browser-extension.js' ) ;
 
@@ -6153,13 +6163,6 @@ const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
 
 
 
-function scaleSizeString( size , rate ) {
-	if ( typeof size === 'number' ) { return size * rate ; }
-	if ( typeof size !== 'string' ) { throw new TypeError( "scaleSizeString: bad type: " + ( typeof size ) ) ; }
-	if ( size.endsWith( "px" ) ) { return Math.round( parseInt( size , 10 ) * rate ) + "px" ; }
-	return parseInt( size , 10 ) * rate ;
-}
-
 Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 
@@ -6172,13 +6175,13 @@ Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.def
 	if ( theme?.panel?.pressedDown ) { deepExtend( this.containerRectPressedDownStyle , theme.panel.pressedDown ) ; }
 
 	if ( this.containerRectHoverStyle.size ) {
-		this.containerRectHoverStyle.width = scaleSizeString( this.containerRectStyle.width , this.containerRectHoverStyle.size ) ;
-		this.containerRectHoverStyle.height = scaleSizeString( this.containerRectStyle.height , this.containerRectHoverStyle.size ) ;
+		this.containerRectHoverStyle.width = misc.scaleSizeString( this.containerRectStyle.width , this.containerRectHoverStyle.size ) ;
+		this.containerRectHoverStyle.height = misc.scaleSizeString( this.containerRectStyle.height , this.containerRectHoverStyle.size ) ;
 	}
 
 	if ( this.containerRectPressedDownStyle.size ) {
-		this.containerRectPressedDownStyle.width = scaleSizeString( this.containerRectStyle.width , this.containerRectPressedDownStyle.size ) ;
-		this.containerRectPressedDownStyle.height = scaleSizeString( this.containerRectStyle.height , this.containerRectPressedDownStyle.size ) ;
+		this.containerRectPressedDownStyle.width = misc.scaleSizeString( this.containerRectStyle.width , this.containerRectPressedDownStyle.size ) ;
+		this.containerRectPressedDownStyle.height = misc.scaleSizeString( this.containerRectStyle.height , this.containerRectPressedDownStyle.size ) ;
 	}
 
 	this.babylon.containerRect.hoverCursor = 'pointer' ;
@@ -6233,7 +6236,7 @@ Button.prototype.pressUp = function() {
 } ;
 
 
-},{"../browser-extension.js":20,"./TextBox.js":29,"seventh":50,"tree-kit/lib/extend.js":53}],27:[function(require,module,exports){
+},{"../browser-extension.js":20,"../misc.js":23,"./TextBox.js":29,"seventh":50,"tree-kit/lib/extend.js":53}],27:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6822,8 +6825,8 @@ TextBox.prototype.getNthCharacter = function( index ) {
 
 
 const Box = require( './Box.js' ) ;
-
 const misc = require( '../misc.js' ) ;
+
 const extension = require( '../browser-extension.js' ) ;
 
 const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
@@ -6855,9 +6858,21 @@ TextInput.prototype.destroy = function() {
 
 
 // Should be redefined
-TextInput.prototype.run = function() {
+TextInput.prototype.run = async function() {
 	if ( ! this.guiCreated ) { this.createGUI() ; }
+	
+	var promise = new Promise() ;
+	
+	this.babylon.inputText.onKeyboardEventProcessedObservable.add( event => {
+		if ( event.key === 'Enter' ) { promise.resolve() ; }
+	} ) ;
+	//this.babylon.inputText.onBlurObservable.addOnce( () => promise.resolve() ) ;
+	await promise ;
+
+	var input = this.babylon.inputText.text ;
+	
 	this.destroy() ;
+	return input ;
 } ;
 
 
@@ -6888,10 +6903,11 @@ TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default )
 	//inputText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
 	inputText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
 
-	inputText.fontSize = theme?.textInput?.fontSize ?? defaultTheme?.text?.fontSize ?? "14px" ;
-	inputText.color = theme?.textInput?.color ?? defaultTheme?.text?.color ;
-	inputText.outlineWidth = theme?.textInput?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
-	inputText.outlineColor = theme?.textInput?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
+	inputText.fontSize = theme?.textInput?.fontSize ?? defaultTheme?.textInput?.fontSize ?? "14px" ;
+	inputText.color = theme?.textInput?.color ?? defaultTheme?.textInput?.color ;
+	inputText.outlineWidth = theme?.textInput?.outlineWidth ?? defaultTheme?.textInput?.outlineWidth ?? 0 ;
+	inputText.outlineColor = theme?.textInput?.outlineColor ?? defaultTheme?.textInput?.outlineColor ?? null ;
+	inputText.background = theme?.textInput?.backgroundColor ?? defaultTheme?.textInput?.backgroundColor ?? this.containerRectStyle.backgroundColor ;
 
 	//inputText.textWrapping = true ;
 	//inputText.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
@@ -6902,6 +6918,13 @@ TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default )
 	//inputText.alpha = this.opacity ;
 	//inputText.resizeToFit = true ;
 	//inputText.isPointerBlocker = false ;
+	
+	inputText.width = 0.8 ;
+	inputText.maxWidth = 0.8 ;
+	inputText.height = misc.scaleSizeString( inputText.fontSize , 2.618 ) ;
+	//inputText.text = "placeholder";
+	//inputText.color = "white";
+	//inputText.background = "green";
 
 	this.babylon.containerRect.addControl( inputText ) ;
 } ;
