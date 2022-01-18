@@ -6689,6 +6689,12 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 	
 	Box.prototype.createGUI.call( this , theme , defaultTheme ) ;
+	
+	// TextInput is derived from TextBox, but it does not always feature an input label
+	if ( ! this.text ) { return ; }
+	
+	// The container is the containerRect, except if there is a containerStack defined
+	var container = this.babylon.containerStack || this.babylon.containerRect ;
 
 	var structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock( 'structuredTextBlock' ) ;
 
@@ -6717,7 +6723,7 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	//structuredTextBlock.resizeToFit = true ;
 	//structuredTextBlock.isPointerBlocker = false ;
 
-	this.babylon.containerRect.addControl( structuredTextBlock ) ;
+	container.addControl( structuredTextBlock ) ;
 } ;
 
 
@@ -6824,7 +6830,7 @@ TextBox.prototype.getNthCharacter = function( index ) {
 
 
 
-const Box = require( './Box.js' ) ;
+const TextBox = require( './TextBox.js' ) ;
 const misc = require( '../misc.js' ) ;
 
 const extension = require( '../browser-extension.js' ) ;
@@ -6835,15 +6841,16 @@ const Promise = require( 'seventh' ) ;
 
 
 function TextInput( dom , gScene , options = {} , parent = null ) {
-	Box.call( this , dom , gScene , options , parent ) ;
+	TextBox.call( this , dom , gScene , options.label , options , parent ) ;
 	
-	this.text = options.placeholder || '' ;
+	this.input = options.placeholder || '' ;
 	//this.type = options.type ;
 
 	this.babylon.inputText = null ;
+	this.babylon.containerStack = null ;
 }
 
-TextInput.prototype = Object.create( Box.prototype ) ;
+TextInput.prototype = Object.create( TextBox.prototype ) ;
 TextInput.prototype.constructor = TextInput ;
 
 module.exports = TextInput ;
@@ -6851,7 +6858,7 @@ module.exports = TextInput ;
 
 
 TextInput.prototype.destroy = function() {
-	Box.prototype.destroy.call( this ) ;
+	TextBox.prototype.destroy.call( this ) ;
 	if ( this.babylon.inputText ) { this.babylon.inputText.dispose() ; }
 } ;
 
@@ -6877,9 +6884,10 @@ TextInput.prototype.run = async function() {
 
 
 
-const THEME = TextInput.THEME = deepExtend( {} , Box.THEME , {
+const THEME = TextInput.THEME = deepExtend( {} , TextBox.THEME , {
 	default: {
 		textInput: {
+			labelMargin: "10px" ,	// margin between the label and the input
 			color: "white"
 		}
 	}
@@ -6890,8 +6898,27 @@ const THEME = TextInput.THEME = deepExtend( {} , Box.THEME , {
 TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 	
-	Box.prototype.createGUI.call( this , theme , defaultTheme ) ;
+	// Create the stack now, TextBox should be aware of it to put the text inside the stack instead of the rect
+	var stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
 
+	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
+
+	// /!\ Should used the computed size later
+	// This is needed for the stackPanel to work, it cannot figure it out all by itself... :/
+	if ( this.babylon.structuredTextBlock ) {
+		this.babylon.structuredTextBlock.height = misc.scaleSizeString( this.babylon.structuredTextBlock.fontSize , 2 ) ;
+	}
+
+	// Create and configure the stack
+	stack.isVertical = true ;
+	// /!\ Looks like there is a bug with spacing, if defined in pixel, the children are not drawn... (Babylonjs 5 alpha, 18/01/2022)
+	//stack.spacing = theme?.textInput?.labelMargin ?? defaultTheme?.textInput?.labelMargin ?? 0 ;
+	stack.spacing = parseInt( theme?.textInput?.labelMargin ?? defaultTheme?.textInput?.labelMargin ?? 0 ) ;
+
+	this.babylon.containerRect.addControl( stack ) ;
+	
+	
+	// Create Babylon's "InputText"
 	var inputText = this.babylon.inputText = new BABYLON.GUI.InputText( 'inputText' ) ;
 
 	// Padding, priority: theme, nine-patch slice, default theme or 0
@@ -6926,11 +6953,11 @@ TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default )
 	//inputText.color = "white";
 	//inputText.background = "green";
 
-	this.babylon.containerRect.addControl( inputText ) ;
+	stack.addControl( inputText ) ;
 } ;
 
 
-},{"../browser-extension.js":20,"../misc.js":23,"./Box.js":25,"seventh":50,"tree-kit/lib/extend.js":53}],31:[function(require,module,exports){
+},{"../browser-extension.js":20,"../misc.js":23,"./TextBox.js":29,"seventh":50,"tree-kit/lib/extend.js":53}],31:[function(require,module,exports){
 /*
 	Array Kit
 
