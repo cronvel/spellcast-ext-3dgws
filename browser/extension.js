@@ -4999,7 +4999,7 @@ GScene.prototype.textInput = function( options ) {
 	console.warn( "3DGWS .textInput()" ) ;
 	if ( this.mainTextInput ) { this.mainTextInput.destroy() ; }
 	this.mainTextInput = new TextInput( this.dom , this , options ) ;
-	return this.mainTextInput.run() ;
+	return this.mainTextInput.run( true ) ;
 } ;
 
 
@@ -6876,10 +6876,12 @@ TextInput.prototype.destroy = function() {
 
 
 // Should be redefined
-TextInput.prototype.run = async function() {
+TextInput.prototype.run = async function( autoFocus = false ) {
 	if ( ! this.guiCreated ) { this.createGUI() ; }
 	
 	var promise = new Promise() ;
+	
+	if ( autoFocus ) { this.babylon.inputText.focus() ; }
 	
 	this.babylon.inputText.onKeyboardEventProcessedObservable.add( event => {
 		if ( event.key === 'Enter' ) { promise.resolve() ; }
@@ -6899,7 +6901,10 @@ const THEME = TextInput.THEME = deepExtend( {} , TextBox.THEME , {
 	default: {
 		textInput: {
 			labelMargin: "10px" ,	// margin between the label and the input
-			color: "white"
+			color: "white" ,
+			focusBackgroundColor: "gray" ,
+			blurBackgroundColor: "#555" ,
+			borderWidth: 1
 		}
 	}
 } ) ;
@@ -6909,7 +6914,7 @@ const THEME = TextInput.THEME = deepExtend( {} , TextBox.THEME , {
 TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInput?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 	
-	// Create the stack now, TextBox should be aware of it to put the text inside the stack instead of the rect
+	// Create the stack now, TextBox should be aware of it to put the text inside the stack instead of the rectangle
 	var stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
 
 	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
@@ -6917,6 +6922,7 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 	// /!\ Should used the computed size later
 	// This is needed for the stackPanel to work, it cannot figure it out all by itself... :/
 	var structuredTextBlock = this.babylon.structuredTextBlock ;
+
 	if ( structuredTextBlock ) {
 		structuredTextBlock.height = misc.scaleSizeString( structuredTextBlock.fontSize , 2 ) ;
 		structuredTextBlock.paddingBottom = 0 ;
@@ -6947,7 +6953,24 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 	inputText.color = theme?.textInput?.color ?? defaultTheme?.textInput?.color ;
 	inputText.outlineWidth = theme?.textInput?.outlineWidth ?? defaultTheme?.textInput?.outlineWidth ?? 0 ;
 	inputText.outlineColor = theme?.textInput?.outlineColor ?? defaultTheme?.textInput?.outlineColor ?? null ;
-	inputText.background = theme?.textInput?.backgroundColor ?? defaultTheme?.textInput?.backgroundColor ?? this.containerRectStyle.backgroundColor ;
+
+	// Focus background color
+	inputText.focusedBackground =
+		theme?.textInput?.focusBackgroundColor ??
+		theme?.textInput?.backgroundColor ??
+		defaultTheme?.textInput?.focusBackgroundColor ??
+		defaultTheme?.textInput?.backgroundColor ??
+		this.containerRectStyle.backgroundColor ;
+
+	// Blur background color
+	inputText.background =
+		theme?.textInput?.blurBackgroundColor ??
+		theme?.textInput?.backgroundColor ??
+		defaultTheme?.textInput?.blurBackgroundColor ??
+		defaultTheme?.textInput?.backgroundColor ??
+		this.containerRectStyle.backgroundColor ;
+
+	inputText.thickness = theme?.textInput?.borderWidth ?? defaultTheme?.textInput?.borderWidth ?? 1 ;
 
 	//inputText.textWrapping = true ;
 	//inputText.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
@@ -6960,6 +6983,7 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 	//inputText.isPointerBlocker = false ;
 	
 	/*
+	// TODO, it doesn't work since the parent have no size yet, it would probably need a timeout to make it work
 	var parentContainer = this.parent.getUi() ,
 		parentSize = parentContainer.getSize() ;
 	inputText.width = parentSize.width - paddingLeft - paddingRight ;
@@ -6969,9 +6993,6 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 	inputText.maxWidth = 0.8 ;
 	
 	inputText.height = misc.scaleSizeString( inputText.fontSize , 2.618 ) ;
-	//inputText.text = "placeholder";
-	//inputText.color = "white";
-	//inputText.background = "green";
 
 	stack.addControl( inputText ) ;
 } ;
