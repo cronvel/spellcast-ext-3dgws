@@ -5656,6 +5656,15 @@ misc.scaleSizeString = ( size , rate ) => {
 } ;
 
 
+
+misc.addToSizeString = ( size , add ) => {
+	if ( typeof size === 'number' ) { return size + add ; }
+	if ( typeof size !== 'string' ) { throw new TypeError( "addToSizeString: bad type: " + ( typeof size ) ) ; }
+	if ( size.endsWith( "px" ) ) { return Math.round( parseInt( size , 10 ) + add ) + "px" ; }
+	return parseInt( size , 10 ) + add ;
+} ;
+
+
 },{"./browser-extension.js":20}],24:[function(require,module,exports){
 /*
 	3D Ground With Sprites
@@ -5913,10 +5922,10 @@ const THEME = Box.THEME = {
 			borderWidth: 4 ,
 			cornerRadius: 20 ,
 			padding: {
-				left: "10px" ,
-				top: "10px" ,
-				right: "10px" ,
-				bottom: "10px"
+				left: "16px" ,
+				right: "16px" ,
+				top: "0px" ,
+				bottom: "0px"
 			}
 		}
 	}
@@ -6698,11 +6707,13 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 
 	var structuredTextBlock = this.babylon.structuredTextBlock = new BABYLON.GUI.StructuredTextBlock( 'structuredTextBlock' ) ;
 
-	// Padding, priority: theme, nine-patch slice, default theme or 0
-	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? this.paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
-	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? this.paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
-	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? this.paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
-	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? this.paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
+	// Padding, priority: theme, default theme, nine-patch slice
+	structuredTextBlock.paddingLeft = theme?.panel?.padding?.left ?? defaultTheme?.panel?.padding?.left ?? this.paddingLeft ;
+	structuredTextBlock.paddingTop = theme?.panel?.padding?.top ?? defaultTheme?.panel?.padding?.top ?? this.paddingTop ;
+	structuredTextBlock.paddingRight = theme?.panel?.padding?.right ?? defaultTheme?.panel?.padding?.right ?? this.paddingRight ;
+	structuredTextBlock.paddingBottom = theme?.panel?.padding?.bottom ?? defaultTheme?.panel?.padding?.bottom ?? this.paddingBottom ;
+	//structuredTextBlock.paddingLeft = structuredTextBlock.paddingTop = structuredTextBlock.paddingRight = structuredTextBlock.paddingBottom = "16px" ;
+	//structuredTextBlock.paddingLeft = structuredTextBlock.paddingRight = "16px" ;
 
 	//structuredTextBlock.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
 	structuredTextBlock.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
@@ -6895,7 +6906,7 @@ const THEME = TextInput.THEME = deepExtend( {} , TextBox.THEME , {
 
 
 
-TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
+TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInput?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 	
 	// Create the stack now, TextBox should be aware of it to put the text inside the stack instead of the rect
@@ -6905,8 +6916,10 @@ TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default )
 
 	// /!\ Should used the computed size later
 	// This is needed for the stackPanel to work, it cannot figure it out all by itself... :/
-	if ( this.babylon.structuredTextBlock ) {
-		this.babylon.structuredTextBlock.height = misc.scaleSizeString( this.babylon.structuredTextBlock.fontSize , 2 ) ;
+	var structuredTextBlock = this.babylon.structuredTextBlock ;
+	if ( structuredTextBlock ) {
+		structuredTextBlock.height = misc.scaleSizeString( structuredTextBlock.fontSize , 2 ) ;
+		structuredTextBlock.paddingBottom = 0 ;
 	}
 
 	// Create and configure the stack
@@ -6922,10 +6935,10 @@ TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default )
 	var inputText = this.babylon.inputText = new BABYLON.GUI.InputText( 'inputText' ) ;
 
 	// Padding, priority: theme, nine-patch slice, default theme or 0
-	inputText.paddingLeft = theme?.panel?.padding?.left ?? this.paddingLeft ?? defaultTheme?.panel?.padding?.left ?? 0 ;
-	inputText.paddingTop = theme?.panel?.padding?.top ?? this.paddingTop ?? defaultTheme?.panel?.padding?.top ?? 0 ;
-	inputText.paddingRight = theme?.panel?.padding?.right ?? this.paddingRight ?? defaultTheme?.panel?.padding?.right ?? 0 ;
-	inputText.paddingBottom = theme?.panel?.padding?.bottom ?? this.paddingBottom ?? defaultTheme?.panel?.padding?.bottom ?? 0 ;
+	var paddingLeft = theme?.panel?.padding?.left ?? defaultTheme?.panel?.padding?.left ?? this.paddingLeft ,
+		paddingTop = structuredTextBlock ? 0 : ( theme?.panel?.padding?.top ?? defaultTheme?.panel?.padding?.top ?? this.paddingTop ) ,
+		paddingRight = theme?.panel?.padding?.right ?? defaultTheme?.panel?.padding?.right ?? this.paddingRight ,
+		paddingBottom = theme?.panel?.padding?.bottom ?? defaultTheme?.panel?.padding?.bottom ?? this.paddingBottom ;
 
 	//inputText.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
 	inputText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
@@ -6946,8 +6959,15 @@ TextInput.prototype.createGUI = function( theme , defaultTheme = THEME.default )
 	//inputText.resizeToFit = true ;
 	//inputText.isPointerBlocker = false ;
 	
+	/*
+	var parentContainer = this.parent.getUi() ,
+		parentSize = parentContainer.getSize() ;
+	inputText.width = parentSize.width - paddingLeft - paddingRight ;
+	console.warn( "iwidth" , this.babylon.containerRect._width.getValueInPixel() , parentSize.width , paddingLeft , paddingRight ) ;
+	//*/
 	inputText.width = 0.8 ;
 	inputText.maxWidth = 0.8 ;
+	
 	inputText.height = misc.scaleSizeString( inputText.fontSize , 2.618 ) ;
 	//inputText.text = "placeholder";
 	//inputText.color = "white";
