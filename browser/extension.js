@@ -6660,8 +6660,9 @@ function TextBox( dom , gScene , text , options = {} , parent = null ) {
 	this.text = text ;
 	//this.type = options.type ;
 
-	this.textFxParts = [] ;
-	this.updateFxCount = 0 ;
+	this.fxTextParts = [] ;
+	this.fxUpdateCount = 0 ;
+	this.isFxInit = false ;
 	this.updateFx = this.updateFx.bind( this ) ;	// Used as an event listener, so bind it
 
 	this.babylon.structuredTextBlock = null ;
@@ -6731,18 +6732,20 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	structuredTextBlock.structuredText = this.parseText( this.text ) ;
 	
 	structuredTextBlock.onLinesReadyObservable.addOnce( () => {
-		this.textFxParts.length = 0 ;
+		this.fxTextParts.length = 0 ;
 		
 		for ( let line of structuredTextBlock.lines ) {
 			for ( let part of line.parts ) {
 				// Some FX may not update (e.g. a rainbow effect would only need an init method)
 				if ( part.staticCustomData?.fx && textFx[ part.staticCustomData.fx ].update ) {
-					this.textFxParts.push( part ) ;
+					this.fxTextParts.push( part ) ;
 				}
 			}
 		}
 		
-		if ( this.textFxParts.length ) { this.gScene.on( 'render' , this.updateFx ) ; }
+		if ( this.fxTextParts.length ) {
+			this.gScene.on( 'render' , this.updateFx ) ;
+		}
 	} ) ;
 	
 
@@ -6762,18 +6765,37 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 
 
 TextBox.prototype.updateFx = function() {
-	var fx ;
+	var fx ,
+		index = 0 ,
+		updated = false ;
 
-	for ( let part of this.textFxParts ) {
+	if ( ! this.isFxInit ) {
+		for ( let part of this.fxTextParts ) {
+			fx = textFx[ part.staticCustomData.fx ] ;
+
+			if ( fx.initDynamic ) {
+				part.dynamicCustomData = {} ;
+				fx.initDynamic( part , this , this.babylon.structuredTextBlock ) ;
+			}
+		}
+
+		this.isFxInit = true ;
+	}
+	
+	for ( let part of this.fxTextParts ) {
 		fx = textFx[ part.staticCustomData.fx ] ;
 
-		if ( ! fx.updateEvery || this.updateFxCount % fx.updateEvery === 0 ) {
-			fx.update( part ) ;
+		if ( ! fx.updateEvery || this.fxUpdateCount % fx.updateEvery === 0 ) {
+			fx.update( part , this , this.babylon.structuredTextBlock , index ) ;
+			updated = true ;
 		}
+		
+		index ++ ;
 	}
 
-	this.updateFxCount ++ ;
-	this.babylon.structuredTextBlock._markAsDirty() ;
+	this.fxUpdateCount ++ ;
+
+	if ( updated ) { this.babylon.structuredTextBlock._markAsDirty() ; }
 } ;
 
 
@@ -6825,8 +6847,8 @@ TextBox.prototype.parseText = function( text ) {
 		if ( input.fx && textFx[ input.fx ] ) {
 			part.staticCustomData = { fx: input.fx } ;
 
-			if ( textFx[ input.fx ].init ) {
-				textFx[ input.fx ].init( part ) ;
+			if ( textFx[ input.fx ].initStatic ) {
+				textFx[ input.fx ].initStatic( part , this ) ;
 			}
 		}
 
@@ -7081,27 +7103,96 @@ module.exports = textFx ;
 
 
 
-textFx.crazy = {
-	init: part => {
+// Common constants
+const HALF_PI = Math.PI / 2 ;
+const TWO_PI = Math.PI * 2 ;
+
+
+
+// Make the letter shake independently
+textFx.shake = {
+	initStatic: part => {
 		part.splitIntoCharacters = true ;
-		part.staticCustomData.deltaX = 1 ;
-		part.staticCustomData.deltaY = 2 ;
+	} ,
+	initDynamic: ( part , widget , structuredTextBox ) => {
+		var fontSize = parseFloat( part.fontSize ?? structuredTextBox.style?.fontSize ?? structuredTextBox.fontSize ) ;
+
+		part.dynamicCustomData.deltaX = fontSize / 22 ;
+		part.dynamicCustomData.deltaY = fontSize / 11 ;
+
+		part.dynamicCustomData.x = part.metrics.x ;
+		part.dynamicCustomData.baselineY = part.metrics.baselineY ;
 	} ,
 	update: part => {
-		if ( ! part.dynamicCustomData ) {
-			part.dynamicCustomData = {
-				x: part.metrics.x ,
-				baselineY: part.metrics.baselineY
-			} ;
-		}
+		var dx = Math.round( ( 2 * Math.random() - 1 ) * part.dynamicCustomData.deltaX ) ,
+			dy = Math.round( ( 2 * Math.random() - 1 ) * part.dynamicCustomData.deltaY ) ;
 
-		let deltaX = part.staticCustomData.deltaX ;
-		let deltaY = part.staticCustomData.deltaY ;
-
-		part.metrics.x = part.dynamicCustomData.x + Math.round( ( 2 * Math.random() - 1 ) * deltaX ) ;
-		part.metrics.baselineY = part.dynamicCustomData.baselineY + Math.round( ( 2 * Math.random() - 1 ) * deltaY ) ;
+		part.metrics.x = part.dynamicCustomData.x + dx ;
+		part.metrics.baselineY = part.dynamicCustomData.baselineY + dy ;
 	} ,
 	updateEvery: 3
+} ;
+
+
+
+// Make the text part bumps
+textFx.bumpy = {
+	initDynamic: ( part , widget , structuredTextBox ) => {
+		var fontSize = parseFloat( part.fontSize ?? structuredTextBox.style?.fontSize ?? structuredTextBox.fontSize ) ;
+		part.dynamicCustomData.deltaY = fontSize / 3 ;
+		part.dynamicCustomData.baselineY = part.metrics.baselineY ;
+	} ,
+	update: ( part , widget ) => {
+		var period = 40 ;
+		var dy = - Math.round( part.dynamicCustomData.deltaY * 0.5 * ( 1 + Math.sin( - HALF_PI + widget.fxUpdateCount * TWO_PI / period ) ) ) ;
+		part.metrics.baselineY = part.dynamicCustomData.baselineY + dy ;
+	} ,
+	updateEvery: 2
+} ;
+
+
+
+const OLA_PHASE_OFFSET = Math.PI / 10 ;
+
+// Like bumpy, but each letter is moving independently with a phase
+textFx.ola = {
+	initStatic: part => {
+		part.splitIntoCharacters = true ;
+	} ,
+	initDynamic: ( part , widget , structuredTextBox ) => {
+		var fontSize = parseFloat( part.fontSize ?? structuredTextBox.style?.fontSize ?? structuredTextBox.fontSize ) ;
+		part.dynamicCustomData.deltaY = fontSize / 3 ;
+		part.dynamicCustomData.baselineY = part.metrics.baselineY ;
+	} ,
+	update: ( part , widget , structuredTextBox , index ) => {
+		var period = 40 ;
+		var dy = - Math.round( part.dynamicCustomData.deltaY * 0.5 * ( 1 + Math.sin( - HALF_PI - index * OLA_PHASE_OFFSET + widget.fxUpdateCount * TWO_PI / period ) ) ) ;
+		part.metrics.baselineY = part.dynamicCustomData.baselineY + dy ;
+	} ,
+	updateEvery: 2
+} ;
+
+
+
+const RAINBOW = [
+	"#ff000d" , // red
+	"#ef9000" , // orange
+	"#fffd00" , // yellow
+	"#66ff00" , // green
+	"#0085fc" , // blue
+	"#2f00ff" , // indigo
+	"#bd00ed" // violet
+] ;
+
+textFx.rainbow = {
+	initStatic: part => {
+		part.splitIntoCharacters = true ;
+	} ,
+	update: ( part , widget , structuredTextBox , index ) => {
+		var colorIndex = ( index + widget.fxUpdateCount / textFx.rainbow.updateEvery ) % RAINBOW.length ;
+		part.color = RAINBOW[ colorIndex ] ;
+	} ,
+	updateEvery: 10
 } ;
 
 
