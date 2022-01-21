@@ -4462,6 +4462,9 @@ function GScene( dom , data ) {
 	this.engineId = data.engineId ;	// immutable
 	//this.rightHanded = data.rightHanded !== undefined ? !! data.rightHanded : true ;    // immutable
 	
+	// Get input from the Dom web-client object
+	this.input = this.dom.input ;
+	
 	this.active = false ;
 	this.paused = false ;
 	this.persistent = false ;
@@ -6601,10 +6604,25 @@ Message.prototype.confirm = function() {
 		nextImage.topInPixels = topBase - Math.abs( Math.sin( 3 * delta ) * 10 ) ;
 	} , 20 ) ;
 
-	this.babylon.containerRect.onPointerClickObservable.addOnce( () => {
+	var done = () => {
 		clearInterval( timer ) ;
+		this.gScene.input.off( 'key' , onKey ) ;
 		promise.resolve() ;
-	} ) ;
+	} ;
+	
+	var onKey = key => {
+		console.warn( "Received key" , key ) ;
+		switch ( key ) {
+			case 'P1_BOTTOM_BUTTON_RELEASED':
+			case ' ':
+				done() ;
+				break ;
+		}
+	} ;
+	
+	this.gScene.input.on( 'key' , onKey ) ;
+	
+	this.babylon.containerRect.onPointerClickObservable.addOnce( done ) ;
 
 	return promise ;
 } ;
