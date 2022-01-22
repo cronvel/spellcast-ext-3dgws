@@ -4462,8 +4462,8 @@ function GScene( dom , data ) {
 	this.engineId = data.engineId ;	// immutable
 	//this.rightHanded = data.rightHanded !== undefined ? !! data.rightHanded : true ;    // immutable
 	
-	// Get input from the Dom web-client object
-	this.input = this.dom.input ;
+	// Get controller input from the Dom web-client object
+	this.controller = this.dom.controller ;
 	
 	this.active = false ;
 	this.paused = false ;
@@ -6606,7 +6606,7 @@ Message.prototype.confirm = function() {
 
 	var done = () => {
 		clearInterval( timer ) ;
-		this.gScene.input.off( 'key' , onKey ) ;
+		this.gScene.controller.off( 'key' , onKey ) ;
 		promise.resolve() ;
 	} ;
 	
@@ -6620,7 +6620,7 @@ Message.prototype.confirm = function() {
 		}
 	} ;
 	
-	this.gScene.input.on( 'key' , onKey ) ;
+	this.gScene.controller.on( 'key' , onKey ) ;
 	
 	this.babylon.containerRect.onPointerClickObservable.addOnce( done ) ;
 
