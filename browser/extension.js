@@ -6606,21 +6606,15 @@ Message.prototype.confirm = function() {
 
 	var done = () => {
 		clearInterval( timer ) ;
-		this.gScene.controller.off( 'key' , onKey ) ;
+		this.gScene.controller.off( 'command' , onCommand ) ;
 		promise.resolve() ;
 	} ;
 	
-	var onKey = key => {
-		//console.warn( "Received key" , key ) ;
-		switch ( key ) {
-			case 'P1_BOTTOM_BUTTON_RELEASED':
-			case ' ':
-				done() ;
-				break ;
-		}
+	var onCommand = command => {
+		if ( command === 'confirm' ) { done() ; }
 	} ;
 	
-	this.gScene.controller.on( 'key' , onKey ) ;
+	this.gScene.controller.on( 'command' , onCommand ) ;
 	
 	this.babylon.containerRect.onPointerClickObservable.addOnce( done ) ;
 
@@ -6695,8 +6689,8 @@ module.exports = TextBox ;
 
 TextBox.prototype.destroy = function() {
 	Box.prototype.destroy.call( this ) ;
-	this.gScene.off( 'render' , this.updateFx ) ;
 	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.dispose() ; }
+	this.gScene.off( 'render' , this.updateFx ) ;
 } ;
 
 
