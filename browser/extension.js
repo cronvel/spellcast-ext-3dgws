@@ -6611,7 +6611,7 @@ Message.prototype.confirm = function() {
 	} ;
 	
 	var onKey = key => {
-		console.warn( "Received key" , key ) ;
+		//console.warn( "Received key" , key ) ;
 		switch ( key ) {
 			case 'P1_BOTTOM_BUTTON_RELEASED':
 			case ' ':
