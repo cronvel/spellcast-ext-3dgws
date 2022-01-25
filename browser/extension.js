@@ -5861,6 +5861,7 @@ utils.epsilonAsin = utils.easin = v => {
 const misc = require( '../misc.js' ) ;
 const extension = require( '../browser-extension.js' ) ;
 
+const LeanEvents = require( 'nextgen-events/lib/LeanEvents.js' ) ;
 const Promise = require( 'seventh' ) ;
 
 
@@ -5882,6 +5883,9 @@ function Box( dom , gScene , options = {} , parent = null ) {
 		boxImage: null
 	} ;
 }
+
+Box.prototype = Object.create( LeanEvents.prototype ) ;
+Box.prototype.constructor = Box ;
 
 module.exports = Box ;
 
@@ -6066,7 +6070,7 @@ Box.prototype.applyRectangleStyle = function( rectangle , style ) {
 } ;
 
 
-},{"../browser-extension.js":20,"../misc.js":23,"seventh":51}],26:[function(require,module,exports){
+},{"../browser-extension.js":20,"../misc.js":23,"nextgen-events/lib/LeanEvents.js":39,"seventh":51}],26:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6198,24 +6202,47 @@ Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.def
 
 	this.babylon.containerRect.hoverCursor = 'pointer' ;
 
-	this.babylon.containerRect.onPointerEnterObservable.add( () => this.hover() ) ;
-	this.babylon.containerRect.onPointerOutObservable.add( () => this.initialState() ) ;
-	this.babylon.containerRect.onPointerDownObservable.add( () => this.pressDown() ) ;
-	this.babylon.containerRect.onPointerUpObservable.add( () => this.pressUp() ) ;
+	this.babylon.containerRect.onPointerEnterObservable.add( () => this.onPointerEnter() ) ;
+	this.babylon.containerRect.onPointerOutObservable.add( () => this.onPointerOut() ) ;
+	this.babylon.containerRect.onPointerDownObservable.add( () => this.onPointerDown() ) ;
+	this.babylon.containerRect.onPointerUpObservable.add( () => this.onPointerUp() ) ;
 } ;
 
 
 
-Button.prototype.initialState = function() {
-	console.warn( "!!!!! ENTERING .initialState()" ) ;
+Button.prototype.onPointerEnter = function() {
+	this.emit( 'mouseInteracting' ) ;
+	this.hover() ;
+} ;
+
+
+
+Button.prototype.onPointerOut = function() {
+	this.emit( 'mouseInteracting' ) ;
+	this.standingBy() ;
+} ;
+
+
+
+Button.prototype.onPointerDown = function() {
+	this.emit( 'mouseInteracting' ) ;
+	this.pressDown() ;
+} ;
+
+
+
+Button.prototype.onPointerUp = function() {
+	this.emit( 'mouseInteracting' ) ;
+	this.pressUp() ;
+} ;
+
+
+
+Button.prototype.standingBy = function() {
+	console.warn( "!!!!! ENTERING .standingBy()" ) ;
 	if ( this.babylon.containerRect ) {
 		this.applyRectangleStyle( this.babylon.containerRect , this.containerRectStyle ) ;
 	}
-
-	/*
-	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = initialState ; }
-	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = initialState ; }
-	*/
 } ;
 
 
@@ -6225,11 +6252,6 @@ Button.prototype.hover = function() {
 	if ( this.babylon.containerRect ) {
 		this.applyRectangleStyle( this.babylon.containerRect , this.containerRectHoverStyle ) ;
 	}
-
-	/*
-	if ( this.babylon.structuredTextBlock ) { this.babylon.structuredTextBlock.alpha = hoverAlpha ; }
-	if ( this.babylon.boxImage ) { this.babylon.boxImage.alpha = hoverAlpha ; }
-	*/
 } ;
 
 
@@ -6243,7 +6265,7 @@ Button.prototype.pressDown = function() {
 
 
 Button.prototype.pressUp = function() {
-	this.initialState() ;
+	this.standingBy() ;
 	if ( this.onPress ) { this.onPress() ; }
 } ;
 
@@ -6299,6 +6321,10 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 	this.undecidedNames = undecidedNames ;
 	this.onSelect = onSelect ;
 
+	// This is the index of the button that would be highlighted by key/gamepad up/down
+	this.highlightedByKeyIndex = 0 ;
+	this.isHighlightedByKey = false ;
+	
 	//this.type = options.type ;
 	//this.wait = options.wait || 0 ;
 
@@ -6329,13 +6355,62 @@ Choices.prototype.getUi = function() { return this.babylon.containerStack ; } ;
 Choices.prototype.run = async function() {
 	if ( ! this.guiCreated ) { this.createGUI() ; }
 
-	var choose = index => {
+	var done = index => {
 		console.warn( "Choice index:" , index ) ;
+		this.gScene.controller.off( 'command' , onCommand ) ;
 		this.onSelect( index ) ;
 	} ;
 
+	var onCommand = command => {
+		if ( this.isHighlightedByKey ) {
+			let highlightedByKeyIndex = this.highlightedByKeyIndex ;
+
+			switch ( command ) {
+				case 'confirm':
+					this.buttons[ highlightedByKeyIndex ].pressDown() ;
+					setTimeout( () => this.buttons[ highlightedByKeyIndex ].pressUp() , 200 ) ;
+					break ;
+				case 'up':
+					if ( this.highlightedByKeyIndex > 0 ) {
+						this.highlightedByKeyIndex -- ;
+						this.hover( this.highlightedByKeyIndex ) ;
+					}
+					break ;
+				case 'down':
+					if ( this.highlightedByKeyIndex < this.buttons.length - 1 ) {
+						this.highlightedByKeyIndex ++ ;
+						this.hover( this.highlightedByKeyIndex ) ;
+					}
+					break ;
+			}
+		}
+		else if ( command === 'confirm' || command === 'up' || command === 'down' ) {
+			this.isHighlightedByKey = true ;
+			this.hover( this.highlightedByKeyIndex ) ;
+		}
+	} ;
+
+	this.gScene.controller.on( 'command' , onCommand ) ;
+
 	this.buttons.forEach( ( button , index ) => {
-		button.run( () => choose( index ) ) ;
+		button.run( () => done( index ) ) ;
+		button.on( 'mouseInteracting' , () => {
+			this.isHighlightedByKey = false ;
+			this.hover( null ) ;
+		} ) ;
+	} ) ;
+} ;
+
+
+
+Choices.prototype.hover = function( hoverIndex ) {
+	this.buttons.forEach( ( button , index ) => {
+		if ( index === hoverIndex ) {
+			button.hover() ;
+		}
+		else {
+			button.standingBy() ;
+		}
 	} ) ;
 } ;
 
