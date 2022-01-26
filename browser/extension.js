@@ -5619,6 +5619,8 @@ exports.getUpmostBoxMeshFace = boxMesh => {
 
 "use strict" ;
 
+/* global BABYLON */
+
 
 
 const extension = require( './browser-extension.js' ) ;
@@ -5665,6 +5667,79 @@ misc.addToSizeString = ( size , add ) => {
 	if ( typeof size !== 'string' ) { throw new TypeError( "addToSizeString: bad type: " + ( typeof size ) ) ; }
 	if ( size.endsWith( "px" ) ) { return Math.round( parseInt( size , 10 ) + add ) + "px" ; }
 	return parseInt( size , 10 ) + add ;
+} ;
+
+
+
+// Get GUI control position not relative to its parent but to another ancestor
+misc.getControlPositionRelativeTo = ( control , reference , horizontal = null , vertical = null ) => {
+	var Control = BABYLON.GUI.Control ,
+		left = control._currentMeasure.left - reference._currentMeasure.left ,
+		top = control._currentMeasure.top - reference._currentMeasure.top ;
+	
+	if ( reference.horizontalAlignment === Control.HORIZONTAL_ALIGNMENT_LEFT ) {
+		if ( horizontal === Control.HORIZONTAL_ALIGNMENT_RIGHT ) {
+			left += control._currentMeasure.width ;
+		}
+		else if ( horizontal === Control.HORIZONTAL_ALIGNMENT_CENTER ) {
+			left += control._currentMeasure.width / 2 ;
+		}
+	}
+	else if ( reference.horizontalAlignment === Control.HORIZONTAL_ALIGNMENT_RIGHT ) {
+		if ( horizontal === Control.HORIZONTAL_ALIGNMENT_LEFT ) {
+			left += - reference._currentMeasure.width ;
+		}
+		else if ( horizontal === Control.HORIZONTAL_ALIGNMENT_CENTER ) {
+			left += - reference._currentMeasure.width + control._currentMeasure.width / 2 ;
+		}
+		else {	// right or null
+			left = - reference._currentMeasure.width + control._currentMeasure.width ;
+		}
+	}
+	else if ( reference.horizontalAlignment === Control.HORIZONTAL_ALIGNMENT_CENTER ) {
+		if ( horizontal === Control.HORIZONTAL_ALIGNMENT_LEFT ) {
+			left += - reference._currentMeasure.width / 2 ;
+		}
+		else if ( horizontal === Control.HORIZONTAL_ALIGNMENT_RIGHT ) {
+			left += - reference._currentMeasure.width / 2 + control._currentMeasure.width ;
+		}
+		else {	// center or null
+			left += ( - reference._currentMeasure.width + control._currentMeasure.width ) / 2 ;
+		}
+	}
+	
+	if ( reference.verticalAlignment === Control.VERTICAL_ALIGNMENT_LEFT ) {
+		if ( vertical === Control.VERTICAL_ALIGNMENT_RIGHT ) {
+			top += control._currentMeasure.height ;
+		}
+		else if ( vertical === Control.VERTICAL_ALIGNMENT_CENTER ) {
+			top += control._currentMeasure.height / 2 ;
+		}
+	}
+	else if ( reference.verticalAlignment === Control.VERTICAL_ALIGNMENT_RIGHT ) {
+		if ( vertical === Control.VERTICAL_ALIGNMENT_LEFT ) {
+			top += - reference._currentMeasure.height ;
+		}
+		else if ( vertical === Control.VERTICAL_ALIGNMENT_CENTER ) {
+			top += - reference._currentMeasure.height + control._currentMeasure.height / 2 ;
+		}
+		else {	// right or null
+			top = - reference._currentMeasure.height + control._currentMeasure.height ;
+		}
+	}
+	else if ( reference.verticalAlignment === Control.VERTICAL_ALIGNMENT_CENTER ) {
+		if ( vertical === Control.VERTICAL_ALIGNMENT_LEFT ) {
+			top += - reference._currentMeasure.height / 2 ;
+		}
+		else if ( vertical === Control.VERTICAL_ALIGNMENT_RIGHT ) {
+			top += - reference._currentMeasure.height / 2 + control._currentMeasure.height ;
+		}
+		else {	// center or null
+			top += ( - reference._currentMeasure.height + control._currentMeasure.height ) / 2 ;
+		}
+	}
+	
+	return { left , top } ;
 } ;
 
 
@@ -6133,6 +6208,12 @@ module.exports = Button ;
 
 
 
+Button.prototype.destroy = function() {
+    TextBox.prototype.destroy.call( this ) ;
+} ;
+
+
+
 Button.prototype.run = function( onPress ) {
 	if ( ! this.guiCreated ) { this.createGUI() ; }
 	this.onPress = onPress ;
@@ -6305,6 +6386,8 @@ Button.prototype.pressUp = function() {
 
 const Button = require( './Button.js' ) ;
 
+const misc = require( '../misc.js' ) ;
+
 const extension = require( '../browser-extension.js' ) ;
 
 const deepExtend = require( 'tree-kit/lib/extend.js' ).bind( null , { deep: true } ) ;
@@ -6333,7 +6416,8 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 	this.guiCreates = false ;
 
 	this.babylon = {
-		containerStack: null
+		containerStack: null ,
+		focusImage: null
 	} ;
 }
 
@@ -6344,6 +6428,7 @@ module.exports = Choices ;
 Choices.prototype.destroy = function() {
 	this.buttons.forEach( button => button.destroy() ) ;
 	if ( this.babylon.containerStack ) { this.babylon.containerStack.dispose() ; }
+	if ( this.babylon.focusImage ) { this.babylon.focusImage.dispose() ; }
 } ;
 
 
@@ -6373,20 +6458,20 @@ Choices.prototype.run = async function() {
 				case 'up':
 					if ( this.highlightedByKeyIndex > 0 ) {
 						this.highlightedByKeyIndex -- ;
-						this.hover( this.highlightedByKeyIndex ) ;
+						this.focus( this.highlightedByKeyIndex ) ;
 					}
 					break ;
 				case 'down':
 					if ( this.highlightedByKeyIndex < this.buttons.length - 1 ) {
 						this.highlightedByKeyIndex ++ ;
-						this.hover( this.highlightedByKeyIndex ) ;
+						this.focus( this.highlightedByKeyIndex ) ;
 					}
 					break ;
 			}
 		}
 		else if ( command === 'confirm' || command === 'up' || command === 'down' ) {
 			this.isHighlightedByKey = true ;
-			this.hover( this.highlightedByKeyIndex ) ;
+			this.focus( this.highlightedByKeyIndex ) ;
 		}
 	} ;
 
@@ -6396,22 +6481,37 @@ Choices.prototype.run = async function() {
 		button.run( () => done( index ) ) ;
 		button.on( 'mouseInteracting' , () => {
 			this.isHighlightedByKey = false ;
-			this.hover( null ) ;
+			this.focus( null ) ;
 		} ) ;
 	} ) ;
 } ;
 
 
 
-Choices.prototype.hover = function( hoverIndex ) {
+Choices.prototype.focus = function( focusIndex ) {
+	var found = false ,
+		focusImage = this.babylon.focusImage ;
+	
 	this.buttons.forEach( ( button , index ) => {
-		if ( index === hoverIndex ) {
+		if ( index === focusIndex ) {
+			let position = misc.getControlPositionRelativeTo( button.babylon.containerRect , focusImage.parent , BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ) ;
+			console.warn( "focusImage.parent" , focusImage.parent , "position" , position ) ;
+			
+			focusImage.isVisible = true ;
+			focusImage.leftInPixels = position.left ;
+			focusImage.topInPixels = position.top ;
+			
 			button.hover() ;
+			found = true ;
 		}
 		else {
 			button.standingBy() ;
 		}
 	} ) ;
+	
+	if ( ! found ) {
+		focusImage.isVisible = false ;
+	}
 } ;
 
 
@@ -6455,16 +6555,23 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 	stack.spacing = spacing ;
 
 	parentContainer.addControl( stack ) ;
-
+	
 	this.buttons.forEach( button => {
 		button.createGUI( theme , defaultTheme ) ;
 	} ) ;
+	
+	// The focus image, usually an arrow, is on a button highlighted by keyboard arrow or gamepad, ready to be 'confirmed'
+	var focusImage = this.babylon.focusImage = new BABYLON.GUI.Image( 'message-next' , '/icons/focus.png' ) ;
+	focusImage.width = "15px" ;
+	focusImage.height = "30px" ;
+	focusImage.isVisible = false ;
+	parentContainer.addControl( focusImage ) ;
 
 	this.guiCreated = true ;
 } ;
 
 
-},{"../browser-extension.js":20,"./Button.js":26,"seventh":51,"tree-kit/lib/extend.js":54}],28:[function(require,module,exports){
+},{"../browser-extension.js":20,"../misc.js":23,"./Button.js":26,"seventh":51,"tree-kit/lib/extend.js":54}],28:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
