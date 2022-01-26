@@ -4479,6 +4479,7 @@ function GScene( dom , data ) {
 	this.localLightGEntities = new Set() ;	// GEntities that are local lights
 	this.animationFunctions = new Set() ;	// Animations for things that are not supported by Babylonjs, like contrast/exposure animation
 
+	this.navigationByKey = false ;
 	this.mainChoices = null ;
 	this.mainTextInput = null ;
 
@@ -4965,6 +4966,12 @@ GScene.prototype.getUi = function() {
 	if ( this.babylon.ui ) { return this.babylon.ui ; }
 	this.babylon.ui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI( 'ui' ) ;
 	return this.babylon.ui ;
+} ;
+
+
+
+GScene.prototype.setNavigationByKey = function( v ) {
+	this.navigationByKey = !! v ;
 } ;
 
 
@@ -6425,8 +6432,7 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 	this.onSelect = onSelect ;
 
 	// This is the index of the button that would be highlighted by key/gamepad up/down
-	this.highlightedByKeyIndex = 0 ;
-	this.isHighlightedByKey = false ;
+	this.keyFocusIndex = 0 ;
 	
 	//this.type = options.type ;
 	//this.wait = options.wait || 0 ;
@@ -6467,31 +6473,31 @@ Choices.prototype.run = async function() {
 	} ;
 
 	var onCommand = command => {
-		if ( this.isHighlightedByKey ) {
-			let highlightedByKeyIndex = this.highlightedByKeyIndex ;
+		if ( this.gScene.navigationByKey ) {
+			let keyFocusIndex = this.keyFocusIndex ;
 
 			switch ( command ) {
 				case 'confirm':
-					this.buttons[ highlightedByKeyIndex ].pressDown() ;
-					setTimeout( () => this.buttons[ highlightedByKeyIndex ].pressUp() , 200 ) ;
+					this.buttons[ keyFocusIndex ].pressDown() ;
+					setTimeout( () => this.buttons[ keyFocusIndex ].pressUp() , 200 ) ;
 					break ;
 				case 'up':
-					if ( this.highlightedByKeyIndex > 0 ) {
-						this.highlightedByKeyIndex -- ;
-						this.focus( this.highlightedByKeyIndex ) ;
+					if ( this.keyFocusIndex > 0 ) {
+						this.keyFocusIndex -- ;
+						this.focus( this.keyFocusIndex ) ;
 					}
 					break ;
 				case 'down':
-					if ( this.highlightedByKeyIndex < this.buttons.length - 1 ) {
-						this.highlightedByKeyIndex ++ ;
-						this.focus( this.highlightedByKeyIndex ) ;
+					if ( this.keyFocusIndex < this.buttons.length - 1 ) {
+						this.keyFocusIndex ++ ;
+						this.focus( this.keyFocusIndex ) ;
 					}
 					break ;
 			}
 		}
 		else if ( command === 'confirm' || command === 'up' || command === 'down' ) {
-			this.isHighlightedByKey = true ;
-			this.focus( this.highlightedByKeyIndex ) ;
+			this.gScene.setNavigationByKey( true ) ;
+			this.focus( this.keyFocusIndex ) ;
 		}
 	} ;
 
@@ -6500,10 +6506,15 @@ Choices.prototype.run = async function() {
 	this.buttons.forEach( ( button , index ) => {
 		button.run( () => done( index ) ) ;
 		button.on( 'mouseInteracting' , () => {
-			this.isHighlightedByKey = false ;
+			this.gScene.setNavigationByKey( false ) ;
 			this.focus( null ) ;
 		} ) ;
 	} ) ;
+
+	if ( this.gScene.navigationByKey ) {
+		// Delay it, because we need to compute some position that are unknown until rendered
+		setTimeout( () => this.focus( this.keyFocusIndex ) , 50 ) ;
+	}
 } ;
 
 
@@ -6817,12 +6828,18 @@ Message.prototype.confirm = function() {
 	} ;
 	
 	var onCommand = command => {
-		if ( command === 'confirm' ) { done() ; }
+		if ( command === 'confirm' ) {
+			this.gScene.setNavigationByKey( true ) ;
+			done() ;
+		}
 	} ;
 	
 	this.gScene.controller.on( 'command' , onCommand ) ;
 	
-	this.babylon.containerRect.onPointerClickObservable.addOnce( done ) ;
+	this.babylon.containerRect.onPointerClickObservable.addOnce( () => {
+		this.gScene.setNavigationByKey( false ) ;
+		done() ;
+	} ) ;
 
 	return promise ;
 } ;
