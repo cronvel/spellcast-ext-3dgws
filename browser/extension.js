@@ -5680,6 +5680,63 @@ misc.addToSizeString = ( size , add ) => {
 
 
 
+misc.positionToAlignment = position => {
+	switch ( position ) {
+		case 'top':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_TOP
+			} ;
+		case 'bottom':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_BOTTOM
+			} ;
+		case 'center':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
+			} ;
+		case 'top-left':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_LEFT ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_TOP
+			} ;
+		case 'bottom-left':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_LEFT ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_BOTTOM
+			} ;
+		case 'left':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_LEFT ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
+			} ;
+		case 'top-right':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_RIGHT ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_TOP
+			} ;
+		case 'bottom-right':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_RIGHT ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_BOTTOM
+			} ;
+		case 'right':
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_RIGHT ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
+			} ;
+		default:
+			return {
+				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
+				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
+			} ;
+	}
+} ;
+
+
+
 /*
 	Get GUI control position not relative to its parent but to another control.
 	Arguments:
@@ -6434,8 +6491,7 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 	// This is the index of the button that would be highlighted by key/gamepad up/down
 	this.keyFocusIndex = 0 ;
 	
-	//this.type = options.type ;
-	//this.wait = options.wait || 0 ;
+	this.position = options.nextStyle.position ;
 
 	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} , this ) ) ;
 
@@ -6581,6 +6637,10 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 	stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
 	spacing = theme?.group?.spacing ?? defaultTheme?.group?.spacing ?? 0 ;
 	
+	var alignment = misc.positionToAlignment( this.position ) ;
+	stack.horizontalAlignment = alignment.horizontalAlignment ;
+	stack.verticalAlignment = alignment.verticalAlignment ;
+
 	// Vertical stack (only one suppported ATM)
 	stack.isVertical = true ;
 	this.childrenWidthInPixelsRequired = false ;
