@@ -1,6 +1,6 @@
 {
   "name": "spellcast-ext-3dgws",
-  "version": "0.50.5",
+  "version": "0.50.6",
   "description": "3D Ground With Sprites - A Spellcast's Client Extension.",
   "main": "lib/extension.js",
   "engines": {

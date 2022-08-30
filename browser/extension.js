@@ -467,9 +467,9 @@ function DiceRoller( gScene , params ) {
 	this.wallSize = 3 ;
 	this.wallThickness = 0.5 ;	// Good thickness prevents bug of dice escaping the box
 	this.stillnessVelocitySumLimit = 0.01 ;	// Used to detect if the dices are still
-	
+
 	this.destroyed = false ;
-	
+
 	// Babylon stuffs
 	this.babylon = {
 		scene: null ,
@@ -624,7 +624,7 @@ DiceRoller.prototype.init = function() {
 
 		this.babylon.dice.push( die ) ;
 	}
-	
+
 	console.warn( "DirceRoller init done!" ) ;
 } ;
 
@@ -640,7 +640,7 @@ DiceRoller.prototype.roll = function() {
 		promise = new Promise() ;
 
 	this.gScene.globalCamera.babylon.camera.detachControl() ;
-	
+
 	promise.then( () => {
 		if ( this.gScene.globalCamera.free ) {
 			this.gScene.globalCamera.babylon.camera.attachControl() ;
@@ -651,7 +651,7 @@ DiceRoller.prototype.roll = function() {
 		scene.onPointerDown = scene.onPointerMove = scene.onPointerUp = null ;
 		if ( intervalTimer ) { clearInterval( intervalTimer ) ; }
 		arrow.setEnabled( false ) ;
-		
+
 		// Scale power from 0 to 1
 		var power = Math.min( 1 , ( Date.now() - startAt ) / this.maxPowerDuration ) ;
 
@@ -769,7 +769,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 	rect.color = "orange" ;
 	rect.thickness = 4 ;
 	rect.background = "green" ;
-	ui.addControl( rect ) ;    	
+	ui.addControl( rect ) ;
 
 	var text = new BABYLON.GUI.TextBlock() ;
 	text.text = result.values.join( '+' ) + ' = ' + result.sum ;
@@ -974,7 +974,7 @@ GEntity.prototype.destroy = function() {
 
 
 const PARENT_MODES = {
-	default: { mesh: true } ,
+	default: { mesh: true }
 } ;
 
 
@@ -989,9 +989,11 @@ GEntity.prototype.setParent = function( parentId , parentMode ) {
 
 	this.parentMode = {
 		mesh: !! parentMode.mesh ,
-		position: { all: false , x: false , y: false , z: false } ,
+		position: {
+			all: false , x: false , y: false , z: false
+		}
 	} ;
-	
+
 	if ( parentMode.position ) {
 		if ( typeof parentMode.position === 'object' ) {
 			this.parentMode.position.x = !! parentMode.position.x ;
@@ -1177,7 +1179,7 @@ GEntity.prototype.updateMeshParent = function() {
 	if ( ! this.parent || ! this.babylon.mesh ) { return ; }
 
 	var pNode , mesh = this.babylon.mesh ;
-	
+
 	if ( this.parentMode.mesh ) {
 		pNode = this.parent.babylon.mesh ;
 
@@ -1545,11 +1547,11 @@ GEntity.prototype.updatePosition = function( data , volatile = false , isClientM
 	}
 
 	if ( ! mesh ) { return ; }
-	
+
 	trNodeX = x ;
 	trNodeY = y ;
 	trNodeZ = z ;
-	
+
 	//*
 	if ( this.clientMods.position ) {
 		x += this.clientMods.position.x ;
@@ -3000,7 +3002,9 @@ function GEntityParticleSystem( dom , gScene , data ) {
 			xmin: 1 , xmax: 1 , ymin: 1 , ymax: 1 , xymin: 1 , xymax: 1
 		} ,
 		sizeGradient: null ,
-		color: { r: 1 , g: 1 , b: 1 , a: 1 } ,
+		color: {
+			r: 1 , g: 1 , b: 1 , a: 1
+		} ,
 		altColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		endColor: null ,	// { r: 1 , g: 1 , b: 1 , a: 1 } ,
 		colorGradient: null ,
@@ -3118,7 +3122,7 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 		else if ( Array.isArray( newPData.speedFactorGradient ) && newPData.speedFactorGradient.length >= 2 ) {
 			if ( pData.speedFactorGradient ) { pData.speedFactorGradient.length = 0 ; }
 			else { pData.speedFactorGradient = [] ; }
-			
+
 			for ( newStep of newPData.speedFactorGradient ) {
 				step = { t: 0 , min: 1 , max: 1 } ;
 				pData.speedFactorGradient.push( step ) ;
@@ -3163,7 +3167,7 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 		else if ( Array.isArray( newPData.rotationSpeedGradient ) && newPData.rotationSpeedGradient.length >= 2 ) {
 			if ( pData.rotationSpeedGradient ) { pData.rotationSpeedGradient.length = 0 ; }
 			else { pData.rotationSpeedGradient = [] ; }
-			
+
 			for ( newStep of newPData.rotationSpeedGradient ) {
 				step = { t: 0 , min: 1 , max: 1 } ;
 				pData.rotationSpeedGradient.push( step ) ;
@@ -3208,7 +3212,7 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 		else if ( Array.isArray( newPData.sizeGradient ) && newPData.sizeGradient.length >= 2 ) {
 			if ( pData.sizeGradient ) { pData.sizeGradient.length = 0 ; }
 			else { pData.sizeGradient = [] ; }
-			
+
 			for ( newStep of newPData.sizeGradient ) {
 				step = { t: 0 , min: 1 , max: 1 } ;
 				pData.sizeGradient.push( step ) ;
@@ -3225,7 +3229,11 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			pData.color = null ;
 		}
 		else if ( newPData.color && typeof newPData.color === 'object' ) {
-			if ( ! pData.color ) { pData.color = { r: 1 , g: 1 , b: 1 , a: 1 } ; }
+			if ( ! pData.color ) {
+				pData.color = {
+					r: 1 , g: 1 , b: 1 , a: 1
+				} ;
+			}
 			if ( Number.isFinite( newPData.color.r ) ) { pData.color.r = newPData.color.r ; }
 			if ( Number.isFinite( newPData.color.g ) ) { pData.color.g = newPData.color.g ; }
 			if ( Number.isFinite( newPData.color.b ) ) { pData.color.b = newPData.color.b ; }
@@ -3236,7 +3244,11 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			pData.altColor = null ;
 		}
 		else if ( newPData.altColor && typeof newPData.altColor === 'object' ) {
-			if ( ! pData.altColor ) { pData.altColor = { r: 1 , g: 1 , b: 1 , a: 1 } ; }
+			if ( ! pData.altColor ) {
+				pData.altColor = {
+					r: 1 , g: 1 , b: 1 , a: 1
+				} ;
+			}
 			if ( Number.isFinite( newPData.altColor.r ) ) { pData.altColor.r = newPData.altColor.r ; }
 			if ( Number.isFinite( newPData.altColor.g ) ) { pData.altColor.g = newPData.altColor.g ; }
 			if ( Number.isFinite( newPData.altColor.b ) ) { pData.altColor.b = newPData.altColor.b ; }
@@ -3247,7 +3259,11 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			pData.endColor = null ;
 		}
 		else if ( newPData.endColor && typeof newPData.endColor === 'object' ) {
-			if ( ! pData.endColor ) { pData.endColor = { r: 1 , g: 1 , b: 1 , a: 1 } ; }
+			if ( ! pData.endColor ) {
+				pData.endColor = {
+					r: 1 , g: 1 , b: 1 , a: 1
+				} ;
+			}
 			if ( Number.isFinite( newPData.endColor.r ) ) { pData.endColor.r = newPData.endColor.r ; }
 			if ( Number.isFinite( newPData.endColor.g ) ) { pData.endColor.g = newPData.endColor.g ; }
 			if ( Number.isFinite( newPData.endColor.b ) ) { pData.endColor.b = newPData.endColor.b ; }
@@ -3262,7 +3278,11 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			else { pData.colorGradient = [] ; }
 
 			for ( newStep of newPData.colorGradient ) {
-				step = { t: 0 , color: { r: 1 , g: 1 , b: 1 , a: 1 } , altColor: null } ;
+				step = { t: 0 ,
+					color: {
+						r: 1 , g: 1 , b: 1 , a: 1
+					} ,
+					altColor: null } ;
 				pData.colorGradient.push( step ) ;
 				if ( Number.isFinite( newStep.t ) ) { step.t = newStep.t ; }
 				if ( newStep.color ) {
@@ -3271,7 +3291,9 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 					if ( Number.isFinite( newStep.color.b ) ) { step.color.b = newStep.color.b ; }
 					if ( Number.isFinite( newStep.color.a ) ) { step.color.a = newStep.color.a ; }
 					if ( newStep.altColor ) {
-						step.altColor = { r: 1 , g: 1 , b: 1 , a: 1 } ;
+						step.altColor = {
+							r: 1 , g: 1 , b: 1 , a: 1
+						} ;
 						if ( Number.isFinite( newStep.altColor.r ) ) { step.altColor.r = newStep.altColor.r ; }
 						if ( Number.isFinite( newStep.altColor.g ) ) { step.altColor.g = newStep.altColor.g ; }
 						if ( Number.isFinite( newStep.altColor.b ) ) { step.altColor.b = newStep.altColor.b ; }
@@ -3292,7 +3314,7 @@ GEntityParticleSystem.prototype.updateSpecialStage2 = function( data ) {
 			else if ( newPData.billboard ) { pData.billboard = 'all' ; }
 			else { pData.billboard = 'none' ; }
 		}
-		
+
 		console.warn( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ data.special.particleSystem" , this.special.particleSystem ) ;
 
 		this.updateParticleSystem() ;
@@ -3382,7 +3404,7 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 	// Particle movement
 	if ( ! fixedDirection ) {
 		particleSystem.direction1 = new BABYLON.Vector3( pData.speed.x , + pData.speed.y , + pData.speed.z ) ;
-		particleSystem.direction2 = 
+		particleSystem.direction2 =
 			pData.altSpeed ? new BABYLON.Vector3( pData.altSpeed.x , pData.altSpeed.y , pData.altSpeed.z ) :
 			new BABYLON.Vector3( pData.speed.x , + pData.speed.y , + pData.speed.z ) ;
 	}
@@ -3456,7 +3478,7 @@ GEntityParticleSystem.prototype.updateParticleSystem = function() {
 			particleSystem.billboardMode = BABYLON.ParticleSystem.BILLBOARDMODE_ALL ;
 			break ;
 	}
-	
+
 	// Use rendering group 1 instead of 0, so it is rendered AFTER alpha-blended mesh like GEntityShadow
 	particleSystem.renderingGroupId = 1 ;
 
@@ -4461,10 +4483,10 @@ function GScene( dom , data ) {
 	//this.id = data.id ;		// immutable
 	this.engineId = data.engineId ;	// immutable
 	//this.rightHanded = data.rightHanded !== undefined ? !! data.rightHanded : true ;    // immutable
-	
+
 	// Get controller input from the Dom web-client object
 	this.controller = this.dom.controller ;
-	
+
 	this.active = false ;
 	this.paused = false ;
 	this.persistent = false ;
@@ -4493,7 +4515,7 @@ function GScene( dom , data ) {
 	this.dom.$gfx.append( this.$gscene ) ;
 
 	this.resizeObserver = null ;	// used to detect when the canvas element is resized
-	
+
 	// What have changed before the last rendered scene
 	this.changes = {
 		camera: false
@@ -5682,52 +5704,52 @@ misc.addToSizeString = ( size , add ) => {
 
 misc.positionToAlignment = position => {
 	switch ( position ) {
-		case 'top':
+		case 'top' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_TOP
 			} ;
-		case 'bottom':
+		case 'bottom' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_BOTTOM
 			} ;
-		case 'center':
+		case 'center' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
 			} ;
-		case 'top-left':
+		case 'top-left' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_LEFT ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_TOP
 			} ;
-		case 'bottom-left':
+		case 'bottom-left' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_LEFT ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_BOTTOM
 			} ;
-		case 'left':
+		case 'left' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_LEFT ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
 			} ;
-		case 'top-right':
+		case 'top-right' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_RIGHT ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_TOP
 			} ;
-		case 'bottom-right':
+		case 'bottom-right' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_RIGHT ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_BOTTOM
 			} ;
-		case 'right':
+		case 'right' :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_RIGHT ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
 			} ;
-		default:
+		default :
 			return {
 				horizontalAlignment: Control.HORIZONTAL_ALIGNMENT_CENTER ,
 				verticalAlignment: Control.VERTICAL_ALIGNMENT_CENTER
@@ -5758,7 +5780,7 @@ misc.getControlPositionRelativeTo = (
 ) => {
 	var left = control._currentMeasure.left - reference._currentMeasure.left ,
 		top = control._currentMeasure.top - reference._currentMeasure.top ;
-	
+
 	if ( horizontalAlignment === Control.HORIZONTAL_ALIGNMENT_LEFT ) {
 		if ( originX === 1 ) {	// right
 			left += control._currentMeasure.width ;
@@ -5769,27 +5791,27 @@ misc.getControlPositionRelativeTo = (
 	}
 	else if ( horizontalAlignment === Control.HORIZONTAL_ALIGNMENT_RIGHT ) {
 		if ( originX === -1 ) {
-			left += - reference._currentMeasure.width ;
+			left += -reference._currentMeasure.width ;
 		}
 		else if ( originX === 0 ) {
-			left += - reference._currentMeasure.width + control._currentMeasure.width / 2 ;
+			left += -reference._currentMeasure.width + control._currentMeasure.width / 2 ;
 		}
 		else {	// right or null
-			left = - reference._currentMeasure.width + control._currentMeasure.width ;
+			left = -reference._currentMeasure.width + control._currentMeasure.width ;
 		}
 	}
 	else if ( horizontalAlignment === Control.HORIZONTAL_ALIGNMENT_CENTER ) {
 		if ( originX === -1 ) {
-			left += - reference._currentMeasure.width / 2 ;
+			left += -reference._currentMeasure.width / 2 ;
 		}
 		else if ( originX === 1 ) {
-			left += - reference._currentMeasure.width / 2 + control._currentMeasure.width ;
+			left += -reference._currentMeasure.width / 2 + control._currentMeasure.width ;
 		}
 		else {	// center or null
-			left += ( - reference._currentMeasure.width + control._currentMeasure.width ) / 2 ;
+			left += ( -reference._currentMeasure.width + control._currentMeasure.width ) / 2 ;
 		}
 	}
-	
+
 	if ( verticalAlignment === Control.VERTICAL_ALIGNMENT_TOP ) {
 		if ( originY === 1 ) {
 			top += control._currentMeasure.height ;
@@ -5800,27 +5822,27 @@ misc.getControlPositionRelativeTo = (
 	}
 	else if ( verticalAlignment === Control.VERTICAL_ALIGNMENT_BOTTOM ) {
 		if ( originY === -1 ) {
-			top += - reference._currentMeasure.height ;
+			top += -reference._currentMeasure.height ;
 		}
 		else if ( originY === 0 ) {
-			top += - reference._currentMeasure.height + control._currentMeasure.height / 2 ;
+			top += -reference._currentMeasure.height + control._currentMeasure.height / 2 ;
 		}
 		else {	// right or null
-			top = - reference._currentMeasure.height + control._currentMeasure.height ;
+			top = -reference._currentMeasure.height + control._currentMeasure.height ;
 		}
 	}
 	else if ( verticalAlignment === Control.VERTICAL_ALIGNMENT_CENTER ) {
 		if ( originY === -1 ) {
-			top += - reference._currentMeasure.height / 2 ;
+			top += -reference._currentMeasure.height / 2 ;
 		}
 		else if ( originY === 1 ) {
-			top += - reference._currentMeasure.height / 2 + control._currentMeasure.height ;
+			top += -reference._currentMeasure.height / 2 + control._currentMeasure.height ;
 		}
 		else {	// center or null
-			top += ( - reference._currentMeasure.height + control._currentMeasure.height ) / 2 ;
+			top += ( -reference._currentMeasure.height + control._currentMeasure.height ) / 2 ;
 		}
 	}
-	
+
 	return { left , top } ;
 } ;
 
@@ -5864,8 +5886,8 @@ module.exports = utils ;
 
 
 const DEG_0 = 0 ,	// n
-    DEG_22_5 = Math.PI / 8 ,
-    DEG_45 = Math.PI / 4 ,	// nw
+	DEG_22_5 = Math.PI / 8 ,
+	DEG_45 = Math.PI / 4 ,	// nw
 	DEG_90 = Math.PI / 2 ,	// w
 	DEG_135 = Math.PI * 3 / 4 ,	// sw
 	DEG_180 = Math.PI ,	// s
@@ -6153,7 +6175,7 @@ Box.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 		this.containerRectStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
 		this.applyRectangleStyle( containerRect , this.containerRectStyle ) ;
 	}
-	
+
 	/*
 	// Not defined in time (because width is not in pixels but is a rate)
 	if ( this.paddingLeft + this.paddingRight > containerRect.widthInPixels / 2 ) {
@@ -6291,7 +6313,7 @@ module.exports = Button ;
 
 
 Button.prototype.destroy = function() {
-    TextBox.prototype.destroy.call( this ) ;
+	TextBox.prototype.destroy.call( this ) ;
 } ;
 
 
@@ -6490,7 +6512,7 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 
 	// This is the index of the button that would be highlighted by key/gamepad up/down
 	this.keyFocusIndex = 0 ;
-	
+
 	this.position = options.nextStyle?.position ?? null ;
 
 	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} , this ) ) ;
@@ -6533,17 +6555,17 @@ Choices.prototype.run = async function() {
 			let keyFocusIndex = this.keyFocusIndex ;
 
 			switch ( command ) {
-				case 'confirm':
+				case 'confirm' :
 					this.buttons[ keyFocusIndex ].pressDown() ;
 					setTimeout( () => this.buttons[ keyFocusIndex ].pressUp() , 200 ) ;
 					break ;
-				case 'up':
+				case 'up' :
 					if ( this.keyFocusIndex > 0 ) {
 						this.keyFocusIndex -- ;
 						this.focus( this.keyFocusIndex ) ;
 					}
 					break ;
-				case 'down':
+				case 'down' :
 					if ( this.keyFocusIndex < this.buttons.length - 1 ) {
 						this.keyFocusIndex ++ ;
 						this.focus( this.keyFocusIndex ) ;
@@ -6578,7 +6600,7 @@ Choices.prototype.run = async function() {
 Choices.prototype.focus = function( focusIndex ) {
 	var found = false ,
 		focusImage = this.babylon.focusImage ;
-	
+
 	this.buttons.forEach( ( button , index ) => {
 		if ( index === focusIndex ) {
 			let position = misc.getControlPositionRelativeTo(
@@ -6587,11 +6609,11 @@ Choices.prototype.focus = function( focusIndex ) {
 				-1 , 0
 			) ;
 			console.warn( "focusImage.parent" , focusImage.parent , "position" , position ) ;
-			
+
 			focusImage.isVisible = true ;
 			focusImage.leftInPixels = position.left ;
 			focusImage.topInPixels = position.top ;
-			
+
 			button.hover() ;
 			found = true ;
 		}
@@ -6599,7 +6621,7 @@ Choices.prototype.focus = function( focusIndex ) {
 			button.standingBy() ;
 		}
 	} ) ;
-	
+
 	if ( ! found ) {
 		focusImage.isVisible = false ;
 	}
@@ -6633,10 +6655,10 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 	var stack , spacing ,
 		parentContainer = this.parent.getUi() ,
 		parentSize = parentContainer.getSize() ;
-	
+
 	stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
 	spacing = theme?.group?.spacing ?? defaultTheme?.group?.spacing ?? 0 ;
-	
+
 	var alignment = misc.positionToAlignment( this.position ) ;
 	stack.horizontalAlignment = alignment.horizontalAlignment ;
 	stack.verticalAlignment = alignment.verticalAlignment ;
@@ -6650,11 +6672,11 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 	stack.spacing = spacing ;
 
 	parentContainer.addControl( stack ) ;
-	
+
 	this.buttons.forEach( button => {
 		button.createGUI( theme , defaultTheme ) ;
 	} ) ;
-	
+
 	// The focus image, usually an arrow, is on a button highlighted by keyboard arrow or gamepad, ready to be 'confirmed'
 	var focusImage = this.babylon.focusImage = new BABYLON.GUI.Image( 'message-next' , '/icons/focus.png' ) ;
 	focusImage.width = "15px" ;
@@ -6886,16 +6908,16 @@ Message.prototype.confirm = function() {
 		this.gScene.controller.off( 'command' , onCommand ) ;
 		promise.resolve() ;
 	} ;
-	
+
 	var onCommand = command => {
 		if ( command === 'confirm' ) {
 			this.gScene.setNavigationByKey( true ) ;
 			done() ;
 		}
 	} ;
-	
+
 	this.gScene.controller.on( 'command' , onCommand ) ;
-	
+
 	this.babylon.containerRect.onPointerClickObservable.addOnce( () => {
 		this.gScene.setNavigationByKey( false ) ;
 		done() ;
@@ -6951,7 +6973,7 @@ const Promise = require( 'seventh' ) ;
 
 function TextBox( dom , gScene , text , options = {} , parent = null ) {
 	Box.call( this , dom , gScene , options , parent ) ;
-	
+
 	this.text = text ;
 	//this.type = options.type ;
 
@@ -6998,12 +7020,12 @@ const THEME = TextBox.THEME = deepExtend( {} , Box.THEME , {
 
 TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
-	
+
 	Box.prototype.createGUI.call( this , theme , defaultTheme ) ;
-	
+
 	// TextInput is derived from TextBox, but it does not always feature an input label
 	if ( ! this.text ) { return ; }
-	
+
 	// The container is the containerRect, except if there is a containerStack defined
 	var container = this.babylon.containerStack || this.babylon.containerRect ;
 
@@ -7025,10 +7047,10 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 	structuredTextBlock.outlineWidth = theme?.text?.outlineWidth ?? defaultTheme?.text?.outlineWidth ?? 0 ;
 	structuredTextBlock.outlineColor = theme?.text?.outlineColor ?? defaultTheme?.text?.outlineColor ?? null ;
 	structuredTextBlock.structuredText = this.parseText( this.text ) ;
-	
+
 	structuredTextBlock.onLinesReadyObservable.addOnce( () => {
 		this.fxTextParts.length = 0 ;
-		
+
 		for ( let line of structuredTextBlock.lines ) {
 			for ( let part of line.parts ) {
 				// Some FX may not update (e.g. a rainbow effect would only need an init method)
@@ -7037,12 +7059,12 @@ TextBox.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
 				}
 			}
 		}
-		
+
 		if ( this.fxTextParts.length ) {
 			this.gScene.on( 'render' , this.updateFx ) ;
 		}
 	} ) ;
-	
+
 
 	//structuredTextBlock.textWrapping = true ;
 	//structuredTextBlock.textWrapping = BABYLON.GUI.TextWrapping.Clip ;
@@ -7076,7 +7098,7 @@ TextBox.prototype.updateFx = function() {
 
 		this.isFxInit = true ;
 	}
-	
+
 	for ( let part of this.fxTextParts ) {
 		fx = textFx[ part.staticCustomData.fx ] ;
 
@@ -7084,7 +7106,7 @@ TextBox.prototype.updateFx = function() {
 			fx.update( part , this , this.babylon.structuredTextBlock , index ) ;
 			updated = true ;
 		}
-		
+
 		index ++ ;
 	}
 
@@ -7217,7 +7239,7 @@ const Promise = require( 'seventh' ) ;
 
 function TextInput( dom , gScene , options = {} , parent = null ) {
 	TextBox.call( this , dom , gScene , options.label , options , parent ) ;
-	
+
 	this.input = options.placeholder || '' ;
 	//this.type = options.type ;
 
@@ -7242,11 +7264,11 @@ TextInput.prototype.destroy = function() {
 // Should be redefined
 TextInput.prototype.run = async function( autoFocus = false ) {
 	if ( ! this.guiCreated ) { this.createGUI() ; }
-	
+
 	var promise = new Promise() ;
-	
+
 	if ( autoFocus ) { this.babylon.inputText.focus() ; }
-	
+
 	this.babylon.inputText.onKeyboardEventProcessedObservable.add( event => {
 		if ( event.key === 'Enter' ) { promise.resolve() ; }
 	} ) ;
@@ -7254,7 +7276,7 @@ TextInput.prototype.run = async function( autoFocus = false ) {
 	await promise ;
 
 	var input = this.babylon.inputText.text ;
-	
+
 	this.destroy() ;
 	return input ;
 } ;
@@ -7277,7 +7299,7 @@ const THEME = TextInput.THEME = deepExtend( {} , TextBox.THEME , {
 
 TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInput?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
-	
+
 	// Create the stack now, TextBox should be aware of it to put the text inside the stack instead of the rectangle
 	var stack = this.babylon.containerStack = new BABYLON.GUI.StackPanel() ;
 
@@ -7296,11 +7318,11 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 	stack.isVertical = true ;
 	// /!\ Looks like there is a bug with spacing, if defined in pixel, the children are not drawn... (Babylonjs 5 alpha, 18/01/2022)
 	//stack.spacing = theme?.textInput?.labelMargin ?? defaultTheme?.textInput?.labelMargin ?? 0 ;
-	stack.spacing = parseInt( theme?.textInput?.labelMargin ?? defaultTheme?.textInput?.labelMargin ?? 0 ) ;
+	stack.spacing = parseInt( theme?.textInput?.labelMargin ?? defaultTheme?.textInput?.labelMargin ?? 0 , 10 ) ;
 
 	this.babylon.containerRect.addControl( stack ) ;
-	
-	
+
+
 	// Create Babylon's "InputText"
 	var inputText = this.babylon.inputText = new BABYLON.GUI.InputText( 'inputText' ) ;
 
@@ -7345,7 +7367,7 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 	//inputText.alpha = this.opacity ;
 	//inputText.resizeToFit = true ;
 	//inputText.isPointerBlocker = false ;
-	
+
 	/*
 	// TODO, it doesn't work since the parent have no size yet, it would probably need a timeout to make it work
 	var parentContainer = this.parent.getUi() ,
@@ -7355,7 +7377,7 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 	//*/
 	inputText.width = 0.8 ;
 	inputText.maxWidth = 0.8 ;
-	
+
 	inputText.height = misc.scaleSizeString( inputText.fontSize , 2.618 ) ;
 
 	stack.addControl( inputText ) ;
@@ -7439,7 +7461,7 @@ textFx.bumpy = {
 	} ,
 	update: ( part , widget ) => {
 		var period = 40 ;
-		var dy = - Math.round( part.dynamicCustomData.deltaY * 0.5 * ( 1 + Math.sin( - HALF_PI + widget.fxUpdateCount * TWO_PI / period ) ) ) ;
+		var dy = -Math.round( part.dynamicCustomData.deltaY * 0.5 * ( 1 + Math.sin( -HALF_PI + widget.fxUpdateCount * TWO_PI / period ) ) ) ;
 		part.metrics.baselineY = part.dynamicCustomData.baselineY + dy ;
 	} ,
 	updateEvery: 2
@@ -7461,7 +7483,7 @@ textFx.ola = {
 	} ,
 	update: ( part , widget , structuredTextBox , index ) => {
 		var period = 40 ;
-		var dy = - Math.round( part.dynamicCustomData.deltaY * 0.5 * ( 1 + Math.sin( - HALF_PI - index * OLA_PHASE_OFFSET + widget.fxUpdateCount * TWO_PI / period ) ) ) ;
+		var dy = -Math.round( part.dynamicCustomData.deltaY * 0.5 * ( 1 + Math.sin( -HALF_PI - index * OLA_PHASE_OFFSET + widget.fxUpdateCount * TWO_PI / period ) ) ) ;
 		part.metrics.baselineY = part.dynamicCustomData.baselineY + dy ;
 	} ,
 	updateEvery: 2
