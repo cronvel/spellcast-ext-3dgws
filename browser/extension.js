@@ -6491,7 +6491,7 @@ function Choices( dom , gScene , choices , undecidedNames , onSelect , options =
 	// This is the index of the button that would be highlighted by key/gamepad up/down
 	this.keyFocusIndex = 0 ;
 	
-	this.position = options.nextStyle.position ;
+	this.position = options.nextStyle?.position ?? null ;
 
 	this.buttons = this.choices.map( choice => new Button( this.dom , this.gScene , choice.label , {} , this ) ) ;
 
