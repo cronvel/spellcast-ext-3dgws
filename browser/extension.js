@@ -8276,7 +8276,7 @@ LeanEvents.prototype.getAllStates = function() {
 },{"../package.json":40}],40:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "The next generation of events handling for javascript! New: abstract away the network!",
   "main": "lib/NextGenEvents.js",
   "engines": {
@@ -9584,6 +9584,8 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 "use strict" ;
 
+/* global AggregateError */
+
 
 
 const Promise = require( './seventh.js' ) ;
@@ -9606,32 +9608,27 @@ Promise.all = ( iterable ) => {
 	for ( value of iterable ) {
 		if ( settled ) { break ; }
 
-		index ++ ;
+		const promiseIndex = ++ index ;
 
-		// Create a scope to keep track of the promise's own index
-		( () => {
-			const promiseIndex = index ;
+		Promise.resolve( value )
+			.then(
+				value_ => {
+					if ( settled ) { return ; }
 
-			Promise.resolve( value )
-				.then(
-					value_ => {
-						if ( settled ) { return ; }
+					values[ promiseIndex ] = value_ ;
+					count ++ ;
 
-						values[ promiseIndex ] = value_ ;
-						count ++ ;
-
-						if ( count >= length ) {
-							settled = true ;
-							allPromise._resolveValue( values ) ;
-						}
-					} ,
-					error => {
-						if ( settled ) { return ; }
+					if ( count >= length ) {
 						settled = true ;
-						allPromise.reject( error ) ;
+						allPromise._resolveValue( values ) ;
 					}
-				) ;
-		} )() ;
+				} ,
+				error => {
+					if ( settled ) { return ; }
+					settled = true ;
+					allPromise.reject( error ) ;
+				}
+			) ;
 	}
 
 	length = index + 1 ;
@@ -9693,6 +9690,56 @@ Promise._allArrayOne = ( value , index , runtime ) => {
 } ;
 
 
+
+Promise.allSettled = ( iterable ) => {
+	var index = -1 , settled = false ,
+		count = 0 , length = Infinity ,
+		value , values = [] ,
+		allPromise = new Promise() ;
+
+	for ( value of iterable ) {
+		if ( settled ) { break ; }
+
+		const promiseIndex = ++ index ;
+
+		Promise.resolve( value )
+			.then(
+				value_ => {
+					if ( settled ) { return ; }
+
+					values[ promiseIndex ] = { status: 'fulfilled' , value: value_ } ;
+					count ++ ;
+
+					if ( count >= length ) {
+						settled = true ;
+						allPromise._resolveValue( values ) ;
+					}
+				} ,
+				error => {
+					if ( settled ) { return ; }
+
+					values[ promiseIndex ] = { status: 'rejected' ,  reason: error } ;
+					count ++ ;
+
+					if ( count >= length ) {
+						settled = true ;
+						allPromise._resolveValue( values ) ;
+					}
+				}
+			) ;
+	}
+
+	length = index + 1 ;
+
+	if ( ! length ) {
+		allPromise._resolveValue( values ) ;
+	}
+
+	return allPromise ;
+} ;
+
+
+
 // Promise.all() with an iterator
 Promise.every =
 Promise.map = ( iterable , iterator ) => {
@@ -9704,36 +9751,31 @@ Promise.map = ( iterable , iterator ) => {
 	for ( value of iterable ) {
 		if ( settled ) { break ; }
 
-		index ++ ;
+		const promiseIndex = ++ index ;
 
-		// Create a scope to keep track of the promise's own index
-		( () => {
-			const promiseIndex = index ;
-
-			Promise.resolve( value )
-				.then( value_ => {
+		Promise.resolve( value )
+			.then( value_ => {
+				if ( settled ) { return ; }
+				return iterator( value_ , promiseIndex ) ;
+			} )
+			.then(
+				value_ => {
 					if ( settled ) { return ; }
-					return iterator( value_ , promiseIndex ) ;
-				} )
-				.then(
-					value_ => {
-						if ( settled ) { return ; }
 
-						values[ promiseIndex ] = value_ ;
-						count ++ ;
+					values[ promiseIndex ] = value_ ;
+					count ++ ;
 
-						if ( count >= length ) {
-							settled = true ;
-							allPromise._resolveValue( values ) ;
-						}
-					} ,
-					error => {
-						if ( settled ) { return ; }
+					if ( count >= length ) {
 						settled = true ;
-						allPromise.reject( error ) ;
+						allPromise._resolveValue( values ) ;
 					}
-				) ;
-		} )() ;
+				} ,
+				error => {
+					if ( settled ) { return ; }
+					settled = true ;
+					allPromise.reject( error ) ;
+				}
+			) ;
 	}
 
 	length = index + 1 ;
@@ -9750,7 +9792,7 @@ Promise.map = ( iterable , iterator ) => {
 /*
 	It works symmetrically with Promise.all(), the resolve and reject logic are switched.
 	Therefore, it resolves to the first resolving promise OR reject if all promises are rejected
-	with, as a reason, the array of all promise rejection reasons.
+	with, as a reason an AggregateError of all promise rejection reasons.
 */
 Promise.any = ( iterable ) => {
 	var index = -1 , settled = false ,
@@ -9762,33 +9804,28 @@ Promise.any = ( iterable ) => {
 	for ( value of iterable ) {
 		if ( settled ) { break ; }
 
-		index ++ ;
+		const promiseIndex = ++ index ;
 
-		// Create a scope to keep track of the promise's own index
-		( () => {
-			const promiseIndex = index ;
+		Promise.resolve( value )
+			.then(
+				value_ => {
+					if ( settled ) { return ; }
 
-			Promise.resolve( value )
-				.then(
-					value_ => {
-						if ( settled ) { return ; }
+					settled = true ;
+					anyPromise._resolveValue( value_ ) ;
+				} ,
+				error => {
+					if ( settled ) { return ; }
 
+					errors[ promiseIndex ] = error ;
+					count ++ ;
+
+					if ( count >= length ) {
 						settled = true ;
-						anyPromise._resolveValue( value_ ) ;
-					} ,
-					error => {
-						if ( settled ) { return ; }
-
-						errors[ promiseIndex ] = error ;
-						count ++ ;
-
-						if ( count >= length ) {
-							settled = true ;
-							anyPromise.reject( errors ) ;
-						}
+						anyPromise.reject( new AggregateError( errors ) , 'Promise.any(): All promises have rejected' ) ;
 					}
-				) ;
-		} )() ;
+				}
+			) ;
 	}
 
 	length = index + 1 ;
@@ -9813,43 +9850,38 @@ Promise.some = ( iterable , iterator ) => {
 	for ( value of iterable ) {
 		if ( settled ) { break ; }
 
-		index ++ ;
+		const promiseIndex = ++ index ;
 
-		// Create a scope to keep track of the promise's own index
-		( () => {
-			const promiseIndex = index ;
-
-			Promise.resolve( value )
-				.then( value_ => {
+		Promise.resolve( value )
+			.then( value_ => {
+				if ( settled ) { return ; }
+				return iterator( value_ , promiseIndex ) ;
+			} )
+			.then(
+				value_ => {
 					if ( settled ) { return ; }
-					return iterator( value_ , promiseIndex ) ;
-				} )
-				.then(
-					value_ => {
-						if ( settled ) { return ; }
 
+					settled = true ;
+					anyPromise._resolveValue( value_ ) ;
+				} ,
+				error => {
+					if ( settled ) { return ; }
+
+					errors[ promiseIndex ] = error ;
+					count ++ ;
+
+					if ( count >= length ) {
 						settled = true ;
-						anyPromise._resolveValue( value_ ) ;
-					} ,
-					error => {
-						if ( settled ) { return ; }
-
-						errors[ promiseIndex ] = error ;
-						count ++ ;
-
-						if ( count >= length ) {
-							settled = true ;
-							anyPromise.reject( errors ) ;
-						}
+						anyPromise.reject( new AggregateError( errors , 'Promise.some(): All promises have rejected' ) ) ;
 					}
-				) ;
-		} )() ;
+				}
+			) ;
 	}
 
 	length = index + 1 ;
 
 	if ( ! length ) {
-		anyPromise.reject( new RangeError( 'Promise.any(): empty array' ) ) ;
+		anyPromise.reject( new RangeError( 'Promise.some(): empty array' ) ) ;
 	}
 
 	return anyPromise ;
@@ -9872,39 +9904,34 @@ Promise.filter = ( iterable , iterator ) => {
 	for ( value of iterable ) {
 		if ( settled ) { break ; }
 
-		index ++ ;
+		const promiseIndex = ++ index ;
 
-		// Create a scope to keep track of the promise's own index
-		( () => {
-			const promiseIndex = index ;
-
-			Promise.resolve( value )
-				.then( value_ => {
+		Promise.resolve( value )
+			.then( value_ => {
+				if ( settled ) { return ; }
+				values[ promiseIndex ] = value_ ;
+				return iterator( value_ , promiseIndex ) ;
+			} )
+			.then(
+				iteratorValue => {
 					if ( settled ) { return ; }
-					values[ promiseIndex ] = value_ ;
-					return iterator( value_ , promiseIndex ) ;
-				} )
-				.then(
-					iteratorValue => {
-						if ( settled ) { return ; }
 
-						count ++ ;
+					count ++ ;
 
-						if ( ! iteratorValue ) { values[ promiseIndex ] = HOLE ; }
+					if ( ! iteratorValue ) { values[ promiseIndex ] = HOLE ; }
 
-						if ( count >= length ) {
-							settled = true ;
-							values = values.filter( e => e !== HOLE ) ;
-							filterPromise._resolveValue( values ) ;
-						}
-					} ,
-					error => {
-						if ( settled ) { return ; }
+					if ( count >= length ) {
 						settled = true ;
-						filterPromise.reject( error ) ;
+						values = values.filter( e => e !== HOLE ) ;
+						filterPromise._resolveValue( values ) ;
 					}
-				) ;
-		} )() ;
+				} ,
+				error => {
+					if ( settled ) { return ; }
+					settled = true ;
+					filterPromise.reject( error ) ;
+				}
+			) ;
 	}
 
 	length = index + 1 ;
@@ -9993,43 +10020,38 @@ Promise.reduce = ( iterable , iterator , accumulator ) => {
 Promise.mapObject = ( inputObject , iterator ) => {
 	var settled = false ,
 		count = 0 ,
-		i , key , keys = Object.keys( inputObject ) ,
+		keys = Object.keys( inputObject ) ,
 		length = keys.length ,
-		value , outputObject = {} ,
+		outputObject = {} ,
 		mapPromise = new Promise() ;
 
-	for ( i = 0 ; ! settled && i < length ; i ++ ) {
-		key = keys[ i ] ;
-		value = inputObject[ key ] ;
+	for ( let i = 0 ; ! settled && i < length ; i ++ ) {
+		const key = keys[ i ] ;
+		const value = inputObject[ key ] ;
 
-		// Create a scope to keep track of the promise's own key
-		( () => {
-			const promiseKey = key ;
-
-			Promise.resolve( value )
-				.then( value_ => {
+		Promise.resolve( value )
+			.then( value_ => {
+				if ( settled ) { return ; }
+				return iterator( value_ , key ) ;
+			} )
+			.then(
+				value_ => {
 					if ( settled ) { return ; }
-					return iterator( value_ , promiseKey ) ;
-				} )
-				.then(
-					value_ => {
-						if ( settled ) { return ; }
 
-						outputObject[ promiseKey ] = value_ ;
-						count ++ ;
+					outputObject[ key ] = value_ ;
+					count ++ ;
 
-						if ( count >= length ) {
-							settled = true ;
-							mapPromise._resolveValue( outputObject ) ;
-						}
-					} ,
-					error => {
-						if ( settled ) { return ; }
+					if ( count >= length ) {
 						settled = true ;
-						mapPromise.reject( error ) ;
+						mapPromise._resolveValue( outputObject ) ;
 					}
-				) ;
-		} )() ;
+				} ,
+				error => {
+					if ( settled ) { return ; }
+					settled = true ;
+					mapPromise.reject( error ) ;
+				}
+			) ;
 	}
 
 	if ( ! length ) {
@@ -10075,48 +10097,42 @@ Promise.concurrent = ( limit , iterable , iterator ) => {
 
 			if ( settled ) { break ; }
 
-			index ++ ;
+			const promiseIndex = ++ index ;
+			running ++ ;
+			//console.log( "Launch" , promiseIndex ) ;
 
-			// Create a scope to keep track of the promise's own index
-			( () => {
-				const promiseIndex = index ;
-
-				running ++ ;
-				//console.log( "Launch" , promiseIndex ) ;
-
-				Promise.resolve( value )
-					.then( value_ => {
+			Promise.resolve( value )
+				.then( value_ => {
+					if ( settled ) { return ; }
+					return iterator( value_ , promiseIndex ) ;
+				} )
+				.then(
+					value_ => {
+					//console.log( "Done" , promiseIndex , value_ ) ;
 						if ( settled ) { return ; }
-						return iterator( value_ , promiseIndex ) ;
-					} )
-					.then(
-						value_ => {
-						//console.log( "Done" , promiseIndex , value_ ) ;
-							if ( settled ) { return ; }
 
-							values[ promiseIndex ] = value_ ;
-							count ++ ;
-							running -- ;
+						values[ promiseIndex ] = value_ ;
+						count ++ ;
+						running -- ;
 
-							//console.log( "count/length" , count , length ) ;
-							if ( count >= length ) {
-								settled = true ;
-								concurrentPromise._resolveValue( values ) ;
-								return ;
-							}
-
-							if ( running < limit ) {
-								runBatch() ;
-								return ;
-							}
-						} ,
-						error => {
-							if ( settled ) { return ; }
+						//console.log( "count/length" , count , length ) ;
+						if ( count >= length ) {
 							settled = true ;
-							concurrentPromise.reject( error ) ;
+							concurrentPromise._resolveValue( values ) ;
+							return ;
 						}
-					) ;
-			} )() ;
+
+						if ( running < limit ) {
+							runBatch() ;
+							return ;
+						}
+					} ,
+					error => {
+						if ( settled ) { return ; }
+						settled = true ;
+						concurrentPromise.reject( error ) ;
+					}
+				) ;
 		}
 	} ;
 
@@ -11105,7 +11121,7 @@ Promise.debounce = ( asyncFn , thisBinding ) => {
 
 
 /*
-	Like .debouce(), but the last promise is returned for some extra time after it resolved
+	Like .debounce(), but subsequent call continue to return the last promise for some extra time after it resolved.
 */
 Promise.debounceDelay = ( delay , asyncFn , thisBinding ) => {
 	var inProgress = null ;
@@ -11126,38 +11142,111 @@ Promise.debounceDelay = ( delay , asyncFn , thisBinding ) => {
 
 
 /*
+	debounceUpdate( [options] , asyncFn , thisBinding ) => {
+
 	It does nothing if the decoratee is still in progress.
-	Instead, the decoratee is called when finished once and only once, if it was tried one or more time during its progress.
+	Instead, the decoratee is called again after finishing once and only once, if it was tried one or more time during its progress.
 	In case of multiple calls, the arguments of the last call will be used.
+
 	The use case is .update()/.refresh()/.redraw() functions.
+
+	If 'options' is given, it is an object, with:
+		* delay: `number` a delay before calling again the decoratee
+		* delayFn: async `function` called before calling again the decoratee
+		* waitFn: async `function` called before calling the decoratee (even the first try), use-case: Window.requestAnimationFrame()
 */
-Promise.debounceUpdate = ( asyncFn , thisBinding ) => {
-	var inProgress = null ;
-	var nextUpdateWith = null ;
-	var nextUpdatePromise = null ;
+Promise.debounceUpdate = ( options , asyncFn , thisBinding ) => {
+	var inProgress = null ,
+		waitInProgress = null ,
+		currentUpdateWith = null ,
+		currentUpdatePromise = null ,
+		nextUpdateWith = null ,
+		nextUpdatePromise = null ,
+		delay = 0 ,
+		delayFn = null ,
+		waitFn = null ,
+		inWrapper = null ,
+		outWrapper = null ;
 
-	const outWrapper = () => {
-		var args , sharedPromise ;
 
-		inProgress = null ;
+	// Manage arguments
+	if ( typeof options === 'function' ) {
+		thisBinding = asyncFn ;
+		asyncFn = options ;
+	}
+	else {
+		if ( typeof options.delay === 'number' ) { delay = options.delay ; }
+		if ( typeof options.delayFn === 'function' ) { delayFn = options.delayFn ; }
+		if ( typeof options.waitFn === 'function' ) { waitFn = options.waitFn ; }
+	}
+
+
+	const nextUpdate = () => {
+		inProgress = currentUpdatePromise = null ;
 
 		if ( nextUpdateWith ) {
-			args = nextUpdateWith ;
+			let callArgs = nextUpdateWith ;
 			nextUpdateWith = null ;
-			sharedPromise = nextUpdatePromise ;
+			let sharedPromise = nextUpdatePromise ;
 			nextUpdatePromise = null ;
 
-			// Call the asyncFn again
-			inProgress = asyncFn.call( ... args ) ;
-
+			inProgress = inWrapper( callArgs ) ;
 			// Forward the result to the pending promise
 			Promise.propagate( inProgress , sharedPromise ) ;
+		}
+	} ;
 
-			// BTW, trigger again the outWrapper
-			Promise.finally( inProgress , outWrapper ) ;
+
+	// Build outWrapper
+	if ( delayFn ) {
+		outWrapper = () => delayFn().then( nextUpdate ) ;
+	}
+	else if ( delay ) {
+		outWrapper = () => setTimeout( nextUpdate , delay ) ;
+	}
+	else {
+		outWrapper = nextUpdate ;
+	}
+
+
+	if ( waitFn ) {
+		inWrapper = ( callArgs ) => {
+			inProgress = new Promise() ;
+			currentUpdateWith = callArgs ;
+			waitInProgress = waitFn() ;
+
+			Promise.finally( waitInProgress , () => {
+				waitInProgress = null ;
+				currentUpdatePromise = asyncFn.call( ... currentUpdateWith ) ;
+				Promise.finally( currentUpdatePromise , outWrapper ) ;
+				Promise.propagate( currentUpdatePromise , inProgress ) ;
+			} ) ;
 
 			return inProgress ;
-		}
+		} ;
+
+		return function( ... args ) {
+			var localThis = thisBinding || this ;
+
+			if ( waitInProgress ) {
+				currentUpdateWith = [ localThis , ... args ] ;
+				return inProgress ;
+			}
+
+			if ( currentUpdatePromise ) {
+				if ( ! nextUpdatePromise ) { nextUpdatePromise = new Promise() ; }
+				nextUpdateWith = [ localThis , ... args ] ;
+				return nextUpdatePromise ;
+			}
+
+			return inWrapper( [ localThis , ... args ] ) ;
+		} ;
+	}
+
+	inWrapper = ( callArgs ) => {
+		inProgress = asyncFn.call( ... callArgs ) ;
+		Promise.finally( inProgress , outWrapper ) ;
+		return inProgress ;
 	} ;
 
 	return function( ... args ) {
@@ -11169,10 +11258,9 @@ Promise.debounceUpdate = ( asyncFn , thisBinding ) => {
 			return nextUpdatePromise ;
 		}
 
-		inProgress = asyncFn.call( localThis , ... args ) ;
-		Promise.finally( inProgress , outWrapper ) ;
-		return inProgress ;
+		return inWrapper( [ localThis , ... args ] ) ;
 	} ;
+
 } ;
 
 
@@ -11330,6 +11418,7 @@ Promise.debounceSync = ( getParams , fullSyncParams ) => {
 
 
 
+// The call reject with a timeout error if it takes too much time
 Promise.timeout = ( timeout , asyncFn , thisBinding ) => {
 	return function( ... args ) {
 		var promise = asyncFn.call( thisBinding || this , ... args ) ;
@@ -11352,81 +11441,6 @@ Promise.variableTimeout = ( asyncFn , thisBinding ) => {
 	} ;
 
 } ;
-
-
-
-/*
-Promise.retry = ( retryCount , retryTimeout , timeoutMultiplier , asyncFn , thisBinding ) => {
-
-	return ( ... args ) => {
-
-		var lastError ,
-			count = retryCount ,
-			timeout = retryTimeout ,
-			globalPromise = new Promise() ;
-
-		const callAgain = () => {
-			if ( count -- < 0 ) {
-				globalPromise.reject( lastError ) ;
-				return ;
-			}
-
-			var promise = asyncFn.call( thisBinding , ... args ) ;
-
-			promise.then(
-				//( value ) => globalPromise.resolve( value ) ,
-				( value ) => {
-					globalPromise.resolve( value ) ;
-				} ,
-				( error ) => {
-					lastError = error ;
-					setTimeout( callAgain , timeout ) ;
-					timeout *= timeoutMultiplier ;
-				}
-			) ;
-		} ;
-
-		callAgain() ;
-
-		return globalPromise ;
-	} ;
-} ;
-
-
-
-Promise.variableRetry = ( asyncFn , thisBinding ) => {
-
-	return ( retryCount , retryTimeout , timeoutMultiplier , ... args ) => {
-
-		var lastError ,
-			count = retryCount ,
-			timeout = retryTimeout ,
-			globalPromise = new Promise() ;
-
-		const callAgain = () => {
-			if ( count -- < 0 ) {
-				globalPromise.reject( lastError ) ;
-				return ;
-			}
-
-			var promise = asyncFn.call( thisBinding , ... args ) ;
-
-			promise.then(
-				( value ) => globalPromise.resolve( value ) ,
-				( error ) => {
-					lastError = error ;
-					setTimeout( callAgain , timeout ) ;
-					timeout *= timeoutMultiplier ;
-				}
-			) ;
-		} ;
-
-		callAgain() ;
-
-		return globalPromise ;
-	} ;
-} ;
-*/
 
 
 },{"./seventh.js":51}],49:[function(require,module,exports){
@@ -12022,10 +12036,7 @@ module.exports = extend ;
 
 
 function extendOne( runtime , options , target , source , mask ) {
-	var j , jmax , path ,
-		sourceKeys , sourceKey , sourceValue , sourceValueIsObject , sourceValueProto , sourceDescriptor ,
-		targetKey , targetPointer , targetValue , targetValueIsObject ,
-		indexOfSource = -1 ;
+	var sourceKeys , sourceKey ;
 
 	// Max depth check
 	if ( options.maxDepth && runtime.depth > options.maxDepth ) {
@@ -12038,158 +12049,192 @@ function extendOne( runtime , options , target , source , mask ) {
 		runtime.references.targets.push( target ) ;
 	}
 
-	if ( options.own ) {
+	// 'unflat' mode computing
+	if ( options.unflat && runtime.depth === 0 ) {
+		for ( sourceKey in source ) {
+			runtime.unflatKeys = sourceKey.split( options.unflat ) ;
+			runtime.unflatIndex = 0 ;
+			runtime.unflatFullKey = sourceKey ;
+			extendOneKV( runtime , options , target , source , runtime.unflatKeys[ runtime.unflatIndex ] , mask ) ;
+		}
+
+		delete runtime.unflatKeys ;
+		delete runtime.unflatIndex ;
+		delete runtime.unflatFullKey ;
+	}
+	else if ( options.own ) {
 		if ( options.nonEnum ) { sourceKeys = Object.getOwnPropertyNames( source ) ; }
 		else { sourceKeys = Object.keys( source ) ; }
+
+		for ( sourceKey of sourceKeys ) {
+			extendOneKV( runtime , options , target , source , sourceKey , mask ) ;
+		}
 	}
-	else { sourceKeys = source ; }
+	else {
+		for ( sourceKey in source ) {
+			extendOneKV( runtime , options , target , source , sourceKey , mask ) ;
+		}
+	}
+}
 
-	for ( sourceKey in sourceKeys ) {
-		if ( options.own ) { sourceKey = sourceKeys[ sourceKey ] ; }
 
-		// OMG, this DEPRECATED __proto__ shit is still alive and can be used to hack anything ><
-		if ( sourceKey === '__proto__' ) { continue ; }
 
-		// If descriptor is on, get it now
-		if ( options.descriptor ) {
-			sourceDescriptor = Object.getOwnPropertyDescriptor( source , sourceKey ) ;
-			sourceValue = sourceDescriptor.value ;
+function extendOneKV( runtime , options , target , source , sourceKey , mask ) {
+	// OMG, this DEPRECATED __proto__ shit is still alive and can be used to hack anything ><
+	if ( sourceKey === '__proto__' ) { return ; }
+
+	let sourceValue , sourceDescriptor , sourceValueProto ;
+
+	if ( runtime.unflatKeys ) {
+		if ( runtime.unflatIndex < runtime.unflatKeys.length - 1 ) {
+			sourceValue = {} ;
 		}
 		else {
-			// We have to trigger an eventual getter only once
-			sourceValue = source[ sourceKey ] ;
+			sourceValue = source[ runtime.unflatFullKey ] ;
 		}
+	}
+	else if ( options.descriptor ) {
+		// If descriptor is on, get it now
+		sourceDescriptor = Object.getOwnPropertyDescriptor( source , sourceKey ) ;
+		sourceValue = sourceDescriptor.value ;
+	}
+	else {
+		// We have to trigger an eventual getter only once
+		sourceValue = source[ sourceKey ] ;
+	}
 
-		targetPointer = target ;
-		targetKey = runtime.prefix + sourceKey ;
+	let targetKey = runtime.prefix + sourceKey ;
 
-		// Do not copy if property is a function and we don't want them
-		if ( options.nofunc && typeof sourceValue === 'function' ) { continue ; }
+	// Do not copy if property is a function and we don't want them
+	if ( options.nofunc && typeof sourceValue === 'function' ) { return ; }
 
-		// 'unflat' mode computing
-		if ( options.unflat && runtime.depth === 0 ) {
-			path = sourceKey.split( options.unflat ) ;
-			jmax = path.length - 1 ;
+	// Again, trigger an eventual getter only once
+	let targetValue = target[ targetKey ] ;
+	let targetValueIsObject = targetValue && ( typeof targetValue === 'object' || typeof targetValue === 'function' ) ;
+	let sourceValueIsObject = sourceValue && ( typeof sourceValue === 'object' || typeof sourceValue === 'function' ) ;
 
-			if ( jmax ) {
-				for ( j = 0 ; j < jmax ; j ++ ) {
-					if ( ! targetPointer[ path[ j ] ] ||
-						( typeof targetPointer[ path[ j ] ] !== 'object' &&
-							typeof targetPointer[ path[ j ] ] !== 'function' ) ) {
-						targetPointer[ path[ j ] ] = {} ;
-					}
+	if (
+		( options.deep || runtime.unflatKeys )
+		&& sourceValue
+		&& ( typeof sourceValue === 'object' || ( options.deepFunc && typeof sourceValue === 'function' ) )
+		&& ( ! options.descriptor || ! sourceDescriptor.get )
+		// not a condition we just cache sourceValueProto now... ok it's trashy ><
+		&& ( ( sourceValueProto = Object.getPrototypeOf( sourceValue ) ) || true )
+		&& ( ! ( options.deep instanceof Set ) || options.deep.has( sourceValueProto ) )
+		&& ( ! options.immutables || ! options.immutables.has( sourceValueProto ) )
+		&& ( ! options.preserve || targetValueIsObject )
+		&& ( ! mask || targetValueIsObject )
+	) {
+		let indexOfSource = options.circular ? runtime.references.sources.indexOf( sourceValue ) : - 1 ;
 
-					targetPointer = targetPointer[ path[ j ] ] ;
+		if ( options.flat ) {
+			// No circular references reconnection when in 'flat' mode
+			if ( indexOfSource >= 0 ) { return ; }
+
+			extendOne(
+				{
+					depth: runtime.depth + 1 ,
+					prefix: runtime.prefix + sourceKey + options.flat ,
+					references: runtime.references
+				} ,
+				options , target , sourceValue , mask
+			) ;
+		}
+		else {
+			if ( indexOfSource >= 0 ) {
+				// Circular references reconnection...
+				targetValue = runtime.references.targets[ indexOfSource ] ;
+
+				if ( options.descriptor ) {
+					Object.defineProperty( target , targetKey , {
+						value: targetValue ,
+						enumerable: sourceDescriptor.enumerable ,
+						writable: sourceDescriptor.writable ,
+						configurable: sourceDescriptor.configurable
+					} ) ;
+				}
+				else {
+					target[ targetKey ] = targetValue ;
 				}
 
-				targetKey = runtime.prefix + path[ jmax ] ;
+				return ;
 			}
-		}
 
-		// Again, trigger an eventual getter only once
-		targetValue = targetPointer[ targetKey ] ;
-		targetValueIsObject = targetValue && ( typeof targetValue === 'object' || typeof targetValue === 'function' ) ;
-		sourceValueIsObject = sourceValue && ( typeof sourceValue === 'object' || typeof sourceValue === 'function' ) ;
+			if ( ! targetValueIsObject || ! Object.hasOwn( target , targetKey ) ) {
+				if ( Array.isArray( sourceValue ) ) { targetValue = [] ; }
+				else if ( options.proto ) { targetValue = Object.create( sourceValueProto ) ; }
+				else if ( options.inherit ) { targetValue = Object.create( sourceValue ) ; }
+				else { targetValue = {} ; }
 
+				if ( options.descriptor ) {
+					Object.defineProperty( target , targetKey , {
+						value: targetValue ,
+						enumerable: sourceDescriptor.enumerable ,
+						writable: sourceDescriptor.writable ,
+						configurable: sourceDescriptor.configurable
+					} ) ;
+				}
+				else {
+					target[ targetKey ] = targetValue ;
+				}
+			}
+			else if ( options.proto && Object.getPrototypeOf( targetValue ) !== sourceValueProto ) {
+				Object.setPrototypeOf( targetValue , sourceValueProto ) ;
+			}
+			else if ( options.inherit && Object.getPrototypeOf( targetValue ) !== sourceValue ) {
+				Object.setPrototypeOf( targetValue , sourceValue ) ;
+			}
 
-		if ( options.deep	// eslint-disable-line no-constant-condition
-			&& sourceValue
-			&& ( typeof sourceValue === 'object' || ( options.deepFunc && typeof sourceValue === 'function' ) )
-			&& ( ! options.descriptor || ! sourceDescriptor.get )
-			// not a condition we just cache sourceValueProto now... ok it's trashy ><
-			&& ( ( sourceValueProto = Object.getPrototypeOf( sourceValue ) ) || true )
-			&& ( ! ( options.deep instanceof Set ) || options.deep.has( sourceValueProto ) )
-			&& ( ! options.immutables || ! options.immutables.has( sourceValueProto ) )
-			&& ( ! options.preserve || targetValueIsObject )
-			&& ( ! mask || targetValueIsObject )
-		) {
 			if ( options.circular ) {
-				indexOfSource = runtime.references.sources.indexOf( sourceValue ) ;
+				runtime.references.sources.push( sourceValue ) ;
+				runtime.references.targets.push( targetValue ) ;
 			}
 
-			if ( options.flat ) {
-				// No circular references reconnection when in 'flat' mode
-				if ( indexOfSource >= 0 ) { continue ; }
+			if ( runtime.unflatKeys && runtime.unflatIndex < runtime.unflatKeys.length - 1 ) {
+				// Finish unflatting this property
+				let nextSourceKey = runtime.unflatKeys[ runtime.unflatIndex + 1 ] ;
 
-				extendOne(
-					{ depth: runtime.depth + 1 , prefix: runtime.prefix + sourceKey + options.flat , references: runtime.references } ,
-					options , targetPointer , sourceValue , mask
+				extendOneKV(
+					{
+						depth: runtime.depth ,	// keep the same depth
+						unflatKeys: runtime.unflatKeys ,
+						unflatIndex: runtime.unflatIndex + 1 ,
+						unflatFullKey: runtime.unflatFullKey ,
+						prefix: '' ,
+						references: runtime.references
+					} ,
+					options , targetValue , source , nextSourceKey , mask
 				) ;
 			}
 			else {
-				if ( indexOfSource >= 0 ) {
-					// Circular references reconnection...
-					targetValue = runtime.references.targets[ indexOfSource ] ;
-
-					if ( options.descriptor ) {
-						Object.defineProperty( targetPointer , targetKey , {
-							value: targetValue ,
-							enumerable: sourceDescriptor.enumerable ,
-							writable: sourceDescriptor.writable ,
-							configurable: sourceDescriptor.configurable
-						} ) ;
-					}
-					else {
-						targetPointer[ targetKey ] = targetValue ;
-					}
-
-					continue ;
-				}
-
-				if ( ! targetValueIsObject || ! Object.prototype.hasOwnProperty.call( targetPointer , targetKey ) ) {
-					if ( Array.isArray( sourceValue ) ) { targetValue = [] ; }
-					else if ( options.proto ) { targetValue = Object.create( sourceValueProto ) ; }	// jshint ignore:line
-					else if ( options.inherit ) { targetValue = Object.create( sourceValue ) ; }
-					else { targetValue = {} ; }
-
-					if ( options.descriptor ) {
-						Object.defineProperty( targetPointer , targetKey , {
-							value: targetValue ,
-							enumerable: sourceDescriptor.enumerable ,
-							writable: sourceDescriptor.writable ,
-							configurable: sourceDescriptor.configurable
-						} ) ;
-					}
-					else {
-						targetPointer[ targetKey ] = targetValue ;
-					}
-				}
-				else if ( options.proto && Object.getPrototypeOf( targetValue ) !== sourceValueProto ) {
-					Object.setPrototypeOf( targetValue , sourceValueProto ) ;
-				}
-				else if ( options.inherit && Object.getPrototypeOf( targetValue ) !== sourceValue ) {
-					Object.setPrototypeOf( targetValue , sourceValue ) ;
-				}
-
-				if ( options.circular ) {
-					runtime.references.sources.push( sourceValue ) ;
-					runtime.references.targets.push( targetValue ) ;
-				}
-
 				// Recursively extends sub-object
 				extendOne(
-					{ depth: runtime.depth + 1 , prefix: '' , references: runtime.references } ,
+					{
+						depth: runtime.depth + 1 ,
+						prefix: '' ,
+						references: runtime.references
+					} ,
 					options , targetValue , sourceValue , mask
 				) ;
 			}
 		}
-		else if ( mask && ( targetValue === undefined || targetValueIsObject || sourceValueIsObject ) ) {
-			// Do not create new value, and so do not delete source's properties that were not moved.
-			// We also do not overwrite object with non-object, and we don't overwrite non-object with object (preserve hierarchy)
-			continue ;
-		}
-		else if ( options.preserve && targetValue !== undefined ) {
-			// Do not overwrite, and so do not delete source's properties that were not moved
-			continue ;
-		}
-		else if ( ! options.inherit ) {
-			if ( options.descriptor ) { Object.defineProperty( targetPointer , targetKey , sourceDescriptor ) ; }
-			else { targetPointer[ targetKey ] = targetValue = sourceValue ; }
-		}
-
-		// Delete owned property of the source object
-		if ( options.move ) { delete source[ sourceKey ] ; }
 	}
+	else if ( mask && ( targetValue === undefined || targetValueIsObject || sourceValueIsObject ) ) {
+		// Do not create new value, and so do not delete source's properties that were not moved.
+		// We also do not overwrite object with non-object, and we don't overwrite non-object with object (preserve hierarchy)
+		return ;
+	}
+	else if ( options.preserve && targetValue !== undefined ) {
+		// Do not overwrite, and so do not delete source's properties that were not moved
+		return ;
+	}
+	else if ( ! options.inherit ) {
+		if ( options.descriptor ) { Object.defineProperty( target , targetKey , sourceDescriptor ) ; }
+		else { target[ targetKey ] = targetValue = sourceValue ; }
+	}
+
+	// Delete owned property of the source object
+	if ( options.move ) { delete source[ sourceKey ] ; }
 }
 
 
