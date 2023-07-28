@@ -1959,7 +1959,6 @@ GEntity.prototype.flipTexture = function( texture , xFlip , yFlip ) {
 
 GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity ) {
 	var size ;
-	console.warn( "GEntity.prototype.updateSizeFromPixelDensity" , pixelDensity ) ;
 
 	if ( texture.isReady() ) {
 		//console.warn( "++++++++++++++++++++++++++++ Already READY" ) ;
@@ -4520,6 +4519,7 @@ module.exports = GEntityVg ;
 
 
 GEntityVg.prototype.useVg = true ;
+//GEntityVg.prototype.noLocalLighting = true ;
 GEntityVg.prototype.forceZScalingToX = true ;
 
 
@@ -4545,17 +4545,18 @@ GEntityVg.prototype.updateMaterial = async function() {
 	material.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
 
 	// Diffuse/Albedo
-	let vgSize = { width: vgObject.viewBox.width , height: vgObject.viewBox.height } ;
-	console.warn( "size:" , vgSize ) ;
+	var vgSize = { width: vgObject.viewBox.width , height: vgObject.viewBox.height } ;
 	material.diffuseTexture = new BABYLON.DynamicTexture( 'vgDynamicTexture' , vgSize , scene ) ;
 	material.diffuseTexture.hasAlpha = true ;
 	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
-	let ctx = material.diffuseTexture.getContext() ;
+
+	// Now render the Vector Graphics
+	var ctx = material.diffuseTexture.getContext() ;
+	console.error( "CTX:" , ctx ) ;
 	await vgObject.renderCanvas( ctx ) ;
     material.diffuseTexture.update() ;
 
 	// Multiply with this.size, if necessary
-	console.error( "this.special.vgPixelDensity" , this.special.vgPixelDensity ) ;
 	if ( this.special.vgPixelDensity ) {
 		this.updateSizeFromPixelDensity( material.diffuseTexture , this.special.vgPixelDensity ) ;
 	}
