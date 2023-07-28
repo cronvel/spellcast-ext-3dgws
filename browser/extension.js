@@ -817,6 +817,8 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 const GTransition = require( './GTransition.js' ) ;
 const Parametric = require( './Parametric.js' ) ;
 
+const extension = require( './browser-extension.js' ) ;
+
 //const Ngev = require( 'nextgen-events/lib/browser.js' ) ;
 const LeanEvents = require( 'nextgen-events/lib/LeanEvents.js' ) ;
 const Promise = require( 'seventh' ) ;
@@ -844,7 +846,6 @@ function GEntity( dom , gScene , data ) {
 	this.texturePack = null ;	// A name, not the instance, see this.texturePackObject for the instance
 	this.variant = 'default' ;	// A name, not the instance, see this.variantObject for the instance
 	this.frame = 0 ;			// An index, not the instance
-	this.dynamicVg = null ;		// Instead of using a TexturePack, use a VG that could be dynamic, using an offsreen canvas
 	this.location = null ;
 	this.origin = { x: 0 , y: 0 , z: 0 } ;
 	this.position = { x: 0 , y: 0 , z: 0 } ;
@@ -1121,7 +1122,17 @@ GEntity.prototype.parametricUpdate = function( absoluteT ) {
 
 
 GEntity.prototype.updateEngine = function( engineData ) {} ;
-GEntity.prototype.updateSpecialStage1 = function( data ) {} ;
+
+
+
+GEntity.prototype.updateSpecialStage1 = async function( data ) {
+	if ( this.useVg ) {
+		if ( data.special.vgPixelDensity ) { this.special.vgPixelDensity = data.special.vgPixelDensity ; }
+
+		if ( data.special.vgObject ) { await this.updateVgObject( data.special.vgObject ) ; }
+		else if ( data.special.vgMorph ) { await this.updateVgMorph( data.special.vgMorph ) ; }
+	}
+} ;
 
 
 
@@ -1474,6 +1485,26 @@ GEntity.prototype.nextTextureFrame = function() {
 	//console.warn( "___________________________ nextTextureFrame AFTER" , this.frame , this.frameObject ) ;
 	this.textureAnimationTimer = setTimeout( this.nextTextureFrame , 1000 * this.frameObject.duration ) ;
 	this.updateMaterial() ;
+} ;
+
+
+
+GEntity.prototype.updateVgObject = async function( vgObject ) {
+	const svgKit = extension.host.exports.svg ;
+
+	if ( ! ( vgObject instanceof svgKit.VG ) ) {
+		vgObject = svgKit.objectToVG( vgObject ) ;
+		if ( ! ( vgObject instanceof svgKit.VG ) ) {
+			// Do nothing if it's not a VG object
+			return ;
+		}
+	}
+
+	// Save it now!
+	this.special.vgObject = vgObject ;
+
+	console.warn( "vgObject:" , vgObject ) ;
+	//this.$image = await vgObject.renderSvgDom() ;
 } ;
 
 
@@ -1928,6 +1959,7 @@ GEntity.prototype.flipTexture = function( texture , xFlip , yFlip ) {
 
 GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity ) {
 	var size ;
+	console.warn( "GEntity.prototype.updateSizeFromPixelDensity" , pixelDensity ) ;
 
 	if ( texture.isReady() ) {
 		//console.warn( "++++++++++++++++++++++++++++ Already READY" ) ;
@@ -1945,7 +1977,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":19,"./Parametric.js":20,"nextgen-events/lib/LeanEvents.js":40,"seventh":52}],4:[function(require,module,exports){
+},{"./GTransition.js":19,"./Parametric.js":20,"./browser-extension.js":21,"nextgen-events/lib/LeanEvents.js":40,"seventh":52}],4:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4475,35 +4507,37 @@ const Promise = require( 'seventh' ) ;
 
 
 
-function GEntityVG( dom , gScene , data ) {
-	console.error( "VG constructor" , data ) ;
+function GEntityVg( dom , gScene , data ) {
 	GEntity.call( this , dom , gScene , data ) ;
 	//this.babylon.billboardOrigin = new BABYLON.Vector3( 0 , 0 , 0 ) ;
 }
 
-GEntityVG.prototype = Object.create( GEntity.prototype ) ;
-GEntityVG.prototype.constructor = GEntityVG ;
+GEntityVg.prototype = Object.create( GEntity.prototype ) ;
+GEntityVg.prototype.constructor = GEntityVg ;
 
-module.exports = GEntityVG ;
-
-
-
-GEntityVG.prototype.forceZScalingToX = true ;
+module.exports = GEntityVg ;
 
 
 
-//GEntityVG.prototype.updateSpecialStage1 = function( data ) {} ;
+GEntityVg.prototype.useVg = true ;
+GEntityVg.prototype.forceZScalingToX = true ;
 
 
 
 // Update the gEntity's material/texture
-GEntityVG.prototype.updateMaterial = async function() {
+GEntityVg.prototype.updateMaterial = async function() {
 	var material ,
+		vgObject = this.special.vgObject ,
 		oldMaterial = this.babylon.material ,
 		scene = this.gScene.babylon.scene ,
 		mesh = this.babylon.mesh ;
 
-	console.warn( "3D GEntityVG.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
+	if ( ! vgObject ) {
+		console.error( "No VG object!" ) ;
+		return ;
+	}
+
+	console.warn( "3D GEntityVg.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
 
 	this.babylon.material = material = new BABYLON.StandardMaterial( 'vgMaterial' , scene ) ;
 	//material.backFaceCulling = true ;
@@ -4511,31 +4545,20 @@ GEntityVG.prototype.updateMaterial = async function() {
 	material.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
 
 	// Diffuse/Albedo
-	material.diffuseTexture = new BABYLON.DynamicTexture( 'vgDynamicTexture' , { width: 512 , height: 512 } , scene ) ;
+	let vgSize = { width: vgObject.viewBox.width , height: vgObject.viewBox.height } ;
+	console.warn( "size:" , vgSize ) ;
+	material.diffuseTexture = new BABYLON.DynamicTexture( 'vgDynamicTexture' , vgSize , scene ) ;
 	material.diffuseTexture.hasAlpha = true ;
 	material.diffuseTexture.wrapU = material.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
 	let ctx = material.diffuseTexture.getContext() ;
-	ctx.beginPath();
-	ctx.moveTo(75*2, 25*2);
-	ctx.quadraticCurveTo(25*2, 25*2, 25*2, 62.5*2);
-	ctx.quadraticCurveTo(25*2, 100*2, 50*2, 100*2);
-	ctx.quadraticCurveTo(50*2, 120*2, 30*2, 125*2);
-	ctx.quadraticCurveTo(60*2, 120*2, 65*2, 100*2);
-	ctx.quadraticCurveTo(125*2, 100*2, 125*2, 62.5*2);
-	ctx.quadraticCurveTo(125*2, 25*2, 75*2, 25*2);
-	ctx.fillStyle = "white";
-	ctx.fill();
-    material.diffuseTexture.update();
+	await vgObject.renderCanvas( ctx ) ;
+    material.diffuseTexture.update() ;
 
-	/*
 	// Multiply with this.size, if necessary
-	if ( this.texturePackObject.pixelDensity ) {
-		this.updateSizeFromPixelDensity( material.diffuseTexture , this.texturePackObject.pixelDensity ) ;
+	console.error( "this.special.vgPixelDensity" , this.special.vgPixelDensity ) ;
+	if ( this.special.vgPixelDensity ) {
+		this.updateSizeFromPixelDensity( material.diffuseTexture , this.special.vgPixelDensity ) ;
 	}
-	else if ( this.frameObject.relSize ) {
-		this.updateSize( this.frameObject.relSize , false , true ) ;
-	}
-	*/
 
 	// /!\ TEMP! Easier to debug!
 	material.backFaceCulling = false ;
@@ -4557,7 +4580,7 @@ GEntityVG.prototype.updateMaterial = async function() {
 
 
 
-GEntityVG.prototype.updateMesh = function() {
+GEntityVg.prototype.updateMesh = function() {
 	var mesh ,
 		scene = this.gScene.babylon.scene ;
 
@@ -4567,7 +4590,7 @@ GEntityVG.prototype.updateMesh = function() {
 
 	if ( this.parent ) { this.updateMeshParent() ; }
 
-	console.warn( 'VG Mesh:' , mesh ) ;
+	console.warn( 'Vg Mesh:' , mesh ) ;
 
 	this.updateMeshNeeded = false ;
 	return mesh ;
@@ -5685,13 +5708,13 @@ engine.perUsageGEntity = {
 	uiFloatingText: require( './GEntityUiFloatingText.js' ) ,
 	basicShape: require( './GEntityBasicShape.js' ) ,
 	ground: require( './GEntityGround.js' ) ,
-	vg: require( './GEntityVG.js' )
+	vg: require( './GEntityVg.js' )
 } ;
 
 engine.DiceRoller = require( './DiceRoller.js' ) ;
 
 
-},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityDirectionalLight.js":6,"./GEntityFloatingText.js":7,"./GEntityFx.js":8,"./GEntityGround.js":9,"./GEntityHemisphericLight.js":10,"./GEntityParticleSystem.js":11,"./GEntityPointLight.js":12,"./GEntityShadow.js":13,"./GEntitySpotLight.js":14,"./GEntitySprite.js":15,"./GEntityUiFloatingText.js":16,"./GEntityVG.js":17,"./GScene.js":18}],23:[function(require,module,exports){
+},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityDirectionalLight.js":6,"./GEntityFloatingText.js":7,"./GEntityFx.js":8,"./GEntityGround.js":9,"./GEntityHemisphericLight.js":10,"./GEntityParticleSystem.js":11,"./GEntityPointLight.js":12,"./GEntityShadow.js":13,"./GEntitySpotLight.js":14,"./GEntitySprite.js":15,"./GEntityUiFloatingText.js":16,"./GEntityVg.js":17,"./GScene.js":18}],23:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
