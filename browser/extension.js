@@ -402,7 +402,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],2:[function(require,module,exports){
+},{"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],2:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -781,7 +781,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 } ;
 
 
-},{"./meshUtils.js":23,"seventh":52}],3:[function(require,module,exports){
+},{"./meshUtils.js":24,"seventh":53}],3:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -1131,6 +1131,9 @@ GEntity.prototype.updateSpecialStage1 = async function( data ) {
 
 		if ( data.special.vgObject ) { await this.updateVgObject( data.special.vgObject ) ; }
 		else if ( data.special.vgMorph ) { await this.updateVgMorph( data.special.vgMorph ) ; }
+
+		if ( data.special.backVgObject ) { await this.updateVgObject( data.special.backVgObject , 'backVgObject' ) ; }
+		else if ( data.special.backVgMorph ) { await this.updateVgMorph( data.special.backVgMorph , 'backVgMorph' ) ; }
 	}
 } ;
 
@@ -1489,7 +1492,7 @@ GEntity.prototype.nextTextureFrame = function() {
 
 
 
-GEntity.prototype.updateVgObject = async function( vgObject ) {
+GEntity.prototype.updateVgObject = async function( vgObject , vgObjectProperty = 'vgObject' ) {
 	const svgKit = extension.host.exports.svg ;
 
 	if ( ! ( vgObject instanceof svgKit.VG ) ) {
@@ -1501,7 +1504,7 @@ GEntity.prototype.updateVgObject = async function( vgObject ) {
 	}
 
 	// Save it now!
-	this.special.vgObject = vgObject ;
+	this.special[ vgObjectProperty ] = vgObject ;
 
 	console.warn( "vgObject:" , vgObject ) ;
 	//this.$image = await vgObject.renderSvgDom() ;
@@ -1976,7 +1979,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":19,"./Parametric.js":20,"./browser-extension.js":21,"nextgen-events/lib/LeanEvents.js":40,"seventh":52}],4:[function(require,module,exports){
+},{"./GTransition.js":20,"./Parametric.js":21,"./browser-extension.js":22,"nextgen-events/lib/LeanEvents.js":41,"seventh":53}],4:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2100,7 +2103,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"seventh":52}],5:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"seventh":53}],5:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2197,7 +2200,182 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],6:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],6:[function(require,module,exports){
+/*
+	3D Ground With Sprites
+
+	Copyright (c) 2020 - 2021 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const GEntity = require( './GEntity.js' ) ;
+const GTransition = require( './GTransition.js' ) ;
+
+const vectorUtils = require( './vectorUtils.js' ) ;
+
+const Promise = require( 'seventh' ) ;
+
+
+
+function GEntityCard( dom , gScene , data ) {
+	GEntity.call( this , dom , gScene , data ) ;
+	//this.babylon.billboardOrigin = new BABYLON.Vector3( 0 , 0 , 0 ) ;
+}
+
+GEntityCard.prototype = Object.create( GEntity.prototype ) ;
+GEntityCard.prototype.constructor = GEntityCard ;
+
+module.exports = GEntityCard ;
+
+
+
+GEntityCard.prototype.useVg = true ;
+//GEntityCard.prototype.noLocalLighting = true ;
+GEntityCard.prototype.forceZScalingToX = true ;
+
+
+
+// Update the gEntity's material/texture
+GEntityCard.prototype.updateMaterial = async function() {
+	var material , frontMaterial , backMaterial ,
+		vgObject = this.special.vgObject ,
+		backVgObject = this.special.backVgObject ,
+		oldMaterial = this.babylon.material ,
+		scene = this.gScene.babylon.scene ,
+		mesh = this.babylon.mesh ;
+
+	if ( ! vgObject || ! backVgObject ) {
+		console.error( "No VG object or back VG object" , vgObject , backVgObject ) ;
+		return ;
+	}
+
+	console.warn( "3D GEntityCard.updateMaterial()" ) ;
+
+
+	// Front material
+	
+	frontMaterial = new BABYLON.StandardMaterial( 'cardMaterial' , scene ) ;
+	frontMaterial.backFaceCulling = true ;
+	frontMaterial.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
+
+	// Diffuse/Albedo
+	var vgSize = { width: vgObject.viewBox.width , height: vgObject.viewBox.height } ;
+	frontMaterial.diffuseTexture = new BABYLON.DynamicTexture( 'cardDynamicTexture' , vgSize , scene ) ;
+	frontMaterial.diffuseTexture.hasAlpha = true ;
+	frontMaterial.diffuseTexture.wrapU = frontMaterial.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
+
+	// Now render the Vector Graphics
+	var ctx = frontMaterial.diffuseTexture.getContext() ;
+	await vgObject.renderCanvas( ctx ) ;
+    frontMaterial.diffuseTexture.update() ;
+
+
+    // Back material
+
+	backMaterial = new BABYLON.StandardMaterial( 'cardBackMaterial' , scene ) ;
+	backMaterial.backFaceCulling = true ;
+	backMaterial.ambientColor = new BABYLON.Color3( 1 , 1 , 1 ) ;
+
+	// Diffuse/Albedo
+	var backVgSize = { width: backVgObject.viewBox.width , height: backVgObject.viewBox.height } ;
+	backMaterial.diffuseTexture = new BABYLON.DynamicTexture( 'cardBackDynamicTexture' , backVgSize , scene ) ;
+	backMaterial.diffuseTexture.hasAlpha = true ;
+	backMaterial.diffuseTexture.wrapU = backMaterial.diffuseTexture.wrapV = BABYLON.Texture.CLAMP_ADDRESSMODE ;
+
+	// Now render the Vector Graphics
+	var ctx = backMaterial.diffuseTexture.getContext() ;
+	await backVgObject.renderCanvas( ctx ) ;
+    backMaterial.diffuseTexture.update() ;
+
+
+    // Now create the sub-material
+
+	this.babylon.material = material = new BABYLON.MultiMaterial( 'multi' , scene ) ;
+	material.subMaterials.push( frontMaterial ) ;
+	material.subMaterials.push( backMaterial ) ;
+
+
+	// Multiply with this.size, if necessary
+	if ( this.special.vgPixelDensity ) {
+		this.updateSizeFromPixelDensity( frontMaterial.diffuseTexture , this.special.vgPixelDensity ) ;
+	}
+
+	if ( ! mesh ) { mesh = this.updateMesh() ; }
+
+	mesh.material = material ;
+
+	if ( oldMaterial ) {
+		oldMaterial.dispose(
+			false ,	// forceDisposeEffect
+			false , // forceDisposeTextures, keep texture, texture should be managed by gScene
+			true	// notBoundToMesh
+		) ;
+	}
+
+	this.updateMaterialNeeded = false ;
+} ;
+
+
+
+var FRONT_FAKE_MATERIAL , BACK_FAKE_MATERIAL ;
+
+GEntityCard.prototype.updateMesh = function() {
+	var mesh , frontMesh , backMesh ,
+		scene = this.gScene.babylon.scene ;
+
+	if ( this.babylon.mesh ) { this.babylon.mesh.dispose() ; }
+
+	// We are about to create a merged mesh with multi-materials
+
+	frontMesh = BABYLON.Mesh.CreatePlane( 'card' , undefined , scene ) ;
+	backMesh = BABYLON.Mesh.CreatePlane( 'card-back' , undefined , scene , undefined , BABYLON.Mesh.BACKSIDE ) ;
+
+	// For some reason, both mesh MUST have their own materials BEFORE merging them, if not they will share the first subMaterial later
+	if ( ! FRONT_FAKE_MATERIAL ) {
+		FRONT_FAKE_MATERIAL = new BABYLON.StandardMaterial( 'card-front-fake-material' ) ;
+		BACK_FAKE_MATERIAL = new BABYLON.StandardMaterial( 'card-back-fake-material' ) ;
+	}
+
+	frontMesh.material = FRONT_FAKE_MATERIAL ;
+	backMesh.material = BACK_FAKE_MATERIAL ;
+
+	this.babylon.mesh = mesh = BABYLON.Mesh.MergeMeshes( [ frontMesh , backMesh ] , true , undefined , undefined , undefined , true ) ;
+
+	if ( this.parent ) { this.updateMeshParent() ; }
+
+	console.warn( 'Card Mesh:' , mesh ) ;
+
+	this.updateMeshNeeded = false ;
+	return mesh ;
+} ;
+
+
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],7:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2312,7 +2490,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],8:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2532,7 +2710,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],9:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2694,7 +2872,7 @@ GEntityFx.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],10:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2822,7 +3000,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"seventh":52}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"seventh":53}],11:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -2956,7 +3134,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],12:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3583,7 +3761,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],13:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3710,7 +3888,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],14:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3835,7 +4013,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],15:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -3893,7 +4071,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],16:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4156,7 +4334,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],16:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],17:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4464,7 +4642,7 @@ GEntityUiFloatingText.prototype.updatePosition = function( data , volatile = fal
 } ;
 
 
-},{"./GEntity.js":3,"./GEntityFloatingText.js":7}],17:[function(require,module,exports){
+},{"./GEntity.js":3,"./GEntityFloatingText.js":8}],18:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -4537,7 +4715,7 @@ GEntityVg.prototype.updateMaterial = async function() {
 		return ;
 	}
 
-	console.warn( "3D GEntityVg.updateMaterial()" , this.texturePackObject , this.variantObject ) ;
+	console.warn( "3D GEntityVg.updateMaterial()" ) ;
 
 	this.babylon.material = material = new BABYLON.StandardMaterial( 'vgMaterial' , scene ) ;
 	//material.backFaceCulling = true ;
@@ -4552,7 +4730,6 @@ GEntityVg.prototype.updateMaterial = async function() {
 
 	// Now render the Vector Graphics
 	var ctx = material.diffuseTexture.getContext() ;
-	console.error( "CTX:" , ctx ) ;
 	await vgObject.renderCanvas( ctx ) ;
     material.diffuseTexture.update() ;
 
@@ -4598,7 +4775,7 @@ GEntityVg.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":19,"./vectorUtils.js":25,"seventh":52}],18:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":53}],19:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5210,7 +5387,7 @@ GScene.prototype.textInputDisabled = function( options ) {
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":19,"./widgets/Choices.js":28,"./widgets/Message.js":29,"./widgets/TextInput.js":31,"nextgen-events/lib/LeanEvents.js":40,"seventh":52}],19:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":20,"./widgets/Choices.js":29,"./widgets/Message.js":30,"./widgets/TextInput.js":32,"nextgen-events/lib/LeanEvents.js":41,"seventh":53}],20:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5426,7 +5603,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":33,"seventh":52}],20:[function(require,module,exports){
+},{"array-kit":34,"seventh":53}],21:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5602,7 +5779,7 @@ Parametric.prototype.recursiveCompute = function( self , computed , base ) {
 } ;
 
 
-},{"./browser-extension.js":21}],21:[function(require,module,exports){
+},{"./browser-extension.js":22}],22:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5658,7 +5835,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":22,"exm/lib/BrowserExm.js":39,"path":42}],22:[function(require,module,exports){
+},{"./engine.js":23,"exm/lib/BrowserExm.js":40,"path":43}],23:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5709,13 +5886,14 @@ engine.perUsageGEntity = {
 	uiFloatingText: require( './GEntityUiFloatingText.js' ) ,
 	basicShape: require( './GEntityBasicShape.js' ) ,
 	ground: require( './GEntityGround.js' ) ,
-	vg: require( './GEntityVg.js' )
+	vg: require( './GEntityVg.js' ) ,
+	card: require( './GEntityCard.js' )
 } ;
 
 engine.DiceRoller = require( './DiceRoller.js' ) ;
 
 
-},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityDirectionalLight.js":6,"./GEntityFloatingText.js":7,"./GEntityFx.js":8,"./GEntityGround.js":9,"./GEntityHemisphericLight.js":10,"./GEntityParticleSystem.js":11,"./GEntityPointLight.js":12,"./GEntityShadow.js":13,"./GEntitySpotLight.js":14,"./GEntitySprite.js":15,"./GEntityUiFloatingText.js":16,"./GEntityVg.js":17,"./GScene.js":18}],23:[function(require,module,exports){
+},{"./Camera.js":1,"./DiceRoller.js":2,"./GEntity.js":3,"./GEntityBackground.js":4,"./GEntityBasicShape.js":5,"./GEntityCard.js":6,"./GEntityDirectionalLight.js":7,"./GEntityFloatingText.js":8,"./GEntityFx.js":9,"./GEntityGround.js":10,"./GEntityHemisphericLight.js":11,"./GEntityParticleSystem.js":12,"./GEntityPointLight.js":13,"./GEntityShadow.js":14,"./GEntitySpotLight.js":15,"./GEntitySprite.js":16,"./GEntityUiFloatingText.js":17,"./GEntityVg.js":18,"./GScene.js":19}],24:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -5786,7 +5964,7 @@ exports.getUpmostBoxMeshFace = boxMesh => {
 } ;
 
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6014,7 +6192,7 @@ misc.getControlPositionRelativeTo = (
 } ;
 
 
-},{"./browser-extension.js":21}],25:[function(require,module,exports){
+},{"./browser-extension.js":22}],26:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6171,7 +6349,7 @@ utils.epsilonAsin = utils.easin = v => {
 } ;
 
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6416,7 +6594,7 @@ Box.prototype.applyRectangleStyle = function( rectangle , style ) {
 } ;
 
 
-},{"../browser-extension.js":21,"../misc.js":24,"nextgen-events/lib/LeanEvents.js":40,"seventh":52}],27:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"nextgen-events/lib/LeanEvents.js":41,"seventh":53}],28:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6622,7 +6800,7 @@ Button.prototype.pressUp = function() {
 } ;
 
 
-},{"../browser-extension.js":21,"../misc.js":24,"./TextBox.js":30,"seventh":52,"tree-kit/lib/extend.js":55}],28:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./TextBox.js":31,"seventh":53,"tree-kit/lib/extend.js":56}],29:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -6855,7 +7033,7 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 } ;
 
 
-},{"../browser-extension.js":21,"../misc.js":24,"./Button.js":27,"seventh":52,"tree-kit/lib/extend.js":55}],29:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./Button.js":28,"seventh":53,"tree-kit/lib/extend.js":56}],30:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -7094,7 +7272,7 @@ Message.prototype.confirm = function() {
 } ;
 
 
-},{"../browser-extension.js":21,"./TextBox.js":30,"seventh":52,"tree-kit/lib/extend.js":55}],30:[function(require,module,exports){
+},{"../browser-extension.js":22,"./TextBox.js":31,"seventh":53,"tree-kit/lib/extend.js":56}],31:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -7361,7 +7539,7 @@ TextBox.prototype.getNthCharacter = function( index ) {
 } ;
 
 
-},{"../browser-extension.js":21,"../misc.js":24,"./Box.js":26,"./textFx.js":32,"seventh":52,"tree-kit/lib/extend.js":55}],31:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./Box.js":27,"./textFx.js":33,"seventh":53,"tree-kit/lib/extend.js":56}],32:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -7551,7 +7729,7 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 } ;
 
 
-},{"../browser-extension.js":21,"../misc.js":24,"./TextBox.js":30,"seventh":52,"tree-kit/lib/extend.js":55}],32:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./TextBox.js":31,"seventh":53,"tree-kit/lib/extend.js":56}],33:[function(require,module,exports){
 /*
 	3D Ground With Sprites
 
@@ -7680,7 +7858,7 @@ textFx.rainbow = {
 } ;
 
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7724,7 +7902,7 @@ module.exports = arrayKit ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 
 
-},{"./delete.js":34,"./deleteValue.js":35,"./inPlaceFilter.js":36,"./range.js":37,"./sample.js":38}],34:[function(require,module,exports){
+},{"./delete.js":35,"./deleteValue.js":36,"./inPlaceFilter.js":37,"./range.js":38,"./sample.js":39}],35:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7776,7 +7954,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7840,7 +8018,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7905,7 +8083,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7972,7 +8150,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -8029,7 +8207,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 (function (global){(function (){
 /*
 	EXM
@@ -8214,7 +8392,7 @@ if ( ! global.EXM ) {
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -8440,7 +8618,7 @@ LeanEvents.prototype.getAllStates = function() {
 } ;
 
 
-},{"../package.json":41}],41:[function(require,module,exports){
+},{"../package.json":42}],42:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.5.3",
@@ -8500,7 +8678,7 @@ module.exports={
   }
 }
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -9033,7 +9211,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":43}],43:[function(require,module,exports){
+},{"_process":44}],44:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -9219,7 +9397,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
@@ -9409,7 +9587,7 @@ process.umask = function() { return 0; };
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":43}],45:[function(require,module,exports){
+},{"_process":44}],46:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9638,7 +9816,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":52}],46:[function(require,module,exports){
+},{"./seventh.js":53}],47:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9722,7 +9900,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":52}],47:[function(require,module,exports){
+},{"./seventh.js":53}],48:[function(require,module,exports){
 /*
 	Seventh
 
@@ -10347,7 +10525,7 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":52}],48:[function(require,module,exports){
+},{"./seventh.js":53}],49:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Seventh
@@ -11106,7 +11284,7 @@ if ( process.browser ) {
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":43,"setimmediate":44,"timers":54}],49:[function(require,module,exports){
+},{"_process":44,"setimmediate":45,"timers":55}],50:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11610,7 +11788,7 @@ Promise.variableTimeout = ( asyncFn , thisBinding ) => {
 } ;
 
 
-},{"./seventh.js":52}],50:[function(require,module,exports){
+},{"./seventh.js":53}],51:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Seventh
@@ -11710,7 +11888,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./seventh.js":52,"_process":43}],51:[function(require,module,exports){
+},{"./seventh.js":53,"_process":44}],52:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11762,7 +11940,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":52}],52:[function(require,module,exports){
+},{"./seventh.js":53}],53:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11806,7 +11984,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":45,"./api.js":46,"./batch.js":47,"./core.js":48,"./decorators.js":49,"./misc.js":50,"./parasite.js":51,"./wrapper.js":53}],53:[function(require,module,exports){
+},{"./Queue.js":46,"./api.js":47,"./batch.js":48,"./core.js":49,"./decorators.js":50,"./misc.js":51,"./parasite.js":52,"./wrapper.js":54}],54:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11971,7 +12149,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":52}],54:[function(require,module,exports){
+},{"./seventh.js":53}],55:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -12050,7 +12228,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":43,"timers":54}],55:[function(require,module,exports){
+},{"process/browser.js":44,"timers":55}],56:[function(require,module,exports){
 /*
 	Tree Kit
 
@@ -12405,4 +12583,4 @@ function extendOneKV( runtime , options , target , source , sourceKey , mask ) {
 }
 
 
-},{}]},{},[21]);
+},{}]},{},[22]);
