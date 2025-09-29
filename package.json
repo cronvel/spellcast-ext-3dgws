@@ -10,18 +10,18 @@
     "test": "test"
   },
   "dependencies": {
-    "array-kit": "^0.2.4",
+    "array-kit": "^0.2.6",
     "babylonjs": "^4.2.0",
     "babylonjs-gui": "^4.2.0",
-    "dom-kit": "^0.4.1",
-    "exm": "^0.5.12",
+    "dom-kit": "^0.5.2",
+    "exm": "^0.5.15",
     "nextgen-events": "^1.5.2",
-    "seventh": "^0.7.40",
-    "tree-kit": "^0.7.4"
+    "seventh": "^0.9.4",
+    "tree-kit": "^0.8.8"
   },
   "devDependencies": {
-    "browserify": "^17.0.0",
-    "uglify-js": "^3.14.3"
+    "browserify": "^17.0.1",
+    "uglify-js": "^3.19.3"
   },
   "scripts": {
     "test": "tea-time -R dot -O"

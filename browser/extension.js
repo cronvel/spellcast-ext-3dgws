@@ -7899,7 +7899,11 @@ const arrayKit = {
 
 module.exports = arrayKit ;
 
+arrayKit.randomInteger = ( min , max ) => min + Math.floor( ( max - min + 1 ) * Math.random() ) ;
+
+arrayKit.random = arrayKit.randomElement = array => array[ Math.floor( array.length * Math.random() ) ] ;
 arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
+arrayKit.randomSampleSize = ( array , min , max , inPlace ) => arrayKit.sample( array , arrayKit.randomInteger( min , max ) , inPlace ) ;
 
 
 },{"./delete.js":35,"./deleteValue.js":36,"./inPlaceFilter.js":37,"./range.js":38,"./sample.js":39}],35:[function(require,module,exports){
@@ -9929,8 +9933,6 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 "use strict" ;
 
-/* global AggregateError */
-
 
 
 const Promise = require( './seventh.js' ) ;
@@ -9945,7 +9947,7 @@ function noop() {}
 
 
 Promise.all = ( iterable ) => {
-	var index = -1 , settled = false ,
+	var index = - 1 , settled = false ,
 		count = 0 , length = Infinity ,
 		value , values = [] ,
 		allPromise = new Promise() ;
@@ -10037,7 +10039,7 @@ Promise._allArrayOne = ( value , index , runtime ) => {
 
 
 Promise.allSettled = ( iterable ) => {
-	var index = -1 , settled = false ,
+	var index = - 1 , settled = false ,
 		count = 0 , length = Infinity ,
 		value , values = [] ,
 		allPromise = new Promise() ;
@@ -10088,7 +10090,7 @@ Promise.allSettled = ( iterable ) => {
 // Promise.all() with an iterator
 Promise.every =
 Promise.map = ( iterable , iterator ) => {
-	var index = -1 , settled = false ,
+	var index = - 1 , settled = false ,
 		count = 0 , length = Infinity ,
 		value , values = [] ,
 		allPromise = new Promise() ;
@@ -10140,7 +10142,7 @@ Promise.map = ( iterable , iterator ) => {
 	with, as a reason an AggregateError of all promise rejection reasons.
 */
 Promise.any = ( iterable ) => {
-	var index = -1 , settled = false ,
+	var index = - 1 , settled = false ,
 		count = 0 , length = Infinity ,
 		value ,
 		errors = [] ,
@@ -10186,7 +10188,7 @@ Promise.any = ( iterable ) => {
 
 // Like Promise.any() but with an iterator
 Promise.some = ( iterable , iterator ) => {
-	var index = -1 , settled = false ,
+	var index = - 1 , settled = false ,
 		count = 0 , length = Infinity ,
 		value ,
 		errors = [] ,
@@ -10235,13 +10237,13 @@ Promise.some = ( iterable , iterator ) => {
 
 
 /*
-	More closed to Array#filter().
+	More close to Array#filter().
 	The iterator should return truthy if the array element should be kept,
 	or falsy if the element should be filtered out.
 	Any rejection reject the whole promise.
 */
 Promise.filter = ( iterable , iterator ) => {
-	var index = -1 , settled = false ,
+	var index = - 1 , settled = false ,
 		count = 0 , length = Infinity ,
 		value , values = [] ,
 		filterPromise = new Promise() ;
@@ -10299,7 +10301,7 @@ Promise.filter = ( iterable , iterator ) => {
 // Force a function statement because we are using arguments.length, so we can support accumulator equals to undefined
 Promise.foreach =
 Promise.forEach = function( iterable , iterator , accumulator ) {
-	var index = -1 ,
+	var index = - 1 ,
 		isReduce = arguments.length >= 3 ,
 		it = iterable[Symbol.iterator]() ,
 		forEachPromise = new Promise() ,
@@ -10410,7 +10412,7 @@ Promise.mapObject = ( inputObject , iterator ) => {
 
 // Like map, but with a concurrency limit
 Promise.concurrent = ( limit , iterable , iterator ) => {
-	var index = -1 , settled = false ,
+	var index = - 1 , settled = false ,
 		running = 0 ,
 		count = 0 , length = Infinity ,
 		value , done = false ,
@@ -10604,6 +10606,7 @@ module.exports = Promise ;
 
 Promise.Native = NativePromise ;
 Promise.warnUnhandledRejection = true ;
+Promise.nextTick = nextTick ;
 
 
 
@@ -10613,7 +10616,7 @@ Promise.prototype._exec = function() {
 	try {
 		this.fn(
 			// Don't return anything, it would create nasty bugs! E.g.:
-			// bad: error => this.reject( error_ )
+			// bad: error_ => this.reject( error_ )
 			// good: error_ => { this.reject( error_ ) ; }
 			result_ => { this.resolve( result_ ) ; } ,
 			error_ => { this.reject( error_ ) ; }
@@ -10760,6 +10763,18 @@ Promise.prototype.resolveTimeout = Promise.prototype.fulfillTimeout = function( 
 
 Promise.prototype.rejectTimeout = function( time , error ) {
 	setTimeout( () => this.reject( error ) , time ) ;
+} ;
+
+
+
+Promise.prototype.resolveNextTick = Promise.prototype.fulfillNextTick = function( result ) {
+	nextTick( () => this.resolve( result ) ) ;
+} ;
+
+
+
+Promise.prototype.rejectNextTick = function( error ) {
+	nextTick( () => this.reject( error ) ) ;
 } ;
 
 
@@ -11052,11 +11067,19 @@ Promise.reject = function( error ) {
 
 
 
+Promise.prototype.resolveTimeout = Promise.prototype.fulfillTimeout = function( timeout , value ) {
+	setTimeout( () => this.resolve( value ) , timeout ) ;
+} ;
+
 Promise.resolveTimeout = Promise.fulfillTimeout = function( timeout , value ) {
 	return new Promise( resolve => setTimeout( () => resolve( value ) , timeout ) ) ;
 } ;
 
 
+
+Promise.prototype.rejectTimeout = function( timeout , error ) {
+	setTimeout( () => this.reject( error ) , timeout ) ;
+} ;
 
 Promise.rejectTimeout = function( timeout , error ) {
 	return new Promise( ( resolve , reject ) => setTimeout( () => reject( error ) , timeout ) ) ;
@@ -11086,9 +11109,9 @@ Promise.dormant = function( fn ) {
 
 
 // Try-catched Promise.resolve( fn() )
-Promise.try = function( fn ) {
+Promise.try = function( fn , ... args ) {
 	try {
-		return Promise.resolve( fn() ) ;
+		return Promise.resolve( fn( ... args ) ) ;
 	}
 	catch ( error ) {
 		return Promise.reject( error ) ;
@@ -11259,6 +11282,23 @@ Promise.resolved = Promise.dummy = Promise.resolve() ;
 
 
 /*
+	Vanilla Promise compatibility.
+*/
+
+
+
+// This method merely achieves what this lib is doing right from the begining:
+// allowing one to pass a promise and process it elsewhere.
+Promise.withResolvers = () => {
+	var promise = new Promise() ;
+	return { promise , resolve: promise.resolve.bind( promise ) , reject: promise.reject.bind( promise ) } ;
+} ;
+
+
+
+
+
+/*
 	Browser specific.
 */
 
@@ -11316,6 +11356,7 @@ if ( process.browser ) {
 
 
 const Promise = require( './seventh.js' ) ;
+const noop = () => undefined ;
 
 
 
@@ -11392,13 +11433,24 @@ Promise.promisify = ( nodeAsyncFn , thisBinding ) => {
 
 
 /*
-	Pass a function that will be called every time the decoratee return something.
+	Intercept each decoratee resolve/reject.
 */
-Promise.returnValueInterceptor = ( interceptor , asyncFn , thisBinding ) => {
+Promise.interceptor = ( asyncFn , interceptor , errorInterceptor , thisBinding ) => {
+	if ( typeof errorInterceptor !== 'function' ) {
+		thisBinding = errorInterceptor ;
+		errorInterceptor = noop ;
+	}
+
 	return function( ... args ) {
-		var returnVal = asyncFn.call( thisBinding || this , ... args ) ;
-		interceptor( returnVal ) ;
-		return returnVal ;
+		var localThis = thisBinding || this ,
+			maybePromise = asyncFn.call( localThis , ... args ) ;
+
+		Promise.resolve( maybePromise ).then(
+			value => interceptor.call( localThis , value ) ,
+			error => errorInterceptor.call( localThis , error )
+		) ;
+
+		return maybePromise ;
 	} ;
 } ;
 
@@ -11408,16 +11460,34 @@ Promise.returnValueInterceptor = ( interceptor , asyncFn , thisBinding ) => {
 	Run only once, return always the same promise.
 */
 Promise.once = ( asyncFn , thisBinding ) => {
-	var triggered = false ;
-	var result ;
+	var functionInstance = null ,	// instance when not called as an object's method but a regular function ('this' is undefined)
+		instanceMap = new WeakMap() ;
+
+	const getInstance = ( localThis ) => {
+		var instance = localThis ? instanceMap.get( localThis ) : functionInstance ;
+		if ( instance ) { return instance ; }
+
+		instance = {
+			triggered: false ,
+			result: undefined
+		} ;
+
+		if ( localThis ) { instanceMap.set( localThis , instance ) ; }
+		else { functionInstance = instance ; }
+
+		return instance ;
+	} ;
 
 	return function( ... args ) {
-		if ( ! triggered ) {
-			triggered = true ;
-			result = asyncFn.call( thisBinding || this , ... args ) ;
+		var localThis = thisBinding || this ,
+			instance = getInstance( localThis ) ;
+
+		if ( ! instance.triggered ) {
+			instance.triggered = true ;
+			instance.result = asyncFn.call( localThis , ... args ) ;
 		}
 
-		return result ;
+		return instance.result ;
 	} ;
 } ;
 
@@ -11427,16 +11497,31 @@ Promise.once = ( asyncFn , thisBinding ) => {
 	The decoratee execution does not overlap, multiple calls are serialized.
 */
 Promise.serialize = ( asyncFn , thisBinding ) => {
-	var lastPromise = new Promise.resolve() ;
+	var functionInstance = null ,	// instance when not called as an object's method but a regular function ('this' is undefined)
+		instanceMap = new WeakMap() ;
+
+	const getInstance = ( localThis ) => {
+		var instance = localThis ? instanceMap.get( localThis ) : functionInstance ;
+		if ( instance ) { return instance ; }
+
+		instance = { lastPromise: Promise.resolve() } ;
+
+		if ( localThis ) { instanceMap.set( localThis , instance ) ; }
+		else { functionInstance = instance ; }
+
+		return instance ;
+	} ;
 
 	return function( ... args ) {
-		var promise = new Promise() ;
+		var localThis = thisBinding || this ,
+			instance = getInstance( localThis ) ,
+			promise = new Promise() ;
 
-		lastPromise.finally( () => {
-			Promise.propagate( asyncFn.call( thisBinding || this , ... args ) , promise ) ;
+		instance.lastPromise.finally( () => {
+			Promise.propagate( asyncFn.call( localThis , ... args ) , promise ) ;
 		} ) ;
 
-		lastPromise = promise ;
+		instance.lastPromise = promise ;
 
 		return promise ;
 	} ;
@@ -11445,20 +11530,32 @@ Promise.serialize = ( asyncFn , thisBinding ) => {
 
 
 /*
-	It does nothing if the decoratee is still in progress, but return the promise of the action in progress.
+	It does nothing if the decoratee is still in progress, but it returns the promise of the action in progress.
 */
 Promise.debounce = ( asyncFn , thisBinding ) => {
-	var inProgress = null ;
+	var functionInstance = null ,	// instance when not called as an object's method but a regular function ('this' is undefined)
+		instanceMap = new WeakMap() ;
 
-	const outWrapper = () => {
-		inProgress = null ;
+	const getInstance = ( localThis ) => {
+		var instance = localThis ? instanceMap.get( localThis ) : functionInstance ;
+		if ( instance ) { return instance ; }
+
+		instance = { inProgress: null } ;
+
+		if ( localThis ) { instanceMap.set( localThis , instance ) ; }
+		else { functionInstance = instance ; }
+
+		return instance ;
 	} ;
 
 	return function( ... args ) {
-		if ( inProgress ) { return inProgress ; }
+		var localThis = thisBinding || this ,
+			instance = getInstance( localThis ) ;
 
-		inProgress = asyncFn.call( thisBinding || this , ... args ) ;
-		Promise.finally( inProgress , outWrapper ) ;
+		if ( instance.inProgress ) { return instance.inProgress ; }
+
+		let inProgress = instance.inProgress = asyncFn.call( localThis , ... args ) ;
+		Promise.finally( inProgress , () => instance.inProgress = null ) ;
 		return inProgress ;
 	} ;
 } ;
@@ -11469,18 +11566,131 @@ Promise.debounce = ( asyncFn , thisBinding ) => {
 	Like .debounce(), but subsequent call continue to return the last promise for some extra time after it resolved.
 */
 Promise.debounceDelay = ( delay , asyncFn , thisBinding ) => {
-	var inProgress = null ;
+	var functionInstance = null ,	// instance when not called as an object's method but a regular function ('this' is undefined)
+		instanceMap = new WeakMap() ;
 
-	const outWrapper = () => {
-		setTimeout( () => inProgress = null , delay ) ;
+	const getInstance = ( localThis ) => {
+		var instance = localThis ? instanceMap.get( localThis ) : functionInstance ;
+		if ( instance ) { return instance ; }
+
+		instance = { inProgress: null } ;
+
+		if ( localThis ) { instanceMap.set( localThis , instance ) ; }
+		else { functionInstance = instance ; }
+
+		return instance ;
 	} ;
 
 	return function( ... args ) {
-		if ( inProgress ) { return inProgress ; }
+		var localThis = thisBinding || this ,
+			instance = getInstance( localThis ) ;
 
-		inProgress = asyncFn.call( thisBinding || this , ... args ) ;
-		Promise.finally( inProgress , outWrapper ) ;
+		if ( instance.inProgress ) { return instance.inProgress ; }
+
+		let inProgress = instance.inProgress = asyncFn.call( localThis , ... args ) ;
+		Promise.finally( inProgress , () => setTimeout( () => instance.inProgress = null , delay ) ) ;
 		return inProgress ;
+	} ;
+} ;
+
+
+
+/*
+	debounceNextTick( [asyncFn|syncFn] , thisBinding ) => {
+
+	It does nothing until the next tick.
+	The decoratee is called only once with the arguments of the last decorator call.
+	The function argument can be sync or async.
+
+	The use case is can be some niche case of .update()/.refresh()/.redraw() functions.
+*/
+Promise.debounceNextTick = ( asyncFn , thisBinding ) => {
+	var inWrapper = null ,
+		outWrapper = null ,
+		waitFn = null ,
+		functionInstance = null ,	// instance when not called as an object's method but a regular function ('this' is undefined)
+		instanceMap = new WeakMap() ;
+
+	const getInstance = ( localThis ) => {
+		var instance = localThis ? instanceMap.get( localThis ) : functionInstance ;
+		if ( instance ) { return instance ; }
+
+		instance = {
+			inProgress: null ,
+			waitingNextTick: false ,
+			currentUpdateWith: null ,
+			currentUpdatePromise: null ,
+			nextUpdateWith: null ,
+			nextUpdatePromise: null
+		} ;
+
+		if ( localThis ) { instanceMap.set( localThis , instance ) ; }
+		else { functionInstance = instance ; }
+
+		return instance ;
+	} ;
+
+
+	const nextUpdate = function() {
+		var instance = getInstance( this ) ;
+		instance.inProgress = instance.currentUpdatePromise = null ;
+
+		if ( instance.nextUpdateWith ) {
+			let args = instance.nextUpdateWith ;
+			instance.nextUpdateWith = null ;
+			let sharedPromise = instance.nextUpdatePromise ;
+			instance.nextUpdatePromise = null ;
+
+			instance.inProgress = inWrapper.call( this , args ) ;
+			// Forward the result to the pending promise
+			Promise.propagate( instance.inProgress , sharedPromise ) ;
+		}
+	} ;
+
+
+	inWrapper = function( args ) {
+		var instance = getInstance( this ) ;
+
+		instance.inProgress = new Promise() ;
+		instance.currentUpdateWith = args ;
+		instance.waitingNextTick = true ;
+
+		Promise.nextTick( () => {
+			instance.waitingNextTick = false ;
+			let maybePromise = asyncFn.call( this , ... instance.currentUpdateWith ) ;
+
+			if ( Promise.isThenable( maybePromise ) ) {
+				instance.currentUpdatePromise = maybePromise ;
+				Promise.finally( maybePromise , nextUpdate.bind( this ) ) ;
+				Promise.propagate( maybePromise , instance.inProgress ) ;
+			}
+			else {
+				// the function was synchronous
+				instance.currentUpdatePromise = null ;
+				instance.inProgress.resolve( maybePromise ) ;
+				nextUpdate.call( this ) ;
+			}
+		} ) ;
+
+		return instance.inProgress ;
+	} ;
+
+	return function( ... args ) {
+		var localThis = thisBinding || this ,
+			instance = getInstance( localThis ) ;
+
+		if ( instance.waitingNextTick ) {
+			instance.currentUpdateWith = args ;
+			return instance.inProgress ;
+		}
+
+		if ( instance.currentUpdatePromise ) {
+			if ( ! instance.nextUpdatePromise ) { instance.nextUpdatePromise = new Promise() ; }
+			instance.nextUpdateWith = args ;
+			return instance.nextUpdatePromise ;
+		}
+
+		return inWrapper.call( localThis , args ) ;
 	} ;
 } ;
 
@@ -11499,20 +11709,16 @@ Promise.debounceDelay = ( delay , asyncFn , thisBinding ) => {
 		* delay: `number` a delay before calling again the decoratee
 		* delayFn: async `function` called before calling again the decoratee
 		* waitFn: async `function` called before calling the decoratee (even the first try), use-case: Window.requestAnimationFrame()
+		* waitNextTick: if true, wait for the next tick before updating, it's the same than:  options.waitFn = Promise.resolveNextTick
 */
 Promise.debounceUpdate = ( options , asyncFn , thisBinding ) => {
-	var inProgress = null ,
-		waitInProgress = null ,
-		currentUpdateWith = null ,
-		currentUpdatePromise = null ,
-		nextUpdateWith = null ,
-		nextUpdatePromise = null ,
+	var inWrapper = null ,
+		outWrapper = null ,
 		delay = 0 ,
 		delayFn = null ,
 		waitFn = null ,
-		inWrapper = null ,
-		outWrapper = null ;
-
+		functionInstance = null ,	// instance when not called as an object's method but a regular function ('this' is undefined)
+		instanceMap = new WeakMap() ;
 
 	// Manage arguments
 	if ( typeof options === 'function' ) {
@@ -11522,32 +11728,59 @@ Promise.debounceUpdate = ( options , asyncFn , thisBinding ) => {
 	else {
 		if ( typeof options.delay === 'number' ) { delay = options.delay ; }
 		if ( typeof options.delayFn === 'function' ) { delayFn = options.delayFn ; }
-		if ( typeof options.waitFn === 'function' ) { waitFn = options.waitFn ; }
+
+		if ( options.waitNextTick ) { waitFn = Promise.resolveNextTick ; }
+		else if ( typeof options.waitFn === 'function' ) { waitFn = options.waitFn ; }
 	}
 
 
-	const nextUpdate = () => {
-		inProgress = currentUpdatePromise = null ;
+	const getInstance = ( localThis ) => {
+		var instance = localThis ? instanceMap.get( localThis ) : functionInstance ;
+		if ( instance ) { return instance ; }
 
-		if ( nextUpdateWith ) {
-			let callArgs = nextUpdateWith ;
-			nextUpdateWith = null ;
-			let sharedPromise = nextUpdatePromise ;
-			nextUpdatePromise = null ;
+		instance = {
+			inProgress: null ,
+			waitInProgress: null ,
+			currentUpdateWith: null ,
+			currentUpdatePromise: null ,
+			nextUpdateWith: null ,
+			nextUpdatePromise: null
+		} ;
 
-			inProgress = inWrapper( callArgs ) ;
+		if ( localThis ) { instanceMap.set( localThis , instance ) ; }
+		else { functionInstance = instance ; }
+
+		return instance ;
+	} ;
+
+
+	const nextUpdate = function() {
+		var instance = getInstance( this ) ;
+		instance.inProgress = instance.currentUpdatePromise = null ;
+
+		if ( instance.nextUpdateWith ) {
+			let args = instance.nextUpdateWith ;
+			instance.nextUpdateWith = null ;
+			let sharedPromise = instance.nextUpdatePromise ;
+			instance.nextUpdatePromise = null ;
+
+			instance.inProgress = inWrapper.call( this , args ) ;
 			// Forward the result to the pending promise
-			Promise.propagate( inProgress , sharedPromise ) ;
+			Promise.propagate( instance.inProgress , sharedPromise ) ;
 		}
 	} ;
 
 
 	// Build outWrapper
 	if ( delayFn ) {
-		outWrapper = () => delayFn().then( nextUpdate ) ;
+		outWrapper = function() {
+			delayFn().then( nextUpdate.bind( this ) ) ;
+		} ;
 	}
 	else if ( delay ) {
-		outWrapper = () => setTimeout( nextUpdate , delay ) ;
+		outWrapper = function() {
+			setTimeout( nextUpdate.bind( this ) , delay ) ;
+		} ;
 	}
 	else {
 		outWrapper = nextUpdate ;
@@ -11555,57 +11788,65 @@ Promise.debounceUpdate = ( options , asyncFn , thisBinding ) => {
 
 
 	if ( waitFn ) {
-		inWrapper = ( callArgs ) => {
-			inProgress = new Promise() ;
-			currentUpdateWith = callArgs ;
-			waitInProgress = waitFn() ;
+		inWrapper = function( args ) {
+			var instance = getInstance( this ) ;
 
-			Promise.finally( waitInProgress , () => {
-				waitInProgress = null ;
-				currentUpdatePromise = asyncFn.call( ... currentUpdateWith ) ;
-				Promise.finally( currentUpdatePromise , outWrapper ) ;
-				Promise.propagate( currentUpdatePromise , inProgress ) ;
+			instance.inProgress = new Promise() ;
+			instance.currentUpdateWith = args ;
+			instance.waitInProgress = waitFn() ;
+
+			Promise.finally( instance.waitInProgress , () => {
+				instance.waitInProgress = null ;
+				instance.currentUpdatePromise = asyncFn.call( this , ... instance.currentUpdateWith ) ;
+				Promise.finally( instance.currentUpdatePromise , outWrapper.bind( this ) ) ;
+				Promise.propagate( instance.currentUpdatePromise , instance.inProgress ) ;
 			} ) ;
 
-			return inProgress ;
+			return instance.inProgress ;
 		} ;
 
 		return function( ... args ) {
-			var localThis = thisBinding || this ;
+			var localThis = thisBinding || this ,
+				instance = getInstance( localThis ) ;
 
-			if ( waitInProgress ) {
-				currentUpdateWith = [ localThis , ... args ] ;
-				return inProgress ;
+			if ( instance.waitInProgress ) {
+				instance.currentUpdateWith = args ;
+				return instance.inProgress ;
 			}
 
-			if ( currentUpdatePromise ) {
-				if ( ! nextUpdatePromise ) { nextUpdatePromise = new Promise() ; }
-				nextUpdateWith = [ localThis , ... args ] ;
-				return nextUpdatePromise ;
+			if ( instance.currentUpdatePromise ) {
+				if ( ! instance.nextUpdatePromise ) { instance.nextUpdatePromise = new Promise() ; }
+				instance.nextUpdateWith = args ;
+				return instance.nextUpdatePromise ;
 			}
 
-			return inWrapper( [ localThis , ... args ] ) ;
+			return inWrapper.call( localThis , args ) ;
 		} ;
 	}
 
-	inWrapper = ( callArgs ) => {
-		inProgress = asyncFn.call( ... callArgs ) ;
-		Promise.finally( inProgress , outWrapper ) ;
-		return inProgress ;
+
+	// Variant without a waitFn
+
+	inWrapper = function( args ) {
+		var instance = getInstance( this ) ;
+
+		instance.inProgress = asyncFn.call( this , ... args ) ;
+		Promise.finally( instance.inProgress , outWrapper.bind( this ) ) ;
+		return instance.inProgress ;
 	} ;
 
 	return function( ... args ) {
-		var localThis = thisBinding || this ;
+		var localThis = thisBinding || this ,
+			instance = getInstance( localThis ) ;
 
-		if ( inProgress ) {
-			if ( ! nextUpdatePromise ) { nextUpdatePromise = new Promise() ; }
-			nextUpdateWith = [ localThis , ... args ] ;
-			return nextUpdatePromise ;
+		if ( instance.inProgress ) {
+			if ( ! instance.nextUpdatePromise ) { instance.nextUpdatePromise = new Promise() ; }
+			instance.nextUpdateWith = args ;
+			return instance.nextUpdatePromise ;
 		}
 
-		return inWrapper( [ localThis , ... args ] ) ;
+		return inWrapper.call( localThis , args ) ;
 	} ;
-
 } ;
 
 
@@ -11668,7 +11909,7 @@ Promise.debounceSync = ( getParams , fullSyncParams ) => {
 
 		if ( resourceData.nextFullSyncWith ) {
 			if ( fullSyncParams.delay && resourceData.lastFullSyncTime && ( delta = now - resourceData.lastFullSyncTime - fullSyncParams.delay ) < 0 ) {
-				resourceData.inProgress = Promise.resolveTimeout( -delta + 1 ) ;	// Strangely, sometime it is trigerred 1ms too soon
+				resourceData.inProgress = Promise.resolveTimeout( - delta + 1 ) ;	// Strangely, sometime it is trigerred 1ms too soon
 				resourceData.inProgress.finally( () => outWrapper( resourceData , 0 ) ) ;
 				return resourceData.nextFullSyncPromise ;
 			}
@@ -11742,7 +11983,7 @@ Promise.debounceSync = ( getParams , fullSyncParams ) => {
 		}
 
 		if ( ! resourceData.inProgress && ! noDelay && fullSyncParams.delay && resourceData.lastFullSyncTime && ( delta = new Date() - resourceData.lastFullSyncTime - fullSyncParams.delay ) < 0 ) {
-			resourceData.inProgress = Promise.resolveTimeout( -delta + 1 ) ;	// Strangely, sometime it is trigerred 1ms too soon
+			resourceData.inProgress = Promise.resolveTimeout( - delta + 1 ) ;	// Strangely, sometime it is trigerred 1ms too soon
 			Promise.finally( resourceData.inProgress , () => outWrapper( resourceData , 0 ) ) ;
 		}
 
@@ -11766,12 +12007,11 @@ Promise.debounceSync = ( getParams , fullSyncParams ) => {
 // The call reject with a timeout error if it takes too much time
 Promise.timeout = ( timeout , asyncFn , thisBinding ) => {
 	return function( ... args ) {
-		var promise = asyncFn.call( thisBinding || this , ... args ) ;
-		// Careful: not my promise, so cannot retrieve its status
+		var promise = new Promise() ;
+		Promise.propagate( asyncFn.call( thisBinding || this , ... args ) , promise ) ;
 		setTimeout( () => promise.reject( new Error( 'Timeout' ) ) , timeout ) ;
 		return promise ;
 	} ;
-
 } ;
 
 
@@ -11779,12 +12019,11 @@ Promise.timeout = ( timeout , asyncFn , thisBinding ) => {
 // Like .timeout(), but here the timeout value is not passed at creation, but as the first arg of each call
 Promise.variableTimeout = ( asyncFn , thisBinding ) => {
 	return function( timeout , ... args ) {
-		var promise = asyncFn.call( thisBinding || this , ... args ) ;
-		// Careful: not my promise, so cannot retrieve its status
+		var promise = new Promise() ;
+		Promise.propagate( asyncFn.call( thisBinding || this , ... args ) , promise ) ;
 		setTimeout( () => promise.reject( new Error( 'Timeout' ) ) , timeout ) ;
 		return promise ;
 	} ;
-
 } ;
 
 
