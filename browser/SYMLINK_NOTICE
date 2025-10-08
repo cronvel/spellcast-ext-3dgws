@@ -1,1 +1,3 @@
 NPM does not copy symlinks into the package -_-'
+So the relevant version are copied into babylonjs.js and babylonjs.gui.js.
+

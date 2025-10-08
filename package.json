@@ -1,7 +1,7 @@
 {
   "name": "spellcast-ext-3dgws",
   "version": "0.50.6",
-  "description": "3D Ground With Sprites - A Spellcast's Client Extension.",
+  "description": "3D Graphics With Sounds - A Spellcast's Web Client Extension.",
   "main": "lib/extension.js",
   "engines": {
     "node": ">=16.13.0"
@@ -51,10 +51,10 @@
     }
   },
   "copyright": {
-    "title": "3D Ground With Sprites",
+    "title": "3D Graphics With Sounds",
     "years": [
       2020,
-      2021
+      2025
     ],
     "owner": "Cédric Ronvel"
   }
