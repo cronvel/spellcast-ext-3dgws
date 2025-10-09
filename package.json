@@ -11,17 +11,12 @@
   },
   "dependencies": {
     "array-kit": "^0.2.6",
-    "babylonjs": "^4.2.0",
-    "babylonjs-gui": "^4.2.0",
+    "babylon-game-gui": "^0.0.1",
     "dom-kit": "^0.5.2",
     "exm": "^0.5.15",
     "nextgen-events": "^1.5.2",
     "seventh": "^0.9.4",
     "tree-kit": "^0.8.8"
-  },
-  "devDependencies": {
-    "browserify": "^17.0.1",
-    "uglify-js": "^3.19.3"
   },
   "scripts": {
     "test": "tea-time -R dot -O"
