@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "array-kit": "^0.2.6",
-    "babylon-game-gui": "^0.0.1",
+    "babylon-game-gui": "^0.0.2",
     "dom-kit": "^0.5.2",
     "exm": "^0.5.15",
     "nextgen-events": "^1.5.2",

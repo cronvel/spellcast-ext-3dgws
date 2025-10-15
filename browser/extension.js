@@ -402,7 +402,7 @@ Camera.prototype.updateOrbital = function( data ) {
 } ;
 
 
-},{"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],2:[function(require,module,exports){
+},{"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],2:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -781,7 +781,7 @@ DiceRoller.prototype.displayDiceRollResult = function( result ) {
 } ;
 
 
-},{"./meshUtils.js":24,"seventh":51}],3:[function(require,module,exports){
+},{"./meshUtils.js":24,"seventh":52}],3:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -1979,7 +1979,7 @@ GEntity.prototype.updateSizeFromPixelDensity = function( texture , pixelDensity 
 } ;
 
 
-},{"./GTransition.js":20,"./Parametric.js":21,"./browser-extension.js":22,"nextgen-events/lib/LeanEvents.js":41,"seventh":51}],4:[function(require,module,exports){
+},{"./GTransition.js":20,"./Parametric.js":21,"./browser-extension.js":22,"nextgen-events/lib/LeanEvents.js":42,"seventh":52}],4:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -2103,7 +2103,7 @@ GEntityBackground.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"seventh":51}],5:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"seventh":52}],5:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -2200,7 +2200,7 @@ GEntityBasicShape.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],6:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],6:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -2375,7 +2375,7 @@ GEntityCard.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],7:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],7:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -2490,7 +2490,7 @@ GEntityDirectionalLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],8:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],8:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -2710,7 +2710,7 @@ GEntityFloatingText.prototype.updateSpecialStage2 = function( data ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],9:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],9:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -2872,7 +2872,7 @@ GEntityFx.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],10:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],10:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -3000,7 +3000,7 @@ GEntityGround.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"seventh":51}],11:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"seventh":52}],11:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -3134,7 +3134,7 @@ GEntityHemisphericLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],12:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],12:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -3761,7 +3761,7 @@ GEntityParticleSystem.prototype.updateSize = function( size , volatile = false ,
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],13:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],13:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -3888,7 +3888,7 @@ GEntityPointLight.prototype.createLight = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],14:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],14:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -4013,7 +4013,7 @@ GEntityShadow.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],15:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],15:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -4071,7 +4071,7 @@ module.exports = GEntitySpotLight ;
 */
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],16:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],16:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -4334,7 +4334,7 @@ GEntitySprite.prototype.autoFacing = function( changes = null ) {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],17:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],17:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -4775,7 +4775,7 @@ GEntityVg.prototype.updateMesh = function() {
 } ;
 
 
-},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":51}],19:[function(require,module,exports){
+},{"./GEntity.js":3,"./GTransition.js":20,"./vectorUtils.js":26,"seventh":52}],19:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -5387,7 +5387,7 @@ GScene.prototype.textInputDisabled = function( options ) {
 } ;
 
 
-},{"./Camera.js":1,"./GTransition.js":20,"./widgets/Choices.js":29,"./widgets/Message.js":30,"./widgets/TextInput.js":32,"nextgen-events/lib/LeanEvents.js":41,"seventh":51}],20:[function(require,module,exports){
+},{"./Camera.js":1,"./GTransition.js":20,"./widgets/Choices.js":29,"./widgets/Message.js":31,"./widgets/TextInput.js":33,"nextgen-events/lib/LeanEvents.js":42,"seventh":52}],20:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -5603,7 +5603,7 @@ GTransition.prototype.createAnimationFn = function( gScene , entity , property ,
 } ;
 
 
-},{"array-kit":34,"seventh":51}],21:[function(require,module,exports){
+},{"array-kit":35,"seventh":52}],21:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -5835,7 +5835,7 @@ const extension = BrowserExm.registerExtension( {
 module.exports = extension ;
 
 
-},{"./engine.js":23,"exm/lib/BrowserExm.js":40,"path":54}],23:[function(require,module,exports){
+},{"./engine.js":23,"exm/lib/BrowserExm.js":41,"path":55}],23:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -6390,6 +6390,11 @@ const Promise = require( 'seventh' ) ;
 
 
 
+/*
+	DEPRECATED?
+	Use DecoratedContainer instead...
+*/
+
 function Box( dom , gScene , options = {} , parent = null ) {
 	this.dom = dom ;    // Dom instance, immutable
 	this.gScene = gScene ;
@@ -6594,7 +6599,7 @@ Box.prototype.applyRectangleStyle = function( rectangle , style ) {
 } ;
 
 
-},{"../browser-extension.js":22,"../misc.js":25,"nextgen-events/lib/LeanEvents.js":41,"seventh":51}],28:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"nextgen-events/lib/LeanEvents.js":42,"seventh":52}],28:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -6627,7 +6632,7 @@ Box.prototype.applyRectangleStyle = function( rectangle , style ) {
 
 
 
-const TextBox = require( './TextBox.js' ) ;
+const DecoratedContainer = require( './DecoratedContainer.js' ) ;
 const misc = require( '../misc.js' ) ;
 
 const extension = require( '../browser-extension.js' ) ;
@@ -6638,7 +6643,7 @@ const Promise = require( 'seventh' ) ;
 
 
 function Button( dom , gScene , text , options = {} , parent = null ) {
-	TextBox.call( this , dom , gScene , text , options , parent ) ;
+	DecoratedContainer.call( this , dom , gScene , text , options , parent ) ;
 
 	this.containerRectHoverStyle = {} ;
 	this.containerRectPressedDownStyle = {} ;
@@ -6648,9 +6653,13 @@ function Button( dom , gScene , text , options = {} , parent = null ) {
 
 	// The hook to be called when the Button is pressed
 	this.onPress = null ;
+
+	this.babylon = {
+		actionButton: null
+	} ;
 }
 
-Button.prototype = Object.create( TextBox.prototype ) ;
+Button.prototype = Object.create( DecoratedContainer.prototype ) ;
 Button.prototype.constructor = Button ;
 
 module.exports = Button ;
@@ -6658,7 +6667,7 @@ module.exports = Button ;
 
 
 Button.prototype.destroy = function() {
-	TextBox.prototype.destroy.call( this ) ;
+	DecoratedContainer.prototype.destroy.call( this ) ;
 } ;
 
 
@@ -6670,56 +6679,96 @@ Button.prototype.run = function( onPress ) {
 
 
 
-const THEME = Button.THEME = deepExtend( {} , TextBox.THEME , {
+const THEME = Button.THEME = {
 	default: {
-		panel: {
-			width: 0.25 ,
-			height: 0.2 ,
-			opacity: 1 ,
-			backgroundColor: "#496ad4" ,
-			borderColor: "#ddd" ,
-			borderWidth: 2 ,
-			cornerRadius: 4 ,
-			padding: {
-				left: "10px" ,
-				right: "10px" ,
-				top: "4px" ,
-				bottom: "4px"
-			} ,
-			hover: {
-				//size: 0.95 ,
-				opacity: 1 ,
-				backgroundColor: "#748dde" ,
-				borderColor: "#eee" ,
-				borderWidth: 2
-			} ,
-			pressedDown: {
-				size: 0.95 ,
-				opacity: 1 ,
-				backgroundColor: "#748dde" ,
-				borderColor: "#eee" ,
-				borderWidth: 2
+		position: 'center' ,
+		// DEPRECATED?
+		//verticalAlignment: BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ,
+
+		width: 0.25 ,
+		height: 0.2 ,
+		//idealWidthInPixels: 100 , idealHeightInPixels: 25 ,
+		//autoScale: true ,
+
+		// DEPRECATED?
+		//opacity: 1 ,
+
+		//paddingTop: paddingBottom: "10px" ,
+		
+		//backgroundColor: '#a5a' ,
+		//borderColor: '#ddd' ,
+		borderThickness: 4 ,
+		cornerRadius: 4 ,
+		textPaddingTop: '4px' ,
+		textPaddingBottom: '4px' ,
+		textPaddingLeft: '10px' ,
+		textPaddingRight: '10px' ,
+
+		// When it loses focus (e.g.: the mouse leaves)
+		blurStyle: {
+			backgroundColor: '#a5a' ,
+			borderColor: '#ddd' ,
+			textAttr: {
+				color: '#eee' ,
+				outlineColor: '#444'
 			}
 		} ,
-		text: {
-			color: "white"
-		}
+
+		// When it gains focus (e.g.: the mouse is hovering, or with the keyboard/gamepad navigation, the button is selected)
+		focusStyle: {
+			backgroundColor: '#c7c' ,
+			borderColor: '#eee' ,
+			textAttr: {
+				color: '#ffe' ,
+				outlineColor: '#886'
+			}
+		} ,
+
+		// When the button is pressed and its action is triggered (e.g.: it is clicked)
+		pressedStyle: {
+			duration: 300 ,     // The duration the style is used
+			blinks: 2 ,         // How many times it blinks during this duration (1 blink alternate between the pressed style and the blur style)
+			backgroundColor: '#e9e' ,
+			borderColor: '#fff' ,
+			textAttr: {
+				color: '#ffe' ,
+				outlineColor: '#886'
+			}
+		} ,
+
+		// When the button is disabled (can't be interacted with)
+		disabledStyle: {
+			backgroundColor: '#777' ,
+			borderColor: '#888' ,
+			textAttr: {
+				color: '#888' ,
+				outlineColor: '#999'
+			}
+		} ,
+	 
+		//textWrapping: "wordWrap" ,
+		textLineSpacing: 5 ,
+		textHorizontalAlignment: 'center' ,
+		textVerticalAlignment: 'center' ,
 	}
-} ) ;
+} ;
 
 
 
 Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.default , defaultTheme = THEME.default ) {
 	if ( this.guiCreated ) { return ; }
 
-	TextBox.prototype.createGUI.call( this , theme , defaultTheme ) ;
+	//DecoratedContainer.prototype.createGUI.call( this , theme , defaultTheme ) ;
 
+	/*
 	if ( defaultTheme?.panel?.hover ) { deepExtend( this.containerRectHoverStyle , defaultTheme.panel.hover ) ; }
 	if ( theme?.panel?.hover ) { deepExtend( this.containerRectHoverStyle , theme.panel.hover ) ; }
 
 	if ( defaultTheme?.panel?.pressedDown ) { deepExtend( this.containerRectPressedDownStyle , defaultTheme.panel.pressedDown ) ; }
 	if ( theme?.panel?.pressedDown ) { deepExtend( this.containerRectPressedDownStyle , theme.panel.pressedDown ) ; }
+	*/
 
+	/*
 	if ( this.containerRectHoverStyle.size ) {
 		this.containerRectHoverStyle.width = misc.scaleSizeString( this.containerRectStyle.width , this.containerRectHoverStyle.size ) ;
 		this.containerRectHoverStyle.height = misc.scaleSizeString( this.containerRectStyle.height , this.containerRectHoverStyle.size ) ;
@@ -6729,13 +6778,19 @@ Button.prototype.createGUI = function( theme = this.dom.themeConfig?.button?.def
 		this.containerRectPressedDownStyle.width = misc.scaleSizeString( this.containerRectStyle.width , this.containerRectPressedDownStyle.size ) ;
 		this.containerRectPressedDownStyle.height = misc.scaleSizeString( this.containerRectStyle.height , this.containerRectPressedDownStyle.size ) ;
 	}
+	*/
 
-	this.babylon.containerRect.hoverCursor = 'pointer' ;
+	this.babylon.actionButton = new BABYLON.GUI.ActionButton( 'actionButton' ) ;
+	this.babylon.actionButton.hoverCursor = 'pointer' ;
+	this.babylon.actionButton.isPointerBlocker = true ;
 
 	this.babylon.containerRect.onPointerEnterObservable.add( () => this.onPointerEnter() ) ;
 	this.babylon.containerRect.onPointerOutObservable.add( () => this.onPointerOut() ) ;
 	this.babylon.containerRect.onPointerDownObservable.add( () => this.onPointerDown() ) ;
 	this.babylon.containerRect.onPointerUpObservable.add( () => this.onPointerUp() ) ;
+
+
+    this.guiCreated = true ;
 } ;
 
 
@@ -6800,7 +6855,7 @@ Button.prototype.pressUp = function() {
 } ;
 
 
-},{"../browser-extension.js":22,"../misc.js":25,"./TextBox.js":31,"seventh":51,"tree-kit/lib/extend.js":53}],29:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./DecoratedContainer.js":30,"seventh":52,"tree-kit/lib/extend.js":54}],29:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -7033,7 +7088,229 @@ Choices.prototype.createGUI = function( theme = this.dom.themeConfig?.choices?.d
 } ;
 
 
-},{"../browser-extension.js":22,"../misc.js":25,"./Button.js":28,"seventh":51,"tree-kit/lib/extend.js":53}],30:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./Button.js":28,"seventh":52,"tree-kit/lib/extend.js":54}],30:[function(require,module,exports){
+/*
+	3D Graphics With Sounds
+
+	Copyright (c) 2020 - 2025 Cédric Ronvel
+
+	The MIT License (MIT)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+"use strict" ;
+
+/* global BABYLON */
+
+
+
+const misc = require( '../misc.js' ) ;
+const extension = require( '../browser-extension.js' ) ;
+
+const LeanEvents = require( 'nextgen-events/lib/LeanEvents.js' ) ;
+const Promise = require( 'seventh' ) ;
+
+
+
+function DecoratedContainer( dom , gScene , options = {} , parent = null ) {
+	this.dom = dom ;    // Dom instance, immutable
+	this.gScene = gScene ;
+	this.parent = parent ?? this.gScene ;
+
+	this.paddingRight = this.paddingLeft = this.paddingBottom = this.paddingTop = 0 ;
+
+	this.ninePatchImageUrl = null ;
+	this.containerRectStyle = {} ;
+
+	this.guiCreated = false ;
+
+	// DEPRECATED???
+	this.babylon = {
+		decoratedContainer: null
+	} ;
+}
+
+DecoratedContainer.prototype = Object.create( LeanEvents.prototype ) ;
+DecoratedContainer.prototype.constructor = DecoratedContainer ;
+
+module.exports = DecoratedContainer ;
+
+
+
+DecoratedContainer.prototype.childrenWidthInPixelsRequired = false ;
+DecoratedContainer.prototype.childrenHeightInPixelsRequired = false ;
+DecoratedContainer.prototype.childrenMaxWidth = 0 ;
+DecoratedContainer.prototype.childrenMaxHeight = 0 ;
+
+
+
+DecoratedContainer.prototype.destroy = function() {
+	if ( this.babylon.containerRect ) { this.babylon.containerRect.dispose() ; }
+	if ( this.babylon.boxImage ) { this.babylon.boxImage.dispose() ; }
+} ;
+
+
+
+DecoratedContainer.prototype.getUi = function() { return this.babylon.containerRect ; } ;
+
+
+
+// Should be redefined
+DecoratedContainer.prototype.run = function() {
+	if ( ! this.guiCreated ) { this.createGUI() ; }
+	this.destroy() ;
+} ;
+
+
+
+DecoratedContainer.prototype.createGUI = function( theme , defaultTheme = THEME.default ) {
+	if ( this.guiCreated ) { return ; }
+
+	var containerRect , boxImage , structuredTextBlock , width , height ;
+
+	width = theme?.panel?.width ?? defaultTheme?.panel?.width ?? 0.5 ;
+	height = theme?.panel?.height ?? defaultTheme?.panel?.height ?? 0.2 ;
+
+	console.warn( ".childrenHeightInPixelsRequired:" , this.parent.childrenHeightInPixelsRequired , height ) ;
+	if ( this.parent.childrenHeightInPixelsRequired && typeof height === 'number' ) {
+		height = ( height * this.parent.childrenMaxHeight ) + 'px' ;
+		console.warn( "Set height to:" , height ) ;
+	}
+
+	containerRect = this.babylon.containerRect = new BABYLON.GUI.Rectangle( 'containerRect' ) ;
+	containerRect.width = this.containerRectStyle.width = width ;
+	containerRect.height = this.containerRectStyle.height = height ;
+	containerRect.thickness = 0 ;
+
+	this.setControlAlignment( containerRect , theme?.position ?? defaultTheme?.position ) ;
+
+	this.parent.getUi().addControl( containerRect ) ;
+
+	console.warn( "THEME: " , theme , theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ) ;
+
+	this.ninePatchImageUrl = theme?.panel?.ninePatchImage?.url ?? defaultTheme?.panel?.ninePatchImage?.url ;
+
+	if ( this.ninePatchImageUrl ) {
+		boxImage = this.babylon.boxImage = new BABYLON.GUI.Image( 'boxImage' , this.ninePatchImageUrl ) ;
+		//boxImage.width = "200px";
+		//boxImage.height = "300px";
+		boxImage.stretch = BABYLON.GUI.Image.STRETCH_NINE_PATCH ;
+
+		// /!\ boxImage.width and boxImage.height are undefined, until the image is loaded!!!
+		// /!\ This will produce bug!
+		boxImage.sliceLeft = this.paddingLeft = theme?.panel?.ninePatchImage?.sliceLeft ?? defaultTheme?.panel?.ninePatchImage?.sliceLeft ?? 0 ;
+		boxImage.sliceTop = this.paddingTop = theme?.panel?.ninePatchImage?.sliceTop ?? defaultTheme?.panel?.ninePatchImage?.sliceTop ?? 0 ;
+		boxImage.sliceRight = theme?.panel?.ninePatchImage?.sliceRight ?? defaultTheme?.panel?.ninePatchImage?.sliceRight ?? boxImage.width ;
+		boxImage.sliceBottom = theme?.panel?.ninePatchImage?.sliceBottom ?? defaultTheme?.panel?.ninePatchImage?.sliceBottom ?? boxImage.height ;
+
+		// /!\ TMP, due to previous bug
+		this.paddingRight = this.paddingLeft ;
+		this.paddingBottom = this.paddingTop ;
+
+		//boxImage.isPointerBlocker = false ;
+
+		containerRect.addControl( boxImage ) ;
+	}
+	else {
+		this.containerRectStyle.opacity = theme?.panel?.opacity ?? defaultTheme?.panel?.opacity ;
+		this.containerRectStyle.backgroundColor = theme?.panel?.backgroundColor ?? defaultTheme?.panel?.backgroundColor ;
+		this.containerRectStyle.borderColor = theme?.panel?.borderColor ?? defaultTheme?.panel?.borderColor ;
+		this.containerRectStyle.borderWidth = theme?.panel?.borderWidth ?? defaultTheme?.panel?.borderWidth ;
+		this.containerRectStyle.cornerRadius = theme?.panel?.cornerRadius ?? defaultTheme?.panel?.cornerRadius ;
+		this.applyRectangleStyle( containerRect , this.containerRectStyle ) ;
+	}
+
+	/*
+	// Not defined in time (because width is not in pixels but is a rate)
+	if ( this.paddingLeft + this.paddingRight > containerRect.widthInPixels / 2 ) {
+		this.paddingLeft = this.paddingRight = Math.round( containerRect.widthInPixels / 4 ) ;
+	}
+	if ( this.paddingTop + this.paddingBottom > containerRect.heightInPixels / 2 ) {
+		this.paddingTop = this.paddingBottom = Math.round( containerRect.heightInPixels / 4 ) ;
+	}
+	*/
+
+	// Needed for containerRect.onPointerClickObservable
+	this.babylon.containerRect.isPointerBlocker = true ;
+	this.guiCreated = true ;
+} ;
+
+
+
+DecoratedContainer.prototype.setControlAlignment = function( control , type ) {
+	switch ( type ) {
+		case 'top' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			break ;
+		case 'bottom' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			break ;
+		case 'left' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+		case 'right' :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+		case 'top-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'top-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'bottom-left' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT ;
+			break ;
+		case 'bottom-right' :
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM ;
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT ;
+			break ;
+		case 'center' :
+		default :
+			control.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER ;
+			control.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER ;
+			break ;
+	}
+} ;
+
+
+
+DecoratedContainer.prototype.applyRectangleStyle = function( rectangle , style ) {
+	console.warn( "******** APPLY STYLE" , style ) ;
+	if ( style.width !== undefined ) { rectangle.width = style.width ; }
+	if ( style.height !== undefined ) { rectangle.height = style.height ; }
+	if ( style.opacity !== undefined ) { rectangle.alpha = style.opacity ; }
+	if ( style.backgroundColor !== undefined ) { rectangle.background = style.backgroundColor ; }
+	if ( style.borderColor !== undefined ) { rectangle.color = style.borderColor ; }
+	if ( style.borderWidth !== undefined ) { rectangle.thickness = style.borderWidth ; }
+	if ( style.cornerRadius !== undefined ) { rectangle.cornerRadius = style.cornerRadius ; }
+} ;
+
+
+},{"../browser-extension.js":22,"../misc.js":25,"nextgen-events/lib/LeanEvents.js":42,"seventh":52}],31:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -7272,7 +7549,7 @@ Message.prototype.confirm = function() {
 } ;
 
 
-},{"../browser-extension.js":22,"./TextBox.js":31,"seventh":51,"tree-kit/lib/extend.js":53}],31:[function(require,module,exports){
+},{"../browser-extension.js":22,"./TextBox.js":32,"seventh":52,"tree-kit/lib/extend.js":54}],32:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -7539,7 +7816,7 @@ TextBox.prototype.getNthCharacter = function( index ) {
 } ;
 
 
-},{"../browser-extension.js":22,"../misc.js":25,"./Box.js":27,"./textFx.js":33,"seventh":51,"tree-kit/lib/extend.js":53}],32:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./Box.js":27,"./textFx.js":34,"seventh":52,"tree-kit/lib/extend.js":54}],33:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -7729,7 +8006,7 @@ TextInput.prototype.createGUI = function( theme = this.dom.themeConfig?.textInpu
 } ;
 
 
-},{"../browser-extension.js":22,"../misc.js":25,"./TextBox.js":31,"seventh":51,"tree-kit/lib/extend.js":53}],33:[function(require,module,exports){
+},{"../browser-extension.js":22,"../misc.js":25,"./TextBox.js":32,"seventh":52,"tree-kit/lib/extend.js":54}],34:[function(require,module,exports){
 /*
 	3D Graphics With Sounds
 
@@ -7858,7 +8135,7 @@ textFx.rainbow = {
 } ;
 
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7906,7 +8183,7 @@ arrayKit.shuffle = array => arrayKit.sample( array , array.length , true ) ;
 arrayKit.randomSampleSize = ( array , min , max , inPlace ) => arrayKit.sample( array , arrayKit.randomInteger( min , max ) , inPlace ) ;
 
 
-},{"./delete.js":35,"./deleteValue.js":36,"./inPlaceFilter.js":37,"./range.js":38,"./sample.js":39}],35:[function(require,module,exports){
+},{"./delete.js":36,"./deleteValue.js":37,"./inPlaceFilter.js":38,"./range.js":39,"./sample.js":40}],36:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -7958,7 +8235,7 @@ module.exports = ( src , index ) => {
 } ;
 
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -8022,7 +8299,7 @@ module.exports = ( src , value ) => {
 } ;
 
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -8087,7 +8364,7 @@ module.exports = ( src , fn , thisArg , forceKey ) => {
 } ;
 
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -8154,7 +8431,7 @@ module.exports = function( start , end , step ) {
 } ;
 
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /*
 	Array Kit
 
@@ -8211,7 +8488,7 @@ module.exports = ( array , count = Infinity , inPlace = false ) => {
 } ;
 
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 (function (global){(function (){
 /*
 	EXM
@@ -8396,7 +8673,7 @@ if ( ! global.EXM ) {
 
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /*
 	Next-Gen Events
 
@@ -8622,7 +8899,7 @@ LeanEvents.prototype.getAllStates = function() {
 } ;
 
 
-},{"../package.json":42}],42:[function(require,module,exports){
+},{"../package.json":43}],43:[function(require,module,exports){
 module.exports={
   "name": "nextgen-events",
   "version": "1.5.3",
@@ -8682,7 +8959,7 @@ module.exports={
   }
 }
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 (function (process,global){(function (){
 (function (global, undefined) {
     "use strict";
@@ -8872,7 +9149,7 @@ module.exports={
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":55}],44:[function(require,module,exports){
+},{"_process":56}],45:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9101,7 +9378,7 @@ Queue.prototype.getStats = function() {
 } ;
 
 
-},{"./seventh.js":51}],45:[function(require,module,exports){
+},{"./seventh.js":52}],46:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9185,7 +9462,7 @@ Promise.promisifyAnyNodeApi = ( api , suffix , multiSuffix , filter ) => {
 
 
 
-},{"./seventh.js":51}],46:[function(require,module,exports){
+},{"./seventh.js":52}],47:[function(require,module,exports){
 /*
 	Seventh
 
@@ -9808,7 +10085,7 @@ Promise.race = ( iterable ) => {
 } ;
 
 
-},{"./seventh.js":51}],47:[function(require,module,exports){
+},{"./seventh.js":52}],48:[function(require,module,exports){
 (function (process,global,setImmediate){(function (){
 /*
 	Seventh
@@ -10605,7 +10882,7 @@ if ( process.browser ) {
 
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"_process":55,"setimmediate":43,"timers":56}],48:[function(require,module,exports){
+},{"_process":56,"setimmediate":44,"timers":57}],49:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11308,7 +11585,7 @@ Promise.variableTimeout = ( asyncFn , thisBinding ) => {
 } ;
 
 
-},{"./seventh.js":51}],49:[function(require,module,exports){
+},{"./seventh.js":52}],50:[function(require,module,exports){
 (function (process){(function (){
 /*
 	Seventh
@@ -11408,7 +11685,7 @@ Promise.resolveSafeTimeout = function( timeout , value ) {
 
 
 }).call(this)}).call(this,require('_process'))
-},{"./seventh.js":51,"_process":55}],50:[function(require,module,exports){
+},{"./seventh.js":52,"_process":56}],51:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11460,7 +11737,7 @@ Promise.parasite = () => {
 } ;
 
 
-},{"./seventh.js":51}],51:[function(require,module,exports){
+},{"./seventh.js":52}],52:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11504,7 +11781,7 @@ require( './parasite.js' ) ;
 require( './misc.js' ) ;
 
 
-},{"./Queue.js":44,"./api.js":45,"./batch.js":46,"./core.js":47,"./decorators.js":48,"./misc.js":49,"./parasite.js":50,"./wrapper.js":52}],52:[function(require,module,exports){
+},{"./Queue.js":45,"./api.js":46,"./batch.js":47,"./core.js":48,"./decorators.js":49,"./misc.js":50,"./parasite.js":51,"./wrapper.js":53}],53:[function(require,module,exports){
 /*
 	Seventh
 
@@ -11669,7 +11946,7 @@ Promise.onceEventAllOrError = ( emitter , eventName , excludeEvents ) => {
 } ;
 
 
-},{"./seventh.js":51}],53:[function(require,module,exports){
+},{"./seventh.js":52}],54:[function(require,module,exports){
 /*
 	Tree Kit
 
@@ -12024,7 +12301,7 @@ function extendOneKV( runtime , options , target , source , sourceKey , mask ) {
 }
 
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -12557,7 +12834,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":55}],55:[function(require,module,exports){
+},{"_process":56}],56:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -12743,7 +13020,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -12822,4 +13099,4 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":55,"timers":56}]},{},[22]);
+},{"process/browser.js":56,"timers":57}]},{},[22]);
